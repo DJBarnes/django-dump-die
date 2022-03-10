@@ -1,0 +1,42 @@
+{% load dump_die %}
+{% if is_string %}
+  <code>{{ repr }}</code>
+{% elif object %}
+  <div class="card">
+    <div class="card-header text-white bg-info">
+      <button type="button" class="btn" data-toggle="collapse" data-target=".{{ unique }}" aria-label="Close">
+        {{ type }} <code>{{ repr }}</code> (<code>#{{ unique }}</code>)
+      </button>
+    </div>
+    <div class="card-body dd-wrapper collapse {{ unique }}">
+      <ul>
+        {% for attr, value in attributes %}
+          <li>
+            {% with index|add:forloop.counter as new_index %}
+              {{ attr }}: {% dd_object value skip new_index %}
+            {% endwith %}
+          </li>
+        {% empty %}
+          <li>No Attributes</li>
+        {% endfor %}
+      </ul>
+      {% if functions %}
+        <a href=".func-{{ unique }}" class="btn btn-info" data-toggle="collapse">Toggle Functions</a>
+        <ul class="collapse func-{{ unique }}">
+          {% for attr, doc in functions %}
+            <li>
+              {{ attr }}:
+                {% if doc %}
+                  <div class="doc">{{ doc }}</div>
+                {% else %}
+                  -
+                {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+{% else %}
+  <code>{{ repr }}</code> (<code>#{{ unique }}</code>)
+{% endif %}
