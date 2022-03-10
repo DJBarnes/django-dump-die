@@ -1,0 +1,144 @@
+# Created by https://www.gitignore.io
+
+### OSX ###
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+### Linux ###
+
+# Lock files
+.~*
+
+### Venv ###
+.venv/
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+#dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+.pytest_cache
+
+# Translations
+*.mo
+*.pot
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Visual Studio Code
+.vscode
+
+### Django ###
+*.log
+*.log.*
+*.pot
+*.pyc
+__pycache__/
+__javascript__/
+__target__/
+webstatic/
+transmit/
+private_media/*
+media/
+
+# Celery
+celerybeat.pid
+
+# Ignore environment settings.
+.env/
+.idea/
+.venv/
+.vs/
+.vscode/
+env/
+idea/
+venv/
+vs/
+vscode/
+
+
+# Ignore temporary files.
+[Tt]emp/
+[Tt]empfiles/
+[Tt]emp_files/
+*.tmp
+*.temp
+
+
+# Ignore logfiles.
+[Ll]og/
+[Ll]ogs/
+*.log
+*.log.*
+
+
+# Ignore development-related Django files.
+*.sqlite3
+DEBUG
+
+# Do not track migrations. Uncomment out to explicitly add them.
+*/migrations/0*.py
+
+# Ignore local environment files.
+.env
+env.py
+SECRET_KEY

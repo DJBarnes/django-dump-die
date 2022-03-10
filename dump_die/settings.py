@@ -19,8 +19,44 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'cce7v(wt++t6j!g@rlvp8sbu8s)^dvn(o&w_9p)n2_z4e-g7qz'
+# region Secret Key Management
+
+def create_key(path, length):
+    """
+    Creates project "secret key" in settings folder.
+    """
+    import string
+    from django.utils.crypto import get_random_string
+
+    # Generate key.
+    key = get_random_string(
+        length,
+        string.ascii_letters + string.digits + '!@#$%^&*(-_=+)'
+    )
+
+    # Write key to file.
+    with open(path, 'w', encoding='utf-8') as _f:
+        _f.write(key)
+
+    return key
+
+
+MIN_KEY_LENGTH = 50
+KEY_PATH = os.path.join(BASE_DIR, 'SECRET_KEY')
+
+# Attempt to open and validate secret key.
+SECRET_KEY = ''
+_io_error = False  # pylint: disable=invalid-name
+try:
+    with open(KEY_PATH, 'r', encoding='utf-8') as _f:
+        SECRET_KEY = _f.read().strip()
+except IOError:
+    _io_error = True  # pylint: disable=invalid-name
+
+if _io_error or len(SECRET_KEY) < MIN_KEY_LENGTH:
+    SECRET_KEY = create_key(KEY_PATH, MIN_KEY_LENGTH)
+
+# endregion Secret Key Management
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
