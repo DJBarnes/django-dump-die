@@ -1,14 +1,16 @@
-{% load dump_die %}<!DOCTYPE html>
+{% load dump_die static %}<!DOCTYPE html>
 <html lang="en">
   <meta charset="utf-8">
   <head>
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> {# Prevent chrome from requesting page again #}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'core/css/dd.css' %}">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <title>DD</title>
-    <style>
+    <script src="{% static 'core/js/dd.js' %}"></script>
+    {% comment %} <style>
       .dd-wrapper {
         border: 1px solid gray;
       }
@@ -24,12 +26,14 @@
       .card {
         overflow: hidden; /* Prevent super long horizontal scroll */
       }
-    </style>
+    </style> {% endcomment %}
   </head>
   <body>
     {% for obj in objects %}
       {% if not forloop.first %}<hr>{% endif %}
-      {% dd_object obj None forloop.counter %}
+      {% comment %} <pre class="sf-dump" id="sf-dump-{{ obj.unique }}" data-indent-pad="  "> {% endcomment %}
+        {% dd_object obj None forloop.counter %}
+      {% comment %} </pre> {% endcomment %}
     {% endfor %}
   </body>
 </html>

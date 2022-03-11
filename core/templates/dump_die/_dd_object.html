@@ -1,8 +1,44 @@
 {% load dump_die %}
-{% if is_string %}
-  <code>{{ repr }}</code>
+{% if is_none %}
+  <code class="none">{{ repr }}</code>
+{% elif is_string %}
+  <code class="string">{{ repr }}</code>
+{% elif is_bool %}
+  <code class="bool">{{ repr }}</code>
+{% elif is_number %}
+  <code class="number">{{ repr }}</code>
 {% elif object %}
-  <div class="card">
+
+  <abbr class="type" title="{{ type }}">{{ type }}</abbr>
+  {
+  <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".{{ unique }}" aria-label="Close">
+    <span class="unique">{{ unique }}</span>
+    <span id="arrow-{{ unique }}" class="arrow">▶</span>
+  </a>
+  <div class="dd-wrapper collapse {{ unique }}" data-unique="{{ unique }}">
+    <ul class="attribute-list">
+      {% for attr, value in attributes %}
+        <li>
+          {% with index|add:forloop.counter as new_index %}
+            <span class="access-modifier">+</span>
+            {% is_upper attr as upper %}
+            {% if attr == upper %}
+              <span class="constant" title="Public contant">{{ attr }}</span>:
+            {% else %}
+              <span class="property" title="Public property">{{ attr }}</span>:
+            {% endif %}
+            {% dd_object value skip new_index %}
+          {% endwith %}
+        </li>
+      {% empty %}
+        <span class="empty" title="No Properties">No Properties</span>
+      {% endfor %}
+    </ul>
+  </div>
+  }
+
+
+  {% comment %} <div class="card">
     <div class="card-header text-white bg-info">
       <button type="button" class="btn" data-toggle="collapse" data-target=".{{ unique }}" aria-label="Close">
         {{ type }} <code>{{ repr }}</code> (<code>#{{ unique }}</code>)
@@ -36,7 +72,7 @@
         </ul>
       {% endif %}
     </div>
-  </div>
+  </div> {% endcomment %}
 {% else %}
-  <code>{{ repr }}</code> (<code>#{{ unique }}</code>)
+  <code class="repr">{{ repr }}</code> (<code>#{{ unique }}</code>)
 {% endif %}

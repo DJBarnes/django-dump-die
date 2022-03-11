@@ -12,8 +12,8 @@ def dd_view(request, objects):
 
 def example(request):
     """Example Test"""
-    class AnotherClass:
-        """Another sample class."""
+    class SpamClass:
+        """Spam sample class."""
         def __init__(self):
             self._spam = 'eggs'
 
@@ -21,7 +21,7 @@ def example(request):
         """Sample class."""
         def __init__(self, value):
             self._value = value
-            self._spam = AnotherClass()
+            self._spam = SpamClass()
 
         def get(self):
             """Get class level value"""
@@ -35,6 +35,24 @@ def example(request):
             """This is a private function"""
             return 'secret'
 
+
+    class SomeOtherClass:
+        """Some Other Class."""
+        SAMPLE_CONST = 41
+
+        def __init__(self, *args, **kwargs):
+            self.my_number = 32
+            self.my_string = 'A super cool string'
+            self.works = True
+            self.nothing = None
+            self.bytes = bytes('My Bytes', 'utf-8')
+            self.list_o_stuff = ['A', 'B', 'C']
+            self.spam = SpamClass()
+
+        def do_work(self):
+            """Do some work"""
+            return True
+
     x = {
         'one': 1,
         'two': [
@@ -43,6 +61,7 @@ def example(request):
         ],
         'three': 'three',
         'something': SomeClass('some instance'),
+        'other_thing': SomeOtherClass(),
     }
 
     dd(x, 'hello')

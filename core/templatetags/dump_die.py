@@ -67,6 +67,11 @@ def get_class_name(obj):
     return name
 
 
+@register.simple_tag
+def is_upper(value):
+    return value.upper()
+
+
 @register.inclusion_tag('dump_die/_dd_object.html')
 def dd_object(obj, skip=None, index=0):
     skip = skip or set()
@@ -83,9 +88,17 @@ def dd_object(obj, skip=None, index=0):
         or type(obj) in SIMPLE_TYPES
         or get_class_name(obj) in SIMPLE_TYPE_NAMES
     ):
+        is_none = obj is None
+        is_string = type(obj) is str
+        is_bool = type(obj) is bool
+        is_number = type(obj) is int or type(obj) is float or type(obj) is bytes
+
         # Simple types will just be returned
         return {
-            'is_string': True,
+            'is_none': is_none,
+            'is_string': is_string,
+            'is_bool': is_bool,
+            'is_number': is_number,
             'object': None,
             'type': type(obj),
             'text': safe_str(obj),
