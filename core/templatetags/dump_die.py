@@ -1,5 +1,6 @@
 """Template Tags for DumpDie"""
 import inspect
+import re
 import types
 
 from django import template
@@ -23,9 +24,14 @@ SIMPLE_TYPE_NAMES = [
 ]
 
 
-def in_dir(obj, attr):
-    """Simpler hasattr() function without side effects."""
-    return attr in dir(obj)
+def get_class_name(obj):
+    name = None
+    try:
+        name = obj.__class__.__name__
+    except:
+        pass
+    return name
+
 
 def safe_repr(obj):
     """Call repr() and ignore ObjectDoesNotExist."""
@@ -50,7 +56,11 @@ def safe_str(obj):
 
     return str_obj
 
-def isiterable(obj):
+def _in_dir(obj, attr):
+    """Simpler hasattr() function without side effects."""
+    return attr in dir(obj)
+
+def _is_iterable(obj):
     """Return True if object can be iterated"""
     try:
         iter(obj)
@@ -58,17 +68,27 @@ def isiterable(obj):
         return False
     return True
 
-def get_class_name(obj):
-    name = None
+def _is_indexable(obj):
+    """Return True if object can be indexed"""
     try:
-        name = obj.__class__.__name__
-    except:
-        pass
-    return name
+        obj[0]
+    except TypeError:
+        return False
+    except KeyError:
+        return False
+    return True
+
+def _is_query(obj):
+    """Return True if object is most likely a query"""
+    return _in_dir(obj, 'as_manager') and _in_dir(obj, 'all') and _in_dir(obj, 'filter')
+
+def _is_dict(obj):
+    """Return True if object is most likely a dict"""
+    return _in_dir(obj, 'items') and _in_dir(obj, 'keys') and _in_dir(obj, 'values')
 
 
 @register.simple_tag
-def is_upper(value):
+def to_upper(value):
     return value.upper()
 
 
@@ -92,6 +112,7 @@ def dd_object(obj, skip=None, index=0):
         is_string = type(obj) is str
         is_bool = type(obj) is bool
         is_number = type(obj) is int or type(obj) is float or type(obj) is bytes
+        is_indexable = _is_indexable(obj)
 
         # Simple types will just be returned
         return {
@@ -99,6 +120,7 @@ def dd_object(obj, skip=None, index=0):
             'is_string': is_string,
             'is_bool': is_bool,
             'is_number': is_number,
+            'is_indexable': is_indexable,
             'object': None,
             'type': type(obj),
             'text': safe_str(obj),
@@ -112,7 +134,7 @@ def dd_object(obj, skip=None, index=0):
         attributes = [] # (attr, value)
         functions = [] # (attr, doc)
 
-        if in_dir(obj, 'as_manager') and in_dir(obj, 'all') and in_dir(obj, 'filter'):
+        if _is_query(obj):
             # Probably a query, so evaluate it
             # This prevents a crash because a lazy queryset has too many members.
             obj = list(obj)
@@ -122,14 +144,20 @@ def dd_object(obj, skip=None, index=0):
         except:
             members = []
 
-        if in_dir(obj, 'items') and in_dir(obj, 'keys') and in_dir(obj, 'values'):
+        if _is_dict(obj):
             # Dictionary members
             members.extend(obj.items())
-        elif isiterable(obj):
+        elif _is_iterable(obj):
             # Lists, sets, etc.
-            members.extend([(safe_str(x), x) for x in obj])
+            if _is_indexable(obj):
+                # Use indexes as left half
+                members.extend([(idx, x) for idx, x in enumerate(obj)])
+            else:
+                # Use safe_str as left half
+                members.extend([(safe_str(x), x) for x in obj])
 
         for attr, value in members:
+            # TODO: Consider allowing a setting to also output these if desired.
             if type(attr) is str and attr.startswith('_'):
                 continue # Skip special attributes
 
@@ -144,7 +172,12 @@ def dd_object(obj, skip=None, index=0):
                 value = inspect.getdoc(value)
                 functions.append([attr, value])
             else:
-                attributes.append([safe_repr(attr), value])
+                if _is_dict(obj):
+                    attributes.append([safe_repr(attr), value])
+                else:
+                    safe_repr_minus_quotes = safe_repr(attr)
+                    safe_repr_minus_quotes = re.sub("'", "", safe_repr_minus_quotes)
+                    attributes.append([safe_repr_minus_quotes, value])
 
         try:
             functions = sorted(functions)
@@ -152,7 +185,11 @@ def dd_object(obj, skip=None, index=0):
             pass # Ignore sort errors
 
         return {
+            'is_none': False,
             'is_string': False,
+            'is_bool': False,
+            'is_number': False,
+            'is_indexable': False,
             'object': obj,
             'unique': unique,
             'type': type(obj).__name__,
@@ -168,7 +205,11 @@ def dd_object(obj, skip=None, index=0):
     # so just return a repr() of it.
 
     return {
+        'is_none': False,
         'is_string': False,
+        'is_bool': False,
+        'is_number': False,
+        'is_indexable': False,
         'object': None,
         'unique': unique,
         'type': type(obj),

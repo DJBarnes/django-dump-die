@@ -47,6 +47,8 @@ def example(request):
             self.nothing = None
             self.bytes = bytes('My Bytes', 'utf-8')
             self.list_o_stuff = ['A', 'B', 'C']
+            self.sample_set = {'A', 'B', 'C'}
+            self.sample_tuple = ('A', 12, True)
             self.spam = SpamClass()
 
         def do_work(self):

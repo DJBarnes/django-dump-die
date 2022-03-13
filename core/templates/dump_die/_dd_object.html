@@ -9,7 +9,7 @@
   <code class="number">{{ repr }}</code>
 {% elif object %}
 
-  <abbr class="type" title="{{ type }}">{{ type }}</abbr>
+  <span class="type" title="{{ type }}">{{ type }}</span>
   {
   <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".{{ unique }}" aria-label="Close">
     <span class="unique">{{ unique }}</span>
@@ -21,8 +21,8 @@
         <li>
           {% with index|add:forloop.counter as new_index %}
             <span class="access-modifier">+</span>
-            {% is_upper attr as upper %}
-            {% if attr == upper %}
+            {% to_upper attr as upper %}
+            {% if attr == upper and upper|length > 1 %}
               <span class="constant" title="Public contant">{{ attr }}</span>:
             {% else %}
               <span class="property" title="Public property">{{ attr }}</span>:
