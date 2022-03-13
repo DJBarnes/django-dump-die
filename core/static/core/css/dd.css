@@ -20,16 +20,22 @@ a.arrow-toggle {
     color: #6c71c4;
 }
 .access-modifier {
-    color: #839496;
+    color: #657b83;
 }
 .property {
-    color: #268bd2;
+    color: #93a1a1;
 }
 .empty {
     color: #dc322f;
 }
 .constant {
     color: #cb4b16;
+}
+.key {
+    color: #268bd2;
+}
+.index {
+    color: #268bd2;
 }
 .none {
     color: #b58900;
@@ -51,12 +57,12 @@ a.arrow-toggle {
 {
 
     body {
-        color: #fdf6e3;;
+        color: #839496;;
         background-color: #002b36;;
     }
 
     .arrow {
-        color: #fdf6e3;;
+        color: #839496;;
     }
 
 }
@@ -65,12 +71,12 @@ a.arrow-toggle {
 {
 
     body {
-        color: #002b36;;
+        color: #839496;;
         background-color: #fdf6e3;;
     }
 
     .arrow {
-        color: #002b36;;
+        color: #839496;;
     }
 
 }

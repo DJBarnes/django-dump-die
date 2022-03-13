@@ -21,11 +21,19 @@
         <li>
           {% with index|add:forloop.counter as new_index %}
             <span class="access-modifier">+</span>
-            {% to_upper attr as upper %}
-            {% if attr == upper and upper|length > 1 %}
-              <span class="constant" title="Public contant">{{ attr }}</span>:
+
+            {% is_const attr as is_const %}
+            {% is_number attr as is_number %}
+            {% is_key attr as is_key %}
+
+            {% if is_const %}
+              <span class="constant" title="Contant">{{ attr }}</span>:
+            {% elif is_key %}
+              <span class="key" title="Key">{{ attr }}</span>:
+            {% elif is_number %}
+              <span class="index" title="Index">{{ attr }}</span>:
             {% else %}
-              <span class="property" title="Public property">{{ attr }}</span>:
+              <span class="property" title="Property">{{ attr }}</span>:
             {% endif %}
             {% dd_object value skip new_index %}
           {% endwith %}
@@ -74,5 +82,11 @@
     </div>
   </div> {% endcomment %}
 {% else %}
-  <code class="repr">{{ repr }}</code> (<code>#{{ unique }}</code>)
+  <span class="type" title="{{ type }}">{{ type }}</span>
+  {
+  <a title="Already output object">
+    <span class="unique">{{ unique }}</span>
+  </a>
+  }
+  {% comment %} <code class="repr">{{ repr }}</code> (<code>#{{ unique }}</code>) {% endcomment %}
 {% endif %}

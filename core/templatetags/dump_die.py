@@ -88,12 +88,26 @@ def _is_dict(obj):
 
 
 @register.simple_tag
-def to_upper(value):
-    return value.upper()
+def is_const(value):
+    """Return True if attr is most likely a constant"""
+    return value.upper() == value and len(value) > 1
+
+
+@register.simple_tag
+def is_number(value):
+    """Return True if attr is numeric"""
+    return value.isnumeric()
+
+
+@register.simple_tag
+def is_key(value):
+    """Return True if attr is most likely a dict key"""
+    return "'" in value
 
 
 @register.inclusion_tag('dump_die/_dd_object.html')
 def dd_object(obj, skip=None, index=0):
+    """Return info about object"""
     skip = skip or set()
     # Skip objects already done to prevent infinite loops
 
@@ -127,7 +141,7 @@ def dd_object(obj, skip=None, index=0):
             'repr': safe_repr(obj),
             'index': index,
         }
-    elif unique not in skip or index < 20:
+    elif unique not in skip and index < 20:
         # New object not parsed yet
         skip.add(unique)
 
@@ -212,7 +226,7 @@ def dd_object(obj, skip=None, index=0):
         'is_indexable': False,
         'object': None,
         'unique': unique,
-        'type': type(obj),
+        'type': type(obj).__name__,
         'text': safe_str(obj),
         'repr': safe_repr(obj),
     }

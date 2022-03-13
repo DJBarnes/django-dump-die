@@ -12,14 +12,22 @@ def dd_view(request, objects):
 
 def example(request):
     """Example Test"""
+
+    class EmptyClass:
+        """Empty sample class"""
+        pass
+
+
     class SpamClass:
         """Spam sample class."""
         def __init__(self):
             self._spam = 'eggs'
 
+
     class SomeClass:
         """Sample class."""
         def __init__(self, value):
+            self.viewable = 'viewable'
             self._value = value
             self._spam = SpamClass()
 
@@ -49,7 +57,8 @@ def example(request):
             self.list_o_stuff = ['A', 'B', 'C']
             self.sample_set = {'A', 'B', 'C'}
             self.sample_tuple = ('A', 12, True)
-            self.spam = SpamClass()
+            self.some_class = SomeClass('sample')
+            self.some_class_dup = self.some_class
 
         def do_work(self):
             """Do some work"""
@@ -62,8 +71,9 @@ def example(request):
             [4, 5, 6],
         ],
         'three': 'three',
-        'something': SomeClass('some instance'),
-        'other_thing': SomeOtherClass(),
+        'empty_class': EmptyClass(),
+        'some_class': SomeClass('some instance'),
+        'other_class': SomeOtherClass(),
     }
 
     dd(x, 'hello')
