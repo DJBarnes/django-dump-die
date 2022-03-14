@@ -1,5 +1,6 @@
 body {
     font-family: monospace;
+    color: #839496;
 }
 hr {
     border: 1px solid;
@@ -9,12 +10,14 @@ a.arrow-toggle {
     cursor: pointer;
 }
 
+
 .attribute-list {
     list-style-type: none;
 }
 
-.type {
-    color: #859900;
+
+.arrow {
+    color: #839496;
 }
 .unique {
     color: #6c71c4;
@@ -22,23 +25,26 @@ a.arrow-toggle {
 .access-modifier {
     color: #657b83;
 }
+.type {
+    color: #859900;
+}
 .property {
     color: #93a1a1;
 }
-.empty {
-    color: #dc322f;
+.function {
+    color: #93a1a1;
+}
+.docs {
+    color: #586e75;
 }
 .constant {
     color: #cb4b16;
 }
-.key {
-    color: #268bd2;
-}
 .index {
     color: #268bd2;
 }
-.none {
-    color: #b58900;
+.key {
+    color: #268bd2;
 }
 .string {
     color: #2aa198;
@@ -49,36 +55,27 @@ a.arrow-toggle {
 .number {
     color: #d33682;
 }
-.repr {
-    color: #839496;
+.none {
+    color: #b58900;
+}
+.empty {
+    color: #dc322f;
 }
 
 @media (prefers-color-scheme: dark)
 {
 
     body {
-        color: #839496;;
-        background-color: #002b36;;
+        background-color: #002b36;
     }
-
-    .arrow {
-        color: #839496;;
-    }
-
 }
 
 @media (prefers-color-scheme: light)
 {
 
     body {
-        color: #839496;;
-        background-color: #fdf6e3;;
+        background-color: #fdf6e3;
     }
-
-    .arrow {
-        color: #839496;;
-    }
-
 }
 /*
 pre.sf-dump {

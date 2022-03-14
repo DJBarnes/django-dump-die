@@ -156,3 +156,47 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# region Dump Die Settings
+
+# Include private members that start with a single underscore
+DJANGO_DD_INCLUDE_PRIVATE_MEMBERS = False
+# Include magic methods that are enclosed with dunders
+DJANGO_DD_INCLUDE_MAGIC_METHODS = False
+# Force light theme
+DJANGO_DD_FORCE_LIGHT_THEME = False
+# Force dark theme
+DJANGO_DD_FORCE_DARK_THEME = False
+# Define the color scheme to use
+# Format as follows:
+# {
+#     'light': {
+#         'color': {value},
+#         'background': {value},
+#     },
+#     'dark': {
+#         'color': {value},
+#         'background': {value}
+#     },
+#     'types': {
+#         'arrow': {value},           #  Expand/Collapse arrow
+#         'unique': {value},          #  Unique hash for class
+#         'access-modifier': {value}, #  Access Modifier Char
+#         'type': {value},            #  Complex Types (non-int, float, string, bool, None)
+#         'property': {value},        #  Class properties
+#         'function': {value},        #  Class functions
+#         'docs': {value},            #  Class function documentation
+#         'constant': {value},        #  Class constants
+#         'index': {value},           #  Index values for indexable types
+#         'key': {value},             #  Key values for dict
+#         'string': {value},          #  Strings
+#         'bool': {value},            #  Bools
+#         'number': {value},          #  Ints and Floats
+#         'none': {value},            #  None
+#         'empty': {value},           #  No Properties or methods available
+#     }
+# }
+DJANGO_DD_COLOR_SCHEME = None
+
+# endregion Dump Die Settings
