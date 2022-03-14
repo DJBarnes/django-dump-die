@@ -11,7 +11,7 @@ from django.template import Context
 from .views import dd_view
 
 
-logger = logging.getLogger('dump_die')
+logger = logging.getLogger('django_dump_die')
 dump_objects = []
 local_settings_unused_ignore = getattr(settings, 'CONTEXT_UNUSED_IGNORE', [])
 UNUSED_IGNORE = [

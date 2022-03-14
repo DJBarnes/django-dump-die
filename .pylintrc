@@ -31,7 +31,7 @@ limit-inference-results=100
 load-plugins=pylint_django
 
 # Point to the Django Settings
-django-settings-module=dump_die.settings
+django-settings-module=django_dump_die.settings
 
 # Pickle collected data for later comparisons.
 persistent=yes

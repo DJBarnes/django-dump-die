@@ -1,5 +1,5 @@
 """
-ASGI config for dump_die project.
+ASGI config for django_dump_die project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dump_die.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_dump_die.settings')
 
 application = get_asgi_application()
