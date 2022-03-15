@@ -162,12 +162,22 @@ STATIC_URL = '/static/'
 
 # Include private members that start with a single underscore
 DJANGO_DD_INCLUDE_PRIVATE_MEMBERS = False
+
 # Include magic methods that are enclosed with dunders
 DJANGO_DD_INCLUDE_MAGIC_METHODS = False
+
+# Include attributes / properties
+DJANGO_DD_INCLUDE_ATTRIBUTES = True
+
+# Include functions
+DJANGO_DD_INCLUDE_FUNCTIONS = True
+
 # Force light theme
 DJANGO_DD_FORCE_LIGHT_THEME = False
+
 # Force dark theme
 DJANGO_DD_FORCE_DARK_THEME = False
+
 # Define the color scheme to use
 # Format as follows:
 # {
