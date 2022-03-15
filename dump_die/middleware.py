@@ -1,6 +1,7 @@
 """Middleware for DumpDie"""
 import contextlib
 import copy
+import inspect
 import logging
 import threading
 import warnings
@@ -100,25 +101,38 @@ def warn_unused_context(request):
 class DumpAndDie(Exception):
     """Dump And Die Exception"""
 
-    def __init__(self, *objects):
-        super().__init__(*objects)
-        self.objects = objects
+    def __init__(self, obj):
+        super().__init__(obj)
+        self.object = obj
 
 
-def dd(*objects, deepcopy=False):
+def dd(obj, deepcopy=False):
     """Immediately return debug template with info about objects.
 
     Includes any objects passed in through dump().
 
     Does nothing if DEBUG != True
     """
+    def retrieve_name(var):
+        callers_local_vars = inspect.currentframe().f_back.f_back.f_locals.items()
+        results = [var_name for var_name, var_val in callers_local_vars if var_val is var]
+        result = None
+        if len(results) > 0:
+            result = results[0]
+        return result
+
+    obj_name = retrieve_name(obj)
+
     if settings.DEBUG:
         if deepcopy:
-            objects = [copy.deepcopy(x) for x in objects]
-        raise DumpAndDie(*objects)
+            obj = copy.deepcopy(obj)
+
+        raise DumpAndDie(
+            (obj_name, obj,)
+        )
 
 
-def dump(*objects, deepcopy=False):
+def dump(obj, deepcopy=False):
     """Show debug template whenever response finishes.
 
     dd() will also include objects from dump().
@@ -128,10 +142,22 @@ def dump(*objects, deepcopy=False):
     NOTE: Not thread safe, this will collect objects server wide,
     dumped objects can come from multiple requests.
     """
+    def retrieve_name(var):
+        callers_local_vars = inspect.currentframe().f_back.f_back.f_locals.items()
+        results = [var_name for var_name, var_val in callers_local_vars if var_val is var]
+        result = None
+        if len(results) > 0:
+            result = results[0]
+        return result
+
+    obj_name = retrieve_name(obj)
+
     if settings.DEBUG:
         if deepcopy:
-            objects = [copy.deepcopy(x) for x in objects]
-        dump_objects.extend(objects)
+            obj = copy.deepcopy(obj)
+        dump_objects.append(
+            (obj_name, obj,)
+        )
 
 
 class DumpAndDieMiddleware:
@@ -168,12 +194,12 @@ class DumpAndDieMiddleware:
         If so, return Debug Response.
         """
         if not isinstance(exception, DumpAndDie):
-            # request._has_exception = True
+            request._has_exception = True
             return None
 
         # Create a copy of the list, and clear it
         objects = dump_objects[:]
-        objects.extend(exception.objects)
+        objects.append(exception.object)
         dump_objects.clear()
 
         return dd_view(request, objects)

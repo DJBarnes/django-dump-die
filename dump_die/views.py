@@ -76,6 +76,7 @@ def example(request):
         'other_class': SomeOtherClass(),
     }
 
-    dd(x, 'hello')
+    dump(x)
+    dd('hello')
 
     return HttpResponse("Example")

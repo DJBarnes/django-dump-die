@@ -12,8 +12,11 @@
     <script src="{% static 'dump_die/js/dd.js' %}"></script>
   </head>
   <body>
-    {% for obj in objects %}
+    {% for obj_name, obj in objects %}
       {% if not forloop.first %}<hr>{% endif %}
+        {% if obj_name is not None %}
+          <span class="property" title="Dumped Object">{{ obj_name }}</span>:
+        {% endif %}
         {% dd_object obj None forloop.counter %}
     {% endfor %}
   </body>
