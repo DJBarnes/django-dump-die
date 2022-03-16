@@ -1,8 +1,10 @@
 """Template Tags for DumpDie"""
+
 import inspect
 import re
 import types
 
+from collections.abc import Sequence
 from django import template
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -71,13 +73,10 @@ def _is_iterable(obj):
 
 def _is_indexable(obj):
     """Return True if object can be indexed"""
-    try:
-        obj[0]
-    except TypeError:
+    if isinstance(obj, Sequence):
+        return True
+    else:
         return False
-    except KeyError:
-        return False
-    return True
 
 def _is_query(obj):
     """Return True if object is most likely a query"""
