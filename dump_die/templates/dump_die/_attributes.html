@@ -22,7 +22,7 @@
 >
   {% for attr, value in attributes %}
     <li>
-      {% with index|add:forloop.counter as new_index %}
+      {% with depth|add:'1' as new_depth %}
 
         {% is_const attr as is_const %}
         {% is_number attr as is_number %}
@@ -49,7 +49,7 @@
         {% else %}
           <span class="access-modifier">&nbsp;</span>
         {% endif %}
-        {% dd_object value skip new_index %}
+        {% dd_object value skip forloop.counter new_depth %}
       {% endwith %}
     </li>
   {% empty %}

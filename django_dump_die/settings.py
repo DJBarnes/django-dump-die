@@ -160,6 +160,14 @@ STATIC_URL = '/static/'
 
 # region Dump Die Settings
 
+# Max recursion depth dd should process through.
+# Setting to None will mean unlimited.
+DJANGO_DD_MAX_RECURSION_DEPTH = 20
+
+# Max number of iterables to show when outputing
+# Setting to None will mean unlimited
+DJANGO_DD_MAX_ITERABLE_LENGTH = 20
+
 # Include private members that start with a single underscore
 DJANGO_DD_INCLUDE_PRIVATE_MEMBERS = False
 

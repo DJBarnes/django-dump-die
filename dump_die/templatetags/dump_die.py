@@ -124,9 +124,11 @@ def is_magic(value):
 
 
 @register.inclusion_tag('dump_die/_dd_object.html')
-def dd_object(obj, skip=None, index=0):
+def dd_object(obj, skip=None, index=0, depth=0):
     """Return info about object"""
 
+    max_recursion_depth = getattr(settings, 'DJANGO_DD_MAX_RECURSION_DEPTH', 20)
+    max_iterable_length = getattr(settings, 'DJANGO_DD_MAX_ITERABLE_LENGTH', 20)
     include_attributes = getattr(settings, 'DJANGO_DD_INCLUDE_ATTRIBUTES', True)
     include_functions = getattr(settings, 'DJANGO_DD_INCLUDE_FUNCTIONS', False)
     attribute_types_start_expanded = getattr(settings, 'DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED', False)
@@ -172,8 +174,21 @@ def dd_object(obj, skip=None, index=0):
             'text': safe_str(obj),
             'repr': safe_repr(obj),
             'index': index,
+            'depth': depth,
         }
-    elif unique not in skip and index < 20:
+    elif (
+        # unique has not been done before
+        unique not in skip
+        # And either the max_recursion is set to None, or we have not reached it yet.
+        and (
+            max_recursion_depth is None
+            or depth < max_recursion_depth
+        # And either the max_iterable_length is set to None, or we have not reached it yet.
+        ) and (
+            max_iterable_length is None
+            or index < max_iterable_length
+        )
+    ):
         # New object not parsed yet
         skip.add(unique)
 
@@ -262,6 +277,7 @@ def dd_object(obj, skip=None, index=0):
             'functions': functions,
             'skip': skip,
             'index': index,
+            'depth': depth,
         }
 
     # If we're here then the object has already been processed before,
