@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
     // Add class to uniques that are duplicated for highlighting on hover
     // Var for all uniques
     var allUniques = [];
@@ -39,6 +40,40 @@ $(document).ready(function() {
             });
         }
     });
+
+
+
+    // Allow ability to CTRL click on an expandable element and have it auto
+    // expand all children elements that can be expanded.
+    $('.arrow-toggle').click(function(event) {
+
+        // If user was holding ctrl key
+        if (event.ctrlKey) {
+            // Get the sibling ddwrapper for the clicked anchor tag
+            var siblingDDWrapper = $(event.currentTarget).siblings('.dd-wrapper, .li-wrapper');
+
+            // If the ddwrapper has the class show, we want to remove the
+            // show class from all other ddwrappers as this one is about to
+            // loose that class from the bootstrap event.
+            // NOTE: Could be race condition on whether this is right order.
+            if ($(siblingDDWrapper).hasClass('show')) {
+                childDivs = $(siblingDDWrapper).find('.dd-wrapper, .li-wrapper');
+                childDivs.removeClass('show');
+
+                childArrows = $(siblingDDWrapper).find('.arrow');
+                childArrows.html('▶');
+            // Else, need to add show class to all elements
+            } else {
+                childDivs = $(siblingDDWrapper).find('.dd-wrapper, .li-wrapper');
+                childDivs.addClass('show');
+
+                childArrows = $(siblingDDWrapper).find('.arrow');
+                childArrows.html('▼');
+            }
+        }
+    });
+
+
 
     // Update arrow on show
     $('.dd-wrapper').on('show.bs.collapse', function(event) {

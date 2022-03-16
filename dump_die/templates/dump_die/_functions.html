@@ -1,16 +1,14 @@
 {% load dump_die %}
-<li>
-  <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".{{ unique }}-functions" aria-label="Open/Close">
-    <span>Functions</span>
-    <span id="arrow-{{ unique }}-functions" class="arrow">
-      {% if functions_start_expanded %}
-        ▼
-      {% else %}
-        ▶
-      {% endif %}
-    </span>
-  </a>
-</li>
+<a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".{{ unique }}-functions" aria-label="Open/Close">
+  <span>Functions</span>
+  <span id="arrow-{{ unique }}-functions" class="arrow">
+    {% if functions_start_expanded %}
+      ▼
+    {% else %}
+      ▶
+    {% endif %}
+  </span>
+</a>
 <div
   class="
     li-wrapper
