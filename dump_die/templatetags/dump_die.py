@@ -91,19 +91,22 @@ def _is_dict(obj):
 @register.simple_tag
 def is_const(value):
     """Return True if attr is most likely a constant"""
-    return value.upper() == value and len(value) > 1
+    if value is not None:
+        return value.upper() == value and len(value) > 1
 
 
 @register.simple_tag
 def is_number(value):
     """Return True if attr is numeric"""
-    return value.isnumeric()
+    if value is not None:
+        return value.isnumeric()
 
 
 @register.simple_tag
 def is_key(value):
     """Return True if attr is most likely a dict key"""
-    return "'" in value
+    if value is not None:
+        return "'" in value
 
 
 @register.inclusion_tag('dump_die/_dd_object.html')
@@ -174,8 +177,8 @@ def dd_object(obj, skip=None, index=0):
                 # Use indexes as left half
                 members.extend([(idx, x) for idx, x in enumerate(obj)])
             else:
-                # Use safe_str as left half
-                members.extend([(safe_str(x), x) for x in obj])
+                # Use None as left half. Most likely a set.
+                members.extend([(None, x) for x in obj])
 
         for attr, value in members:
             # TODO: Consider allowing a setting to also output these if desired.
@@ -193,8 +196,11 @@ def dd_object(obj, skip=None, index=0):
                 value = inspect.getdoc(value)
                 functions.append([attr, value])
             else:
+                # Attributes logic
                 if _is_dict(obj):
                     attributes.append([safe_repr(attr), value])
+                elif attr is None:
+                    attributes.append([attr, value])
                 else:
                     safe_repr_minus_quotes = safe_repr(attr)
                     safe_repr_minus_quotes = re.sub("'", "", safe_repr_minus_quotes)
