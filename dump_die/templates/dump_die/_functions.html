@@ -8,7 +8,10 @@
 <div class="li-wrapper collapse {{ unique }}-functions" data-unique-functions="{{ unique }}-functions">
   {% for attr, doc in functions %}
     <li class="function-li">
-      <span class="access-modifier">+</span>
+      {% is_magic attr as is_magic %}
+      {% is_private attr as is_private %}
+
+      {% if is_magic %}-{% else %}{% if is_private %}#{% else %}+{% endif %}{% endif %}
       <span class="function" title="Function">{{ attr }}</span>:
       {% if doc %}
         <span class="docs">{{ doc }}</span>

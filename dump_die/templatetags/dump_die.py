@@ -109,12 +109,28 @@ def is_key(value):
         return "'" in value
 
 
+@register.simple_tag
+def is_private(value):
+    """Return True if attr is private"""
+    if value is not None:
+        return type(value) is str and value.startswith('_')
+
+
+@register.simple_tag
+def is_magic(value):
+    """Return True if attr is magic"""
+    if value is not None:
+        return type(value) is str and value.startswith('__')
+
+
 @register.inclusion_tag('dump_die/_dd_object.html')
 def dd_object(obj, skip=None, index=0):
     """Return info about object"""
 
     include_attributes = getattr(settings, 'DJANGO_DD_INCLUDE_ATTRIBUTES', True)
     include_functions = getattr(settings, 'DJANGO_DD_INCLUDE_FUNCTIONS', False)
+    include_private_methods = getattr(settings, 'DJANGO_DD_INCLUDE_PRIVATE_MEMBERS', False)
+    include_magic_methods = getattr(settings, 'DJANGO_DD_INCLUDE_MAGIC_METHODS', False)
 
     skip = skip or set()
     # Skip objects already done to prevent infinite loops
@@ -181,13 +197,17 @@ def dd_object(obj, skip=None, index=0):
                 members.extend([(None, x) for x in obj])
 
         for attr, value in members:
-            # TODO: Consider allowing a setting to also output these if desired.
-            if type(attr) is str and attr.startswith('_'):
-                continue # Skip special attributes
+
+            # Skip private members if not including them
+            if type(attr) is str and attr.startswith('_') and not include_private_methods:
+                continue # Skip private attributes and methods
 
             is_callable = callable(value)
-
             if is_callable:
+                # Skip dunder (magic) methods if not including them
+                if type(attr) is str and attr.startswith('__') and not include_magic_methods:
+                    continue #  Skip magic attributes and methods
+
                 # Functions will just return documentation
                 try:
                     attr += safe_str(inspect.signature(value))
@@ -197,11 +217,16 @@ def dd_object(obj, skip=None, index=0):
                 functions.append([attr, value])
             else:
                 # Attributes logic
-                if _is_dict(obj):
+
+                # Always skip dunder attributes
+                if type(attr) is str and attr.startswith('__'):
+                    continue #  Skip all dunder attributes
+
+                if _is_dict(obj): #  dict
                     attributes.append([safe_repr(attr), value])
-                elif attr is None:
+                elif attr is None: #  set
                     attributes.append([attr, value])
-                else:
+                else: #  Everything else
                     safe_repr_minus_quotes = safe_repr(attr)
                     safe_repr_minus_quotes = re.sub("'", "", safe_repr_minus_quotes)
                     attributes.append([safe_repr_minus_quotes, value])

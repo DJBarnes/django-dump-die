@@ -13,9 +13,13 @@
         {% is_const attr as is_const %}
         {% is_number attr as is_number %}
         {% is_key attr as is_key %}
+        {% is_magic attr as is_magic %}
+        {% is_private attr as is_private %}
 
         {% if is_const %}
-          <span class="access-modifier">+</span>
+          <span class="access-modifier">
+            {% if is_magic %}-{% else %}{% if is_private %}#{% else %}+{% endif %}{% endif %}
+          </span>
           <span class="constant" title="Contant">{{ attr }}</span>:
         {% elif is_key %}
           <span class="access-modifier">&nbsp;</span>
@@ -24,7 +28,9 @@
           <span class="access-modifier">&nbsp;</span>
           <span class="index" title="Index">{{ attr }}</span>:
         {% elif attr is not None %}
-          <span class="access-modifier">+</span>
+          <span class="access-modifier">
+            {% if is_magic %}-{% else %}{% if is_private %}#{% else %}+{% endif %}{% endif %}
+          </span>
           <span class="attribute" title="Attribute">{{ attr }}</span>:
         {% else %}
           <span class="access-modifier">&nbsp;</span>
