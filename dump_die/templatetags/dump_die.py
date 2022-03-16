@@ -92,7 +92,7 @@ def _is_dict(obj):
 def is_const(value):
     """Return True if attr is most likely a constant"""
     if value is not None:
-        return type(value) is str and value[0].isalpha() and value.upper() == value and len(value) > 1
+        return type(value) is str and value[0].isalpha() and value.upper() == value
 
 
 @register.simple_tag
@@ -182,11 +182,11 @@ def dd_object(obj, skip=None, index=0, depth=0):
         # And either the max_recursion is set to None, or we have not reached it yet.
         and (
             max_recursion_depth is None
-            or depth < max_recursion_depth
+            or depth <= max_recursion_depth
         # And either the max_iterable_length is set to None, or we have not reached it yet.
         ) and (
             max_iterable_length is None
-            or index < max_iterable_length
+            or index <= max_iterable_length
         )
     ):
         # New object not parsed yet
