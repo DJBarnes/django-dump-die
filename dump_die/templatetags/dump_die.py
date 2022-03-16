@@ -154,7 +154,6 @@ def dd_object(obj, skip=None, index=0, depth=0):
         is_string = type(obj) is str
         is_bool = type(obj) is bool
         is_number = type(obj) is int or type(obj) is float or type(obj) is bytes
-        is_indexable = _is_indexable(obj)
 
         # Simple types will just be returned
         return {
@@ -167,7 +166,10 @@ def dd_object(obj, skip=None, index=0, depth=0):
             'is_string': is_string,
             'is_bool': is_bool,
             'is_number': is_number,
-            'is_indexable': is_indexable,
+            'is_list': False,
+            'is_tuple': False,
+            'is_indexable': False,
+            'is_iterable': False,
             'object': None,
             'type': type(obj),
             'text': safe_str(obj),
@@ -191,6 +193,11 @@ def dd_object(obj, skip=None, index=0, depth=0):
         # New object not parsed yet
         skip.add(unique)
 
+        is_indexable = _is_indexable(obj)
+        is_iterable = _is_iterable(obj)
+        is_list = type(obj) is list
+        is_tuple = type(obj) is tuple
+
         attributes = [] # (attr, value)
         functions = [] # (attr, doc)
 
@@ -207,9 +214,9 @@ def dd_object(obj, skip=None, index=0, depth=0):
         if _is_dict(obj):
             # Dictionary members
             members.extend(obj.items())
-        elif _is_iterable(obj):
+        elif is_iterable:
             # Lists, sets, etc.
-            if _is_indexable(obj):
+            if is_indexable:
                 # Use indexes as left half
                 members.extend([(idx, x) for idx, x in enumerate(obj)])
             else:
@@ -266,7 +273,10 @@ def dd_object(obj, skip=None, index=0, depth=0):
             'is_string': False,
             'is_bool': False,
             'is_number': False,
-            'is_indexable': False,
+            'is_list': is_list,
+            'is_tuple': is_tuple,
+            'is_indexable': is_indexable,
+            'is_iterable': is_iterable,
             'object': obj,
             'unique': unique,
             'type': type(obj).__name__,
@@ -293,6 +303,7 @@ def dd_object(obj, skip=None, index=0, depth=0):
         'is_bool': False,
         'is_number': False,
         'is_indexable': False,
+        'is_iterable': False,
         'object': None,
         'unique': unique,
         'type': type(obj).__name__,

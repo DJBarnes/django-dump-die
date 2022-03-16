@@ -36,18 +36,14 @@
           </span>
           <span class="constant" title="Contant">{{ attr }}</span>:
         {% elif is_key %}
-          <span class="access-modifier">&nbsp;</span>
           <span class="key" title="Key">{{ attr }}</span>:
         {% elif is_number %}
-          <span class="access-modifier">&nbsp;</span>
           <span class="index" title="Index">{{ attr }}</span>:
         {% elif attr is not None %}
           <span class="access-modifier">
             {% if is_magic %}-{% else %}{% if is_private %}#{% else %}+{% endif %}{% endif %}
           </span>
           <span class="attribute" title="Attribute">{{ attr }}</span>:
-        {% else %}
-          <span class="access-modifier">&nbsp;</span>
         {% endif %}
         {% dd_object value skip forloop.counter new_depth %}
       {% endwith %}

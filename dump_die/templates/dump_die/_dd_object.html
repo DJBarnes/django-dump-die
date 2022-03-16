@@ -9,8 +9,14 @@
   <code class="number">{{ repr }}</code>
 {% elif object %}
 
-  <span class="type" title="{{ type }}">{{ type }}</span>
-  {
+  <span class="type" title="{{ type }}">{{ type }}{% if is_iterable %}:{{ object|length }}{% endif %}</span>
+  {% if is_list %}
+    [
+  {% elif is_tuple %}
+    (
+  {% else %}
+    {
+  {% endif %}
   <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".{{ unique }}" aria-label="Close">
     <span class="unique">{{ unique }}</span>
     <span id="arrow-{{ unique }}" class="arrow">
@@ -44,12 +50,30 @@
       {% endif %}
     </ul>
   </div>
-  }
+  {% if is_list %}
+    ]
+  {% elif is_tuple %}
+    )
+  {% else %}
+    }
+  {% endif %}
 {% else %}
   <span class="type" title="{{ type }}">{{ type }}</span>
-  {
-  <a title="Already output object">
+  {% if is_list %}
+    [
+  {% elif is_tuple %}
+    (
+  {% else %}
+    {
+  {% endif %}
+  <a title="Already output object or ">
     <span class="unique">{{ unique }}</span>
   </a>
-  }
+  {% if is_list %}
+    ]
+  {% elif is_tuple %}
+    )
+  {% else %}
+    }
+  {% endif %}
 {% endif %}
