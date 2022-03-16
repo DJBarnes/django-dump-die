@@ -1,4 +1,7 @@
-"""Middleware for DumpDie"""
+"""
+Middleware for DumpAndDie.
+"""
+
 import contextlib
 import copy
 import inspect
@@ -54,10 +57,10 @@ def warn_unused_context(request):
         yield  # Let caller get the response
         return  # Ignore admin pages
 
-    # NOTE: Monkeypatching is not threadsafe
+    # NOTE: Monkeypatching is not threadsafe.
     lock.acquire()
 
-    # Monkeypatch context to keep track of unused variables in context
+    # Monkeypatch context to keep track of unused variables in context.
     __orig_getitem__ = Context.__getitem__
 
     used_keys = set(UNUSED_IGNORE)
@@ -82,14 +85,14 @@ def warn_unused_context(request):
     try:
         Context.__getitem__ = __getitem__
 
-        # Let caller get the response
+        # Let caller get the response.
         yield
     finally:
-        # Un-patch it
+        # Un-patch it.
         Context.__getitem__ = __orig_getitem__
         lock.release()
 
-    # Check for unused keys
+    # Check for unused keys/
     unused = all_keys.difference(used_keys)
 
     if unused:
@@ -99,21 +102,27 @@ def warn_unused_context(request):
 
 
 class DumpAndDie(Exception):
-    """Dump And Die Exception"""
-
+    """
+    DumpAndDie Exception.
+    Triggers the middleware exception logic which outputs the alternate dd debug view.
+    """
     def __init__(self, obj):
         super().__init__(obj)
         self.object = obj
 
 
 def dd(obj, deepcopy=False):
-    """Immediately return debug template with info about objects.
-
+    """
+    Immediately return debug template with info about objects.
     Includes any objects passed in through dump().
 
-    Does nothing if DEBUG != True
+    Does nothing if DEBUG != True.
     """
     def retrieve_name(var):
+        """
+        Inspects call stack in an attempt to grab names of variables to display in dd output.
+        Names are determined by value. On multiple names matching given value, all corresponding names are returned.
+        """
         callers_local_vars = inspect.currentframe().f_back.f_back.f_locals.items()
         results = [var_name for var_name, var_val in callers_local_vars if var_val is var]
         result = None
@@ -133,14 +142,13 @@ def dd(obj, deepcopy=False):
 
 
 def dump(obj, deepcopy=False):
-    """Show debug template whenever response finishes.
-
+    """
+    Show debug template whenever response finishes.
     dd() will also include objects from dump().
 
     Does nothing if DEBUG != True
 
-    NOTE: Not thread safe, this will collect objects server wide,
-    dumped objects can come from multiple requests.
+    NOTE: Not thread safe, this will collect objects server wide, dumped objects can come from multiple requests.
     """
     def retrieve_name(var):
         callers_local_vars = inspect.currentframe().f_back.f_back.f_locals.items()
@@ -161,45 +169,53 @@ def dump(obj, deepcopy=False):
 
 
 class DumpAndDieMiddleware:
-    """Dump And Die Middleware
+    """
+    DumpAndDie Middleware.
 
     Allows access to php/laravel-like function dd().
     """
-
     def __init__(self, get_response):
+        """
+        Add our dd() and dump() commands to be universally accessible.
+        """
         self.get_response = get_response
 
-        # Add global dd() function
+        # Add global dd() function.
         __builtins__['dd'] = dd
-        # Add global dump() function
+        # Add global dump() function.
         __builtins__['dump'] = dump
 
     def __call__(self, request):
-        """Simply return the response if nothing dumped"""
+        """
+        Return standard response if nothing dumped.
+        Otherwise return dump view.
+        """
         with warn_unused_context(request):
             response = self.get_response(request)
 
         if not dump_objects or getattr(request, '_has_exception', False):
             return response
         else:
-            # Create a copy of the list, and clear it
+            # Create a copy of the list, and clear it.
             objects = dump_objects[:]
             dump_objects.clear()
 
             return dd_view(request, objects)
 
     def process_exception(self, request, exception):
-        """Check if exception is from dd(). If not, ignore.
-
+        """
+        Check if exception is of DumpAndDie type.
         If so, return Debug Response.
+        If not, ignore and allow standard exception handling.
         """
         if not isinstance(exception, DumpAndDie):
             request._has_exception = True
             return None
 
-        # Create a copy of the list, and clear it
+        # Create a copy of the list, and clear it.
         objects = dump_objects[:]
         objects.append(exception.object)
         dump_objects.clear()
 
+        # Return custom DumpAndDie output view.
         return dd_view(request, objects)
