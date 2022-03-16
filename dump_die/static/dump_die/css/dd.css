@@ -13,6 +13,11 @@ a.arrow-toggle {
 
 .attribute-list {
     list-style-type: none;
+    margin-bottom: 0;
+}
+.function-li {
+    text-indent: -2ch;
+    margin-left: 2ch;
 }
 
 
@@ -28,11 +33,11 @@ a.arrow-toggle {
 .type {
     color: #859900;
 }
-.property {
+.attribute {
     color: #93a1a1;
 }
 .function {
-    color: #93a1a1;
+    color: #268bd2;
 }
 .docs {
     color: #586e75;
@@ -41,10 +46,10 @@ a.arrow-toggle {
     color: #cb4b16;
 }
 .index {
-    color: #268bd2;
+    color: #d33682;
 }
 .key {
-    color: #268bd2;
+    color: #2aa198;
 }
 .string {
     color: #2aa198;

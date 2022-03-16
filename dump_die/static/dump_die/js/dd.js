@@ -52,4 +52,30 @@ $(document).ready(function() {
         arrow_element = $('#arrow-' + unique);
         $(arrow_element).html('▶');
     });
+
+    // Update arrow on show attributes header
+    $('.dd-wrapper').on('show.bs.collapse', function(event) {
+        unique = $(event.target).data('unique-attributes');
+        arrow_element = $('#arrow-' + unique);
+        $(arrow_element).html('▼');
+    });
+    // Update arrow on hide
+    $('.dd-wrapper').on('hide.bs.collapse', function(event) {
+        unique = $(event.target).data('unique-attributes');
+        arrow_element = $('#arrow-' + unique);
+        $(arrow_element).html('▶');
+    });
+
+    // Update arrow on show functions header
+    $('.dd-wrapper').on('show.bs.collapse', function(event) {
+        unique = $(event.target).data('unique-functions');
+        arrow_element = $('#arrow-' + unique);
+        $(arrow_element).html('▼');
+    });
+    // Update arrow on hide
+    $('.dd-wrapper').on('hide.bs.collapse', function(event) {
+        unique = $(event.target).data('unique-functions');
+        arrow_element = $('#arrow-' + unique);
+        $(arrow_element).html('▶');
+    });
 });

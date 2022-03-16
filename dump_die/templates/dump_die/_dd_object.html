@@ -16,71 +16,18 @@
     <span id="arrow-{{ unique }}" class="arrow">▶</span>
   </a>
   <div class="dd-wrapper collapse {{ unique }}" data-unique="{{ unique }}">
+
     <ul class="attribute-list">
-      {% for attr, value in attributes %}
-        <li>
-          {% with index|add:forloop.counter as new_index %}
-            <span class="access-modifier">+</span>
+      {% if include_attributes %}
+        {% include "dump_die/_attributes.html" %}
+      {% endif %}
 
-            {% is_const attr as is_const %}
-            {% is_number attr as is_number %}
-            {% is_key attr as is_key %}
-
-            {% if is_const %}
-              <span class="constant" title="Contant">{{ attr }}</span>:
-            {% elif is_key %}
-              <span class="key" title="Key">{{ attr }}</span>:
-            {% elif is_number %}
-              <span class="index" title="Index">{{ attr }}</span>:
-            {% else %}
-              <span class="property" title="Property">{{ attr }}</span>:
-            {% endif %}
-            {% dd_object value skip new_index %}
-          {% endwith %}
-        </li>
-      {% empty %}
-        <span class="empty" title="No Properties">No Properties</span>
-      {% endfor %}
+      {% if include_functions %}
+        {% include "dump_die/_functions.html" %}
+      {% endif %}
     </ul>
   </div>
   }
-
-
-  {% comment %} <div class="card">
-    <div class="card-header text-white bg-info">
-      <button type="button" class="btn" data-toggle="collapse" data-target=".{{ unique }}" aria-label="Close">
-        {{ type }} <code>{{ repr }}</code> (<code>#{{ unique }}</code>)
-      </button>
-    </div>
-    <div class="card-body dd-wrapper collapse {{ unique }}">
-      <ul>
-        {% for attr, value in attributes %}
-          <li>
-            {% with index|add:forloop.counter as new_index %}
-              {{ attr }}: {% dd_object value skip new_index %}
-            {% endwith %}
-          </li>
-        {% empty %}
-          <li>No Attributes</li>
-        {% endfor %}
-      </ul>
-      {% if functions %}
-        <a href=".func-{{ unique }}" class="btn btn-info" data-toggle="collapse">Toggle Functions</a>
-        <ul class="collapse func-{{ unique }}">
-          {% for attr, doc in functions %}
-            <li>
-              {{ attr }}:
-                {% if doc %}
-                  <div class="doc">{{ doc }}</div>
-                {% else %}
-                  -
-                {% endif %}
-            </li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    </div>
-  </div> {% endcomment %}
 {% else %}
   <span class="type" title="{{ type }}">{{ type }}</span>
   {
@@ -88,5 +35,4 @@
     <span class="unique">{{ unique }}</span>
   </a>
   }
-  {% comment %} <code class="repr">{{ repr }}</code> (<code>#{{ unique }}</code>) {% endcomment %}
 {% endif %}

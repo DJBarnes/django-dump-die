@@ -4,6 +4,7 @@ import re
 import types
 
 from django import template
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.boundfield import BoundField
 
@@ -108,6 +109,10 @@ def is_key(value):
 @register.inclusion_tag('dump_die/_dd_object.html')
 def dd_object(obj, skip=None, index=0):
     """Return info about object"""
+
+    include_attributes = getattr(settings, 'DJANGO_DD_INCLUDE_ATTRIBUTES', True)
+    include_functions = getattr(settings, 'DJANGO_DD_INCLUDE_FUNCTIONS', False)
+
     skip = skip or set()
     # Skip objects already done to prevent infinite loops
 
@@ -130,6 +135,8 @@ def dd_object(obj, skip=None, index=0):
 
         # Simple types will just be returned
         return {
+            'include_attributes': include_attributes,
+            'include_functions': include_functions,
             'is_none': is_none,
             'is_string': is_string,
             'is_bool': is_bool,
@@ -199,6 +206,8 @@ def dd_object(obj, skip=None, index=0):
             pass # Ignore sort errors
 
         return {
+            'include_attributes': include_attributes,
+            'include_functions': include_functions,
             'is_none': False,
             'is_string': False,
             'is_bool': False,
@@ -219,6 +228,8 @@ def dd_object(obj, skip=None, index=0):
     # so just return a repr() of it.
 
     return {
+        'include_attributes': include_attributes,
+        'include_functions': include_functions,
         'is_none': False,
         'is_string': False,
         'is_bool': False,

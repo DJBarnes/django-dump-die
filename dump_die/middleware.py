@@ -118,7 +118,7 @@ def dd(obj, deepcopy=False):
         results = [var_name for var_name, var_val in callers_local_vars if var_val is var]
         result = None
         if len(results) > 0:
-            result = results[0]
+            result = ", ".join(results)
         return result
 
     obj_name = retrieve_name(obj)
@@ -147,7 +147,7 @@ def dump(obj, deepcopy=False):
         results = [var_name for var_name, var_val in callers_local_vars if var_val is var]
         result = None
         if len(results) > 0:
-            result = results[0]
+            result = ", ".join(results)
         return result
 
     obj_name = retrieve_name(obj)

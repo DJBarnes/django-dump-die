@@ -1,0 +1,33 @@
+{% load dump_die %}
+<li>
+  <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".{{ unique }}-attributes" aria-label="Open/Close">
+    <span>Attributes</span>
+    <span id="arrow-{{ unique }}-attributes" class="arrow">▼</span>
+  </a>
+</li>
+<div class="li-wrapper collapse {{ unique }}-attributes show" data-unique-attributes="{{ unique }}-attributes">
+  {% for attr, value in attributes %}
+    <li>
+      {% with index|add:forloop.counter as new_index %}
+        <span class="access-modifier">+</span>
+
+        {% is_const attr as is_const %}
+        {% is_number attr as is_number %}
+        {% is_key attr as is_key %}
+
+        {% if is_const %}
+          <span class="constant" title="Contant">{{ attr }}</span>:
+        {% elif is_key %}
+          <span class="key" title="Key">{{ attr }}</span>:
+        {% elif is_number %}
+          <span class="index" title="Index">{{ attr }}</span>:
+        {% else %}
+          <span class="attribute" title="Attribute">{{ attr }}</span>:
+        {% endif %}
+        {% dd_object value skip new_index %}
+      {% endwith %}
+    </li>
+  {% empty %}
+    <span class="empty" title="No Attributes">No Attributes</span>
+  {% endfor %}
+</div>
