@@ -2,10 +2,26 @@
 <li>
   <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".{{ unique }}-functions" aria-label="Open/Close">
     <span>Functions</span>
-    <span id="arrow-{{ unique }}-functions" class="arrow">▶</span>
+    <span id="arrow-{{ unique }}-functions" class="arrow">
+      {% if functions_start_expanded %}
+        ▼
+      {% else %}
+        ▶
+      {% endif %}
+    </span>
   </a>
 </li>
-<div class="li-wrapper collapse {{ unique }}-functions" data-unique-functions="{{ unique }}-functions">
+<div
+  class="
+    li-wrapper
+    collapse
+    {{ unique }}-functions
+    {% if functions_start_expanded %}
+      show
+    {% endif %}
+  "
+  data-unique-functions="{{ unique }}-functions"
+>
   {% for attr, doc in functions %}
     <li class="function-li">
       {% is_magic attr as is_magic %}

@@ -129,6 +129,9 @@ def dd_object(obj, skip=None, index=0):
 
     include_attributes = getattr(settings, 'DJANGO_DD_INCLUDE_ATTRIBUTES', True)
     include_functions = getattr(settings, 'DJANGO_DD_INCLUDE_FUNCTIONS', False)
+    attribute_types_start_expanded = getattr(settings, 'DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED', False)
+    attributes_start_expanded = getattr(settings, 'DJANGO_DD_ATTRIBUTES_START_EXPANDED', False)
+    functions_start_expanded = getattr(settings, 'DJANGO_DD_FUNCTIONS_START_EXPANDED', False)
     include_private_methods = getattr(settings, 'DJANGO_DD_INCLUDE_PRIVATE_MEMBERS', False)
     include_magic_methods = getattr(settings, 'DJANGO_DD_INCLUDE_MAGIC_METHODS', False)
 
@@ -156,6 +159,9 @@ def dd_object(obj, skip=None, index=0):
         return {
             'include_attributes': include_attributes,
             'include_functions': include_functions,
+            'attribute_types_start_expanded': attribute_types_start_expanded,
+            'attributes_start_expanded': attributes_start_expanded,
+            'functions_start_expanded': functions_start_expanded,
             'is_none': is_none,
             'is_string': is_string,
             'is_bool': is_bool,
@@ -239,6 +245,9 @@ def dd_object(obj, skip=None, index=0):
         return {
             'include_attributes': include_attributes,
             'include_functions': include_functions,
+            'attribute_types_start_expanded': attribute_types_start_expanded,
+            'attributes_start_expanded': attributes_start_expanded,
+            'functions_start_expanded': functions_start_expanded,
             'is_none': False,
             'is_string': False,
             'is_bool': False,
@@ -261,6 +270,9 @@ def dd_object(obj, skip=None, index=0):
     return {
         'include_attributes': include_attributes,
         'include_functions': include_functions,
+        'attribute_types_start_expanded': attribute_types_start_expanded,
+        'attributes_start_expanded': attributes_start_expanded,
+        'functions_start_expanded': functions_start_expanded,
         'is_none': False,
         'is_string': False,
         'is_bool': False,

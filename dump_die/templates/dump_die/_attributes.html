@@ -2,10 +2,26 @@
 <li>
   <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".{{ unique }}-attributes" aria-label="Open/Close">
     <span>Attributes</span>
-    <span id="arrow-{{ unique }}-attributes" class="arrow">▼</span>
+    <span id="arrow-{{ unique }}-attributes" class="arrow">
+      {% if attributes_start_expanded %}
+        ▼
+      {% else %}
+        ▶
+      {% endif %}
+    </span>
   </a>
 </li>
-<div class="li-wrapper collapse {{ unique }}-attributes show" data-unique-attributes="{{ unique }}-attributes">
+<div
+  class="
+    li-wrapper
+    collapse
+    {{ unique }}-attributes
+    {% if attributes_start_expanded %}
+      show
+    {% endif %}
+  "
+  data-unique-attributes="{{ unique }}-attributes"
+>
   {% for attr, value in attributes %}
     <li>
       {% with index|add:forloop.counter as new_index %}

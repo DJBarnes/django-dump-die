@@ -172,6 +172,15 @@ DJANGO_DD_INCLUDE_ATTRIBUTES = True
 # Include functions
 DJANGO_DD_INCLUDE_FUNCTIONS = True
 
+# Attribute types start expanded
+DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED = False
+
+# Attributes start expanded
+DJANGO_DD_ATTRIBUTES_START_EXPANDED = True
+
+# Functions start expanded
+DJANGO_DD_FUNCTIONS_START_EXPANDED = False
+
 # Force light theme
 DJANGO_DD_FORCE_LIGHT_THEME = False
 
