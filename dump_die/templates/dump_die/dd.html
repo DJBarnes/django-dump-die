@@ -10,6 +10,9 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <title>DD</title>
     <script src="{% static 'dump_die/js/dd.js' %}"></script>
+    {% if force_light_theme or force_dark_theme or custom_color_theme %}
+        {% include 'dump_die/_custom_color_theme.html' %}
+    {% endif %}
   </head>
   <body>
     {% for obj_name, obj in objects %}

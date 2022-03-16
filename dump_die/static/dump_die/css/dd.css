@@ -67,6 +67,14 @@ a.arrow-toggle {
     color: #dc322f;
 }
 
+@media (prefers-color-scheme: light)
+{
+
+    body {
+        background-color: #fdf6e3;
+    }
+}
+
 @media (prefers-color-scheme: dark)
 {
 
@@ -75,13 +83,6 @@ a.arrow-toggle {
     }
 }
 
-@media (prefers-color-scheme: light)
-{
-
-    body {
-        background-color: #fdf6e3;
-    }
-}
 /*
 pre.sf-dump {
     display: block;

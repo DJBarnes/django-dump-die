@@ -188,6 +188,7 @@ DJANGO_DD_FORCE_LIGHT_THEME = False
 DJANGO_DD_FORCE_DARK_THEME = False
 
 # Define the color scheme to use
+# {value} should be a string hexcode for color with hash symbol. EX: #FF88CC
 # Format as follows:
 # {
 #     'light': {
@@ -201,9 +202,9 @@ DJANGO_DD_FORCE_DARK_THEME = False
 #     'types': {
 #         'arrow': {value},           #  Expand/Collapse arrow
 #         'unique': {value},          #  Unique hash for class
-#         'access-modifier': {value}, #  Access Modifier Char
+#         'access_modifier': {value}, #  Access Modifier Char
 #         'type': {value},            #  Complex Types (non-int, float, string, bool, None)
-#         'property': {value},        #  Class properties
+#         'attribute': {value},       #  Class attribute
 #         'function': {value},        #  Class functions
 #         'docs': {value},            #  Class function documentation
 #         'constant': {value},        #  Class constants
@@ -213,7 +214,7 @@ DJANGO_DD_FORCE_DARK_THEME = False
 #         'bool': {value},            #  Bools
 #         'number': {value},          #  Ints and Floats
 #         'none': {value},            #  None
-#         'empty': {value},           #  No Properties or methods available
+#         'empty': {value},           #  No Attributes or methods available
 #     }
 # }
 DJANGO_DD_COLOR_SCHEME = None
