@@ -92,7 +92,7 @@ def _is_dict(obj):
 def is_const(value):
     """Return True if attr is most likely a constant"""
     if value is not None:
-        return value.upper() == value and len(value) > 1
+        return type(value) is str and value[0].isalpha() and value.upper() == value and len(value) > 1
 
 
 @register.simple_tag
