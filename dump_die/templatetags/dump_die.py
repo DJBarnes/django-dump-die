@@ -24,6 +24,16 @@ SIMPLE_TYPES = [
 
 ADDITIONAL_SIMPLE_TYPES = getattr(settings, 'DJANGO_DD_ADDITIONAL_SIMPLE_TYPES', [])
 
+MAX_RECURSION_DEPTH = getattr(settings, 'DJANGO_DD_MAX_RECURSION_DEPTH', 20)
+MAX_ITERABLE_LENGTH = getattr(settings, 'DJANGO_DD_MAX_ITERABLE_LENGTH', 20)
+INCLUDE_ATTRIBUTES = getattr(settings, 'DJANGO_DD_INCLUDE_ATTRIBUTES', True)
+INCLUDE_FUNCTIONS = getattr(settings, 'DJANGO_DD_INCLUDE_FUNCTIONS', False)
+ATTR_TYPES_START_EXPANDED = getattr(settings, 'DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED', False)
+ATTRIBUTES_START_EXPANDED = getattr(settings, 'DJANGO_DD_ATTRIBUTES_START_EXPANDED', False)
+FUNCTIONS_START_EXPANDED = getattr(settings, 'DJANGO_DD_FUNCTIONS_START_EXPANDED', False)
+INCLUDE_PRIVATE_METHODS = getattr(settings, 'DJANGO_DD_INCLUDE_PRIVATE_MEMBERS', False)
+INCLUDE_MAGIC_METHODS = getattr(settings, 'DJANGO_DD_INCLUDE_MAGIC_METHODS', False)
+
 def _get_class_name(obj):
     """Get class name of an object"""
     name = None
@@ -43,7 +53,7 @@ def _safe_repr(obj):
         # L8R: A list of deleted db objects will cause repr(list) to fail.
         # We should detect this and print out the __class__ of the contents of
         # the list.
-        str_obj = '<{} DELETED>'.format(obj.__class__)
+        str_obj = f'<{obj.__class__} DELETED>'
 
     return str_obj
 
@@ -78,11 +88,13 @@ def _is_indexable(obj):
 
 def _is_query(obj):
     """Return True if object is most likely a query"""
-    return _in_dir(obj, 'as_manager') and _in_dir(obj, 'all') and _in_dir(obj, 'filter')
+    if obj is not None:
+        return _in_dir(obj, 'as_manager') and _in_dir(obj, 'all') and _in_dir(obj, 'filter')
 
 def _is_dict(obj):
     """Return True if object is most likely a dict"""
-    return _in_dir(obj, 'items') and _in_dir(obj, 'keys') and _in_dir(obj, 'values')
+    if obj is not None:
+        return _in_dir(obj, 'items') and _in_dir(obj, 'keys') and _in_dir(obj, 'values')
 
 def _is_const(obj):
     """Return True if object is most likely a constant"""
@@ -123,16 +135,6 @@ def _get_access_modifier(obj):
 def dd_object(obj, skip=None, index=0, depth=0):
     """Return info about object"""
 
-    max_recursion_depth = getattr(settings, 'DJANGO_DD_MAX_RECURSION_DEPTH', 20)
-    max_iterable_length = getattr(settings, 'DJANGO_DD_MAX_ITERABLE_LENGTH', 20)
-    include_attributes = getattr(settings, 'DJANGO_DD_INCLUDE_ATTRIBUTES', True)
-    include_functions = getattr(settings, 'DJANGO_DD_INCLUDE_FUNCTIONS', False)
-    attribute_types_start_expanded = getattr(settings, 'DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED', False)
-    attributes_start_expanded = getattr(settings, 'DJANGO_DD_ATTRIBUTES_START_EXPANDED', False)
-    functions_start_expanded = getattr(settings, 'DJANGO_DD_FUNCTIONS_START_EXPANDED', False)
-    include_private_methods = getattr(settings, 'DJANGO_DD_INCLUDE_PRIVATE_MEMBERS', False)
-    include_magic_methods = getattr(settings, 'DJANGO_DD_INCLUDE_MAGIC_METHODS', False)
-
     skip = skip or set()
     # Skip objects already done to prevent infinite loops
 
@@ -167,12 +169,12 @@ def dd_object(obj, skip=None, index=0, depth=0):
         unique not in skip
         # And either the max_recursion is set to None, or we have not reached it yet.
         and (
-            max_recursion_depth is None
-            or depth <= max_recursion_depth
+            MAX_RECURSION_DEPTH is None
+            or depth <= MAX_RECURSION_DEPTH
         # And either the max_iterable_length is set to None, or we have not reached it yet.
         ) and (
-            max_iterable_length is None
-            or index <= max_iterable_length
+            MAX_ITERABLE_LENGTH is None
+            or index <= MAX_ITERABLE_LENGTH
         )
     ):
         # New object not parsed yet
@@ -217,13 +219,13 @@ def dd_object(obj, skip=None, index=0, depth=0):
         for attr, value in members:
 
             # Skip private members if not including them
-            if _is_private(attr) and not include_private_methods:
+            if _is_private(attr) and not INCLUDE_PRIVATE_METHODS:
                 continue # Skip private attributes and methods
 
             is_callable = callable(value)
             if is_callable:
                 # Skip dunder (magic) methods if not including them
-                if _is_magic(attr) and not include_magic_methods:
+                if _is_magic(attr) and not INCLUDE_MAGIC_METHODS:
                     continue #  Skip magic attributes and methods
 
                 # Functions will just return documentation
@@ -281,11 +283,11 @@ def dd_object(obj, skip=None, index=0, depth=0):
             pass # Ignore sort errors
 
         return {
-            'include_attributes': include_attributes,
-            'include_functions': include_functions,
-            'attribute_types_start_expanded': attribute_types_start_expanded,
-            'attributes_start_expanded': attributes_start_expanded,
-            'functions_start_expanded': functions_start_expanded,
+            'include_attributes': INCLUDE_ATTRIBUTES,
+            'include_functions': INCLUDE_FUNCTIONS,
+            'attribute_types_start_expanded': ATTR_TYPES_START_EXPANDED,
+            'attributes_start_expanded': ATTRIBUTES_START_EXPANDED,
+            'functions_start_expanded': FUNCTIONS_START_EXPANDED,
             'braces': braces,
             'object': obj,
             'unique': unique,
