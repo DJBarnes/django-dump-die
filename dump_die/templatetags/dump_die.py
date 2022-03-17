@@ -237,12 +237,7 @@ def dd_object(obj, skip=None, index=0, depth=0):
 
                 value = inspect.getdoc(value)
 
-                if attr.startswith('_'):
-                    access_modifier = '#'
-                elif attr.startswith('__'):
-                    access_modifier = '-'
-                else:
-                    access_modifier = '+'
+                access_modifier = _get_access_modifier(attr)
 
                 functions.append([attr, value, access_modifier])
             else:
