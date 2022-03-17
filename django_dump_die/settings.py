@@ -160,6 +160,10 @@ STATIC_URL = '/static/'
 
 # region Dump Die Settings
 
+# List of Simple Types defined as strings that should not be recursively evaluated.
+# EX: 'Cell' #  From openpyxl package
+DJANGO_DD_ADDITIONAL_SIMPLE_TYPES = []
+
 # Max recursion depth dd should process through.
 # Setting to None will mean unlimited.
 DJANGO_DD_MAX_RECURSION_DEPTH = 20

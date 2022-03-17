@@ -22,12 +22,9 @@ SIMPLE_TYPES = [
     BoundField,
 ]
 
-SIMPLE_TYPE_NAMES = [
-    'Cell', # openpyxl Cell
-]
+ADDITIONAL_SIMPLE_TYPES = getattr(settings, 'DJANGO_DD_ADDITIONAL_SIMPLE_TYPES', [])
 
-
-def get_class_name(obj):
+def _get_class_name(obj):
     """Get class name of an object"""
     name = None
     try:
@@ -37,7 +34,7 @@ def get_class_name(obj):
     return name
 
 
-def safe_repr(obj):
+def _safe_repr(obj):
     """Call repr() and ignore ObjectDoesNotExist."""
     str_obj = ''
     try:
@@ -50,13 +47,13 @@ def safe_repr(obj):
 
     return str_obj
 
-def safe_str(obj):
+def _safe_str(obj):
     """Call str() and ignore TypeErrors if str() doesn't return a string."""
     str_obj = ''
     try:
         str_obj = str(obj)
     except (TypeError, ObjectDoesNotExist):
-        str_obj = safe_repr(obj)
+        str_obj = _safe_repr(obj)
 
     return str_obj
 
@@ -143,13 +140,13 @@ def dd_object(obj, skip=None, index=0, depth=0):
         unique = hash(obj)
     except Exception:
         unique = id(obj)
-    unique = f'{get_class_name(obj)}_{unique}'
+    unique = f'{_get_class_name(obj)}_{unique}'
     css_class = ''
 
     if (
         obj is None
         or type(obj) in SIMPLE_TYPES
-        or get_class_name(obj) in SIMPLE_TYPE_NAMES
+        or _get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
     ):
         if obj is None:
             css_class = 'none'
@@ -161,7 +158,7 @@ def dd_object(obj, skip=None, index=0, depth=0):
             css_class = 'number'
 
         return {
-            'simple': safe_repr(obj),
+            'simple': _safe_repr(obj),
             'css_class': css_class,
         }
 
@@ -231,7 +228,7 @@ def dd_object(obj, skip=None, index=0, depth=0):
 
                 # Functions will just return documentation
                 try:
-                    attr += safe_str(inspect.signature(value))
+                    attr += _safe_str(inspect.signature(value))
                 except Exception:
                     attr += '()'
 
@@ -249,7 +246,7 @@ def dd_object(obj, skip=None, index=0, depth=0):
 
                 # If attr is not None (anything but set) change to safe_repr
                 if attr is not None:
-                    attr = safe_repr(attr)
+                    attr = _safe_repr(attr)
 
                 if not _is_dict(obj) and attr is not None:
                     attr = re.sub("'", "", attr)
