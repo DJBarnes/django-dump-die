@@ -1,7 +1,10 @@
 {% load dump_die %}
-{% if simple %}
+
+{% if simple %} {# If simple object, just spit out. #}
+
   <code class="{{ css_class }}">{{ simple }}</code>
-{% elif object %}
+
+{% elif object %} {# Else if an actual object to process #}
 
   <span class="type" title="{{ type }}">{{ type }}{% if is_iterable %}:{{ object|length }}{% endif %}</span>
   {{ braces.0 }}
@@ -39,11 +42,14 @@
     </ul>
   </div>
   {{ braces.1 }}
-{% else %}
+
+{% else %} {# Else, must be skipped or past max thresholds but still object. #}
+
   <span class="type" title="{{ type }}">{{ type }}</span>
   {{ braces.0 }}
-  <a title="Already output object">
+  <a title="Already output or skipped object">
     <span class="unique">{{ unique }}</span>
   </a>
   {{ braces.1 }}
+
 {% endif %}

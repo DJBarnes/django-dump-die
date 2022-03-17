@@ -2,25 +2,32 @@
 <html lang="en">
   <meta charset="utf-8">
   <head>
+    <!-- Required Libraries -->
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> {# Prevent chrome from requesting page again #}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'dump_die/css/dd.css' %}">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <title>DD</title>
     <script src="{% static 'dump_die/js/dd.js' %}"></script>
+
+    <title>DD</title>
+
+    {# If user wants changes to the color them, include a partial to generate needed css. #}
     {% if force_light_theme or force_dark_theme or custom_color_theme %}
         {% include 'dump_die/_custom_color_theme.html' %}
     {% endif %}
   </head>
   <body>
+    {# for each object to output #}
     {% for obj_name, obj in objects %}
+      {# If is is not the first object, add a horizontal line to separate #}
       {% if not forloop.first %}<hr>{% endif %}
-        {% if obj_name is not None %}
-          <span title="Dumped Object">{{ obj_name }}</span>:
-        {% endif %}
-        {% dd_object obj None forloop.counter %}
+      {# Display the name of the dumped object so long as not None #}
+      {% if obj_name is not None %}
+        <span title="Dumped Object">{{ obj_name }}</span>:
+      {% endif %}
+      {# Use dd_object template tag to dump object #}
+      {% dd_object obj None forloop.counter %}
     {% endfor %}
   </body>
 </html>
