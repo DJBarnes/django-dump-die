@@ -1,22 +1,10 @@
 {% load dump_die %}
-{% if is_none %}
-  <code class="none">{{ repr }}</code>
-{% elif is_string %}
-  <code class="string">{{ repr }}</code>
-{% elif is_bool %}
-  <code class="bool">{{ repr }}</code>
-{% elif is_number %}
-  <code class="number">{{ repr }}</code>
+{% if simple %}
+  <code class="{{ css_class }}">{{ simple }}</code>
 {% elif object %}
 
   <span class="type" title="{{ type }}">{{ type }}{% if is_iterable %}:{{ object|length }}{% endif %}</span>
-  {% if is_list %}
-    [
-  {% elif is_tuple %}
-    (
-  {% else %}
-    {
-  {% endif %}
+  {{ braces.0 }}
   <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".{{ unique }}" aria-label="Close">
     <span class="unique">{{ unique }}</span>
     <span id="arrow-{{ unique }}" class="arrow">
@@ -50,30 +38,12 @@
       {% endif %}
     </ul>
   </div>
-  {% if is_list %}
-    ]
-  {% elif is_tuple %}
-    )
-  {% else %}
-    }
-  {% endif %}
+  {{ braces.1 }}
 {% else %}
   <span class="type" title="{{ type }}">{{ type }}</span>
-  {% if is_list %}
-    [
-  {% elif is_tuple %}
-    (
-  {% else %}
-    {
-  {% endif %}
-  <a title="Already output object or ">
+  {{ braces.0 }}
+  <a title="Already output object">
     <span class="unique">{{ unique }}</span>
   </a>
-  {% if is_list %}
-    ]
-  {% elif is_tuple %}
-    )
-  {% else %}
-    }
-  {% endif %}
+  {{ braces.1 }}
 {% endif %}

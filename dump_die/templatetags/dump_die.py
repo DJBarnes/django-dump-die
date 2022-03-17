@@ -28,10 +28,11 @@ SIMPLE_TYPE_NAMES = [
 
 
 def get_class_name(obj):
+    """Get class name of an object"""
     name = None
     try:
         name = obj.__class__.__name__
-    except:
+    except Exception:
         pass
     return name
 
@@ -86,40 +87,39 @@ def _is_dict(obj):
     """Return True if object is most likely a dict"""
     return _in_dir(obj, 'items') and _in_dir(obj, 'keys') and _in_dir(obj, 'values')
 
+def _is_const(obj):
+    """Return True if object is most likely a constant"""
+    if obj is not None:
+        return isinstance(obj, str) and obj[0].isalpha() and obj.upper() == obj
 
-@register.simple_tag
-def is_const(value):
-    """Return True if attr is most likely a constant"""
-    if value is not None:
-        return type(value) is str and value[0].isalpha() and value.upper() == value
+def _is_key(obj):
+    """Return True if object is most likely a key"""
+    if obj is not None:
+        return "'" in obj
 
+def _is_number(obj):
+    """Return True if object is most likely a number"""
+    if obj is not None:
+        return isinstance(obj, (int, float)) or obj.isnumeric()
 
-@register.simple_tag
-def is_number(value):
-    """Return True if attr is numeric"""
-    if value is not None:
-        return value.isnumeric()
+def _is_private(obj):
+    """Return True if object is private"""
+    if obj is not None:
+        return isinstance(obj, str) and obj.startswith('_')
 
+def _is_magic(obj):
+    """Return True if object is private"""
+    if obj is not None:
+        return isinstance(obj, str) and obj.startswith('__')
 
-@register.simple_tag
-def is_key(value):
-    """Return True if attr is most likely a dict key"""
-    if value is not None:
-        return "'" in value
-
-
-@register.simple_tag
-def is_private(value):
-    """Return True if attr is private"""
-    if value is not None:
-        return type(value) is str and value.startswith('_')
-
-
-@register.simple_tag
-def is_magic(value):
-    """Return True if attr is magic"""
-    if value is not None:
-        return type(value) is str and value.startswith('__')
+def _get_access_modifier(obj):
+    """Return the access modifier that should be used"""
+    if _is_magic(obj):
+        return '-'
+    elif _is_private(obj):
+        return '#'
+    else:
+        return '+'
 
 
 @register.inclusion_tag('dump_die/_dd_object.html')
@@ -141,42 +141,30 @@ def dd_object(obj, skip=None, index=0, depth=0):
 
     try:
         unique = hash(obj)
-    except:
+    except Exception:
         unique = id(obj)
-    unique = '{0}_{1}'.format(safe_str(obj.__class__.__name__), unique)
+    unique = f'{get_class_name(obj)}_{unique}'
+    css_class = ''
 
     if (
         obj is None
         or type(obj) in SIMPLE_TYPES
         or get_class_name(obj) in SIMPLE_TYPE_NAMES
     ):
-        is_none = obj is None
-        is_string = type(obj) is str
-        is_bool = type(obj) is bool
-        is_number = type(obj) is int or type(obj) is float or type(obj) is bytes
+        if obj is None:
+            css_class = 'none'
+        elif isinstance(obj, str):
+            css_class = 'string'
+        elif isinstance(obj, bool):
+            css_class = 'bool'
+        elif isinstance(obj, (int, float, bytes)):
+            css_class = 'number'
 
-        # Simple types will just be returned
         return {
-            'include_attributes': include_attributes,
-            'include_functions': include_functions,
-            'attribute_types_start_expanded': attribute_types_start_expanded,
-            'attributes_start_expanded': attributes_start_expanded,
-            'functions_start_expanded': functions_start_expanded,
-            'is_none': is_none,
-            'is_string': is_string,
-            'is_bool': is_bool,
-            'is_number': is_number,
-            'is_list': False,
-            'is_tuple': False,
-            'is_indexable': False,
-            'is_iterable': False,
-            'object': None,
-            'type': type(obj),
-            'text': safe_str(obj),
-            'repr': safe_repr(obj),
-            'index': index,
-            'depth': depth,
+            'simple': safe_repr(obj),
+            'css_class': css_class,
         }
+
     elif (
         # unique has not been done before
         unique not in skip
@@ -193,13 +181,18 @@ def dd_object(obj, skip=None, index=0, depth=0):
         # New object not parsed yet
         skip.add(unique)
 
-        is_indexable = _is_indexable(obj)
-        is_iterable = _is_iterable(obj)
-        is_list = type(obj) is list
-        is_tuple = type(obj) is tuple
+        is_list = isinstance(obj, list)
+        is_tuple = isinstance(obj, tuple)
 
-        attributes = [] # (attr, value)
-        functions = [] # (attr, doc)
+        if is_list:
+            braces = '[]'
+        elif is_tuple:
+            braces = '()'
+        else:
+            braces = '{}'
+
+        attributes = [] # (attr, value, access_modifier, css_class, title)
+        functions = [] # (attr, doc, access_modifier)
 
         if _is_query(obj):
             # Probably a query, so evaluate it
@@ -208,17 +201,18 @@ def dd_object(obj, skip=None, index=0, depth=0):
 
         try:
             members = inspect.getmembers(obj)
-        except:
+        except Exception:
             members = []
 
         if _is_dict(obj):
             # Dictionary members
             members.extend(obj.items())
-        elif is_iterable:
+        elif _is_iterable(obj):
             # Lists, sets, etc.
-            if is_indexable:
+            if _is_indexable(obj):
                 # Use indexes as left half
-                members.extend([(idx, x) for idx, x in enumerate(obj)])
+                # members.extend([(idx, x) for idx, x in enumerate(obj)])
+                members.extend(list(enumerate(obj)))
             else:
                 # Use None as left half. Most likely a set.
                 members.extend([(None, x) for x in obj])
@@ -226,41 +220,72 @@ def dd_object(obj, skip=None, index=0, depth=0):
         for attr, value in members:
 
             # Skip private members if not including them
-            if type(attr) is str and attr.startswith('_') and not include_private_methods:
+            if _is_private(attr) and not include_private_methods:
                 continue # Skip private attributes and methods
 
             is_callable = callable(value)
             if is_callable:
                 # Skip dunder (magic) methods if not including them
-                if type(attr) is str and attr.startswith('__') and not include_magic_methods:
+                if _is_magic(attr) and not include_magic_methods:
                     continue #  Skip magic attributes and methods
 
                 # Functions will just return documentation
                 try:
                     attr += safe_str(inspect.signature(value))
-                except:
+                except Exception:
                     attr += '()'
+
                 value = inspect.getdoc(value)
-                functions.append([attr, value])
+
+                if attr.startswith('_'):
+                    access_modifier = '#'
+                elif attr.startswith('__'):
+                    access_modifier = '-'
+                else:
+                    access_modifier = '+'
+
+                functions.append([attr, value, access_modifier])
             else:
                 # Attributes logic
 
                 # Always skip dunder attributes
-                if type(attr) is str and attr.startswith('__'):
+                if _is_magic(attr):
                     continue #  Skip all dunder attributes
 
-                if _is_dict(obj): #  dict
-                    attributes.append([safe_repr(attr), value])
-                elif attr is None: #  set
-                    attributes.append([attr, value])
-                else: #  Everything else
-                    safe_repr_minus_quotes = safe_repr(attr)
-                    safe_repr_minus_quotes = re.sub("'", "", safe_repr_minus_quotes)
-                    attributes.append([safe_repr_minus_quotes, value])
+                # If attr is not None (anything but set) change to safe_repr
+                if attr is not None:
+                    attr = safe_repr(attr)
+
+                if not _is_dict(obj) and attr is not None:
+                    attr = re.sub("'", "", attr)
+
+                # Index, const, key, set, attribute
+                if _is_number(attr):
+                    access_modifier = None
+                    css_class = 'index'
+                    title = 'Index'
+                elif _is_const(attr):
+                    access_modifier = _get_access_modifier(attr)
+                    css_class = 'constant'
+                    title = 'Constant'
+                elif _is_key(attr):
+                    access_modifier = None
+                    css_class = 'key'
+                    title = 'Key'
+                elif attr is None:
+                    access_modifier = None
+                    css_class = ''
+                    title = ''
+                else:
+                    access_modifier = _get_access_modifier(attr)
+                    css_class = 'attribute'
+                    title = 'Attribute'
+
+                attributes.append([attr, value, access_modifier, css_class, title])
 
         try:
             functions = sorted(functions)
-        except:
+        except Exception:
             pass # Ignore sort errors
 
         return {
@@ -269,21 +294,13 @@ def dd_object(obj, skip=None, index=0, depth=0):
             'attribute_types_start_expanded': attribute_types_start_expanded,
             'attributes_start_expanded': attributes_start_expanded,
             'functions_start_expanded': functions_start_expanded,
-            'is_none': False,
-            'is_string': False,
-            'is_bool': False,
-            'is_number': False,
-            'is_list': is_list,
-            'is_tuple': is_tuple,
-            'is_indexable': is_indexable,
-            'is_iterable': is_iterable,
+            'braces': braces,
             'object': obj,
             'unique': unique,
             'type': type(obj).__name__,
-            'text': safe_str(obj),
-            'repr': safe_repr(obj),
             'attributes': attributes,
             'functions': functions,
+            'is_iterable': _is_iterable(obj),
             'skip': skip,
             'index': index,
             'depth': depth,
@@ -293,20 +310,6 @@ def dd_object(obj, skip=None, index=0, depth=0):
     # so just return a repr() of it.
 
     return {
-        'include_attributes': include_attributes,
-        'include_functions': include_functions,
-        'attribute_types_start_expanded': attribute_types_start_expanded,
-        'attributes_start_expanded': attributes_start_expanded,
-        'functions_start_expanded': functions_start_expanded,
-        'is_none': False,
-        'is_string': False,
-        'is_bool': False,
-        'is_number': False,
-        'is_indexable': False,
-        'is_iterable': False,
-        'object': None,
-        'unique': unique,
         'type': type(obj).__name__,
-        'text': safe_str(obj),
-        'repr': safe_repr(obj),
+        'unique': unique,
     }

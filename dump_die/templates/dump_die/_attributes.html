@@ -20,30 +20,14 @@
   "
   data-unique-attributes="{{ unique }}-attributes"
 >
-  {% for attr, value in attributes %}
+  {% for attr, value, access_modifier, css_class, title in attributes %}
     <li>
       {% with depth|add:'1' as new_depth %}
-
-        {% is_const attr as is_const %}
-        {% is_number attr as is_number %}
-        {% is_key attr as is_key %}
-        {% is_magic attr as is_magic %}
-        {% is_private attr as is_private %}
-
-        {% if is_const %}
-          <span class="access-modifier">
-            {% if is_magic %}-{% else %}{% if is_private %}#{% else %}+{% endif %}{% endif %}
-          </span>
-          <span class="constant" title="Contant">{{ attr }}</span>:
-        {% elif is_key %}
-          <span class="key" title="Key">{{ attr }}</span>:
-        {% elif is_number %}
-          <span class="index" title="Index">{{ attr }}</span>:
-        {% elif attr is not None %}
-          <span class="access-modifier">
-            {% if is_magic %}-{% else %}{% if is_private %}#{% else %}+{% endif %}{% endif %}
-          </span>
-          <span class="attribute" title="Attribute">{{ attr }}</span>:
+        {% if access_modifier %}
+          <span class="access-modifier">{{ access_modifier }}</span>
+        {% endif %}
+        {% if attr %}
+          <span class="{{ css_class }}" title="{{ title }}">{{ attr }}</span>:
         {% endif %}
         {% dd_object value skip forloop.counter new_depth %}
       {% endwith %}
