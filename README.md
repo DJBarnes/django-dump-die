@@ -78,6 +78,7 @@ dump('Simple String')
 dump(empty_class)
 dd(some_class)
 ```
+![django-dump-die-sample-output](https://user-images.githubusercontent.com/4390026/159033583-b2d4d98e-52c1-487e-93a3-5c56e7038893.png)
 
 <br>
 
