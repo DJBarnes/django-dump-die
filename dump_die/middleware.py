@@ -19,7 +19,7 @@ logger = logging.getLogger('django_dump_die')
 dump_objects = []
 local_settings_unused_ignore = getattr(settings, 'CONTEXT_UNUSED_IGNORE', [])
 UNUSED_IGNORE = [
-    'block'
+    'block',
     'csrf_token',
     'debug',
     'DEFAULT_MESSAGE_LEVELS',
