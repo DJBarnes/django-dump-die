@@ -19,7 +19,6 @@ logger = logging.getLogger('django_dump_die')
 dump_objects = []
 local_settings_unused_ignore = getattr(settings, 'CONTEXT_UNUSED_IGNORE', [])
 UNUSED_IGNORE = [
-    'block',
     'csrf_token',
     'debug',
     'DEFAULT_MESSAGE_LEVELS',
@@ -32,7 +31,6 @@ UNUSED_IGNORE = [
     'page_obj',
     'paginator',
     'perms',
-    'request',
     'site',
     'site_name',
     'sql_queries',
