@@ -33,12 +33,55 @@ MIDDLEWARE = [
 ## Usage
 The middleware is where most of this package's heavy lifting happens.
 
-By having the middleware installed, you can run `dd(<value>)` anywhere you want, and it will run the dump logic.
-No importing is required, nor is any extra logic. Just type "dd" anywhere you want in a python file and it will run.
+By having the middleware installed, you can run `dump(<value>)` and/or `dd(<value>)` anywhere you want, and it will run the dump logic.
+No importing is required, nor is any extra logic. Just type **"dump"** and/or **"dd"** anywhere you want in a python file and it will run.
+The `dump()` command will add the object to dump to an internal list to be dumped when a `dd()` is used.
+You can have as many `dump(<value>)` statements as you want leading up to a `dd(<value>)`,
+but in order for there to be actual output to the screen you must issue a `dd(<value)` as the last thing you do.
 
 <br>
 
-Note that most editors will give a red error squiggle for the dd command.
+Example:
+```python
+# Sample classes for output.
+class EmptyClass:
+    """Empty Class."""
+    pass
+
+
+class SomeClass:
+    """Some Class."""
+    SAMPLE_CONST = 41
+
+    def __init__(self, *args, **kwargs):
+        self.my_number = 32
+        self.my_string = 'A super cool string'
+        self.works = True
+        self.nothing = None
+        self.bytes = bytes('My Bytes', 'utf-8')
+        self.list_o_stuff = ['A', 'B', 'C']
+        self.sample_set = {'A', 'B', 'C'}
+        self.sample_tuple = ('A', 12, True)
+        self.empty_class = EmptyClass()
+        self.empty_class_dup = self.empty_class
+
+    def do_work(self):
+        """Do some work"""
+        return True
+
+
+# Example Usage
+empty_class = EmptyClass()
+some_class = SomeClass()
+
+dump('Simple String')
+dump(empty_class)
+dd(some_class)
+```
+
+<br>
+
+**Note:** that most editors will give a red error squiggle for the dd command.
 
 This is intentional, and the command will still run. This is because this command is meant to be used for debugging,
 and is not meant to stay long-term. The red squiggle helps identify it as something that should be removed before
@@ -56,7 +99,7 @@ As the tool inspects an object it recurses into other objects that are part of t
 DJANGO_DD_MAX_RECURSION_DEPTH = 30
 ```
 
-### DJANGO_DD_MAXITERABLE_LENGTH
+### DJANGO_DD_MAX_ITERABLE_LENGTH
 Default: ```20```<br>
 As the tool inspects an iterable object it will recurse into each object in the iterable. This may mean a lot of recursion for a very long iterable. This setting will limit the length or processed elements in an iterable to prevent long processing times.
 <br>
