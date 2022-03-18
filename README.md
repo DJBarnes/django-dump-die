@@ -180,14 +180,14 @@ DJANGO_DD_FUNCTIONS_START_EXPANDED = True
 
 ### DJANGO_DD_FORCE_LIGHT_THEME
 Default: ```False```<br>
-By default, the included color theme will change depending on the setting of your brower to either light or dark. If you normally have your browser set to dark but would like to force this tool to display the light theme, change this setting to ```True```
+By default, the included color theme will change depending on the setting of your browser to either light or dark. If you normally have your browser set to dark but would like to force this tool to display the light theme, change this setting to ```True```
 ```python
 DJANGO_DD_FORCE_LIGHT_THEME = True
 ```
 
 ### DJANGO_DD_FORCE_DARK_THEME
 Default: ```False```<br>
-By default, the included color theme will change depending on the setting of your brower to either light or dark. If you normally have your browser set to light but would like to force this tool to display the darkt theme, change this setting to ```True```
+By default, the included color theme will change depending on the setting of your browser to either light or dark. If you normally have your browser set to light but would like to force this tool to display the dark theme, change this setting to ```True```
 ```python
 DJANGO_DD_FORCE_DARK_THEME = True
 ```
