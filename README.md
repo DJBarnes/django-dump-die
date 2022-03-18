@@ -10,16 +10,29 @@ Inspired by the dump and dump/die functionality from Symfony / Laravel.
 ## Installation
 Import the package via either:
 ```shell
-python -m pip install -e "git+https://github.com/DJBarnes/django-dump-die@master/#egg=django-dump-die"
+python -m pip install -e "git+https://github.com/DJBarnes/django-dump-die#egg=django-dump-die"
 ```
 or
 ```shell
-pipenv install -e "git+https://github.com/DJBarnes/django-dump-die@master/#egg=django-dump-die"
+pipenv install -e "git+https://github.com/DJBarnes/django-dump-die#egg=django-dump-die"
 ```
 
 <br>
 
-Then add the corresponding middleware to your Django `settings.py` file:
+Next add the corresponding app to your Django `settings.py` file:
+```python
+INSTALLED_APPS = [
+    ...
+
+    'dump_die.apps.DumpDieConfig',
+
+    ...
+]
+```
+
+<br>
+
+Lastly add the corresponding middleware to your Django `settings.py` file:
 ```python
 MIDDLEWARE = [
     ...
