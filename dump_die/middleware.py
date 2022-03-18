@@ -19,25 +19,26 @@ logger = logging.getLogger('django_dump_die')
 dump_objects = []
 local_settings_unused_ignore = getattr(settings, 'CONTEXT_UNUSED_IGNORE', [])
 UNUSED_IGNORE = [
-    'sql_queries',
-    'perms',
-    'DEFAULT_MESSAGE_LEVELS',
-    'debug',
-    'False',
-    'None',
-    'True',
+    'block'
     'csrf_token',
-    'view',
+    'debug',
+    'DEFAULT_MESSAGE_LEVELS',
+    'False',
+    'is_paginated',
+    'lastframe', # Error pages (from assertRaises)
+    'messages',
+    'None',
     'object',
+    'page_obj',
+    'paginator',
+    'perms',
+    'request',
     'site',
     'site_name',
-    'page_obj',
-    'is_paginated',
-    'paginator',
+    'sql_queries',
+    'True',
     'user',
-    'messages',
-    # Error pages (from assertRaises)
-    'lastframe',
+    'view',
 ] + local_settings_unused_ignore
 
 lock = threading.Lock()
