@@ -2,103 +2,18 @@
 Middleware for DumpAndDie.
 """
 
-import contextlib
 import copy
 import inspect
 import logging
-import threading
 import warnings
 
 from django.conf import settings
-from django.template import Context
 
 from .views import dd_view
 
 
 logger = logging.getLogger('django_dump_die')
 dump_objects = []
-local_settings_unused_ignore = getattr(settings, 'CONTEXT_UNUSED_IGNORE', [])
-UNUSED_IGNORE = [
-    'csrf_token',
-    'debug',
-    'DEFAULT_MESSAGE_LEVELS',
-    'False',
-    'is_paginated',
-    'lastframe', # Error pages (from assertRaises)
-    'messages',
-    'None',
-    'object',
-    'page_obj',
-    'paginator',
-    'perms',
-    'site',
-    'site_name',
-    'sql_queries',
-    'True',
-    'user',
-    'view',
-] + local_settings_unused_ignore
-
-lock = threading.Lock()
-
-
-@contextlib.contextmanager
-def warn_unused_context(request):
-    """Warn if unused keys in context when using request.
-
-    Currently ignores admin pages
-
-    Usage:
-        with warn_unused_context(request):
-            response = self.get_response(request)
-    """
-    if request.path.startswith('/admin/'):
-        yield  # Let caller get the response
-        return  # Ignore admin pages
-
-    # NOTE: Monkeypatching is not threadsafe.
-    lock.acquire()
-
-    # Monkeypatch context to keep track of unused variables in context.
-    __orig_getitem__ = Context.__getitem__
-
-    used_keys = set(UNUSED_IGNORE)
-    all_keys = set()
-
-    def __getitem__(self, key):
-        if not all_keys:
-            flattened = {}
-            try:
-                flattened = self.flatten()
-            except Exception as err:
-                # Exceptions here are usually caused because a template tag
-                # returned a Context() object instead of a plain dictionary.
-                logger.exception("Ignoring context error: %s", err)
-                raise
-            for x, y in flattened.items():
-                if y:
-                    all_keys.add(x)
-        used_keys.add(key)
-        return __orig_getitem__(self, key)
-
-    try:
-        Context.__getitem__ = __getitem__
-
-        # Let caller get the response.
-        yield
-    finally:
-        # Un-patch it.
-        Context.__getitem__ = __orig_getitem__
-        lock.release()
-
-    # Check for unused keys/
-    unused = all_keys.difference(used_keys)
-
-    if unused:
-        msg = "Request Context %s had unused keys: %s"
-        warnings.warn(msg % (request, unused))
-        logger.warning(msg, request, unused)
-
 
 class DumpAndDie(Exception):
     """
@@ -189,9 +104,11 @@ class DumpAndDieMiddleware:
         Return standard response if nothing dumped.
         Otherwise return dump view.
         """
-        with warn_unused_context(request):
-            response = self.get_response(request)
 
+        # Get the response
+        response = self.get_response(request)
+
+        # If there are no items in the dump_objects list or there is no exception raised
         if not dump_objects or getattr(request, '_has_exception', False):
             return response
         else:
@@ -199,6 +116,7 @@ class DumpAndDieMiddleware:
             objects = dump_objects[:]
             dump_objects.clear()
 
+            # Return the dd view to dump the items in the dump_objects list.
             return dd_view(request, objects)
 
     def process_exception(self, request, exception):
