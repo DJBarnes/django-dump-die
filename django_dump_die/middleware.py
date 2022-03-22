@@ -25,6 +25,19 @@ class DumpAndDie(Exception):
         self.object = obj
 
 
+def _retrieve_name(var):
+    """
+    Inspects call stack in an attempt to grab names of variables to display in dd output.
+    Names are determined by value. On multiple names matching given value, all corresponding names are returned.
+    """
+    callers_local_vars = inspect.currentframe().f_back.f_back.f_locals.items()
+    results = [var_name for var_name, var_val in callers_local_vars if var_val is var]
+    result = None
+    if len(results) > 0:
+        result = ", ".join(results)
+    return result
+
+
 def dd(obj, deepcopy=False):
     """
     Immediately return debug template with info about objects.
@@ -32,19 +45,7 @@ def dd(obj, deepcopy=False):
 
     Does nothing if DEBUG != True.
     """
-    def retrieve_name(var):
-        """
-        Inspects call stack in an attempt to grab names of variables to display in dd output.
-        Names are determined by value. On multiple names matching given value, all corresponding names are returned.
-        """
-        callers_local_vars = inspect.currentframe().f_back.f_back.f_locals.items()
-        results = [var_name for var_name, var_val in callers_local_vars if var_val is var]
-        result = None
-        if len(results) > 0:
-            result = ", ".join(results)
-        return result
-
-    obj_name = retrieve_name(obj)
+    obj_name = _retrieve_name(obj)
 
     if settings.DEBUG:
         if deepcopy:
@@ -64,15 +65,7 @@ def dump(obj, deepcopy=False):
 
     NOTE: Not thread safe, this will collect objects server wide, dumped objects can come from multiple requests.
     """
-    def retrieve_name(var):
-        callers_local_vars = inspect.currentframe().f_back.f_back.f_locals.items()
-        results = [var_name for var_name, var_val in callers_local_vars if var_val is var]
-        result = None
-        if len(results) > 0:
-            result = ", ".join(results)
-        return result
-
-    obj_name = retrieve_name(obj)
+    obj_name = _retrieve_name(obj)
 
     if settings.DEBUG:
         if deepcopy:
