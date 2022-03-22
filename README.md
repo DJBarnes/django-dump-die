@@ -48,9 +48,15 @@ The middleware is where most of this package's heavy lifting happens.
 
 By having the middleware installed, you can run `dump(<value>)` and/or `dd(<value>)` anywhere you want, and it will run the dump logic.
 No importing is required, nor is any extra logic. Just type **"dump"** and/or **"dd"** anywhere you want in a python file and it will run.
-The `dump()` command will add the object to dump to an internal list to be dumped when a `dd()` is used.
-You can have as many `dump(<value>)` statements as you want leading up to a `dd(<value>)`,
-but in order for there to be actual output to the screen you must issue a `dd(<value)` as the last thing you do.
+
+The `dump()` command will add the object to dump to an internal list to be dumped
+either when a `dd(<value>)` is used or if the entirety of the request finishes.
+You can have as many `dump(<value>)` statements as you want leading up to a `dd(<value>)`.
+If you then make a call to `dd(<value>)`, execution will stop and all dumped
+objects including the the one sent to dd will be output.
+If you do not make a call to `dd(<value>)` and only use `dump(<value>)` statements,
+the request will continue processing until it is time to return the response at which
+point it will replace the response with the dumped data.
 
 <br>
 
