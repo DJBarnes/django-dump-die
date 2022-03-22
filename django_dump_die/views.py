@@ -16,7 +16,7 @@ def dd_view(request, objects):
 
     return render(
         request,
-        'dump_die/dd.html',
+        'django_dump_die/dd.html',
         {
             'objects': objects,
             'force_light_theme': force_light_theme,

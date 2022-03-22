@@ -24,7 +24,7 @@ Next add the corresponding app to your Django `settings.py` file:
 INSTALLED_APPS = [
     ...
 
-    'dump_die.apps.DumpDieConfig',
+    'django_dump_die',
 
     ...
 ]
@@ -37,7 +37,7 @@ Lastly add the corresponding middleware to your Django `settings.py` file:
 MIDDLEWARE = [
     ...
 
-    'dump_die.middleware.DumpAndDieMiddleware',
+    'django_dump_die.middleware.DumpAndDieMiddleware',
 
     ...
 ]

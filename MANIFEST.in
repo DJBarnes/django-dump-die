@@ -1,4 +1,4 @@
 include LICENSE
 include README.md
-recursive-include dump_die/static *
-recursive-include dump_die/templates *
+recursive-include django_dump_die/static *
+recursive-include django_dump_die/templates *

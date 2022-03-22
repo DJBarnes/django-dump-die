@@ -1,5 +1,5 @@
 """
-dump_die URL Configuration.
+django_dump_die URL Configuration.
 Used exclusively to show example output.
 """
 

@@ -144,7 +144,7 @@ def _get_access_modifier(obj):
         return '+'
 
 
-@register.inclusion_tag('dump_die/_dd_object.html')
+@register.inclusion_tag('django_dump_die/_dd_object.html')
 def dd_object(obj, skip=None, index=0, depth=0):
     """Return info about object"""
 
