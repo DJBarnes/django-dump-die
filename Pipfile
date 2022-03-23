@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+
+[dev-packages]
+autopep8 = "*"
+coverage = "*"
+doc8 = "*"
+esbonio = "*"
+pylint = "*"
+pylint-django = "*"
+rstcheck = "*"
+sphinx = "*"
+sphinx-autobuild = "*"
+sphinx-rtd-theme = "*"
+
+[requires]
+python_version = "3.8"

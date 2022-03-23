@@ -6,8 +6,9 @@
 Welcome to Django-AdminLTE-2's documentation!
 =============================================
 
-Django App providing a mechanism for extracting the details of any python variable and dumping it to the browser.
-This is effectively a debugging tool, used to quickly and easily output an object's full data to screen.
+Django App providing a mechanism for extracting the details of any python
+variable and dumping it to the browser. This is effectively a debugging tool,
+used to quickly and easily output an object's full data to screen.
 
 .. toctree::
    :maxdepth: 2
