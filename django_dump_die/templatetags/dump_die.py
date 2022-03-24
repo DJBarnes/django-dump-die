@@ -165,8 +165,9 @@ def dd_object(obj, skip=None, curr_iteration=0, curr_depth=0):
     If we have exceeded specified iteration count or depth, OR if object is of simple type, then output minimal info.
     Otherwise, output full object info, including information for any inner-children, if applicable.
     (Inner children are minimally processed here, and fully processed later in a new call to templatetag.)
+
     :param obj: Object to iterate over and attempt to parse information from.
-    :param skip: Bool indicating if object should be skipped or not. Mostly used to prevent infinite loops.
+    :param skip: Set of already-processed objects. Used to skip re-processing identical objects.
     :param curr_iteration: Current iteration-index. Used to track current index of object we're iterating through.
     :param curr_depth: Current depth-index. Used to track how deep of child-members we're iterating through.
     """
