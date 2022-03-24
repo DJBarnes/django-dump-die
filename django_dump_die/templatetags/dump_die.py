@@ -24,6 +24,7 @@ SIMPLE_TYPES = [
     BoundField,
 ]
 
+
 # List of additional simple types defined as strings that do not need to be recursively inspected.
 ADDITIONAL_SIMPLE_TYPES = getattr(settings, 'DJANGO_DD_ADDITIONAL_SIMPLE_TYPES', [])
 # Max recursion depth to go while processing the dumped variable.
@@ -46,6 +47,7 @@ FUNCTIONS_START_EXPANDED = getattr(settings, 'DJANGO_DD_FUNCTIONS_START_EXPANDED
 INCLUDE_PRIVATE_METHODS = getattr(settings, 'DJANGO_DD_INCLUDE_PRIVATE_MEMBERS', False)
 # Whether the output should include magic methods.
 INCLUDE_MAGIC_METHODS = getattr(settings, 'DJANGO_DD_INCLUDE_MAGIC_METHODS', False)
+
 
 def _get_class_name(obj):
     """Get class name of an object"""
@@ -70,6 +72,7 @@ def _safe_repr(obj):
 
     return str_obj
 
+
 def _safe_str(obj):
     """Call str() and ignore TypeErrors if str() doesn't return a string."""
     str_obj = ''
@@ -80,9 +83,11 @@ def _safe_str(obj):
 
     return str_obj
 
+
 def _in_dir(obj, attr):
     """Simpler hasattr() function without side effects."""
     return attr in dir(obj)
+
 
 def _is_iterable(obj):
     """Return True if object can be iterated"""
@@ -92,6 +97,7 @@ def _is_iterable(obj):
         return False
     return True
 
+
 def _is_indexable(obj):
     """Return True if object can be indexed"""
     if isinstance(obj, Sequence):
@@ -99,40 +105,48 @@ def _is_indexable(obj):
     else:
         return False
 
+
 def _is_query(obj):
     """Return True if object is most likely a query"""
     if obj is not None:
         return _in_dir(obj, 'as_manager') and _in_dir(obj, 'all') and _in_dir(obj, 'filter')
+
 
 def _is_dict(obj):
     """Return True if object is most likely a dict"""
     if obj is not None:
         return _in_dir(obj, 'items') and _in_dir(obj, 'keys') and _in_dir(obj, 'values')
 
+
 def _is_const(obj):
     """Return True if object is most likely a constant"""
     if obj is not None:
         return isinstance(obj, str) and obj[0].isalpha() and obj.upper() == obj
+
 
 def _is_key(obj):
     """Return True if object is most likely a key"""
     if obj is not None:
         return "'" in obj
 
+
 def _is_number(obj):
     """Return True if object is most likely a number"""
     if obj is not None:
         return isinstance(obj, (int, float)) or obj.isnumeric()
+
 
 def _is_private(obj):
     """Return True if object is private"""
     if obj is not None:
         return isinstance(obj, str) and obj.startswith('_')
 
+
 def _is_magic(obj):
     """Return True if object is private"""
     if obj is not None:
         return isinstance(obj, str) and obj.startswith('__')
+
 
 def _get_access_modifier(obj):
     """Return the access modifier that should be used"""
