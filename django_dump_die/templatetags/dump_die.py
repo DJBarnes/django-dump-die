@@ -159,7 +159,7 @@ def _get_access_modifier(obj):
 
 
 @register.inclusion_tag('django_dump_die/_dd_object.html')
-def dd_object(obj, skip=None, curr_iteration=0, curr_depth=0, root_index_start=None, root_index_end=None):
+def dd_object(obj, parent_len, skip=None, curr_iteration=0, curr_depth=0, root_index_start=None, root_index_end=None):
     """
     Return info about object.
     If we have exceeded specified iteration count or depth, OR if object is of simple type, then output minimal info.
@@ -167,6 +167,7 @@ def dd_object(obj, skip=None, curr_iteration=0, curr_depth=0, root_index_start=N
     (Inner children are minimally processed here, and fully processed later in a new call to templatetag.)
 
     :param obj: Object to iterate over and attempt to parse information from.
+    :param parent_len: Length of parent object. Used to calculate negative index values.
     :param skip: Set of already-processed objects. Used to skip re-processing identical objects.
     :param curr_iteration: Current iteration-index. Used to track current index of object we're iterating through.
     :param curr_depth: Current depth-index. Used to track how deep of child-members we're iterating through.
@@ -252,7 +253,7 @@ def dd_object(obj, skip=None, curr_iteration=0, curr_depth=0, root_index_start=N
 
         # Handle if provided start_index is negative.
         if root_index_start < 0:
-            root_index_start = len(obj) + root_index_start
+            root_index_start = parent_len + root_index_start
 
             # Reset if still negative.
             if root_index_start < 0:
@@ -260,7 +261,7 @@ def dd_object(obj, skip=None, curr_iteration=0, curr_depth=0, root_index_start=N
 
         # Handle if provided end_index is negative.
         if root_index_end < 0:
-            root_index_end = len(obj) + root_index_end
+            root_index_end = parent_len + root_index_end
 
             # Reset if still negative.
             if root_index_end < 0:
