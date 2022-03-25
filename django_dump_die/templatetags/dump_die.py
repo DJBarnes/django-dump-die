@@ -252,7 +252,7 @@ def dd_object(obj, skip=None, curr_iteration=0, curr_depth=0, root_index_start=N
 
         # Handle if current index is between root_index values.
         # Otherwise fallback to "already processed" logic.
-        if curr_iteration >= root_index_start and curr_iteration <= root_index_end:
+        if curr_iteration >= (root_index_start + 1) and curr_iteration <= (root_index_end + 1):
             # Handle for new "unique" object output.
             return _handle_unique_obj(
                 obj,
