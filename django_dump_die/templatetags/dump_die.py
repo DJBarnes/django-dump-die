@@ -161,7 +161,7 @@ def _get_access_modifier(obj):
 
 
 @register.inclusion_tag('django_dump_die/_dd_object.html')
-def dd_object(obj, parent_len, skip=None, curr_iteration=0, curr_depth=0, root_index_start=None, root_index_end=None):
+def dd_object(obj, parent_len, skip=None, current_iteration=0, current_depth=0, root_index_start=None, root_index_end=None):
     """
     Return info about object.
     If we have exceeded specified iteration count or depth, OR if object is of simple type, then output minimal info.
@@ -171,10 +171,10 @@ def dd_object(obj, parent_len, skip=None, curr_iteration=0, curr_depth=0, root_i
     :param obj: Object to iterate over and attempt to parse information from.
     :param parent_len: Length of parent object. Used to calculate negative index values.
     :param skip: Set of already-processed objects. Used to skip re-processing identical objects.
-    :param curr_iteration: Current iteration-index. Used to track current index of object we're iterating through.
-    :param curr_depth: Current depth-index. Used to track how deep of child-members we're iterating through.
-    :param root_index_start: Starting index for root iteratable object. If None, uses default behavior.
-    :param root_index_end: Ending index for root iteratable object. If None, uses default behavior.
+    :param current_iteration: Current iteration-index. Used to track current index of object we're iterating through.
+    :param current_depth: Current depth-index. Used to track how deep of child-members we're iterating through.
+    :param root_index_start: Starting index for root iterable object. If None, uses default behavior.
+    :param root_index_end: Ending index for root iterable object. If None, uses default behavior.
     """
     # Set up set to store uniques to skip if not passed in.
     # Will be used to skip objects already done to prevent infinite loops.
@@ -204,26 +204,24 @@ def dd_object(obj, parent_len, skip=None, curr_iteration=0, curr_depth=0, root_i
         unique = id(obj)
     # Append the class name to the unique to really make unique.
     unique = f'{_get_class_name(obj)}_{unique}'
-    # Default for css class to use with object.
-    css_class = ''
+
+    # Handle if object is in skip set, aka already processed.
+    if unique in skip:
+        # Complex object found in skip set. Skip further handling of if clauses and go to end of function.
+        pass
 
     # Handle if obj is a simple type (Null/None, int, str, bool, and basic number types).
-    if (
+    elif (
         obj is None
         or type(obj) in SIMPLE_TYPES
         or _get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
     ):
         return _handle_simple_type(obj)
 
-    # Handle if object is in skip set, aka already processed.
-    elif unique in skip:
-        # Complex object found in skip set. Skip further handling of if clauses and go to end of function.
-        pass
-
     # Handle if we're at the root's element direct children (depth of 1),
     # element is iterable, AND "root_index" values are set.
     elif (
-        curr_depth == 1
+        current_depth == 1
         and (root_index_start is not None or root_index_end is not None)
         and _is_iterable(obj)
     ):
@@ -262,14 +260,14 @@ def dd_object(obj, parent_len, skip=None, curr_iteration=0, curr_depth=0, root_i
 
         # Handle if current index is between root_index values.
         # Otherwise fallback to "already processed" logic.
-        if curr_iteration >= (root_index_start + 1) and curr_iteration <= (root_index_end + 1):
+        if current_iteration >= (root_index_start + 1) and current_iteration <= (root_index_end + 1):
             # Handle for new "unique" object output.
             return _handle_unique_obj(
                 obj,
                 unique,
                 skip=skip,
-                curr_iteration=curr_iteration,
-                curr_depth=curr_depth,
+                current_iteration=current_iteration,
+                current_depth=current_depth,
             )
 
     # Handle if not at root element and/or "root_index" values are not set.
@@ -277,13 +275,13 @@ def dd_object(obj, parent_len, skip=None, curr_iteration=0, curr_depth=0, root_i
         # Check if the max_recursion is set to None, or we have not reached it yet.
         (
             MAX_RECURSION_DEPTH is None
-            or curr_depth <= MAX_RECURSION_DEPTH
+            or current_depth <= MAX_RECURSION_DEPTH
         )
 
         # And if the max_iterable_length is set to None, or we have not reached it yet.
         and (
             MAX_ITERABLE_LENGTH is None
-            or curr_iteration <= MAX_ITERABLE_LENGTH
+            or current_iteration <= MAX_ITERABLE_LENGTH
         )
     ):
         # Handle for new "unique" object output.
@@ -291,8 +289,8 @@ def dd_object(obj, parent_len, skip=None, curr_iteration=0, curr_depth=0, root_i
             obj,
             unique,
             skip=skip,
-            curr_iteration=curr_iteration,
-            curr_depth=curr_depth,
+            current_iteration=current_iteration,
+            current_depth=current_depth,
             root_index_start=root_index_start,
             root_index_end=root_index_end,
         )
@@ -334,8 +332,8 @@ def _handle_unique_obj(
     obj,
     unique,
     skip=None,
-    curr_iteration=0,
-    curr_depth=0,
+    current_iteration=0,
+    current_depth=0,
     root_index_start=None,
     root_index_end=None,
 ):
@@ -344,8 +342,8 @@ def _handle_unique_obj(
 
     :param obj: Object to iterate over and attempt to parse information from.
     :param skip: Set of already-processed objects. Used to skip re-processing identical objects.
-    :param curr_iteration: Current iteration-index. Used to track current index of object we're iterating through.
-    :param curr_depth: Current depth-index. Used to track how deep of child-members we're iterating through.
+    :param current_iteration: Current iteration-index. Used to track current index of object we're iterating through.
+    :param current_depth: Current depth-index. Used to track how deep of child-members we're iterating through.
     """
     # Add unique to skip so it won't be processed a second time by additional
     # recursive calls to this template tag.
@@ -486,8 +484,8 @@ def _handle_unique_obj(
         'functions': functions,
         'is_iterable': _is_iterable(obj),
         'skip': skip,
-        'index': curr_iteration,
-        'depth': curr_depth,
+        'index': current_iteration,
+        'depth': current_depth,
         'root_index_start': root_index_start,
         'root_index_end': root_index_end,
     }

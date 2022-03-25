@@ -5,7 +5,6 @@ Middleware for DumpAndDie.
 import copy
 import inspect
 import logging
-import warnings
 
 from collections.abc import Sequence
 from django.conf import settings
@@ -81,7 +80,7 @@ def _sanitize_index_range(index_range):
     if end_index:
         try:
             end_index = int(end_index)
-        except:
+        except Exception:
             end_index = None
 
     return start_index, end_index
