@@ -7,6 +7,7 @@ import inspect
 import logging
 import warnings
 
+from collections.abc import Sequence
 from django.conf import settings
 
 from .views import dd_view
@@ -39,7 +40,55 @@ def _retrieve_name(var):
     return result
 
 
-def dd(obj, start_index=None, end_index=None, deepcopy=False):
+def _sanitize_index_range(index_range):
+    """
+    Validates and sanitizes passed index values.
+    """
+    # Set index defaults.
+    start_index = None
+    end_index = None
+
+    # First check if index_range is an iterable.
+    if isinstance(index_range, Sequence):
+        # Handle for length 2 or more (we ignore values past second index).
+        if len(index_range) > 1:
+            # Assume is index range. Split values onto indexes.
+            start_index = index_range[0]
+            end_index = index_range[1]
+
+        # Handle for length exactly 1.
+        elif len(index_range) == 1:
+            # Assume user typo'd somehow and meant literal start index.
+            start_index = index_range[0]
+
+    else:
+        # Non-iterable. Assume user passed single start-index value.
+        start_index = index_range
+
+    # Sanitize if start_index set.
+    if start_index:
+        try:
+            start_index = int(start_index)
+        except TypeError:
+            start_index = None
+
+    # Sanitize if end_index set.
+    if end_index:
+        try:
+            end_index = int(end_index)
+        except:
+            end_index = None
+
+    # Handle if user provided a start_index that is higher than end_index.
+    if start_index and end_index and start_index > end_index:
+        temp = start_index
+        start_index = end_index
+        end_index = temp
+
+    return start_index, end_index
+
+
+def dd(obj, index_range=None, deepcopy=False):
     """
     Immediately return debug template with info about objects.
     Includes any objects passed in through dump().
@@ -49,19 +98,8 @@ def dd(obj, start_index=None, end_index=None, deepcopy=False):
     obj_name = _retrieve_name(obj)
 
     if settings.DEBUG:
-        # Handle if start_index set.
-        if start_index:
-            try:
-                start_index = int(start_index)
-            except TypeError:
-                start_index = None
-
-        # Handle if end_index set.
-        if end_index:
-            try:
-                end_index = int(end_index)
-            except:
-                end_index = None
+        # Sanitize and validate provided index values.
+        start_index, end_index = _sanitize_index_range(index_range)
 
         # Handle if deepcopy set.
         if deepcopy:
@@ -73,7 +111,7 @@ def dd(obj, start_index=None, end_index=None, deepcopy=False):
         )
 
 
-def dump(obj, start_index=None, end_index=None, deepcopy=False):
+def dump(obj, index_range=None, deepcopy=False):
     """
     Show debug template whenever response finishes.
     dd() will also include objects from dump().
@@ -85,6 +123,9 @@ def dump(obj, start_index=None, end_index=None, deepcopy=False):
     obj_name = _retrieve_name(obj)
 
     if settings.DEBUG:
+        # Sanitize and validate provided index values.
+        start_index, end_index = _sanitize_index_range(index_range)
+
         # Handle if deepcopy set.
         if deepcopy:
             obj = copy.deepcopy(obj)
