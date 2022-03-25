@@ -211,22 +211,7 @@ def dd_object(obj, parent_len, skip=None, curr_iteration=0, curr_depth=0, root_i
         or type(obj) in SIMPLE_TYPES
         or _get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
     ):
-        # Determine which css class to use.
-        if obj is None:
-            css_class = 'none'
-        elif isinstance(obj, str):
-            css_class = 'string'
-        elif isinstance(obj, bool):
-            css_class = 'bool'
-        elif isinstance(obj, (int, float, bytes)):
-            css_class = 'number'
-
-        # Since simple type, return safe representation of simple type and
-        # which css class to use.
-        return {
-            'simple': _safe_repr(obj),
-            'css_class': css_class,
-        }
+        return _handle_simple_type(obj)
 
     # Handle if object is in skip set, aka already processed.
     elif unique in skip:
@@ -319,9 +304,38 @@ def dd_object(obj, parent_len, skip=None, curr_iteration=0, curr_depth=0, root_i
     }
 
 
+def _handle_simple_type(obj):
+    """
+    Logic for outputting information about a "simpel type".
+    Includes str, numbers, bools, etc.
+    """
+    # Determine which css class to use.
+    css_class = ''
+    if obj is None:
+        css_class = 'none'
+    elif isinstance(obj, str):
+        css_class = 'string'
+    elif isinstance(obj, bool):
+        css_class = 'bool'
+    elif isinstance(obj, (int, float, bytes)):
+        css_class = 'number'
+
+    # Since simple type, return safe representation of simple type and
+    # which css class to use.
+    return {
+        'simple': _safe_repr(obj),
+        'css_class': css_class,
+    }
+
+
 def _handle_unique_obj(
-    obj, unique,
-    skip=None, curr_iteration=0, curr_depth=0, root_index_start=None, root_index_end=None,
+    obj,
+    unique,
+    skip=None,
+    curr_iteration=0,
+    curr_depth=0,
+    root_index_start=None,
+    root_index_end=None,
 ):
     """
     Main logic for outputting information for a given "unique".
