@@ -32,6 +32,11 @@ def _retrieve_name(var):
     Inspects call stack in an attempt to grab names of variables to display in dd output.
     Names are determined by value. On multiple names matching given value, all corresponding names are returned.
     """
+    # Handle for functions.
+    if callable(var):
+        return 'function'
+
+    # Handle for all other value types.
     callers_local_vars = inspect.currentframe().f_back.f_back.f_locals.items()
     results = [var_name for var_name, var_val in callers_local_vars if var_val is var]
     result = None
@@ -92,6 +97,10 @@ def dd(obj, index_range=None, deepcopy=False):
     obj_name = _retrieve_name(obj)
 
     if settings.DEBUG:
+        # Handle if function.
+        if callable(obj):
+            obj = "{0}() defined at {1}".format(obj.__name__, obj.__module__)
+
         # Sanitize and validate provided index values.
         start_index, end_index = _sanitize_index_range(index_range)
 
@@ -117,6 +126,10 @@ def dump(obj, index_range=None, deepcopy=False):
     obj_name = _retrieve_name(obj)
 
     if settings.DEBUG:
+        # Handle if function.
+        if callable(obj):
+            obj = "{0}() defined at {1}".format(obj.__name__, obj.__module__)
+
         # Sanitize and validate provided index values.
         start_index, end_index = _sanitize_index_range(index_range)
 
