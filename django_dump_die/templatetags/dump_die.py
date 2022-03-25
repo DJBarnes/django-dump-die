@@ -349,14 +349,6 @@ def _handle_unique_obj(
     # recursive calls to this template tag.
     skip.add(unique)
 
-    # Determine which type of braces should be used.
-    if isinstance(obj, list):
-        braces = '[]'
-    elif isinstance(obj, tuple):
-        braces = '()'
-    else:
-        braces = '{}'
-
     # List to store all the attributes for this object.
     attributes = []  # (attr, value, access_modifier, css_class, title)
     # List to store all the functions for this object
@@ -366,6 +358,14 @@ def _handle_unique_obj(
     # This prevents a crash because a lazy queryset has too many members.
     if _is_query(obj):
         obj = list(obj)
+
+    # Determine which type of braces should be used.
+    if isinstance(obj, list):
+        braces = '[]'
+    elif isinstance(obj, tuple):
+        braces = '()'
+    else:
+        braces = '{}'
 
     # Try to get the members by using inspect and fallback to an empty list
     # on a raised exception.
