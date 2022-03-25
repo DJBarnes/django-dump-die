@@ -4,7 +4,7 @@
 
   <code class="{{ css_class }}">{{ simple }}</code>
 
-{% elif object %} {# Else if an actual object to process #}
+{% elif object is not None %} {# Else if an actual object to process #}
 
   <span class="type" title="{{ type }}">{{ type }}{% if is_iterable %}:{{ object|length }}{% endif %}</span>
   {{ braces.0 }}
