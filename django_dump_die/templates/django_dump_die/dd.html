@@ -19,7 +19,7 @@
   </head>
   <body>
     {# for each object to output #}
-    {% for obj_name, obj in objects %}
+    {% for obj_name, obj, root_index_start, root_index_end in objects %}
       {# If is is not the first object, add a horizontal line to separate #}
       {% if not forloop.first %}<hr>{% endif %}
       {# Display the name of the dumped object so long as not None #}
@@ -27,7 +27,7 @@
         <span title="Dumped Object">{{ obj_name }}</span>:
       {% endif %}
       {# Use dd_object template tag to dump object #}
-      {% dd_object obj None forloop.counter %}
+      {% dd_object obj None forloop.counter 0 root_index_start root_index_end %}
     {% endfor %}
   </body>
 </html>

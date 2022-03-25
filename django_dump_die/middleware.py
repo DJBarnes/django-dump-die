@@ -15,6 +15,7 @@ from .views import dd_view
 logger = logging.getLogger('django_dump_die')
 dump_objects = []
 
+
 class DumpAndDie(Exception):
     """
     DumpAndDie Exception.
@@ -38,7 +39,7 @@ def _retrieve_name(var):
     return result
 
 
-def dd(obj, deepcopy=False):
+def dd(obj, start_index=None, end_index=None, deepcopy=False):
     """
     Immediately return debug template with info about objects.
     Includes any objects passed in through dump().
@@ -48,15 +49,31 @@ def dd(obj, deepcopy=False):
     obj_name = _retrieve_name(obj)
 
     if settings.DEBUG:
+        # Handle if start_index set.
+        if start_index:
+            try:
+                start_index = int(start_index)
+            except TypeError:
+                start_index = None
+
+        # Handle if end_index set.
+        if end_index:
+            try:
+                end_index = int(end_index)
+            except:
+                end_index = None
+
+        # Handle if deepcopy set.
         if deepcopy:
             obj = copy.deepcopy(obj)
 
+        # Run dd core logic.
         raise DumpAndDie(
-            (obj_name, obj,)
+            (obj_name, obj, start_index, end_index),
         )
 
 
-def dump(obj, deepcopy=False):
+def dump(obj, start_index=None, end_index=None, deepcopy=False):
     """
     Show debug template whenever response finishes.
     dd() will also include objects from dump().
@@ -68,10 +85,13 @@ def dump(obj, deepcopy=False):
     obj_name = _retrieve_name(obj)
 
     if settings.DEBUG:
+        # Handle if deepcopy set.
         if deepcopy:
             obj = copy.deepcopy(obj)
+
+        # Run dd core logic.
         dump_objects.append(
-            (obj_name, obj,)
+            (obj_name, obj, start_index, end_index),
         )
 
 
@@ -97,7 +117,6 @@ class DumpAndDieMiddleware:
         Return standard response if nothing dumped.
         Otherwise return dump view.
         """
-
         # Get the response
         response = self.get_response(request)
 
