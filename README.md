@@ -111,6 +111,29 @@ This is intentional, and the command will still run. This is because this comman
 and is not meant to stay long-term. The red squiggle helps identify it as something that should be removed before
 any actual commits.
 
+### Available Parameters
+Both the `dd()` and `dump()` functions take the same parameters, in the same ordering:
+
+#### Arg1 / Kwarg: index_range
+Default: `None`
+
+An index range to modify output values of parent entity (if iterable).<br>
+Allows changing the range of which direct-child indexes are fully examined. Only affects the direct children of the
+outermost parent object. Can be useful with large datasets, when only wanting to examine a specific range of values.
+
+When an index range is passed, it overrides the `DJANGO_DD_MAX_ITERABLE_LENGTH` value set in settings.
+
+Value can be:
+* A single index.
+* A range of two values, to specify starting and ending index (defined such as in a list or tuple).
+
+#### Arg2 / Kwarg: deepcopy
+Default: `False`
+
+A boolean to specify if passed objects should be deep-copied before being passed into dd/dump logic.<br>
+If set to `True`, then preserves exact state of object at time of passing into dd/dump.
+
+
 ## Configuration
 The package has a few configuration options available to you. Each of the following options can be set by adding the associated option and value into your settings file for Django.
 
