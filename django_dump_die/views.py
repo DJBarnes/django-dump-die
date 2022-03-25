@@ -31,6 +31,10 @@ def dd_view(request, objects):
 def example(request):
     """Example Test"""
 
+    def test_func():
+        """Test doc string"""
+        return 42;
+
     class EmptyClass:
         """Empty sample class"""
         pass
@@ -94,6 +98,7 @@ def example(request):
         'other_class': SomeOtherClass(),
     }
 
+    dump(test_func)
     dump(x)
     dd('hello')
 
