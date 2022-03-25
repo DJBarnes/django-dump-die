@@ -5,6 +5,7 @@ import re
 import types
 
 from collections.abc import Sequence
+from decimal import Decimal
 from django import template
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -18,6 +19,7 @@ SIMPLE_TYPES = [
     str,
     bytes,
     int,
+    Decimal,
     float,
     bool,
     types.ModuleType,
@@ -215,7 +217,7 @@ def dd_object(obj, parent_len, skip=None, curr_iteration=0, curr_depth=0, root_i
 
     # Handle if object is in skip set, aka already processed.
     elif unique in skip:
-        # Found in skip set. Skip further handling of if clauses and go to end of function.
+        # Complex object found in skip set. Skip further handling of if clauses and go to end of function.
         pass
 
     # Handle if we're at the root's element direct children (depth of 1),
@@ -306,7 +308,7 @@ def dd_object(obj, parent_len, skip=None, curr_iteration=0, curr_depth=0, root_i
 
 def _handle_simple_type(obj):
     """
-    Logic for outputting information about a "simpel type".
+    Logic for outputting information about a "simple type".
     Includes str, numbers, bools, etc.
     """
     # Determine which css class to use.
@@ -317,7 +319,7 @@ def _handle_simple_type(obj):
         css_class = 'string'
     elif isinstance(obj, bool):
         css_class = 'bool'
-    elif isinstance(obj, (int, float, bytes)):
+    elif isinstance(obj, (int, Decimal, float, bytes)):
         css_class = 'number'
 
     # Since simple type, return safe representation of simple type and
