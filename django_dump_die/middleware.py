@@ -79,12 +79,6 @@ def _sanitize_index_range(index_range):
         except:
             end_index = None
 
-    # Handle if user provided a start_index that is higher than end_index.
-    if start_index and end_index and start_index > end_index:
-        temp = start_index
-        start_index = end_index
-        end_index = temp
-
     return start_index, end_index
 
 

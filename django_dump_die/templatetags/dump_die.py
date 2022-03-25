@@ -250,6 +250,28 @@ def dd_object(obj, skip=None, curr_iteration=0, curr_depth=0, root_index_start=N
         if root_index_end is None:
             root_index_end = MAX_ITERABLE_LENGTH
 
+        # Handle if provided start_index is negative.
+        if root_index_start < 0:
+            root_index_start = len(obj) + root_index_start
+
+            # Reset if still negative.
+            if root_index_start < 0:
+                root_index_start = 0
+
+        # Handle if provided end_index is negative.
+        if root_index_end < 0:
+            root_index_end = len(obj) + root_index_end
+
+            # Reset if still negative.
+            if root_index_end < 0:
+                root_index_end = 0
+
+        # Handle if user provided a start_index that is higher than end_index.
+        if root_index_start > root_index_end:
+            temp = root_index_start
+            root_index_start = root_index_end
+            root_index_end = temp
+
         # Handle if current index is between root_index values.
         # Otherwise fallback to "already processed" logic.
         if curr_iteration >= (root_index_start + 1) and curr_iteration <= (root_index_end + 1):
