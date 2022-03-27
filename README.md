@@ -32,7 +32,7 @@ INSTALLED_APPS = [
 
 <br>
 
-Lastly add the corresponding middleware to your Django `settings.py` file:
+Next add the corresponding middleware to your Django `settings.py` file:
 ```python
 MIDDLEWARE = [
     ...
@@ -42,6 +42,14 @@ MIDDLEWARE = [
     ...
 ]
 ```
+
+Lastly, ensure that you have DEBUG set to True in your Django `settings.py` file:
+```python
+DEBUG = True
+```
+**Note:** Neither the dump command nor the dd command will do anything if DEBUG is not set to True.
+With that said, this is a tool for debugging. You should not include this package
+in production nor should you ever have DEBUG set to True in production.
 
 ## Usage
 The middleware is where most of this package's heavy lifting happens.
@@ -115,23 +123,38 @@ any actual commits.
 Both the `dd()` and `dump()` functions take the same parameters, in the same ordering:
 
 #### Arg1 / Kwarg: index_range
-Default: `None`
+Default: ```None```
 
 An index range to modify output values of parent entity (if iterable).<br>
 Allows changing the range of which direct-child indexes are fully examined. Only affects the direct children of the
 outermost parent object. Can be useful with large datasets, when only wanting to examine a specific range of values.
 
-When an index range is passed, it overrides the `DJANGO_DD_MAX_ITERABLE_LENGTH` value set in settings.
+When an index range is passed, the end index of that range overrides the `DJANGO_DD_MAX_ITERABLE_LENGTH` value set in settings.
 
 Value can be:
 * A single index.
 * A range of two values, to specify starting and ending index (defined such as in a list or tuple).
+```python
+# Single index
+dump(my_list, index_range=18)  # Will do from index 18 to 18 + DJANGO_DD_MAX_ITERABLE_LENGTH
+# Range index
+dd(my_list, index_range=(18, 37))  # Will do from index 18 to 37
+```
 
 #### Arg2 / Kwarg: deepcopy
-Default: `False`
+Default: ```False```
 
 A boolean to specify if passed objects should be deep-copied before being passed into dd/dump logic.<br>
 If set to `True`, then preserves exact state of object at time of passing into dd/dump.
+Useful if you are dumping an object, then making changes to that object, and then dumping it again.
+```python
+# Dump starting state
+dump(my_list, deepcopy=True)
+# Update list
+my_list[5] = 42
+# Dump updated state
+dd(my_list)
+```
 
 
 ## Configuration

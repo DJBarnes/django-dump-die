@@ -8,7 +8,10 @@ control the overall look, feel, and functionality of the tool.
 DJANGO_DD_MAX_RECURSION_DEPTH
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As the tool inspects an object it recurses into other objects that are part of the original object. This recursion could become quite deep depending on the size of the object being dumped. This setting will limit the depth of recursion as to prevent long processing times.
+As the tool inspects an object it recurses into other objects that are part of
+the original object. This recursion could become quite deep depending on the
+size of the object being dumped. This setting will limit the depth of recursion
+as to prevent long processing times.
 **NOTE:** Setting the value to ```None``` will mean no limit.
 
 :Type: ``int``
@@ -23,7 +26,10 @@ Example::
 DJANGO_DD_MAX_ITERABLE_LENGTH
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As the tool inspects an iterable object it will recurse into each object in the iterable. This may mean a lot of recursion for a very long iterable. This setting will limit the length or processed elements in an iterable to prevent long processing times.
+As the tool inspects an iterable object it will recurse into each object in the
+iterable. This may mean a lot of recursion for a very long iterable. This
+setting will limit the length or processed elements in an iterable to prevent
+long processing times.
 **NOTE:** Setting the value to ```None``` will mean no limit.
 
 :Type: ``int``
@@ -37,7 +43,8 @@ Example::
 DJANGO_DD_ADDITIONAL_SIMPLE_TYPES
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When the tool encounters a defined simple type it will no longer recurse further and instead simply output a string representation of that simple type.
+When the tool encounters a defined simple type it will no longer recurse
+further and instead simply output a string representation of that simple type.
 Predefined simple types include:
 * str
 * bytes
@@ -47,7 +54,9 @@ Predefined simple types include:
 * module
 * BoundField
 
-If you would like to add additional simple types that are specific to your project, you can do that here. Be sure to list each type in the list as a string of the type to treat as a simple type.
+If you would like to add additional simple types that are specific to your
+project, you can do that here. Be sure to list each type in the list as a
+string of the type to treat as a simple type.
 
 :Type: ``list``
 :Default: ``[]``
@@ -62,7 +71,9 @@ Example::
 DJANGO_DD_INCLUDE_PRIVATE_MEMBERS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, Private members (those that start with an underscore) are not included in the output. If you would like to include private members in the output set this setting to
+By default, Private members (those that start with an underscore) are not
+included in the output. If you would like to include private members in the
+output set this setting to: ``True``
 
 :Type: ``bool``
 :Default: ``False``
@@ -75,7 +86,9 @@ Example::
 DJANGO_DD_INCLUDE_MAGIC_METHODS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, Magic methods (those enclosed by dunders) are not included in the output. If you would like to include magic methods in the output, set this setting to ``True``.
+By default, Magic methods (those enclosed by dunders) are not included in the
+output. If you would like to include magic methods in the output, set this
+setting to ``True``.
 
 :Type: ``bool``
 :Default: ``False``
@@ -88,7 +101,8 @@ Example::
 DJANGO_DD_INCLUDE_ATTRIBUTES
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, all attributes for an object are included in the output. If you would like to disable this, set this setting to ``False``.
+By default, all attributes for an object are included in the output. If you
+would like to disable this, set this setting to ``False``.
 
 :Type: ``bool``
 :Default: ``True``
@@ -101,7 +115,8 @@ Example::
 DJANGO_DD_INCLUDE_FUNCTIONS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, all methods for an object are not included in the output. If you would like to include them, set this setting to ``True``.
+By default, all methods for an object are not included in the output. If you
+would like to include them, set this setting to ``True``.
 
 :Type: ``bool``
 :Default: ``False``
@@ -114,7 +129,11 @@ Example::
 DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, everything is collapsed when dumped to the screen. If you would like the first level of expansion that shows the attribute types (Attributes and Functions heading) already expanded, set this setting to ``True``. This will not show you the attributes or functions for a method, but rather the headings for those sections.
+By default, everything is collapsed when dumped to the screen. If you would
+like the first level of expansion that shows the attribute types (Attributes
+and Functions heading) already expanded, set this setting to ``True``. This
+will not show you the attributes or functions for a method, but rather the
+headings for those sections.
 
 :Type: ``bool``
 :Default: ``False``
@@ -127,7 +146,10 @@ Example::
 DJANGO_DD_ATTRIBUTES_START_EXPANDED
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, all attributes are already expanded so that when you expand a specific object to show the attribute types you can immediately see the attributes without having to also expand the attributes section. If you would rather have this closed by default, set this setting to ``False``.
+By default, all attributes are already expanded so that when you expand a
+specific object to show the attribute types you can immediately see the
+attributes without having to also expand the attributes section. If you would
+rather have this closed by default, set this setting to ``False``.
 
 :Type: ``bool``
 :Default: ``False``
@@ -140,7 +162,10 @@ Example::
 DJANGO_DD_FUNCTIONS_START_EXPANDED
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, all functions are collapsed so that when you expand a specific object to show the attribute types you still have to manually expand the functions section. If you would rather have this section already expanded, set this setting to ``True``.
+By default, all functions are collapsed so that when you expand a specific
+object to show the attribute types you still have to manually expand the
+functions section. If you would rather have this section already expanded, set
+this setting to ``True``.
 
 :Type: ``bool``
 :Default: ``False``
@@ -153,7 +178,10 @@ Example::
 DJANGO_DD_FORCE_LIGHT_THEME
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, the included color theme will change depending on the setting of your browser to either light or dark. If you normally have your browser set to dark but would like to force this tool to display the light theme, change this setting to ``True``.
+By default, the included color theme will change depending on the setting of
+your browser to either light or dark. If you normally have your browser set to
+dark but would like to force this tool to display the light theme, change this
+setting to ``True``.
 
 :Type: ``bool``
 :Default: ``False``
@@ -166,7 +194,10 @@ Example::
 DJANGO_DD_FORCE_DARK_THEME
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, the included color theme will change depending on the setting of your browser to either light or dark. If you normally have your browser set to light but would like to force this tool to display the dark theme, change this setting to ``True``.
+By default, the included color theme will change depending on the setting of
+your browser to either light or dark. If you normally have your browser set to
+light but would like to force this tool to display the dark theme, change this
+setting to ``True``.
 
 :Type: ``bool``
 :Default: ``False``
@@ -179,7 +210,11 @@ Example::
 DJANGO_DD_COLOR_SCHEME
 ^^^^^^^^^^^^^^^^^^^^^^
 
-By default, the tool uses the Solarized color scheme. If you want full control over the color theme and would like to define your own, here is where you do that. The format is in dictionary format and needs to follow the same format. In the sample below, ``<value>`` should be a string hexcode for a color with the hash symbol included.
+By default, the tool uses the Solarized color scheme. If you want full control
+over the color theme and would like to define your own, here is where you do
+that. The format is in dictionary format and needs to follow the same format.
+In the sample below, ``<value>`` should be a string hexcode for a color with
+the hash symbol included.
 EX: ``#FF88CC``.
 
 :Type: ``dict``

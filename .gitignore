@@ -142,3 +142,6 @@ DEBUG
 .env
 env.py
 SECRET_KEY
+
+# Ignore apps.py as it is only needed for the restructured text extension
+apps.py

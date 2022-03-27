@@ -15,6 +15,7 @@ used to quickly and easily output an object's full data to screen.
    :caption: Contents:
 
    quickstart
+   usage
    configuration
    api_reference
 
