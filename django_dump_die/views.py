@@ -35,6 +35,10 @@ def example(request):
         """Test doc string"""
         return 42;
 
+    def test_func_param(param1, *args, **kwargs):
+        """Test param doc string"""
+        return param1
+
     class EmptyClass:
         """Empty sample class"""
         pass
@@ -99,6 +103,7 @@ def example(request):
     }
 
     dump(test_func)
+    dump(test_func_param)
     dump(x)
     dd('hello')
 

@@ -26,18 +26,37 @@ class DumpAndDie(Exception):
         self.object = obj
 
 
+def _get_callable_name(var, results):
+    """
+    Do extra processing for a function to get it's information.
+    """
+    new_results = []
+    for result in results:
+        # Get the method signature and fall back to simply appending
+        # parentheses to the method name on exception.
+        try:
+            result += str(inspect.signature(var))
+        except Exception:
+            result += '()'
+        new_results.append(result)
+
+    return new_results
+
+
 def _retrieve_name(var):
     """
     Inspects call stack in an attempt to grab names of variables to display in dd output.
     Names are determined by value. On multiple names matching given value, all corresponding names are returned.
     """
-    # Handle for functions.
-    if callable(var):
-        return 'function'
 
-    # Handle for all other value types.
+    # Get dumped variable name.
     callers_local_vars = inspect.currentframe().f_back.f_back.f_locals.items()
     results = [var_name for var_name, var_val in callers_local_vars if var_val is var]
+
+    # If function(s) get the callable name.
+    if callable(var):
+        results = _get_callable_name(var, results)
+
     result = None
     if len(results) > 0:
         result = ", ".join(results)
@@ -97,8 +116,9 @@ def dd(obj, index_range=None, deepcopy=False):
 
     if settings.DEBUG:
         # Handle if function.
+        function_doc = None
         if callable(obj):
-            obj = "{0}() defined at {1}".format(obj.__name__, obj.__module__)
+            function_doc = inspect.getdoc(obj)
 
         # Sanitize and validate provided index values.
         start_index, end_index = _sanitize_index_range(index_range)
@@ -109,7 +129,7 @@ def dd(obj, index_range=None, deepcopy=False):
 
         # Run dd core logic.
         raise DumpAndDie(
-            (obj_name, obj, start_index, end_index),
+            (obj_name, obj, function_doc, start_index, end_index),
         )
 
 
@@ -126,8 +146,9 @@ def dump(obj, index_range=None, deepcopy=False):
 
     if settings.DEBUG:
         # Handle if function.
+        function_doc = None
         if callable(obj):
-            obj = "{0}() defined at {1}".format(obj.__name__, obj.__module__)
+            function_doc = inspect.getdoc(obj)
 
         # Sanitize and validate provided index values.
         start_index, end_index = _sanitize_index_range(index_range)
@@ -138,7 +159,7 @@ def dump(obj, index_range=None, deepcopy=False):
 
         # Run dd core logic.
         dump_objects.append(
-            (obj_name, obj, start_index, end_index),
+            (obj_name, obj, function_doc, start_index, end_index),
         )
 
 
