@@ -50,6 +50,9 @@ INCLUDE_PRIVATE_METHODS = getattr(settings, 'DJANGO_DD_INCLUDE_PRIVATE_MEMBERS',
 # Whether the output should include magic methods.
 INCLUDE_MAGIC_METHODS = getattr(settings, 'DJANGO_DD_INCLUDE_MAGIC_METHODS', False)
 
+# Stores the uniques for each dumped root object.
+root_skip = {}
+
 
 def _get_class_name(obj):
     """Get class name of an object."""
@@ -59,6 +62,16 @@ def _get_class_name(obj):
     except Exception:
         pass
     return name
+
+
+def _get_access_modifier(obj):
+    """Return the access modifier that should be used."""
+    if _is_magic(obj):
+        return '-'
+    elif _is_private(obj):
+        return '#'
+    else:
+        return '+'
 
 
 def _safe_repr(obj):
@@ -147,21 +160,91 @@ def _is_private(obj):
 def _is_magic(obj):
     """Return True if object is private."""
     if obj is not None:
-        return isinstance(obj, str) and obj.startswith('__')
+        return isinstance(obj, str) and obj.startswith('__') and obj.endswith('__')
 
 
-def _get_access_modifier(obj):
-    """Return the access modifier that should be used."""
-    if _is_magic(obj):
-        return '-'
-    elif _is_private(obj):
-        return '#'
-    else:
-        return '+'
+def _is_simple_type(obj):
+    """Return if the obj is a simple type"""
+    return (
+        obj is None
+        or type(obj) in SIMPLE_TYPES
+        or _get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
+    )
+
+
+def _should_render_full_object(current_depth, current_iteration):
+    """Return if we should render the full object"""
+    return (
+        # Ensure all dump calls are processed.
+        current_depth == 0
+        # Check for any nested objects
+        or (
+            # Check if the max_recursion is set to None or we have not reached it yet.
+            (
+                MAX_RECURSION_DEPTH is None
+                or current_depth <= MAX_RECURSION_DEPTH
+            )
+
+            # And if the max_iterable_length is set to None,
+            # or we have not reached it yet or we are at the root level.
+            and (
+                MAX_ITERABLE_LENGTH is None
+                or current_iteration <= MAX_ITERABLE_LENGTH
+            )
+        )
+    )
+
+
+def _process_root_indices(start, end, parent_length):
+    """Process the passed in start and end indices into proper format"""
+    # Handle unique indexing logic for root element.
+    # We do not do this logic for child elements (depth > 0), but allow it for the root
+    # element, in case user wants to only run dd for a specific range of values.
+
+    # Save for later processing
+    orig_end = end
+
+    # Handle defaults.
+    # If we got this far, at least one is set. Make sure the other is set as well.
+    if start is None:
+        start = 0
+    if end is None:
+        end = MAX_ITERABLE_LENGTH
+
+    # Handle if provided start_index is negative.
+    if start < 0:
+        start = parent_length + start
+
+        # Reset if still negative.
+        if start < 0:
+            start = 0
+
+    # If the original value of end is None, there is no specified end and
+    # it makes sense to then run from the start, now that it is calculated,
+    # to the max iterable length.
+    if orig_end is None:
+        end = start + MAX_ITERABLE_LENGTH
+
+    # Handle if provided end_index is negative.
+    if end < 0:
+        end = parent_length + end
+
+        # Reset if still negative.
+        if end < 0:
+            end = 0
+
+    # Handle if user provided a start_index that is higher than end_index.
+    if start > end:
+        temp = start
+        start = end
+        end = temp
+
+    # Return the processed indices.
+    return start, end
 
 
 @register.inclusion_tag('django_dump_die/_dd_object.html')
-def dd_object(obj, parent_len, skip=None, current_iteration=0, current_depth=0, root_index_start=None, root_index_end=None):
+def dd_object(obj, root_obj, skip=None, current_iteration=0, current_depth=0, root_index_start=None, root_index_end=None):
     """
     Return info about object.
     If we have exceeded specified iteration count or depth, OR if object is of simple type, then output minimal info.
@@ -176,26 +259,10 @@ def dd_object(obj, parent_len, skip=None, current_iteration=0, current_depth=0, 
     :param root_index_start: Starting index for root iterable object. If None, uses default behavior.
     :param root_index_end: Ending index for root iterable object. If None, uses default behavior.
     """
+
     # Set up set to store uniques to skip if not passed in.
     # Will be used to skip objects already done to prevent infinite loops.
     skip = skip or set()
-
-    # Validate root_index values.
-    if root_index_start is not None:
-        # Ensure proper typing.
-        try:
-            root_index_start = int(root_index_start)
-        except (TypeError, ValueError):
-            # Invalid type. Does not support integers. Reset to default.
-            root_index_start = None
-
-    if root_index_end is not None:
-        # Ensure proper typing.
-        try:
-            root_index_end = int(root_index_end)
-        except (TypeError, ValueError):
-            # Invalid type. Does not support integers. Reset to default.
-            root_index_end = None
 
     # Create unique via hash and fallback to id on exception.
     try:
@@ -205,62 +272,46 @@ def dd_object(obj, parent_len, skip=None, current_iteration=0, current_depth=0, 
     # Append the class name to the unique to really make unique.
     unique = f'{_get_class_name(obj)}_{unique}'
 
+    # If we are at the root depth we want to keep track of the same object
+    # being dumped multiple times so that we can append a number to the unique.
+    if current_depth == 0:
+        # If the unique is already in root_skip.
+        if unique in root_skip:
+            # Get the current count out.
+            root_count = root_skip[unique]
+            # Increment the count.
+            root_skip[unique] += 1
+            # Append the current iteration.
+            unique = f'{unique}_{root_count}'
+        else:
+            # Else add the unique to the root_skip.
+            root_skip[unique] = 1
+
+    # Following section will determine what should get rendered out.
+
     # Handle if object is in skip set, aka already processed.
     if unique in skip:
         # Complex object found in skip set. Skip further handling of if clauses and go to end of function.
         pass
 
     # Handle if obj is a simple type (Null/None, int, str, bool, and basic number types).
-    elif (
-        obj is None
-        or type(obj) in SIMPLE_TYPES
-        or _get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
-    ):
+    elif _is_simple_type(obj):
         return _handle_simple_type(obj)
 
-    # Handle if we're at the root's element direct children (depth of 1),
-    # element is iterable, AND "root_index" values are set.
-    elif (
-        current_depth == 1
-        and (root_index_start is not None or root_index_end is not None)
-        and _is_iterable(obj)
-    ):
+    # Handle if element is iterable and we are at the root's element direct children (depth of 1),
+    elif _is_iterable(root_obj) and current_depth == 1:
+
         # Handle unique indexing logic for root element.
-        # We do not do this logic for child elements (depth > 0), but allow it for the root
-        # element, in case user wants to only run dd for a specific range of values.
-
-        # Handle defaults.
-        # If we got this far, at least one is set. Make sure the other is set as well.
-        if root_index_start is None:
-            root_index_start = 0
-        if root_index_end is None:
-            root_index_end = MAX_ITERABLE_LENGTH
-
-        # Handle if provided start_index is negative.
-        if root_index_start < 0:
-            root_index_start = parent_len + root_index_start
-
-            # Reset if still negative.
-            if root_index_start < 0:
-                root_index_start = 0
-
-        # Handle if provided end_index is negative.
-        if root_index_end < 0:
-            root_index_end = parent_len + root_index_end
-
-            # Reset if still negative.
-            if root_index_end < 0:
-                root_index_end = 0
-
-        # Handle if user provided a start_index that is higher than end_index.
-        if root_index_start > root_index_end:
-            temp = root_index_start
-            root_index_start = root_index_end
-            root_index_end = temp
+        root_index_start, root_index_end = _process_root_indices(
+            root_index_start,
+            root_index_end,
+            len(root_obj)
+        )
 
         # Handle if current index is between root_index values.
         # Otherwise fallback to "already processed" logic.
-        if current_iteration >= (root_index_start + 1) and current_iteration <= (root_index_end + 1):
+        if current_iteration >= root_index_start and current_iteration < root_index_end:
+
             # Handle for new "unique" object output.
             return _handle_unique_obj(
                 obj,
@@ -271,19 +322,8 @@ def dd_object(obj, parent_len, skip=None, current_iteration=0, current_depth=0, 
             )
 
     # Handle if not at root element and/or "root_index" values are not set.
-    elif (
-        # Check if the max_recursion is set to None, or we have not reached it yet.
-        (
-            MAX_RECURSION_DEPTH is None
-            or current_depth <= MAX_RECURSION_DEPTH
-        )
+    elif _should_render_full_object(current_depth, current_iteration):
 
-        # And if the max_iterable_length is set to None, or we have not reached it yet.
-        and (
-            MAX_ITERABLE_LENGTH is None
-            or current_iteration <= MAX_ITERABLE_LENGTH
-        )
-    ):
         # Handle for new "unique" object output.
         return _handle_unique_obj(
             obj,
@@ -296,7 +336,8 @@ def dd_object(obj, parent_len, skip=None, current_iteration=0, current_depth=0, 
         )
 
     # If we're here then the object has already been processed before,
-    # or we have reached the max depth or number of iterations.
+    # or we have reached the max depth or number of iterations
+    # or outside the bounds of the root indexes to process.
     # In any case, just return the type and unique of the object for output.
     return {
         'type': type(obj).__name__,

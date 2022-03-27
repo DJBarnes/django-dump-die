@@ -36,7 +36,7 @@
           <span title="Dumped Object">{{ obj_name }}</span>:
         {% endif %}
         {# Use dd_object template tag to dump object #}
-        {% dd_object obj obj|length None forloop.counter 0 root_index_start root_index_end %}
+        {% dd_object obj obj None forloop.counter0 0 root_index_start root_index_end %}
       {% endif %}
     {% endfor %}
   </body>

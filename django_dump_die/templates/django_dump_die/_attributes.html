@@ -30,7 +30,7 @@
         {% if attr %}
           <span class="{{ css_class }}" title="{{ title }}">{{ attr }}</span>:
         {% endif %}
-        {% dd_object value object|length skip forloop.counter new_depth root_index_start root_index_end %}
+        {% dd_object value object skip forloop.counter0 new_depth root_index_start root_index_end %}
       {% endwith %}
     </li>
   {% empty %}

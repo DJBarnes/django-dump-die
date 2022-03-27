@@ -112,9 +112,11 @@ def dd(obj, index_range=None, deepcopy=False):
 
     Does nothing if DEBUG != True.
     """
-    obj_name = _retrieve_name(obj)
 
     if settings.DEBUG:
+        # Get object name
+        obj_name = _retrieve_name(obj)
+
         # Handle if function.
         function_doc = None
         if callable(obj):
@@ -142,9 +144,11 @@ def dump(obj, index_range=None, deepcopy=False):
 
     NOTE: Not thread safe, this will collect objects server wide, dumped objects can come from multiple requests.
     """
-    obj_name = _retrieve_name(obj)
 
     if settings.DEBUG:
+        # Get object name
+        obj_name = _retrieve_name(obj)
+
         # Handle if function.
         function_doc = None
         if callable(obj):
