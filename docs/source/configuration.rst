@@ -46,13 +46,15 @@ DJANGO_DD_ADDITIONAL_SIMPLE_TYPES
 When the tool encounters a defined simple type it will no longer recurse
 further and instead simply output a string representation of that simple type.
 Predefined simple types include:
-* str
-* bytes
-* int
-* float
+
 * bool
-* module
 * BoundField
+* bytes
+* Decimal
+* float
+* int
+* module
+* str
 
 If you would like to add additional simple types that are specific to your
 project, you can do that here. Be sure to list each type in the list as a

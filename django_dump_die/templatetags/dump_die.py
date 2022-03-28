@@ -16,14 +16,14 @@ register = template.Library()
 
 # Simple types that do not need to be recursively inspected.
 SIMPLE_TYPES = [
-    str,
+    bool,
+    BoundField,
     bytes,
-    int,
     Decimal,
     float,
-    bool,
+    int,
     types.ModuleType,
-    BoundField,
+    str,
 ]
 
 
