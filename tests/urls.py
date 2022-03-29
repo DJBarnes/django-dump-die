@@ -9,5 +9,5 @@ from . import views
 
 
 urlpatterns = [
-    path('string/', views.string_example, name='string_example'),
+    path('simple', views.simple_example, name='simple_example'),
 ]
