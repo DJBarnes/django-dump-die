@@ -285,6 +285,8 @@ By default, the tool uses the Solarized color scheme. If you want full control o
         'type': <value>,            #  Complex Types (non-int, float, string, bool, None)
         'attribute': <value>,       #  Class attribute
         'function': <value>,        #  Class functions
+        'module': <value>,          #  Module via ModuleType
+        'bound': <value>,           #  Django Bound Form Field
         'docs': <value>,            #  Class function documentation
         'constant': <value>,        #  Class constants
         'index': <value>,           #  Index values for indexable types
@@ -294,6 +296,7 @@ By default, the tool uses the Solarized color scheme. If you want full control o
         'number': <value>,          #  Ints and Floats
         'none': <value>,            #  None
         'empty': <value>,           #  No Attributes or methods available
+        'default': <value>,         #  Default color if does not fit into any of the above
     }
 }
 ```

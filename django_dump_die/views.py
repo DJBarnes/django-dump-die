@@ -1,4 +1,6 @@
 """Views for DumpDie"""
+from decimal import Decimal
+from types import ModuleType
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -76,10 +78,13 @@ def example(request):
 
         def __init__(self, *args, **kwargs):
             self.my_number = 32
+            self.my_float = 32.5
+            self.my_decimal = 32.5
             self.my_string = 'A super cool string'
             self.works = True
             self.nothing = None
             self.bytes = bytes('My Bytes', 'utf-8')
+            self.module = ModuleType('django.html')
             self.list_o_stuff = ['A', 'B', 'C']
             self.sample_set = {'A', 'B', 'C'}
             self.sample_tuple = ('A', 12, True)

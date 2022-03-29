@@ -39,6 +39,12 @@ a.arrow-toggle {
 .function {
     color: #268bd2;
 }
+.module {
+    color: #268bd2;
+}
+.bound {
+    color: #268bd2;
+}
 .docs {
     color: #586e75;
 }
@@ -65,6 +71,9 @@ a.arrow-toggle {
 }
 .empty {
     color: #dc322f;
+}
+.default {
+    color: #586e75;
 }
 
 @media (prefers-color-scheme: light)

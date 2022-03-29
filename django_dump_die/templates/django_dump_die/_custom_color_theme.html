@@ -51,6 +51,16 @@
             color: {{ custom_color_theme.types.function }};
         }
       {% endif %}
+      {% if custom_color_theme.types.module %}
+        .module {
+            color: {{ custom_color_theme.types.module }};
+        }
+      {% endif %}
+      {% if custom_color_theme.types.bound %}
+        .bound {
+            color: {{ custom_color_theme.types.bound }};
+        }
+      {% endif %}
       {% if custom_color_theme.types.docs %}
         .docs {
             color: {{ custom_color_theme.types.docs }};
@@ -94,6 +104,11 @@
       {% if custom_color_theme.types.empty %}
         .empty {
             color: {{ custom_color_theme.types.empty }};
+        }
+      {% endif %}
+      {% if custom_color_theme.types.empty %}
+        .default {
+            color: {{ custom_color_theme.types.default }};
         }
       {% endif %}
     {% endif %}

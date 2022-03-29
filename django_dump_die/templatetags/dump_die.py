@@ -360,6 +360,12 @@ def _handle_simple_type(obj):
         css_class = 'bool'
     elif isinstance(obj, (int, Decimal, float, bytes)):
         css_class = 'number'
+    elif isinstance(obj, types.ModuleType):
+        css_class = 'module'
+    elif isinstance(obj, BoundField):
+        css_class = 'bound'
+    else:
+        css_class = 'default'
 
     # Since simple type, return safe representation of simple type and
     # which css class to use.
