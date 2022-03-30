@@ -109,6 +109,7 @@ def example(request):
 
     dump(test_func)
     dump(test_func_param)
+    dump(x.copy)
     dump(x)
     dd('hello')
 

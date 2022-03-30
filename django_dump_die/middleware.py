@@ -53,6 +53,21 @@ def _retrieve_name(var):
     callers_local_vars = inspect.currentframe().f_back.f_back.f_locals.items()
     results = [var_name for var_name, var_val in callers_local_vars if var_val is var]
 
+    # If no results, it might be that they dumped a function on an object.
+    # rather than a direct function. We can search the members of each var
+    # looking for a possible match.
+    # NOTE: This increases the chance of returning a function name that isn't exactly right.
+    if not results:
+        # Search through each var from the stack frame where dd was called from.
+        for local_var_name, local_var_val in callers_local_vars:
+            # Get the members of the current var.
+            members = inspect.getmembers(local_var_val)
+            # Look for a match. Can include callable as a requirement as we know we are looking for a function.
+            inner_results = [inner_var_name for inner_var_name, inner_var_val in members if callable(inner_var_val) and inner_var_val == var]
+            # If there is a match, set the inner results to the main results.
+            if inner_results:
+                results = inner_results
+
     # If function(s) get the callable name.
     if callable(var):
         results = _get_callable_name(var, results)

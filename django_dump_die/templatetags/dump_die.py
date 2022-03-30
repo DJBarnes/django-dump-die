@@ -252,7 +252,7 @@ def dd_object(obj, root_obj, skip=None, current_iteration=0, current_depth=0, ro
     (Inner children are minimally processed here, and fully processed later in a new call to templatetag.)
 
     :param obj: Object to iterate over and attempt to parse information from.
-    :param parent_len: Length of parent object. Used to calculate negative index values.
+    :param root_obj: Root object. Used to calculate negative index values.
     :param skip: Set of already-processed objects. Used to skip re-processing identical objects.
     :param current_iteration: Current iteration-index. Used to track current index of object we're iterating through.
     :param current_depth: Current depth-index. Used to track how deep of child-members we're iterating through.
