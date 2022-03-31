@@ -79,7 +79,7 @@ def example(request):
         def __init__(self, *args, **kwargs):
             self.my_number = 32
             self.my_float = 32.5
-            self.my_decimal = 32.5
+            self.my_decimal = Decimal(32.5)
             self.my_string = 'A super cool string'
             self.works = True
             self.nothing = None
