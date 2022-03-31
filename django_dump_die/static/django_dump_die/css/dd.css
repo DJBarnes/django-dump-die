@@ -1,6 +1,9 @@
 body {
     font-family: monospace;
     color: #839496;
+
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 hr {
     border: 1px solid;
