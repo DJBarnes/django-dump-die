@@ -412,11 +412,6 @@ def _handle_unique_obj(
     # recursive calls to this template tag.
     skip.add(unique)
 
-    # List to store all the attributes for this object.
-    attributes = []  # (attr, value, access_modifier, css_class, title)
-    # List to store all the functions for this object
-    functions = []  # (attr, doc, access_modifier)
-
     # If the object is a query, evaluate it.
     # This prevents a crash because a lazy queryset has too many members.
     if _is_query(obj):
@@ -430,101 +425,8 @@ def _handle_unique_obj(
     else:
         braces = '{}'
 
-    # Try to get the members by using inspect and fallback to an empty list
-    # on a raised exception.
-    try:
-        members = inspect.getmembers(obj)
-    except Exception:
-        members = []
-
-    # Add type specific members that will not be included from the use of
-    # the inspect.getmembers function.
-    if _is_dict(obj):
-        # Dictionary members.
-        members.extend(obj.items())
-    elif _is_iterable(obj):
-        # Lists, sets, etc.
-        if _is_indexable(obj):
-            # Use indexes as left half.
-            members.extend(list(enumerate(obj)))
-        else:
-            # Use None as left half. Most likely a set.
-            members.extend([(None, x) for x in obj])
-
-    # Now that all members have been collected, time to figure out what
-    # type, access modifier, css class, and title should be used.
-    # For each attribute and value in the members.
-    for attr, value in members:
-
-        # Skip private members if not including them.
-        if _is_private(attr) and not INCLUDE_PRIVATE_METHODS:
-            continue
-
-        # Determine if the value is callable (function).
-        # If so, Functions will just return documentation.
-        is_callable = callable(value)
-        if is_callable:  # Handle member functions.
-
-            # Skip dunder (magic) methods if not including them.
-            if _is_magic(attr) and not INCLUDE_MAGIC_METHODS:
-                continue
-
-            # Get the method signature and fall back to simply appending
-            # parentheses to the method name on exception.
-            try:
-                attr += _safe_str(inspect.signature(value))
-            except Exception:
-                attr += '()'
-
-            # Get the documentation for the method.
-            value = inspect.getdoc(value)
-
-            # Get the access modifier for the method.
-            access_modifier = _get_access_modifier(attr)
-
-            functions.append([attr, value, access_modifier])
-
-        else:  # Handle member attributes.
-
-            # Always skip dunder attributes.
-            if _is_magic(attr):
-                continue
-
-            # If attr is not None (anything but set) change to safe_repr.
-            if attr is not None:
-                attr = _safe_repr(attr)
-
-            # If not a dict and not None, remove the outside quotes
-            # so it looks more like an attribute and not a string.
-            if not _is_dict(obj) and attr is not None:
-                attr = re.sub("'", "", attr)
-
-            # Determine what type attribute is so that the access modifier,
-            # css class, and title can be appropriately set.
-            # Processing order is: Index, const, key, set, attribute
-            if _is_number(attr):  # Index.
-                access_modifier = None
-                css_class = 'index'
-                title = 'Index'
-            elif _is_const(attr):  # Constant.
-                access_modifier = _get_access_modifier(attr)
-                css_class = 'constant'
-                title = 'Constant'
-            elif _is_key(attr):  # Key.
-                access_modifier = None
-                css_class = 'key'
-                title = 'Key'
-            elif attr is None:  # Set.
-                access_modifier = None
-                css_class = ''
-                title = ''
-            else:  # Class Attribute.
-                access_modifier = _get_access_modifier(attr)
-                css_class = 'attribute'
-                title = 'Attribute'
-
-            # Append the attribute information to the list of attributes.
-            attributes.append([attr, value, access_modifier, css_class, title])
+    # Attempt to get corresponding attribute/function values of object.
+    attributes, functions = _get_obj_values(obj)
 
     # Attempt to sort the functions and just ignore any errors.
     try:
@@ -553,3 +455,112 @@ def _handle_unique_obj(
         'root_index_start': root_index_start,
         'root_index_end': root_index_end,
     }
+
+
+def _get_members(obj):
+    """Attempts to get object members. Falls back to an empty list."""
+
+    # Get initial member set or empty list.
+    try:
+        members = inspect.getmembers(obj)
+    except Exception:
+        members = []
+
+    # Add type specific members that will not be included from the use of the inspect.getmembers function.
+    if _is_dict(obj):
+        # Dictionary members.
+        members.extend(obj.items())
+    elif _is_iterable(obj):
+        # Lists, sets, etc.
+        if _is_indexable(obj):
+            # Use indexes as left half.
+            members.extend(list(enumerate(obj)))
+        else:
+            # Use None as left half. Most likely a set.
+            members.extend([(None, x) for x in obj])
+
+    return members
+
+
+def _get_obj_values(obj):
+    """Determines full corresponding member values (attributes/functions) of object."""
+
+    # Initialize attribute/function lists. This is what we ultimately return.
+    attributes = []     # (attr, value, access_modifier, css_class, title)
+    functions = []      # (attr, doc, access_modifier)
+
+    # Attempt to get member values of object. Falls back to empty list on failure.
+    members = _get_members(obj)
+
+    # Once all members have been collected, attempt to figure out what type, access modifier, css class, and title
+    # should be used for each attribute/function/value in the members.
+    for attr, value in members:
+
+        # Skip private members if not including them.
+        if _is_private(attr) and not INCLUDE_PRIVATE_METHODS:
+            continue
+
+        # Determine if the value is callable (function).
+        # If so, Functions will just return documentation.
+        is_callable = callable(value)
+        if is_callable:  # Handle member functions.
+
+            # Skip dunder (magic) methods if not including them.
+            if _is_magic(attr) and not INCLUDE_MAGIC_METHODS:
+                continue
+
+            # Get the method signature and fall back to simply appending parentheses to the method name on exception.
+            try:
+                attr += _safe_str(inspect.signature(value))
+            except Exception:
+                attr += '()'
+
+            # Get the documentation for the method.
+            value = inspect.getdoc(value)
+
+            # Get the access modifier for the method.
+            access_modifier = _get_access_modifier(attr)
+
+            functions.append([attr, value, access_modifier])
+
+        else:  # Handle member attributes.
+
+            # Always skip dunder attributes.
+            if _is_magic(attr):
+                continue
+
+            # If attr is not None (anything but set) change to safe_repr.
+            if attr is not None:
+                attr = _safe_repr(attr)
+
+            # If not a dict and not None, remove the outside quotes so it looks more like an attribute and not a string.
+            if not _is_dict(obj) and attr is not None:
+                attr = re.sub("'", "", attr)
+
+            # Determine what type attribute is so that the access modifier, css class, and title can be appropriately
+            # set. Processing order is: Index, const, key, set, attribute
+            if _is_number(attr):  # Index.
+                access_modifier = None
+                css_class = 'index'
+                title = 'Index'
+            elif _is_const(attr):  # Constant.
+                access_modifier = _get_access_modifier(attr)
+                css_class = 'constant'
+                title = 'Constant'
+            elif _is_key(attr):  # Key.
+                access_modifier = None
+                css_class = 'key'
+                title = 'Key'
+            elif attr is None:  # Set.
+                access_modifier = None
+                css_class = ''
+                title = ''
+            else:  # Class Attribute.
+                access_modifier = _get_access_modifier(attr)
+                css_class = 'attribute'
+                title = 'Attribute'
+
+            # Append the attribute information to the list of attributes.
+            attributes.append([attr, value, access_modifier, css_class, title])
+
+    return (attributes, functions)
