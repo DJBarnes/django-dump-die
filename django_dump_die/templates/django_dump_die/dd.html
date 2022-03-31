@@ -1,4 +1,7 @@
-{% load dump_die static %}<!DOCTYPE html>
+{% load dump_die static %}
+<!DOCTYPE html>
+
+
 <html lang="en">
   <meta charset="utf-8">
   <head>
@@ -17,33 +20,40 @@
         {% include 'django_dump_die/_custom_color_theme.html' %}
     {% endif %}
   </head>
+
   <body>
     {# for each object to output #}
     {% for obj_name, obj, function_doc, root_index_start, root_index_end in objects %}
+
       {# If it is not the first object, add a horizontal line to separate #}
       {% if not forloop.first %}<hr>{% endif %}
 
       {# If dumped object has function_docs, assume function. Otherwise object. #}
       {% if function_doc %}
+
         {# Display the name of the dumped object so long as not None #}
         {% if obj_name is not None %}
           <span title="Dumped Function" class="function">{{ obj_name }}</span>:
         {% else %}
           <span title="Dumped Function" class="empty">Unknown Function</span>:
         {% endif %}
+
         {# Handle function doc output. #}
         {% if multiline_function_docs %}
           <span class="docs indent-docs">{{ function_doc|linebreaks }}</span>
         {% else  %}
           <span class="docs">{{ function_doc }}</span>
         {% endif %}
+
       {% else %}
+
         {# Display the name of the dumped object so long as not None #}
         {% if obj_name is not None %}
           <span title="Dumped Object">{{ obj_name }}</span>:
         {% endif %}
         {# Use dd_object template tag to dump object #}
         {% dd_object obj obj None forloop.counter0 0 root_index_start root_index_end %}
+
       {% endif %}
     {% endfor %}
   </body>

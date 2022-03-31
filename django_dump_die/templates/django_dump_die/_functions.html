@@ -1,6 +1,13 @@
 {% load dump_die %}
 
-<a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".{{ unique }}-functions" aria-label="Open/Close">
+
+<a
+  class="arrow-toggle"
+  title="[Ctrl+click] Expand all children"
+  data-toggle="collapse"
+  data-target=".{{ unique }}-functions"
+  aria-label="Open/Close"
+>
   <span>Functions</span>
   <span id="arrow-{{ unique }}-functions" class="arrow">
     {% if functions_start_expanded %}
@@ -10,15 +17,9 @@
     {% endif %}
   </span>
 </a>
+
 <div
-  class="
-    li-wrapper
-    collapse
-    {{ unique }}-functions
-    {% if functions_start_expanded %}
-      show
-    {% endif %}
-  "
+  class="li-wrapper collapse {{ unique }}-functions{% if functions_start_expanded %}show{% endif %}"
   data-unique-functions="{{ unique }}-functions"
 >
   {% for attr, doc, access_modifier in functions %}
@@ -26,6 +27,7 @@
       {% if access_modifier %}
         <span class="access-modifier">{{ access_modifier }}</span>
       {% endif %}
+
       <span class="function" title="Function">{{ attr }}</span>:
       {% if doc %}
         {# Handle function doc output. #}

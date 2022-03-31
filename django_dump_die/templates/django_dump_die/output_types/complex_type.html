@@ -1,5 +1,6 @@
 
 <span class="type" title="{{ type }}">{{ type }}{% if is_iterable %}:{{ object|length }}{% endif %}</span>
+
 {{ braces.0 }}
 
 <a
@@ -20,17 +21,9 @@
 </a>
 
 <div
-    class="
-      dd-wrapper
-      collapse
-      {{ unique }}
-      {% if attribute_types_start_expanded %}
-        show
-      {% endif %}
-    "
+    class="dd-wrapper collapse {{ unique }} {% if attribute_types_start_expanded %}show{% endif %}"
     data-unique="{{ unique }}"
   >
-
   <ul class="attribute-list">
     {% if include_attributes %}
       {% include "django_dump_die/_attributes.html" %}
@@ -42,4 +35,5 @@
     {% endif %}
   </ul>
 </div>
+
 {{ braces.1 }}

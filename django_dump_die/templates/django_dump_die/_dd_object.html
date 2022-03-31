@@ -1,14 +1,13 @@
 {% load dump_die %}
 
+
 {% if simple %} {# If simple object, just spit out. #}
   {% include 'django_dump_die/output_types/simple_type.html' %}
 
 {% elif object is not None %} {# Else if an actual object to process #}
-
   {% include 'django_dump_die/output_types/complex_type.html' %}
 
 {% else %} {# Else, must be skipped or past max thresholds but still object. #}
-
   {% include 'django_dump_die/output_types/skipped_object.html' %}
 
 {% endif %}
