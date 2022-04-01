@@ -404,7 +404,7 @@ def _handle_simple_type(obj):
         css_class = 'string'
     elif isinstance(obj, bool):
         css_class = 'bool'
-    elif isinstance(obj, (int, Decimal, float, bytes)):
+    elif isinstance(obj, (int, Decimal, float, bytes)) or _is_pseudo_simple_type(obj):
         css_class = 'number'
     elif isinstance(obj, types.ModuleType):
         css_class = 'module'
@@ -413,10 +413,16 @@ def _handle_simple_type(obj):
     else:
         css_class = 'default'
 
+    # Determine which output to use.
+    if _is_pseudo_simple_type(obj) or isinstance(obj, Decimal):
+        output_value = _safe_str(obj)
+    else:
+        output_value = _safe_repr(obj)
+
     # Since simple type, return safe representation of simple type and
     # which css class to use.
     return {
-        'simple': _safe_repr(obj),
+        'simple': output_value,
         'type': _get_obj_type(obj),
         'css_class': css_class,
     }
@@ -446,7 +452,7 @@ def _handle_pseudo_simple_type(obj, unique):
         'multiline_function_docs': MULTILINE_FUNCTION_DOCS,
         'braces': '{}',
         'object': obj,
-        'pseudo_simple': True,
+        'pseudo_simple': _safe_str(obj),
         'unique': unique,
         'type': type(obj).__name__,
         'attributes': attributes,
