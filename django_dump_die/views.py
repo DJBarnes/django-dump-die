@@ -1,9 +1,10 @@
 """Views for DumpDie"""
+from datetime import datetime
 from decimal import Decimal
-from types import ModuleType
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
+from types import ModuleType
 
 
 def dd_view(request, objects):
@@ -87,6 +88,7 @@ def example(request):
             self.nothing = None
             self.bytes = bytes('My Bytes', 'utf-8')
             self.module = ModuleType('django.html')
+            self.datetime = datetime.now()
             self.list_o_stuff = ['A', 'B', 'C']
             self.sample_set = {'A', 'B', 'C'}
             self.sample_tuple = ('A', 12, True)

@@ -16,16 +16,12 @@
 >
   <span class="unique">{{ unique }}</span>
   <span id="arrow-{{ unique }}" class="arrow">
-    {% if attribute_types_start_expanded %}
-      ▼
-    {% else %}
-      ▶
-    {% endif %}
+    {{ attribute_type_arrow }}
   </span>
 </a>
 
 <div
-    class="dd-wrapper collapse {{ unique }} {% if attribute_types_start_expanded %}show{% endif %}"
+    class="dd-wrapper collapse {{ unique }} {{ attribute_type_show }}"
     data-unique="{{ unique }}"
   >
   <ul class="attribute-list">

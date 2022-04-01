@@ -463,14 +463,25 @@ def _handle_intermediate_type(obj, unique):
     # Attempt to get corresponding attribute/function values of object.
     attributes, functions = _get_obj_values(obj)
 
+    # Determine the arrow and state for each expandable section
+    attribute_type_arrow = '▼' if ATTR_TYPES_START_EXPANDED else '▶'
+    attribute_type_show = 'show' if ATTR_TYPES_START_EXPANDED else ''
+    attribute_arrow = '▼' if ATTRIBUTES_START_EXPANDED else '▶'
+    attribute_show = 'show' if ATTRIBUTES_START_EXPANDED else ''
+    function_arrow = '▼' if FUNCTIONS_START_EXPANDED else '▶'
+    function_show = 'show' if FUNCTIONS_START_EXPANDED else ''
+
     # Return information required to render object.
     return {
         'include_attributes': INCLUDE_ATTRIBUTES,
         'include_functions': INCLUDE_FUNCTIONS,
-        'attribute_types_start_expanded': ATTR_TYPES_START_EXPANDED,
-        'attributes_start_expanded': ATTRIBUTES_START_EXPANDED,
-        'functions_start_expanded': FUNCTIONS_START_EXPANDED,
         'multiline_function_docs': MULTILINE_FUNCTION_DOCS,
+        'attribute_type_arrow': attribute_type_arrow,
+        'attribute_type_show': attribute_type_show,
+        'attribute_arrow': attribute_arrow,
+        'attribute_show': attribute_show,
+        'function_arrow': function_arrow,
+        'function_show': function_show,
         'braces': '{}',
         'object': obj,
         'intermediate': _safe_str(obj),
@@ -524,14 +535,25 @@ def _handle_unique_obj(
     # Attempt to get corresponding attribute/function values of object.
     attributes, functions = _get_obj_values(obj)
 
+    # Determine the arrow and state for each expandable section
+    attribute_type_arrow = '▼' if ATTR_TYPES_START_EXPANDED else '▶'
+    attribute_type_show = 'show' if ATTR_TYPES_START_EXPANDED else ''
+    attribute_arrow = '▼' if ATTRIBUTES_START_EXPANDED else '▶'
+    attribute_show = 'show' if ATTRIBUTES_START_EXPANDED else ''
+    function_arrow = '▼' if FUNCTIONS_START_EXPANDED else '▶'
+    function_show = 'show' if FUNCTIONS_START_EXPANDED else ''
+
     # Return information required to render object.
     return {
         'include_attributes': INCLUDE_ATTRIBUTES,
         'include_functions': INCLUDE_FUNCTIONS,
-        'attribute_types_start_expanded': ATTR_TYPES_START_EXPANDED,
-        'attributes_start_expanded': ATTRIBUTES_START_EXPANDED,
-        'functions_start_expanded': FUNCTIONS_START_EXPANDED,
         'multiline_function_docs': MULTILINE_FUNCTION_DOCS,
+        'attribute_type_arrow': attribute_type_arrow,
+        'attribute_type_show': attribute_type_show,
+        'attribute_arrow': attribute_arrow,
+        'attribute_show': attribute_show,
+        'function_arrow': function_arrow,
+        'function_show': function_show,
         'braces': braces,
         'object': obj,
         'unique': unique,

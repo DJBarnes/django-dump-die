@@ -10,16 +10,12 @@
 >
   <span>Attributes</span>
   <span id="arrow-{{ unique }}-attributes" class="arrow">
-    {% if attributes_start_expanded %}
-      ▼
-    {% else %}
-      ▶
-    {% endif %}
+    {{ attribute_arrow }}
   </span>
 </a>
 
 <div
-  class="li-wrapper collapse {{ unique }}-attributes {% if attributes_start_expanded %}show{% endif %}"
+  class="li-wrapper collapse {{ unique }}-attributes {{ attribute_show }}"
   data-unique-attributes="{{ unique }}-attributes"
 >
   {% for attr, value, access_modifier, css_class, title in attributes %}
