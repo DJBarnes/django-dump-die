@@ -443,6 +443,7 @@ def _handle_pseudo_simple_type(obj, unique):
         'attribute_types_start_expanded': ATTR_TYPES_START_EXPANDED,
         'attributes_start_expanded': ATTRIBUTES_START_EXPANDED,
         'functions_start_expanded': FUNCTIONS_START_EXPANDED,
+        'multiline_function_docs': MULTILINE_FUNCTION_DOCS,
         'braces': '{}',
         'object': obj,
         'pseudo_simple': True,
