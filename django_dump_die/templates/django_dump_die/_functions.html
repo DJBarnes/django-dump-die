@@ -10,12 +10,12 @@
 >
   <span>Functions</span>
   <span id="arrow-{{ unique }}-functions" class="arrow">
-    {{ function_arrow }}
+    {{ collapsable.function.arrow }}
   </span>
 </a>
 
 <div
-  class="li-wrapper collapse {{ unique }}-functions {{ function_show }}"
+  class="li-wrapper collapse {{ unique }}-functions {{ collapsable.function.show }}"
   data-unique-functions="{{ unique }}-functions"
 >
   {% for attr, doc, access_modifier in functions %}

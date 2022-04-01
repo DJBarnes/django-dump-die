@@ -16,12 +16,12 @@
 >
   <span class="unique">{{ unique }}</span>
   <span id="arrow-{{ unique }}" class="arrow">
-    {{ attribute_type_arrow }}
+    {{ collapsable.attribute_type.arrow }}
   </span>
 </a>
 
 <div
-    class="dd-wrapper collapse {{ unique }} {{ attribute_type_show }}"
+    class="dd-wrapper collapse {{ unique }} {{ collapsable.attribute_type.show }}"
     data-unique="{{ unique }}"
   >
   <ul class="attribute-list">

@@ -10,12 +10,12 @@
 >
   <span>Attributes</span>
   <span id="arrow-{{ unique }}-attributes" class="arrow">
-    {{ attribute_arrow }}
+    {{ collapsable.attribute.arrow }}
   </span>
 </a>
 
 <div
-  class="li-wrapper collapse {{ unique }}-attributes {{ attribute_show }}"
+  class="li-wrapper collapse {{ unique }}-attributes {{ collapsable.attribute.show }}"
   data-unique-attributes="{{ unique }}-attributes"
 >
   {% for attr, value, access_modifier, css_class, title in attributes %}
