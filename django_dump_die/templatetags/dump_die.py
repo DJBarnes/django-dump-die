@@ -74,6 +74,19 @@ def _get_access_modifier(obj):
         return '+'
 
 
+def _get_obj_type(obj):
+    """Determines the string representation of object's type."""
+    
+    # Get default type value.
+    obj_type = type(obj).__name__
+
+    # Special handling for certain types.
+    if obj_type == 'NoneType':
+        obj_type = 'null'
+
+    return obj_type
+
+
 def _safe_repr(obj):
     """Call repr() and ignore ObjectDoesNotExist."""
     str_obj = ''
@@ -340,7 +353,7 @@ def dd_object(obj, root_obj, skip=None, current_iteration=0, current_depth=0, ro
     # or outside the bounds of the root indexes to process.
     # In any case, just return the type and unique of the object for output.
     return {
-        'type': type(obj).__name__,
+        'type': _get_obj_type(obj),
         'unique': unique,
     }
 
@@ -371,6 +384,7 @@ def _handle_simple_type(obj):
     # which css class to use.
     return {
         'simple': _safe_repr(obj),
+        'type': _get_obj_type(obj),
         'css_class': css_class,
     }
 
@@ -526,7 +540,7 @@ def _handle_unique_obj(
         'braces': braces,
         'object': obj,
         'unique': unique,
-        'type': type(obj).__name__,
+        'type': _get_obj_type(obj),
         'attributes': attributes,
         'functions': functions,
         'is_iterable': _is_iterable(obj),
