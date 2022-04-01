@@ -129,7 +129,7 @@ Example::
 
 
 DJANGO_DD_MULTILINE_FUNCTION_DOCS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 By default, all function documentation output is collapsed into one line (aka
 line breaks are ignored). To expand function doc output to multiple lines, set
