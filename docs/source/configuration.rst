@@ -130,7 +130,6 @@ Example::
 
 DJANGO_DD_MULTILINE_FUNCTION_DOCS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 By default, all function documentation output is collapsed into one line (aka
 line breaks are ignored). To expand function doc output to multiple lines, set
 this setting to ``True``.
@@ -264,6 +263,7 @@ Example::
             'string': <value>,          #  Strings
             'bool': <value>,            #  Bools
             'number': <value>,          #  Ints and Floats
+            'datetime': <value>,        #  DateTimes and similar types
             'none': <value>,            #  None
             'empty': <value>,           #  No Attributes or methods available
             'default': <value>,         #  Default color if does not fit into any of the above

@@ -97,6 +97,11 @@
             color: {{ custom_color_theme.types.number }};
         }
       {% endif %}
+      {% if custom_color_theme.types.datetime %}
+        .datetime {
+          color: {{ custom_color_theme.types.datetime }};
+        }
+      {% endif %}
       {% if custom_color_theme.types.none %}
         .none {
             color: {{ custom_color_theme.types.none }};

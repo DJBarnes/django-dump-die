@@ -418,8 +418,10 @@ def _handle_simple_type(obj):
         css_class = 'string'
     elif isinstance(obj, bool):
         css_class = 'bool'
-    elif isinstance(obj, (int, Decimal, float, bytes)) or _is_pseudo_simple_type(obj):
+    elif isinstance(obj, (int, Decimal, float, bytes)):
         css_class = 'number'
+    elif _is_pseudo_simple_type(obj):
+        css_class = 'datetime'
     elif isinstance(obj, types.ModuleType):
         css_class = 'module'
     elif isinstance(obj, BoundField):

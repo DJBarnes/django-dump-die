@@ -301,6 +301,7 @@ By default, the tool uses the Solarized color scheme. If you want full control o
         'string': <value>,          #  Strings
         'bool': <value>,            #  Bools
         'number': <value>,          #  Ints and Floats
+        'datetime': <value>,        #  DateTimes and similar types
         'none': <value>,            #  None
         'empty': <value>,           #  No Attributes or methods available
         'default': <value>,         #  Default color if does not fit into any of the above
