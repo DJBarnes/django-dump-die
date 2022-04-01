@@ -228,6 +228,13 @@ By default, all methods for an object are not included in the output. If you wou
 DJANGO_DD_INCLUDE_FUNCTIONS = True
 ```
 
+### DJANGO_DD_MULTILINE_FUNCTION_DOCS
+Default: ```False```<br>
+By default, all function documentation output is collapsed into one line (aka line breaks are ignored). To expand function doc output to multiple lines, set this setting to ```True```.
+```python
+DJANGO_DD_MULTILINE_FUNCTION_DOCS = True
+```
+
 ### DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED
 Default: ```False```<br>
 By default, everything is collapsed when dumped to the screen. If you would like the first level of expansion that shows the attribute types (Attributes and Functions heading) already expanded, set this setting to ```True```. This will not show you the attributes or functions for a method, but rather the headings for those sections.
