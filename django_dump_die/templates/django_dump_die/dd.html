@@ -31,7 +31,12 @@
         {% else %}
           <span title="Dumped Function" class="empty">Unknown Function</span>:
         {% endif %}
-        <span class="docs">{{ function_doc }}</span>
+        {# Handle function doc output. #}
+        {% if multiline_function_docs %}
+          <span class="docs indent-docs">{{ function_doc|linebreaks }}</span>
+        {% else  %}
+          <span class="docs">{{ function_doc }}</span>
+        {% endif %}
       {% else %}
         {# Display the name of the dumped object so long as not None #}
         {% if obj_name is not None %}

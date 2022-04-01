@@ -39,6 +39,8 @@ MAX_ITERABLE_LENGTH = getattr(settings, 'DJANGO_DD_MAX_ITERABLE_LENGTH', 20)
 INCLUDE_ATTRIBUTES = getattr(settings, 'DJANGO_DD_INCLUDE_ATTRIBUTES', True)
 # Whether functions should be included in the output.
 INCLUDE_FUNCTIONS = getattr(settings, 'DJANGO_DD_INCLUDE_FUNCTIONS', False)
+# Whether function doc output should try to fit on one line, or output with original newlines.
+MULTILINE_FUNCTION_DOCS = getattr(settings, 'DJANGO_DD_MULTILINE_FUNCTION_DOCS', False)
 # Whether objects attribute types (Attribute, Function) should start expanded for viewing.
 ATTR_TYPES_START_EXPANDED = getattr(settings, 'DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED', False)
 # Whether the attributes for an object should start expanded for viewing.
@@ -76,7 +78,7 @@ def _get_access_modifier(obj):
 
 def _get_obj_type(obj):
     """Determines the string representation of object's type."""
-    
+
     # Get default type value.
     obj_type = type(obj).__name__
 
@@ -537,6 +539,7 @@ def _handle_unique_obj(
         'attribute_types_start_expanded': ATTR_TYPES_START_EXPANDED,
         'attributes_start_expanded': ATTRIBUTES_START_EXPANDED,
         'functions_start_expanded': FUNCTIONS_START_EXPANDED,
+        'multiline_function_docs': MULTILINE_FUNCTION_DOCS,
         'braces': braces,
         'object': obj,
         'unique': unique,

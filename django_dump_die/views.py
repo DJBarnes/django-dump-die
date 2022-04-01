@@ -16,6 +16,7 @@ def dd_view(request, objects):
     force_light_theme = getattr(settings, 'DJANGO_DD_FORCE_LIGHT_THEME', False)
     force_dark_theme = getattr(settings, 'DJANGO_DD_FORCE_DARK_THEME', False)
     custom_color_theme = getattr(settings, 'DJANGO_DD_COLOR_SCHEME', None)
+    multiline_function_docs = getattr(settings, 'DJANGO_DD_MULTILINE_FUNCTION_DOCS', False)
 
     # Validate chosen themes.
     if force_light_theme and force_dark_theme:
@@ -27,6 +28,7 @@ def dd_view(request, objects):
         'force_light_theme': force_light_theme,
         'force_dark_theme': force_dark_theme,
         'custom_color_theme': custom_color_theme,
+        'multiline_function_docs': multiline_function_docs,
     })
 
 

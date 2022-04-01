@@ -28,7 +28,12 @@
       {% endif %}
       <span class="function" title="Function">{{ attr }}</span>:
       {% if doc %}
-        <span class="docs">{{ doc }}</span>
+        {# Handle function doc output. #}
+        {% if multiline_function_docs %}
+          <span class="docs indent-docs">{{ doc|linebreaks }}</span>
+        {% else %}
+          <span class="docs">{{ doc }}</span>
+        {% endif  %}
       {% else %}
         <span class="empty">No Documentation</span>
       {% endif %}
