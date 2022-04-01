@@ -1,5 +1,6 @@
 """Template Tags for DumpDie"""
 
+import datetime
 import inspect
 import re
 import types
@@ -10,6 +11,7 @@ from django import template
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.boundfield import BoundField
+from django.utils import timezone
 
 register = template.Library()
 
@@ -24,6 +26,15 @@ SIMPLE_TYPES = [
     int,
     types.ModuleType,
     str,
+]
+
+
+# Pseudo simple types, that need some level of recursion and some level of "simple type" handling.
+PSEUDO_SIMPLE_TYPES = [
+    datetime.datetime,
+    datetime.date,
+    datetime.time,
+    timezone.timezone,
 ]
 
 
@@ -179,12 +190,17 @@ def _is_magic(obj):
 
 
 def _is_simple_type(obj):
-    """Return if the obj is a simple type"""
+    """Return if the obj is a simple type."""
     return (
         obj is None
         or type(obj) in SIMPLE_TYPES
         or _get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
     )
+
+
+def _is_pseudo_simple_type(obj):
+    """Return if the obj is a pseudo simple type."""
+    return type(obj) in PSEUDO_SIMPLE_TYPES
 
 
 def _should_render_full_object(current_depth, current_iteration):
@@ -259,7 +275,16 @@ def _process_root_indices(start, end, parent_length):
 
 
 @register.inclusion_tag('django_dump_die/_dd_object.html')
-def dd_object(obj, root_obj, skip=None, current_iteration=0, current_depth=0, root_index_start=None, root_index_end=None):
+def dd_object(
+    obj,
+    root_obj,
+    skip=None,
+    current_iteration=0,
+    current_depth=0,
+    root_index_start=None,
+    root_index_end=None,
+    parent_is_pseudo_simple=False,
+):
     """
     Return info about object.
     If we have exceeded specified iteration count or depth, OR if object is of simple type, then output minimal info.
@@ -273,6 +298,7 @@ def dd_object(obj, root_obj, skip=None, current_iteration=0, current_depth=0, ro
     :param current_depth: Current depth-index. Used to track how deep of child-members we're iterating through.
     :param root_index_start: Starting index for root iterable object. If None, uses default behavior.
     :param root_index_end: Ending index for root iterable object. If None, uses default behavior.
+    :param parent_is_pseudo_simple: Boolean indicating that parent is pseudo simple type. Do not recurse further.
     """
 
     # Set up set to store uniques to skip if not passed in.
@@ -310,8 +336,13 @@ def dd_object(obj, root_obj, skip=None, current_iteration=0, current_depth=0, ro
         pass
 
     # Handle if obj is a simple type (Null/None, int, str, bool, and basic number types).
-    elif _is_simple_type(obj):
+    # OR if direct parent is a pseudo-simple-type.
+    elif _is_simple_type(obj) or parent_is_pseudo_simple:
         return _handle_simple_type(obj)
+
+    # Handle if obj is a pseudo-simple-type (date/time types).
+    elif _is_pseudo_simple_type(obj):
+        return _handle_pseudo_simple_type(obj, unique)
 
     # Handle if element is iterable and we are at the root's element direct children (depth of 1),
     elif _is_iterable(root_obj) and current_depth == 1:
@@ -391,6 +422,43 @@ def _handle_simple_type(obj):
     }
 
 
+def _handle_pseudo_simple_type(obj, unique):
+    """Handling for a "pseudo simple type" object.
+
+    Effectively, it's an object that's complex enough to have associated attributes and functions that we want to
+    display in dd output. But for basic cases, treating it more almost as a "simple type" is generally enough
+    information. Thus, it ends up being a combination of the two output formats.
+
+    Similar to "simple type" in that we display base value output without needing to expand.
+
+    Similar to "complex type" in that we display associated attributes, but do not fully recursively expand all.
+    """
+    # Attempt to get corresponding attribute/function values of object.
+    attributes, functions = _get_obj_values(obj)
+
+    # Return information required to render object.
+    return {
+        'include_attributes': INCLUDE_ATTRIBUTES,
+        'include_functions': INCLUDE_FUNCTIONS,
+        'attribute_types_start_expanded': ATTR_TYPES_START_EXPANDED,
+        'attributes_start_expanded': ATTRIBUTES_START_EXPANDED,
+        'functions_start_expanded': FUNCTIONS_START_EXPANDED,
+        'braces': '{}',
+        'object': obj,
+        'pseudo_simple': True,
+        'unique': unique,
+        'type': type(obj).__name__,
+        'attributes': attributes,
+        'functions': functions,
+        'is_iterable': False,
+        'skip': set(),
+        'index': 0,
+        'depth': 0,
+        'root_index_start': None,
+        'root_index_end': None,
+    }
+
+
 def _handle_unique_obj(
     obj,
     unique,
@@ -427,12 +495,6 @@ def _handle_unique_obj(
 
     # Attempt to get corresponding attribute/function values of object.
     attributes, functions = _get_obj_values(obj)
-
-    # Attempt to sort the functions and just ignore any errors.
-    try:
-        functions = sorted(functions)
-    except Exception:
-        pass  # Ignore sort errors
 
     # Return information required to render object.
     return {
@@ -562,5 +624,11 @@ def _get_obj_values(obj):
 
             # Append the attribute information to the list of attributes.
             attributes.append([attr, value, access_modifier, css_class, title])
+
+    # Attempt to sort the functions and just ignore any errors.
+    try:
+        functions = sorted(functions)
+    except Exception:
+        pass  # Ignore sort errors.
 
     return (attributes, functions)
