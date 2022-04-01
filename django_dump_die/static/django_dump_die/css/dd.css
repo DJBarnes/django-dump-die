@@ -40,6 +40,11 @@ a.arrow-toggle {
 .function {
     color: #268bd2;
 }
+.indent-docs p {
+    margin-left: 20px;
+    margin-bottom: 0;
+    text-indent: 0;
+}
 .module {
     color: #268bd2;
 }
