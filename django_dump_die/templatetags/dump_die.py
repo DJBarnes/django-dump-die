@@ -31,8 +31,8 @@ SIMPLE_TYPES = [
 ]
 
 
-# Pseudo simple types, that need some level of recursion and some level of "simple type" handling.
-PSEUDO_SIMPLE_TYPES = [
+# Intermediate types, that need some level of recursion and some level of "simple type" handling.
+INTERMEDIATE_TYPES = [
     datetime.datetime,
     datetime.date,
     datetime.time,
@@ -43,8 +43,8 @@ PSEUDO_SIMPLE_TYPES = [
 
 # List of additional simple types defined as strings that do not need to be recursively inspected.
 ADDITIONAL_SIMPLE_TYPES = getattr(settings, 'DJANGO_DD_ADDITIONAL_SIMPLE_TYPES', [])
-# List of additional psuedo-simple types defined as strings that do not need to be recursively inspected.
-ADDITIONAL_PSEUDO_SIMPLE_TYPES = getattr(settings, 'DJANGO_DD_ADDITIONAL_PSEUDO_SIMPLE_TYPES', [])
+# List of additional intermediate types defined as strings that do not need to be recursively inspected.
+ADDITIONAL_INTERMEDIATE_TYPES = getattr(settings, 'DJANGO_DD_ADDITIONAL_INTERMEDIATE_TYPES', [])
 # Max recursion depth to go while processing the dumped variable.
 MAX_RECURSION_DEPTH = getattr(settings, 'DJANGO_DD_MAX_RECURSION_DEPTH', 20)
 # Max number of iterables to recursively process before just printing the unique
@@ -205,8 +205,8 @@ def _is_simple_type(obj):
     )
 
 
-def _is_pseudo_simple_type(obj):
-    """Return if the obj is a pseudo simple type."""
+def _is_intermediate_type(obj):
+    """Return if the obj is an intermediate type."""
 
     # Special handling for pytz timezone objects.
     if isinstance(obj, pytz.BaseTzInfo):
@@ -214,8 +214,8 @@ def _is_pseudo_simple_type(obj):
 
     # Handling for all other objects.
     return (
-        type(obj) in PSEUDO_SIMPLE_TYPES
-        or _get_class_name(obj) in ADDITIONAL_PSEUDO_SIMPLE_TYPES
+        type(obj) in INTERMEDIATE_TYPES
+        or _get_class_name(obj) in ADDITIONAL_INTERMEDIATE_TYPES
     )
 
 
@@ -299,7 +299,7 @@ def dd_object(
     current_depth=0,
     root_index_start=None,
     root_index_end=None,
-    parent_is_pseudo_simple=False,
+    parent_is_intermediate=False,
 ):
     """
     Return info about object.
@@ -314,7 +314,7 @@ def dd_object(
     :param current_depth: Current depth-index. Used to track how deep of child-members we're iterating through.
     :param root_index_start: Starting index for root iterable object. If None, uses default behavior.
     :param root_index_end: Ending index for root iterable object. If None, uses default behavior.
-    :param parent_is_pseudo_simple: Boolean indicating that parent is pseudo simple type. Do not recurse further.
+    :param parent_is_intermediate: Boolean indicating that parent is intermediate type. Do not recurse further.
     """
 
     # Set up set to store uniques to skip if not passed in.
@@ -352,16 +352,16 @@ def dd_object(
         pass
 
     # Handle if obj is a simple type (Null/None, int, str, bool, and basic number types)
-    # OR if direct parent is a pseudo-simple-type (excluding pytz timezone objects).
+    # OR if direct parent is a intermediate (excluding pytz timezone objects).
     elif (
         _is_simple_type(obj)
-        or (parent_is_pseudo_simple and not isinstance(obj, pytz.BaseTzInfo))
+        or (parent_is_intermediate and not isinstance(obj, pytz.BaseTzInfo))
     ):
         return _handle_simple_type(obj)
 
-    # Handle if obj is a pseudo-simple-type (date/time types).
-    elif _is_pseudo_simple_type(obj):
-        return _handle_pseudo_simple_type(obj, unique)
+    # Handle if obj is an intermediate (date/time types).
+    elif _is_intermediate_type(obj):
+        return _handle_intermediate_type(obj, unique)
 
     # Handle if element is iterable and we are at the root's element direct children (depth of 1),
     elif _is_iterable(root_obj) and current_depth == 1:
@@ -425,7 +425,7 @@ def _handle_simple_type(obj):
         css_class = 'bool'
     elif isinstance(obj, (int, Decimal, float, bytes)):
         css_class = 'number'
-    elif _is_pseudo_simple_type(obj):
+    elif _is_intermediate_type(obj):
         css_class = 'datetime'
     elif isinstance(obj, types.ModuleType):
         css_class = 'module'
@@ -435,7 +435,7 @@ def _handle_simple_type(obj):
         css_class = 'default'
 
     # Determine which output to use.
-    if _is_pseudo_simple_type(obj) or isinstance(obj, Decimal):
+    if _is_intermediate_type(obj) or isinstance(obj, Decimal):
         output_value = _safe_str(obj)
     else:
         output_value = _safe_repr(obj)
@@ -449,8 +449,8 @@ def _handle_simple_type(obj):
     }
 
 
-def _handle_pseudo_simple_type(obj, unique):
-    """Handling for a "pseudo simple type" object.
+def _handle_intermediate_type(obj, unique):
+    """Handling for a intermediate object.
 
     Effectively, it's an object that's complex enough to have associated attributes and functions that we want to
     display in dd output. But for basic cases, treating it more almost as a "simple type" is generally enough
@@ -473,7 +473,7 @@ def _handle_pseudo_simple_type(obj, unique):
         'multiline_function_docs': MULTILINE_FUNCTION_DOCS,
         'braces': '{}',
         'object': obj,
-        'pseudo_simple': _safe_str(obj),
+        'intermediate': _safe_str(obj),
         'unique': unique,
         'type': _get_obj_type(obj),
         'attributes': attributes,

@@ -70,28 +70,28 @@ Example::
     ]
 
 
-DJANGO_DD_ADDITIONAL_PSUEDO_SIMPLE_TYPES
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+DJANGO_DD_ADDITIONAL_INTERMEDIATE_TYPES
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When the tool encounters a defined pseudo-simple type it will no longer recurse
-further and instead simply output a string representation of that pseudo-simple type.
-Predefined pseudo-simple types include:
+When the tool encounters a defined intermediate type it will no longer recurse
+further and instead simply output a string representation of that intermediate type.
+Predefined intermediate types include:
 
 * datetime
 * date
 * time
 * timezone
 
-If you would like to add additional simple types that are specific to your
+If you would like to add additional intermediate types that are specific to your
 project, you can do that here. Be sure to list each type in the list as a
-string of the type to treat as a simple type.
+string of the type to treat as an intermediate type.
 
 :Type: ``list``
 :Default: ``[]``
 
 Example::
 
-    DJANGO_DD_ADDITIONAL_PSEUDO_SIMPLE_TYPES = [
+    DJANGO_DD_ADDITIONAL_INTERMEDIATE_TYPES = [
         'Cell' #  From openpyxl package
     ]
 
