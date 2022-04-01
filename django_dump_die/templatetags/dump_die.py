@@ -43,6 +43,8 @@ PSEUDO_SIMPLE_TYPES = [
 
 # List of additional simple types defined as strings that do not need to be recursively inspected.
 ADDITIONAL_SIMPLE_TYPES = getattr(settings, 'DJANGO_DD_ADDITIONAL_SIMPLE_TYPES', [])
+# List of additional psuedo-simple types defined as strings that do not need to be recursively inspected.
+ADDITIONAL_PSEUDO_SIMPLE_TYPES = getattr(settings, 'DJANGO_DD_ADDITIONAL_PSEUDO_SIMPLE_TYPES', [])
 # Max recursion depth to go while processing the dumped variable.
 MAX_RECURSION_DEPTH = getattr(settings, 'DJANGO_DD_MAX_RECURSION_DEPTH', 20)
 # Max number of iterables to recursively process before just printing the unique
@@ -211,7 +213,10 @@ def _is_pseudo_simple_type(obj):
         return True
 
     # Handling for all other objects.
-    return type(obj) in PSEUDO_SIMPLE_TYPES
+    return (
+        type(obj) in PSEUDO_SIMPLE_TYPES
+        or _get_class_name(obj) in ADDITIONAL_PSEUDO_SIMPLE_TYPES
+    )
 
 
 def _should_render_full_object(current_depth, current_iteration):
