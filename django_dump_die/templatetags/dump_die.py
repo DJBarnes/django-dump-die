@@ -2,11 +2,13 @@
 
 import datetime
 import inspect
+import pytz
 import re
 import types
 
 from collections.abc import Sequence
 from decimal import Decimal
+
 from django import template
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -35,6 +37,7 @@ PSEUDO_SIMPLE_TYPES = [
     datetime.date,
     datetime.time,
     timezone.timezone,
+    # pytz.BaseTzInfo,  # pytz timezone object. Has to be handled separately. Noted here just as a reminder.
 ]
 
 
@@ -96,6 +99,8 @@ def _get_obj_type(obj):
     # Special handling for certain types.
     if obj_type == 'NoneType':
         obj_type = 'null'
+    elif isinstance(obj, pytz.BaseTzInfo):
+        obj_type = 'pytz_timezone'
 
     return obj_type
 
@@ -200,6 +205,12 @@ def _is_simple_type(obj):
 
 def _is_pseudo_simple_type(obj):
     """Return if the obj is a pseudo simple type."""
+
+    # Special handling for pytz timezone objects.
+    if isinstance(obj, pytz.BaseTzInfo):
+        return True
+
+    # Handling for all other objects.
     return type(obj) in PSEUDO_SIMPLE_TYPES
 
 
@@ -335,9 +346,12 @@ def dd_object(
         # Complex object found in skip set. Skip further handling of if clauses and go to end of function.
         pass
 
-    # Handle if obj is a simple type (Null/None, int, str, bool, and basic number types).
-    # OR if direct parent is a pseudo-simple-type.
-    elif _is_simple_type(obj) or parent_is_pseudo_simple:
+    # Handle if obj is a simple type (Null/None, int, str, bool, and basic number types)
+    # OR if direct parent is a pseudo-simple-type (excluding pytz timezone objects).
+    elif (
+        _is_simple_type(obj)
+        or (parent_is_pseudo_simple and not isinstance(obj, pytz.BaseTzInfo))
+    ):
         return _handle_simple_type(obj)
 
     # Handle if obj is a pseudo-simple-type (date/time types).
@@ -454,7 +468,7 @@ def _handle_pseudo_simple_type(obj, unique):
         'object': obj,
         'pseudo_simple': _safe_str(obj),
         'unique': unique,
-        'type': type(obj).__name__,
+        'type': _get_obj_type(obj),
         'attributes': attributes,
         'functions': functions,
         'is_iterable': False,
