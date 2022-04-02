@@ -72,6 +72,55 @@ INCLUDE_MAGIC_METHODS = getattr(settings, 'DJANGO_DD_INCLUDE_MAGIC_METHODS', Fal
 root_skip = {}
 
 
+def _generate_unique_from_obj(obj):
+    """Generate a unique identifier for the object passed in."""
+
+    # Create unique via hash and fallback to id on exception.
+    try:
+        unique = hash(obj)
+    except Exception:
+        unique = id(obj)
+    # Append the class name to the unique to really make unique.
+    unique = f'{_get_class_name(obj)}_{unique}'
+
+    return unique
+
+
+def _generate_unique(obj, root_obj):
+    """Generate the current and root unique"""
+
+    # Get a unique for the object
+    unique = _generate_unique_from_obj(obj)
+
+    # Get a unique for the object
+    root_unique = _generate_unique_from_obj(root_obj)
+
+    # If the root unique is already in root_skip.
+    if root_unique in root_skip:
+
+        # If obj and root_obj are the same, increment the count
+        if obj == root_obj:
+            # Get the current count out.
+            root_count = root_skip[root_unique]
+            # Increment the count.
+            root_skip[root_unique] += 1
+        # Else set the root count to the value - 1 as it is a child of the
+        # root unique and would otherwise have the wrong value.
+        else:
+            # Get the current count out.
+            root_count = root_skip[root_unique] - 1
+
+        # If the root count is greater than zero, use it.
+        if root_count > 0:
+            # Append the current iteration.
+            unique = f'{unique}_{root_count}'
+    else:
+        # Else add the unique to the root_skip.
+        root_skip[root_unique] = 1
+
+    return unique, root_unique
+
+
 def _get_class_name(obj):
     """Get class name of an object."""
     name = None
@@ -340,28 +389,9 @@ def dd_object(
     # Will be used to skip objects already done to prevent infinite loops.
     skip = skip or set()
 
-    # Create unique via hash and fallback to id on exception.
-    try:
-        unique = hash(obj)
-    except Exception:
-        unique = id(obj)
-    # Append the class name to the unique to really make unique.
-    unique = f'{_get_class_name(obj)}_{unique}'
+    # Generate the unique and root_unique
+    unique, root_unique = _generate_unique(obj, root_obj)
 
-    # If we are at the root depth we want to keep track of the same object
-    # being dumped multiple times so that we can append a number to the unique.
-    if current_depth == 0:
-        # If the unique is already in root_skip.
-        if unique in root_skip:
-            # Get the current count out.
-            root_count = root_skip[unique]
-            # Increment the count.
-            root_skip[unique] += 1
-            # Append the current iteration.
-            unique = f'{unique}_{root_count}'
-        else:
-            # Else add the unique to the root_skip.
-            root_skip[unique] = 1
 
     # Following section will determine what should get rendered out.
 
@@ -380,7 +410,7 @@ def dd_object(
 
     # Handle if obj is an intermediate (date/time types).
     elif _is_intermediate_type(obj):
-        return _handle_intermediate_type(obj, unique)
+        return _handle_intermediate_type(obj, root_obj, unique)
 
     # Handle if element is iterable and we are at the root's element direct children (depth of 1),
     elif _is_iterable(root_obj) and current_depth == 1:
@@ -399,6 +429,7 @@ def dd_object(
             # Handle for new "unique" object output.
             return _handle_unique_obj(
                 obj,
+                root_obj,
                 unique,
                 skip=skip,
                 current_iteration=current_iteration,
@@ -411,6 +442,7 @@ def dd_object(
         # Handle for new "unique" object output.
         return _handle_unique_obj(
             obj,
+            root_obj,
             unique,
             skip=skip,
             current_iteration=current_iteration,
@@ -468,7 +500,7 @@ def _handle_simple_type(obj):
     }
 
 
-def _handle_intermediate_type(obj, unique):
+def _handle_intermediate_type(obj, root_obj, unique):
     """Handling for a intermediate object.
 
     Effectively, it's an object that's complex enough to have associated attributes and functions that we want to
@@ -490,6 +522,7 @@ def _handle_intermediate_type(obj, unique):
         'collapsable': _get_collapsable_values(),
         'braces': '{}',
         'object': obj,
+        'root_obj': root_obj,
         'intermediate': _safe_str(obj),
         'unique': unique,
         'type': _get_obj_type(obj),
@@ -506,6 +539,7 @@ def _handle_intermediate_type(obj, unique):
 
 def _handle_unique_obj(
     obj,
+    root_obj,
     unique,
     skip=None,
     current_iteration=0,
@@ -549,6 +583,7 @@ def _handle_unique_obj(
         'collapsable': _get_collapsable_values(),
         'braces': braces,
         'object': obj,
+        'root_obj': root_obj,
         'unique': unique,
         'type': _get_obj_type(obj),
         'attributes': attributes,
