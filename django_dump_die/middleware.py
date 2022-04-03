@@ -141,12 +141,18 @@ def dd(obj, index_range=None, deepcopy=False):
         start_index, end_index = _sanitize_index_range(index_range)
 
         # Handle if deepcopy set.
-        if deepcopy:
-            obj = copy.deepcopy(obj)
+        original_obj = None
+        try:
+            if deepcopy:
+                original_obj = obj
+                obj = copy.deepcopy(obj)
+        except TypeError as te:
+            original_obj = None
+            raise TypeError(f"Object contains type that can't be deep copied. - {te}")
 
         # Run dd core logic.
         raise DumpAndDie(
-            (obj_name, obj, function_doc, start_index, end_index),
+            (obj_name, obj, function_doc, start_index, end_index, original_obj),
         )
 
 
@@ -173,12 +179,18 @@ def dump(obj, index_range=None, deepcopy=False):
         start_index, end_index = _sanitize_index_range(index_range)
 
         # Handle if deepcopy set.
-        if deepcopy:
-            obj = copy.deepcopy(obj)
+        original_obj = None
+        try:
+            if deepcopy:
+                original_obj = obj
+                obj = copy.deepcopy(obj)
+        except TypeError as te:
+            original_obj = None
+            raise TypeError(f"Object contains type that can't be deep copied. - {te}")
 
         # Run dd core logic.
         dump_objects.append(
-            (obj_name, obj, function_doc, start_index, end_index),
+            (obj_name, obj, function_doc, start_index, end_index, original_obj),
         )
 
 

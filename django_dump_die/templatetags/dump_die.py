@@ -70,6 +70,7 @@ INCLUDE_MAGIC_METHODS = getattr(settings, 'DJANGO_DD_INCLUDE_MAGIC_METHODS', Fal
 
 # Stores the uniques for each dumped root object.
 root_skip = {}
+root_unique_map = {}
 
 
 def _generate_unique_from_obj(obj):
@@ -86,7 +87,7 @@ def _generate_unique_from_obj(obj):
     return unique
 
 
-def _generate_unique(obj, root_obj):
+def _generate_unique(obj, root_obj, original_obj):
     """Generate the current and root unique"""
 
     # Get a unique for the object
@@ -94,6 +95,22 @@ def _generate_unique(obj, root_obj):
 
     # Get a unique for the object
     root_unique = _generate_unique_from_obj(root_obj)
+
+    # If there is an original_obj, we may need to create the unique map so that
+    # we can restore the original uniques to the deepcopied object.
+    if original_obj:
+        # Ensure root unique in root_unique_map
+        root_unique = _generate_unique_from_obj(root_obj)
+        if root_unique not in root_unique_map:
+            # Create the unique map
+            _create_unique_map(obj, root_obj, original_obj)
+
+        # Skip simple types and intermediate types
+        if unique in root_unique_map[root_unique]:
+            # Do unique swap so that both unique and root unique are the
+            # same value as the original value before deep copying.
+            unique = root_unique_map[root_unique][unique]
+            root_unique = root_unique_map[root_unique][root_unique]
 
     # If the root unique is already in root_skip.
     if root_unique in root_skip:
@@ -118,7 +135,56 @@ def _generate_unique(obj, root_obj):
         # Else add the unique to the root_skip.
         root_skip[root_unique] = 1
 
-    return unique, root_unique
+    return unique
+
+
+def _create_unique_map(obj, root_obj, original_obj):
+    """Create an entry in the root_unique_map for this object"""
+
+    # Calculate the root unique
+    root_unique = _generate_unique_from_obj(root_obj)
+    # Create a dict for that unique map
+    root_unique_map[root_unique] = {}
+    # Begin recursively adding entries to the unique map
+    _add_unique_map_entry(obj, original_obj, root_unique)
+
+
+
+def _add_unique_map_entry(obj, original_obj, root_unique):
+    """Add a unique entry to the unique entry map"""
+
+    # Calculate the obj unique and the original obj unique.
+    obj_unique = _generate_unique_from_obj(obj)
+    original_obj_unique = _generate_unique_from_obj(original_obj)
+
+    # Add the new unique to the root unique map.
+    root_unique_map[root_unique][obj_unique] = original_obj_unique
+
+    # Attempt to get member values of object and original object.
+    members = _get_members(obj)
+    original_members = _get_members(original_obj)
+
+    # Loop through members
+    for attr, value in members:
+        # Skip simple types and childrent of intermediate types
+        if _is_simple_type(value) or _is_intermediate_type(obj):
+            continue
+        # Skip private members if not including them and functions.
+        if (_is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
+            continue
+
+        # Loop through orig members looking for a match
+        for orig_attr, orig_value in original_members:
+            # Skip simple types and children of intermediate types
+            if _is_simple_type(value) or _is_intermediate_type(original_obj):
+                continue
+            # Skip private members if not including them and functions.
+            if (_is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
+                continue
+
+            # If the attrs match, make recursive call to add more entries to the unique map
+            if orig_attr == attr:
+                _add_unique_map_entry(value, orig_value, root_unique)
 
 
 def _get_class_name(obj):
@@ -367,6 +433,7 @@ def dd_object(
     current_depth=0,
     root_index_start=None,
     root_index_end=None,
+    original_obj=None,
     parent_is_intermediate=False,
 ):
     """
@@ -389,9 +456,8 @@ def dd_object(
     # Will be used to skip objects already done to prevent infinite loops.
     skip = skip or set()
 
-    # Generate the unique and root_unique
-    unique, root_unique = _generate_unique(obj, root_obj)
-
+    # Generate the unique
+    unique = _generate_unique(obj, root_obj, original_obj)
 
     # Following section will determine what should get rendered out.
 
@@ -410,7 +476,7 @@ def dd_object(
 
     # Handle if obj is an intermediate (date/time types).
     elif _is_intermediate_type(obj):
-        return _handle_intermediate_type(obj, root_obj, unique)
+        return _handle_intermediate_type(obj, root_obj, unique, original_obj=original_obj)
 
     # Handle if element is iterable and we are at the root's element direct children (depth of 1),
     elif _is_iterable(root_obj) and current_depth == 1:
@@ -434,6 +500,7 @@ def dd_object(
                 skip=skip,
                 current_iteration=current_iteration,
                 current_depth=current_depth,
+                original_obj=original_obj,
             )
 
     # Handle if not at root element and/or "root_index" values are not set.
@@ -449,6 +516,7 @@ def dd_object(
             current_depth=current_depth,
             root_index_start=root_index_start,
             root_index_end=root_index_end,
+            original_obj=original_obj,
         )
 
     # If we're here then the object has already been processed before,
@@ -500,7 +568,7 @@ def _handle_simple_type(obj):
     }
 
 
-def _handle_intermediate_type(obj, root_obj, unique):
+def _handle_intermediate_type(obj, root_obj, unique, original_obj=None):
     """Handling for a intermediate object.
 
     Effectively, it's an object that's complex enough to have associated attributes and functions that we want to
@@ -534,6 +602,7 @@ def _handle_intermediate_type(obj, root_obj, unique):
         'depth': 0,
         'root_index_start': None,
         'root_index_end': None,
+        'original_obj': original_obj,
     }
 
 
@@ -546,6 +615,7 @@ def _handle_unique_obj(
     current_depth=0,
     root_index_start=None,
     root_index_end=None,
+    original_obj=None,
 ):
     """
     Main logic for outputting information for a given "unique".
@@ -594,6 +664,7 @@ def _handle_unique_obj(
         'depth': current_depth,
         'root_index_start': root_index_start,
         'root_index_end': root_index_end,
+        'original_obj': original_obj,
     }
 
 

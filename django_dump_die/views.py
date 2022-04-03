@@ -87,7 +87,6 @@ def example(request):
             self.works = True
             self.nothing = None
             self.bytes = bytes('My Bytes', 'utf-8')
-            self.module = ModuleType('django.html')
             self.datetime = datetime.now()
             self.list_o_stuff = ['A', 'B', 'C']
             self.sample_set = {'A', 'B', 'C'}
@@ -111,10 +110,17 @@ def example(request):
         'other_class': SomeOtherClass(),
     }
 
+    module_type = ModuleType('django.html')
+
     dump(test_func)
     dump(test_func_param)
     dump(x.copy)
+    dump(x, deepcopy=True)
+    dump(x, deepcopy=True)
+    x['foo'] = 'bar'
+    x['new_class'] = SomeOtherClass()
     dump(x)
+    dump(module_type)
     dd('hello')
 
     return HttpResponse("Example")
