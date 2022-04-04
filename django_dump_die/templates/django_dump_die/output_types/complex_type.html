@@ -11,18 +11,18 @@
   class="arrow-toggle"
   title="[Ctrl+click] Expand all children"
   data-toggle="collapse"
-  data-target=".{{ unique }}"
+  data-target=".{{ unique }}{{ root_count }}"
   aria-label="Close"
 >
-  <span class="unique">{{ unique }}</span>
-  <span id="arrow-{{ unique }}" class="arrow">
+  <span class="unique" data-highlight-unique="{{ unique }}">{{ unique }}{{ root_count }}</span>
+  <span id="arrow-{{ unique }}{{ root_count }}" class="arrow">
     {{ collapsable.attribute_type.arrow }}
   </span>
 </a>
 
 <div
-    class="dd-wrapper collapse {{ unique }} {{ collapsable.attribute_type.show }}"
-    data-unique="{{ unique }}"
+    class="dd-wrapper collapse {{ unique }}{{ root_count }} {{ collapsable.attribute_type.show }}"
+    data-unique="{{ unique }}{{ root_count }}"
   >
   <ul class="attribute-list">
     {% if include_attributes %}

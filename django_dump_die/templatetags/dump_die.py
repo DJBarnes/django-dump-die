@@ -117,7 +117,7 @@ def dd_object(
     skip_set = skip_set or set()
 
     # Generate the unique
-    unique = _generate_unique(obj, root_obj, original_obj)
+    unique, root_count = _generate_unique(obj, root_obj, original_obj)
 
     # Following section will determine what should get rendered out.
     intermediate_value = None
@@ -139,7 +139,7 @@ def dd_object(
 
     # Handle if obj is an intermediate (date/time types).
     elif _is_intermediate_type(obj):
-        return _handle_intermediate_type(obj, root_obj, unique, skip_set=skip_set, original_obj=original_obj)
+        return _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=skip_set, original_obj=original_obj)
 
     # Handle if element is iterable and we are at the root's element direct children (depth of 1),
     elif _is_iterable(root_obj) and current_depth == 1:
@@ -160,6 +160,7 @@ def dd_object(
                 obj,
                 root_obj,
                 unique,
+                root_count,
                 skip_set=skip_set,
                 current_iteration=current_iteration,
                 current_depth=current_depth,
@@ -174,6 +175,7 @@ def dd_object(
             obj,
             root_obj,
             unique,
+            root_count,
             skip_set=skip_set,
             current_iteration=current_iteration,
             current_depth=current_depth,
@@ -189,6 +191,7 @@ def dd_object(
     return {
         'type': _get_obj_type(obj),
         'unique': unique,
+        'root_count': root_count,
         'intermediate': intermediate_value,
     }
 
@@ -212,6 +215,9 @@ def _generate_unique(obj, root_obj, original_obj):
 
     # Get a unique for the object.
     root_unique = _generate_unique_from_obj(root_obj)
+
+    # Default root_count to blank string
+    root_count_string = ''
 
     # If there is an original_obj, we may need to create the unique map so that
     # we can restore the original uniques to the deepcopied object.
@@ -248,14 +254,16 @@ def _generate_unique(obj, root_obj, original_obj):
 
         # If the root count is greater than zero, use it.
         if root_count > 0:
-            # Append the current iteration.
-            unique = f'{unique}_{root_count}'
+            # Update root_count_string.
+            root_count_string = f'_{root_count}'
+        else:
+            root_count_string = ''
 
     else:
         # Unique not found in tracker. Add the unique to the repeat_iteration_tracker.
         repeat_iteration_tracker[root_unique] = 1
 
-    return unique
+    return unique, root_count_string
 
 
 def _generate_unique_from_obj(obj):
@@ -410,8 +418,9 @@ def _handle_simple_type(obj):
     }
 
 
-def _handle_intermediate_type(obj, root_obj, unique, skip_set=None, original_obj=None):
-    """Handling for am intermediate object.
+
+def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, original_obj=None):
+    """Handling for a intermediate object.
 
     Effectively, it's an object that's complex enough to have associated attributes and functions that we want to
     display in dd output. But for basic cases, treating it more almost as a "simple type" is generally enough
@@ -424,6 +433,7 @@ def _handle_intermediate_type(obj, root_obj, unique, skip_set=None, original_obj
     :param obj: Object to iterate over and attempt to parse information from.
     :param root_obj: Root, parent object associated with current object.
     :param unique: Unique identifier associated with current object.
+    :param root_count: Count of how many times the root object has been dumped as a string prefixed with '_'.
     :param original_obj: Original object, for handling uniques if dealing with deepcopy.
     """
     # Add unique to skip so it won't be processed a second time by additional
@@ -444,6 +454,7 @@ def _handle_intermediate_type(obj, root_obj, unique, skip_set=None, original_obj
         'root_obj': root_obj,
         'intermediate': _safe_str(obj),
         'unique': unique,
+        'root_count': root_count,
         'type': _get_obj_type(obj),
         'attributes': attributes,
         'functions': functions,
@@ -461,6 +472,7 @@ def _handle_complex_type(
     obj,
     root_obj,
     unique,
+    root_count,
     skip_set=None,
     current_iteration=0,
     current_depth=0,
@@ -474,6 +486,7 @@ def _handle_complex_type(
     :param obj: Object to iterate over and attempt to parse information from.
     :param root_obj: Root, parent object associated with current object.
     :param unique: Unique identifier associated with current object.
+    :param root_count: Count of how many times the root object has been dumped as a string prefixed with '_'.
     :param original_obj: Original object, for handling uniques if dealing with deepcopy.
     :param skip_set: Set of already-processed objects. Used to skip re-processing identical objects.
     :param current_iteration: Current iteration-index. Used to track current index of object we're iterating through.
@@ -511,6 +524,7 @@ def _handle_complex_type(
         'object': obj,
         'root_obj': root_obj,
         'unique': unique,
+        'root_count': root_count,
         'type': _get_obj_type(obj),
         'attributes': attributes,
         'functions': functions,

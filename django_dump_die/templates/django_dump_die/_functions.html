@@ -5,18 +5,18 @@
   class="arrow-toggle"
   title="[Ctrl+click] Expand all children"
   data-toggle="collapse"
-  data-target=".{{ unique }}-functions"
+  data-target=".{{ unique }}{{ root_count }}-functions"
   aria-label="Open/Close"
 >
   <span>Functions</span>
-  <span id="arrow-{{ unique }}-functions" class="arrow">
+  <span id="arrow-{{ unique }}{{ root_count }}-functions" class="arrow">
     {{ collapsable.function.arrow }}
   </span>
 </a>
 
 <div
-  class="li-wrapper collapse {{ unique }}-functions {{ collapsable.function.show }}"
-  data-unique-functions="{{ unique }}-functions"
+  class="li-wrapper collapse {{ unique }}{{ root_count }}-functions {{ collapsable.function.show }}"
+  data-unique-functions="{{ unique }}{{ root_count }}-functions"
 >
   {% for attr, doc, access_modifier in functions %}
     <li class="function-li">

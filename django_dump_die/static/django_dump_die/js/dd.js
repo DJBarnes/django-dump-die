@@ -17,7 +17,7 @@ const djangoDumpDie = {
         const allUniquesJQ = $('.unique');
         // Convert JQ uniques to array of unique text.
         allUniquesJQ.each(function(index) {
-            allUniques.push($(this).html());
+            allUniques.push($(this).data('highlight-unique'));
         });
 
         // Function to find duplicates inside our dataset.
@@ -31,10 +31,10 @@ const djangoDumpDie = {
 
             // Check if Unique has one or more instances.
             // If so, set a class identifier on all matching elements which match said Unique.
-            if (dupUniques.includes($(this).html())) {
+            if (dupUniques.includes($(this).data('highlight-unique'))) {
 
                 // Create the css class to identify Unique group.
-                var cssClass = 'duplicate-' + $(this).html();
+                var cssClass = 'duplicate-' + $(this).data('highlight-unique');
 
                 // Add the css class to the element.
                 $(this).addClass(cssClass);
@@ -76,7 +76,9 @@ const djangoDumpDie = {
             if (event.ctrlKey) {
                 // Get the sibling dd-wrapper or li-wrapper for the clicked anchor tag.
                 // This is the div that will be expanded via the click and bootstrap.
-                let siblingDDWrapper = $(event.currentTarget).siblings('.dd-wrapper, .li-wrapper');
+                let target = $(event.currentTarget).data('target')
+                let selector = target + '.dd-wrapper, ' + target + '.li-wrapper';
+                let siblingDDWrapper = $(event.currentTarget).siblings(selector);
 
                 // Get all dd-wrapper and li-wrapper child divs that need to be updated.
                 childDivs = $(siblingDDWrapper).find('.dd-wrapper, .li-wrapper');
