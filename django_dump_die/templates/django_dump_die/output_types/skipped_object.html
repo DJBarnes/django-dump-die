@@ -1,6 +1,10 @@
 
 <span class="type" title="{{ type }}">{{ type }}</span>
 
+{% if intermediate %}
+  <code class="datetime">{{ intermediate }}</code>
+{% endif %}
+
 {{ braces.0 }}
 
 <a title="Already output or skipped object">

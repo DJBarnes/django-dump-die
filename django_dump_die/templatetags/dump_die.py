@@ -120,11 +120,14 @@ def dd_object(
     unique = _generate_unique(obj, root_obj, original_obj)
 
     # Following section will determine what should get rendered out.
+    intermediate_value = None
 
     # Handle if object is in skip set, aka already processed.
     if unique in skip_set:
         # Complex object found in skip set. Skip further handling of if clauses and go to end of function.
-        pass
+        # Intermediates get slightly extra handling for "simple" value output.
+        if _is_intermediate_type(obj):
+            intermediate_value = _safe_str(obj)
 
     # Handle if obj is a simple type (Null/None, int, str, bool, and basic number types)
     # OR if direct parent is a intermediate (excluding pytz timezone objects).
@@ -136,7 +139,7 @@ def dd_object(
 
     # Handle if obj is an intermediate (date/time types).
     elif _is_intermediate_type(obj):
-        return _handle_intermediate_type(obj, root_obj, unique, original_obj=original_obj)
+        return _handle_intermediate_type(obj, root_obj, unique, skip_set=skip_set, original_obj=original_obj)
 
     # Handle if element is iterable and we are at the root's element direct children (depth of 1),
     elif _is_iterable(root_obj) and current_depth == 1:
@@ -186,6 +189,7 @@ def dd_object(
     return {
         'type': _get_obj_type(obj),
         'unique': unique,
+        'intermediate': intermediate_value,
     }
 
 
@@ -406,7 +410,7 @@ def _handle_simple_type(obj):
     }
 
 
-def _handle_intermediate_type(obj, root_obj, unique, original_obj=None):
+def _handle_intermediate_type(obj, root_obj, unique, skip_set=None, original_obj=None):
     """Handling for am intermediate object.
 
     Effectively, it's an object that's complex enough to have associated attributes and functions that we want to
@@ -422,6 +426,10 @@ def _handle_intermediate_type(obj, root_obj, unique, original_obj=None):
     :param unique: Unique identifier associated with current object.
     :param original_obj: Original object, for handling uniques if dealing with deepcopy.
     """
+    # Add unique to skip so it won't be processed a second time by additional
+    # recursive calls to this template tag.
+    skip_set.add(unique)
+
     # Attempt to get corresponding attribute/function values of object.
     attributes, functions = _get_obj_values(obj)
 
