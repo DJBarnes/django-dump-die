@@ -18,6 +18,8 @@ from django.utils import timezone
 register = template.Library()
 
 
+# region Module Variables
+
 # Simple types that do not need to be recursively inspected.
 SIMPLE_TYPES = [
     bool,
@@ -72,359 +74,7 @@ INCLUDE_MAGIC_METHODS = getattr(settings, 'DJANGO_DD_INCLUDE_MAGIC_METHODS', Fal
 repeat_iteration_tracker = {}
 deepcopy_unique_map = {}
 
-
-def _generate_unique_from_obj(obj):
-    """Generate a unique identifier for the object passed in."""
-
-    # Create unique via hash and fallback to id on exception.
-    try:
-        unique = hash(obj)
-    except Exception:
-        unique = id(obj)
-    # Append the class name to the unique to really make unique.
-    unique = f'{_get_class_name(obj)}_{unique}'
-
-    return unique
-
-
-def _generate_unique(obj, root_obj, original_obj):
-    """Generate the current and root unique."""
-
-    # Get a unique for the object.
-    unique = _generate_unique_from_obj(obj)
-
-    # Get a unique for the object.
-    root_unique = _generate_unique_from_obj(root_obj)
-
-    # If there is an original_obj, we may need to create the unique map so that
-    # we can restore the original uniques to the deepcopied object.
-    if original_obj:
-        # Ensure root unique in root_unique_map.
-        if root_unique not in deepcopy_unique_map:
-            # Create the unique mapping of current deepcopy to original object.
-            _create_unique_map(obj, root_unique, original_obj)
-
-        # Skip simple types and intermediate types
-        if unique in deepcopy_unique_map[root_unique]:
-            # Do unique swap so that both unique and root unique are the
-            # same value as the original value before deep copying.
-            unique = deepcopy_unique_map[root_unique][unique]
-            root_unique = deepcopy_unique_map[root_unique][root_unique]
-
-    # If the root unique is already in repeat_iteration_tracker.
-    if root_unique in repeat_iteration_tracker:
-        # Unique found in tracker.
-        # Determine appended "iteration tracker" value for root unique and all associated children.
-
-        # If obj and root_obj are the same, increment the count.
-        if obj == root_obj:
-            # Get the current count out.
-            root_count = repeat_iteration_tracker[root_unique]
-            # Increment the count.
-            repeat_iteration_tracker[root_unique] += 1
-
-        # Else set the root count to the value - 1 as it is a child of the
-        # root unique and would otherwise have the wrong value.
-        else:
-            # Get the current count out.
-            root_count = repeat_iteration_tracker[root_unique] - 1
-
-        # If the root count is greater than zero, use it.
-        if root_count > 0:
-            # Append the current iteration.
-            unique = f'{unique}_{root_count}'
-
-    else:
-        # Unique not found in tracker. Add the unique to the repeat_iteration_tracker.
-        repeat_iteration_tracker[root_unique] = 1
-
-    return unique
-
-
-def _create_unique_map(obj, root_unique, original_obj):
-    """Create an entry in the root_unique_map for this object"""
-
-    # Create a dict for that unique map.
-    deepcopy_unique_map[root_unique] = {}
-
-    # Begin recursively adding entries to the unique map.
-    _add_unique_map_entry(obj, original_obj, root_unique)
-
-
-def _add_unique_map_entry(obj, original_obj, root_unique):
-    """Add a unique entry to the unique entry map"""
-
-    # Calculate the obj unique and the original obj unique.
-    obj_unique = _generate_unique_from_obj(obj)
-    original_obj_unique = _generate_unique_from_obj(original_obj)
-
-    # Add the new unique to the root unique map.
-    deepcopy_unique_map[root_unique][obj_unique] = original_obj_unique
-
-    # Attempt to get member values of object and original object.
-    members = _get_members(obj)
-    original_members = _get_members(original_obj)
-
-    # Loop through members and recursively determine unique mappings.
-    # We do this because the state of an object might change over time, so child values (and mappings) might be
-    # different. Parent might also be of complex type with children that are also complex types.
-    for attr, value in members:
-        # Skip simple types and children of intermediate types.
-        if _is_simple_type(value) or _is_intermediate_type(obj):
-            continue
-        # Skip private members if not including them and functions.
-        if (_is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
-            continue
-
-        # Loop through orig members looking for a match.
-        for orig_attr, orig_value in original_members:
-            # Skip simple types and children of intermediate types.
-            if _is_simple_type(value) or _is_intermediate_type(original_obj):
-                continue
-            # Skip private members if not including them and functions.
-            if (_is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
-                continue
-
-            # If the attrs match, make recursive call to add more entries to the unique map.
-            if orig_attr == attr:
-                _add_unique_map_entry(value, orig_value, root_unique)
-
-
-def _get_class_name(obj):
-    """Get class name of an object."""
-    name = None
-    try:
-        name = obj.__class__.__name__
-    except Exception:
-        pass
-    return name
-
-
-def _get_access_modifier(obj):
-    """Return the access modifier that should be used."""
-    if _is_magic(obj):
-        return '-'
-    elif _is_private(obj):
-        return '#'
-    else:
-        return '+'
-
-
-def _get_obj_type(obj):
-    """Determines the string representation of object's type."""
-
-    # Get default type value.
-    obj_type = type(obj).__name__
-
-    # Special handling for certain types.
-    if obj_type == 'NoneType':
-        obj_type = 'null'
-    elif isinstance(obj, pytz.BaseTzInfo):
-        obj_type = 'pytz_timezone'
-
-    return obj_type
-
-
-def _safe_repr(obj):
-    """Call repr() and ignore ObjectDoesNotExist."""
-    str_obj = ''
-    try:
-        str_obj = repr(obj)
-    except ObjectDoesNotExist:
-        # L8R: A list of deleted db objects will cause repr(list) to fail.
-        # We should detect this and print out the __class__ of the contents of
-        # the list.
-        str_obj = f'<{obj.__class__} DELETED>'
-
-    return str_obj
-
-
-def _safe_str(obj):
-    """Call str() and ignore TypeErrors if str() doesn't return a string."""
-    str_obj = ''
-    try:
-        str_obj = str(obj)
-    except (TypeError, ObjectDoesNotExist):
-        str_obj = _safe_repr(obj)
-
-    return str_obj
-
-
-def _in_dir(obj, attr):
-    """Simpler hasattr() function without side effects."""
-    return attr in dir(obj)
-
-
-def _is_iterable(obj):
-    """Return True if object can be iterated."""
-    try:
-        iter(obj)
-    except TypeError:
-        return False
-    return True
-
-
-def _is_indexable(obj):
-    """Return True if object can be indexed."""
-    if isinstance(obj, Sequence):
-        return True
-    else:
-        return False
-
-
-def _is_query(obj):
-    """Return True if object is most likely a query."""
-    if obj is not None:
-        return _in_dir(obj, 'as_manager') and _in_dir(obj, 'all') and _in_dir(obj, 'filter')
-
-
-def _is_dict(obj):
-    """Return True if object is most likely a dict."""
-    if obj is not None:
-        return _in_dir(obj, 'items') and _in_dir(obj, 'keys') and _in_dir(obj, 'values')
-
-
-def _is_const(obj):
-    """Return True if object is most likely a constant."""
-    if obj is not None:
-        return isinstance(obj, str) and obj[0].isalpha() and obj.upper() == obj
-
-
-def _is_key(obj):
-    """Return True if object is most likely a key."""
-    if obj is not None:
-        return "'" in obj
-
-
-def _is_number(obj):
-    """Return True if object is most likely a number."""
-    if obj is not None:
-        return isinstance(obj, (int, float)) or obj.isnumeric()
-
-
-def _is_private(obj):
-    """Return True if object is private."""
-    if obj is not None:
-        return isinstance(obj, str) and obj.startswith('_')
-
-
-def _is_magic(obj):
-    """Return True if object is private."""
-    if obj is not None:
-        return isinstance(obj, str) and obj.startswith('__') and obj.endswith('__')
-
-
-def _is_simple_type(obj):
-    """Return if the obj is a simple type."""
-    return (
-        obj is None
-        or type(obj) in SIMPLE_TYPES
-        or _get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
-    )
-
-
-def _is_intermediate_type(obj):
-    """Return if the obj is an intermediate type."""
-
-    # Special handling for pytz timezone objects.
-    if isinstance(obj, pytz.BaseTzInfo):
-        return True
-
-    # Handling for all other objects.
-    return (
-        type(obj) in INTERMEDIATE_TYPES
-        or _get_class_name(obj) in ADDITIONAL_INTERMEDIATE_TYPES
-    )
-
-
-def _should_render_full_object(current_depth, current_iteration):
-    """Return if we should render the full object"""
-    return (
-        # Ensure all dump calls are processed.
-        current_depth == 0
-        # Check for any nested objects
-        or (
-            # Check if the max_recursion is set to None or we have not reached it yet.
-            (
-                MAX_RECURSION_DEPTH is None
-                or current_depth <= MAX_RECURSION_DEPTH
-            )
-
-            # And if the max_iterable_length is set to None,
-            # or we have not reached it yet or we are at the root level.
-            and (
-                MAX_ITERABLE_LENGTH is None
-                or current_iteration <= MAX_ITERABLE_LENGTH
-            )
-        )
-    )
-
-
-def _process_root_indices(start, end, parent_length):
-    """Process the passed in start and end indices into proper format"""
-    # Handle unique indexing logic for root element.
-    # We do not do this logic for child elements (depth > 0), but allow it for the root
-    # element, in case user wants to only run dd for a specific range of values.
-
-    # Save for later processing
-    orig_end = end
-
-    # Handle defaults.
-    # If we got this far, at least one is set. Make sure the other is set as well.
-    if start is None:
-        start = 0
-    if end is None:
-        end = MAX_ITERABLE_LENGTH
-
-    # Handle if provided start_index is negative.
-    if start < 0:
-        start = parent_length + start
-
-        # Reset if still negative.
-        if start < 0:
-            start = 0
-
-    # If the original value of end is None, there is no specified end and
-    # it makes sense to then run from the start, now that it is calculated,
-    # to the max iterable length.
-    if orig_end is None:
-        end = start + MAX_ITERABLE_LENGTH
-
-    # Handle if provided end_index is negative.
-    if end < 0:
-        end = parent_length + end
-
-        # Reset if still negative.
-        if end < 0:
-            end = 0
-
-    # Handle if user provided a start_index that is higher than end_index.
-    if start > end:
-        temp = start
-        start = end
-        end = temp
-
-    # Return the processed indices.
-    return start, end
-
-
-def _get_collapsable_values():
-    """Get the arrow and collapsable values"""
-
-    return {
-        'attribute_type' : {
-            'arrow': '▼' if ATTR_TYPES_START_EXPANDED else '▶',
-            'show': 'show' if ATTR_TYPES_START_EXPANDED else '',
-        },
-        'attribute' : {
-            'arrow': '▼' if ATTRIBUTES_START_EXPANDED else '▶',
-            'show': 'show' if ATTRIBUTES_START_EXPANDED else '',
-        },
-        'function' : {
-            'arrow': '▼' if FUNCTIONS_START_EXPANDED else '▶',
-            'show': 'show' if FUNCTIONS_START_EXPANDED else '',
-        },
-    }
+# endregion Module Variables
 
 
 @register.inclusion_tag('django_dump_die/_dd_object.html')
@@ -530,6 +180,175 @@ def dd_object(
         'type': _get_obj_type(obj),
         'unique': unique,
     }
+
+
+# region Unique Mapping Functions
+
+def _generate_unique(obj, root_obj, original_obj):
+    """Generate the current and root unique."""
+
+    # Get a unique for the object.
+    unique = _generate_unique_from_obj(obj)
+
+    # Get a unique for the object.
+    root_unique = _generate_unique_from_obj(root_obj)
+
+    # If there is an original_obj, we may need to create the unique map so that
+    # we can restore the original uniques to the deepcopied object.
+    if original_obj:
+        # Ensure root unique in root_unique_map.
+        if root_unique not in deepcopy_unique_map:
+            # Create the unique mapping of current deepcopy to original object.
+            _create_unique_map(obj, root_unique, original_obj)
+
+        # Skip simple types and intermediate types
+        if unique in deepcopy_unique_map[root_unique]:
+            # Do unique swap so that both unique and root unique are the
+            # same value as the original value before deep copying.
+            unique = deepcopy_unique_map[root_unique][unique]
+            root_unique = deepcopy_unique_map[root_unique][root_unique]
+
+    # If the root unique is already in repeat_iteration_tracker.
+    if root_unique in repeat_iteration_tracker:
+        # Unique found in tracker.
+        # Determine appended "iteration tracker" value for root unique and all associated children.
+
+        # If obj and root_obj are the same, increment the count.
+        if obj == root_obj:
+            # Get the current count out.
+            root_count = repeat_iteration_tracker[root_unique]
+            # Increment the count.
+            repeat_iteration_tracker[root_unique] += 1
+
+        # Else set the root count to the value - 1 as it is a child of the
+        # root unique and would otherwise have the wrong value.
+        else:
+            # Get the current count out.
+            root_count = repeat_iteration_tracker[root_unique] - 1
+
+        # If the root count is greater than zero, use it.
+        if root_count > 0:
+            # Append the current iteration.
+            unique = f'{unique}_{root_count}'
+
+    else:
+        # Unique not found in tracker. Add the unique to the repeat_iteration_tracker.
+        repeat_iteration_tracker[root_unique] = 1
+
+    return unique
+
+
+def _generate_unique_from_obj(obj):
+    """Generate a unique identifier for the object passed in."""
+
+    # Create unique via hash and fallback to id on exception.
+    try:
+        unique = hash(obj)
+    except Exception:
+        unique = id(obj)
+    # Append the class name to the unique to really make unique.
+    unique = f'{_get_class_name(obj)}_{unique}'
+
+    return unique
+
+
+def _create_unique_map(obj, root_unique, original_obj):
+    """Create an entry in the root_unique_map for this object"""
+
+    # Create a dict for that unique map.
+    deepcopy_unique_map[root_unique] = {}
+
+    # Begin recursively adding entries to the unique map.
+    _add_unique_map_entry(obj, original_obj, root_unique)
+
+
+def _add_unique_map_entry(obj, original_obj, root_unique):
+    """Add a unique entry to the unique entry map"""
+
+    # Calculate the obj unique and the original obj unique.
+    obj_unique = _generate_unique_from_obj(obj)
+    original_obj_unique = _generate_unique_from_obj(original_obj)
+
+    # Add the new unique to the root unique map.
+    deepcopy_unique_map[root_unique][obj_unique] = original_obj_unique
+
+    # Attempt to get member values of object and original object.
+    members = _get_members(obj)
+    original_members = _get_members(original_obj)
+
+    # Loop through members and recursively determine unique mappings.
+    # We do this because the state of an object might change over time, so child values (and mappings) might be
+    # different. Parent might also be of complex type with children that are also complex types.
+    for attr, value in members:
+        # Skip simple types and children of intermediate types.
+        if _is_simple_type(value) or _is_intermediate_type(obj):
+            continue
+        # Skip private members if not including them and functions.
+        if (_is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
+            continue
+
+        # Loop through orig members looking for a match.
+        for orig_attr, orig_value in original_members:
+            # Skip simple types and children of intermediate types.
+            if _is_simple_type(value) or _is_intermediate_type(original_obj):
+                continue
+            # Skip private members if not including them and functions.
+            if (_is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
+                continue
+
+            # If the attrs match, make recursive call to add more entries to the unique map.
+            if orig_attr == attr:
+                _add_unique_map_entry(value, orig_value, root_unique)
+
+# endregion Unique Mapping Functions
+
+
+# region Type Handling Functions
+
+def _is_simple_type(obj):
+    """Return if the obj is a simple type."""
+    return (
+        obj is None
+        or type(obj) in SIMPLE_TYPES
+        or _get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
+    )
+
+
+def _is_intermediate_type(obj):
+    """Return if the obj is an intermediate type."""
+
+    # Special handling for pytz timezone objects.
+    if isinstance(obj, pytz.BaseTzInfo):
+        return True
+
+    # Handling for all other objects.
+    return (
+        type(obj) in INTERMEDIATE_TYPES
+        or _get_class_name(obj) in ADDITIONAL_INTERMEDIATE_TYPES
+    )
+
+
+def _should_render_full_object(current_depth, current_iteration):
+    """Return if we should render the full object"""
+    return (
+        # Ensure all dump calls are processed.
+        current_depth == 0
+        # Check for any nested objects
+        or (
+            # Check if the max_recursion is set to None or we have not reached it yet.
+            (
+                MAX_RECURSION_DEPTH is None
+                or current_depth <= MAX_RECURSION_DEPTH
+            )
+
+            # And if the max_iterable_length is set to None,
+            # or we have not reached it yet or we are at the root level.
+            and (
+                MAX_ITERABLE_LENGTH is None
+                or current_iteration <= MAX_ITERABLE_LENGTH
+            )
+        )
+    )
 
 
 def _handle_simple_type(obj):
@@ -670,31 +489,10 @@ def _handle_unique_obj(
         'original_obj': original_obj,
     }
 
+# endregion Type Handling Functions
 
-def _get_members(obj):
-    """Attempts to get object members. Falls back to an empty list."""
 
-    # Get initial member set or empty list.
-    try:
-        members = inspect.getmembers(obj)
-    except Exception:
-        members = []
-
-    # Add type specific members that will not be included from the use of the inspect.getmembers function.
-    if _is_dict(obj):
-        # Dictionary members.
-        members.extend(obj.items())
-    elif _is_iterable(obj):
-        # Lists, sets, etc.
-        if _is_indexable(obj):
-            # Use indexes as left half.
-            members.extend(list(enumerate(obj)))
-        else:
-            # Use None as left half. Most likely a set.
-            members.extend([(None, x) for x in obj])
-
-    return members
-
+# region Object Property Functions
 
 def _get_obj_values(obj):
     """Determines full corresponding member values (attributes/functions) of object."""
@@ -784,3 +582,225 @@ def _get_obj_values(obj):
         pass  # Ignore sort errors.
 
     return (attributes, functions)
+
+
+def _get_members(obj):
+    """Attempts to get object members. Falls back to an empty list."""
+
+    # Get initial member set or empty list.
+    try:
+        members = inspect.getmembers(obj)
+    except Exception:
+        members = []
+
+    # Add type specific members that will not be included from the use of the inspect.getmembers function.
+    if _is_dict(obj):
+        # Dictionary members.
+        members.extend(obj.items())
+    elif _is_iterable(obj):
+        # Lists, sets, etc.
+        if _is_indexable(obj):
+            # Use indexes as left half.
+            members.extend(list(enumerate(obj)))
+        else:
+            # Use None as left half. Most likely a set.
+            members.extend([(None, x) for x in obj])
+
+    return members
+
+
+def _get_class_name(obj):
+    """Get class name of an object."""
+    name = None
+    try:
+        name = obj.__class__.__name__
+    except Exception:
+        pass
+    return name
+
+
+def _get_access_modifier(obj):
+    """Return the access modifier that should be used."""
+    if _is_magic(obj):
+        return '-'
+    elif _is_private(obj):
+        return '#'
+    else:
+        return '+'
+
+
+def _get_obj_type(obj):
+    """Determines the string representation of object's type."""
+
+    # Get default type value.
+    obj_type = type(obj).__name__
+
+    # Special handling for certain types.
+    if obj_type == 'NoneType':
+        obj_type = 'null'
+    elif isinstance(obj, pytz.BaseTzInfo):
+        obj_type = 'pytz_timezone'
+
+    return obj_type
+
+
+def _safe_repr(obj):
+    """Call repr() and ignore ObjectDoesNotExist."""
+    str_obj = ''
+    try:
+        str_obj = repr(obj)
+    except ObjectDoesNotExist:
+        # L8R: A list of deleted db objects will cause repr(list) to fail.
+        # We should detect this and print out the __class__ of the contents of
+        # the list.
+        str_obj = f'<{obj.__class__} DELETED>'
+
+    return str_obj
+
+
+def _safe_str(obj):
+    """Call str() and ignore TypeErrors if str() doesn't return a string."""
+    str_obj = ''
+    try:
+        str_obj = str(obj)
+    except (TypeError, ObjectDoesNotExist):
+        str_obj = _safe_repr(obj)
+
+    return str_obj
+
+
+def _in_dir(obj, attr):
+    """Simpler hasattr() function without side effects."""
+    return attr in dir(obj)
+
+
+def _is_iterable(obj):
+    """Return True if object can be iterated."""
+    try:
+        iter(obj)
+    except TypeError:
+        return False
+    return True
+
+
+def _is_indexable(obj):
+    """Return True if object can be indexed."""
+    if isinstance(obj, Sequence):
+        return True
+    else:
+        return False
+
+
+def _is_query(obj):
+    """Return True if object is most likely a query."""
+    if obj is not None:
+        return _in_dir(obj, 'as_manager') and _in_dir(obj, 'all') and _in_dir(obj, 'filter')
+
+
+def _is_dict(obj):
+    """Return True if object is most likely a dict."""
+    if obj is not None:
+        return _in_dir(obj, 'items') and _in_dir(obj, 'keys') and _in_dir(obj, 'values')
+
+
+def _is_const(obj):
+    """Return True if object is most likely a constant."""
+    if obj is not None:
+        return isinstance(obj, str) and obj[0].isalpha() and obj.upper() == obj
+
+
+def _is_key(obj):
+    """Return True if object is most likely a key."""
+    if obj is not None:
+        return "'" in obj
+
+
+def _is_number(obj):
+    """Return True if object is most likely a number."""
+    if obj is not None:
+        return isinstance(obj, (int, float)) or obj.isnumeric()
+
+
+def _is_private(obj):
+    """Return True if object is private."""
+    if obj is not None:
+        return isinstance(obj, str) and obj.startswith('_')
+
+
+def _is_magic(obj):
+    """Return True if object is private."""
+    if obj is not None:
+        return isinstance(obj, str) and obj.startswith('__') and obj.endswith('__')
+
+# endregion Object Property Functions
+
+
+# region Misc Functions
+
+def _process_root_indices(start, end, parent_length):
+    """Process the passed in start and end indices into proper format"""
+    # Handle unique indexing logic for root element.
+    # We do not do this logic for child elements (depth > 0), but allow it for the root
+    # element, in case user wants to only run dd for a specific range of values.
+
+    # Save for later processing
+    orig_end = end
+
+    # Handle defaults.
+    # If we got this far, at least one is set. Make sure the other is set as well.
+    if start is None:
+        start = 0
+    if end is None:
+        end = MAX_ITERABLE_LENGTH
+
+    # Handle if provided start_index is negative.
+    if start < 0:
+        start = parent_length + start
+
+        # Reset if still negative.
+        if start < 0:
+            start = 0
+
+    # If the original value of end is None, there is no specified end and
+    # it makes sense to then run from the start, now that it is calculated,
+    # to the max iterable length.
+    if orig_end is None:
+        end = start + MAX_ITERABLE_LENGTH
+
+    # Handle if provided end_index is negative.
+    if end < 0:
+        end = parent_length + end
+
+        # Reset if still negative.
+        if end < 0:
+            end = 0
+
+    # Handle if user provided a start_index that is higher than end_index.
+    if start > end:
+        temp = start
+        start = end
+        end = temp
+
+    # Return the processed indices.
+    return start, end
+
+
+def _get_collapsable_values():
+    """Get the arrow and collapsable values"""
+
+    return {
+        'attribute_type' : {
+            'arrow': '▼' if ATTR_TYPES_START_EXPANDED else '▶',
+            'show': 'show' if ATTR_TYPES_START_EXPANDED else '',
+        },
+        'attribute' : {
+            'arrow': '▼' if ATTRIBUTES_START_EXPANDED else '▶',
+            'show': 'show' if ATTRIBUTES_START_EXPANDED else '',
+        },
+        'function' : {
+            'arrow': '▼' if FUNCTIONS_START_EXPANDED else '▶',
+            'show': 'show' if FUNCTIONS_START_EXPANDED else '',
+        },
+    }
+
+# endregion Misc Functions
