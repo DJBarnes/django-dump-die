@@ -69,8 +69,8 @@ INCLUDE_PRIVATE_METHODS = getattr(settings, 'DJANGO_DD_INCLUDE_PRIVATE_MEMBERS',
 INCLUDE_MAGIC_METHODS = getattr(settings, 'DJANGO_DD_INCLUDE_MAGIC_METHODS', False)
 
 # Stores the uniques for each dumped root object.
-root_skip = {}
-root_unique_map = {}
+repeat_iteration_tracker = {}
+deepcopy_unique_map = {}
 
 
 def _generate_unique_from_obj(obj):
@@ -88,66 +88,67 @@ def _generate_unique_from_obj(obj):
 
 
 def _generate_unique(obj, root_obj, original_obj):
-    """Generate the current and root unique"""
+    """Generate the current and root unique."""
 
-    # Get a unique for the object
+    # Get a unique for the object.
     unique = _generate_unique_from_obj(obj)
 
-    # Get a unique for the object
+    # Get a unique for the object.
     root_unique = _generate_unique_from_obj(root_obj)
 
     # If there is an original_obj, we may need to create the unique map so that
     # we can restore the original uniques to the deepcopied object.
     if original_obj:
-        # Ensure root unique in root_unique_map
-        root_unique = _generate_unique_from_obj(root_obj)
-        if root_unique not in root_unique_map:
-            # Create the unique map
-            _create_unique_map(obj, root_obj, original_obj)
+        # Ensure root unique in root_unique_map.
+        if root_unique not in deepcopy_unique_map:
+            # Create the unique mapping of current deepcopy to original object.
+            _create_unique_map(obj, root_unique, original_obj)
 
         # Skip simple types and intermediate types
-        if unique in root_unique_map[root_unique]:
+        if unique in deepcopy_unique_map[root_unique]:
             # Do unique swap so that both unique and root unique are the
             # same value as the original value before deep copying.
-            unique = root_unique_map[root_unique][unique]
-            root_unique = root_unique_map[root_unique][root_unique]
+            unique = deepcopy_unique_map[root_unique][unique]
+            root_unique = deepcopy_unique_map[root_unique][root_unique]
 
-    # If the root unique is already in root_skip.
-    if root_unique in root_skip:
+    # If the root unique is already in repeat_iteration_tracker.
+    if root_unique in repeat_iteration_tracker:
+        # Unique found in tracker.
+        # Determine appended "iteration tracker" value for root unique and all associated children.
 
-        # If obj and root_obj are the same, increment the count
+        # If obj and root_obj are the same, increment the count.
         if obj == root_obj:
             # Get the current count out.
-            root_count = root_skip[root_unique]
+            root_count = repeat_iteration_tracker[root_unique]
             # Increment the count.
-            root_skip[root_unique] += 1
+            repeat_iteration_tracker[root_unique] += 1
+
         # Else set the root count to the value - 1 as it is a child of the
         # root unique and would otherwise have the wrong value.
         else:
             # Get the current count out.
-            root_count = root_skip[root_unique] - 1
+            root_count = repeat_iteration_tracker[root_unique] - 1
 
         # If the root count is greater than zero, use it.
         if root_count > 0:
             # Append the current iteration.
             unique = f'{unique}_{root_count}'
+
     else:
-        # Else add the unique to the root_skip.
-        root_skip[root_unique] = 1
+        # Unique not found in tracker. Add the unique to the repeat_iteration_tracker.
+        repeat_iteration_tracker[root_unique] = 1
 
     return unique
 
 
-def _create_unique_map(obj, root_obj, original_obj):
+def _create_unique_map(obj, root_unique, original_obj):
     """Create an entry in the root_unique_map for this object"""
 
-    # Calculate the root unique
-    root_unique = _generate_unique_from_obj(root_obj)
-    # Create a dict for that unique map
-    root_unique_map[root_unique] = {}
-    # Begin recursively adding entries to the unique map
-    _add_unique_map_entry(obj, original_obj, root_unique)
+    # Create a dict for that unique map.
+    deepcopy_unique_map[root_unique] = {}
 
+    # Begin recursively adding entries to the unique map.
+    _add_unique_map_entry(obj, original_obj, root_unique)
 
 
 def _add_unique_map_entry(obj, original_obj, root_unique):
@@ -158,31 +159,33 @@ def _add_unique_map_entry(obj, original_obj, root_unique):
     original_obj_unique = _generate_unique_from_obj(original_obj)
 
     # Add the new unique to the root unique map.
-    root_unique_map[root_unique][obj_unique] = original_obj_unique
+    deepcopy_unique_map[root_unique][obj_unique] = original_obj_unique
 
     # Attempt to get member values of object and original object.
     members = _get_members(obj)
     original_members = _get_members(original_obj)
 
-    # Loop through members
+    # Loop through members and recursively determine unique mappings.
+    # We do this because the state of an object might change over time, so child values (and mappings) might be
+    # different. Parent might also be of complex type with children that are also complex types.
     for attr, value in members:
-        # Skip simple types and childrent of intermediate types
+        # Skip simple types and children of intermediate types.
         if _is_simple_type(value) or _is_intermediate_type(obj):
             continue
         # Skip private members if not including them and functions.
         if (_is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
             continue
 
-        # Loop through orig members looking for a match
+        # Loop through orig members looking for a match.
         for orig_attr, orig_value in original_members:
-            # Skip simple types and children of intermediate types
+            # Skip simple types and children of intermediate types.
             if _is_simple_type(value) or _is_intermediate_type(original_obj):
                 continue
             # Skip private members if not including them and functions.
             if (_is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
                 continue
 
-            # If the attrs match, make recursive call to add more entries to the unique map
+            # If the attrs match, make recursive call to add more entries to the unique map.
             if orig_attr == attr:
                 _add_unique_map_entry(value, orig_value, root_unique)
 
