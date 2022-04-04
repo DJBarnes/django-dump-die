@@ -81,7 +81,7 @@ deepcopy_unique_map = {}
 def dd_object(
     obj,
     root_obj,
-    skip=None,
+    skip_set=None,
     current_iteration=0,
     current_depth=0,
     root_index_start=None,
@@ -89,25 +89,32 @@ def dd_object(
     original_obj=None,
     parent_is_intermediate=False,
 ):
-    """
-    Return info about object.
-    If we have exceeded specified iteration count or depth, OR if object is of simple type, then output minimal info.
-    Otherwise, output full object info, including information for any inner-children, if applicable.
-    (Inner children are minimally processed here, and fully processed later in a new call to templatetag.)
+    """Determines template dd/dump info for provided object.
+
+    Determines appropriate attributes/functions associated with object, for dd/dump output to template.
+
+    There are three major object categories:
+      * Simple - Basic entities that simply output minimal, direct value output.
+      * Intermediate - Objects that that display only one level of attribute/function values.
+      * Complex - Complex objects that recursively display attribute/function values for self and all children.
+
+    Note:
+      * If we have exceeded specified iteration count or depth, then defaults back to "simple" type output.
+      * On each call, inner children are minimally processed, and fully processed later in a new call to templatetag.
 
     :param obj: Object to iterate over and attempt to parse information from.
-    :param root_obj: Root object. Used to calculate negative index values.
-    :param skip: Set of already-processed objects. Used to skip re-processing identical objects.
+    :param root_obj: Root, parent object associated with current object.
+    :param skip_set: Set of already-processed objects. Used to skip re-processing identical non-objects.
     :param current_iteration: Current iteration-index. Used to track current index of object we're iterating through.
     :param current_depth: Current depth-index. Used to track how deep of child-members we're iterating through.
     :param root_index_start: Starting index for root iterable object. If None, uses default behavior.
     :param root_index_end: Ending index for root iterable object. If None, uses default behavior.
+    :param original_obj: Original object, for handling uniques if dealing with deepcopy.
     :param parent_is_intermediate: Boolean indicating that parent is intermediate type. Do not recurse further.
     """
-
     # Set up set to store uniques to skip if not passed in.
     # Will be used to skip objects already done to prevent infinite loops.
-    skip = skip or set()
+    skip_set = skip_set or set()
 
     # Generate the unique
     unique = _generate_unique(obj, root_obj, original_obj)
@@ -115,7 +122,7 @@ def dd_object(
     # Following section will determine what should get rendered out.
 
     # Handle if object is in skip set, aka already processed.
-    if unique in skip:
+    if unique in skip_set:
         # Complex object found in skip set. Skip further handling of if clauses and go to end of function.
         pass
 
@@ -150,7 +157,7 @@ def dd_object(
                 obj,
                 root_obj,
                 unique,
-                skip=skip,
+                skip_set=skip_set,
                 current_iteration=current_iteration,
                 current_depth=current_depth,
                 original_obj=original_obj,
@@ -164,7 +171,7 @@ def dd_object(
             obj,
             root_obj,
             unique,
-            skip=skip,
+            skip_set=skip_set,
             current_iteration=current_iteration,
             current_depth=current_depth,
             root_index_start=root_index_start,
@@ -185,8 +192,17 @@ def dd_object(
 # region Unique Mapping Functions
 
 def _generate_unique(obj, root_obj, original_obj):
-    """Generate the current and root unique."""
+    """Generates object "unique" identifier.
 
+    If using dump/dd on multiple instances of a root object, tracks such and appends iteration counters appropriately.
+
+    If dealing with deepcopy, creates mapping to track the original values, so end user can track evolution of a single
+    variable over time.
+
+    :param obj: Current object to determine unique for.
+    :param root_obj: Root object associated with current obj. Used for deepcopy mapping logic.
+    :param original_obj: Original instance of object corresponding to current obj. Used for deepcopy mapping logic.
+    """
     # Get a unique for the object.
     unique = _generate_unique_from_obj(obj)
 
@@ -253,7 +269,7 @@ def _generate_unique_from_obj(obj):
 
 
 def _create_unique_map(obj, root_unique, original_obj):
-    """Create an entry in the root_unique_map for this object"""
+    """Create an entry in the root_unique_map for this object."""
 
     # Create a dict for that unique map.
     deepcopy_unique_map[root_unique] = {}
@@ -263,7 +279,7 @@ def _create_unique_map(obj, root_unique, original_obj):
 
 
 def _add_unique_map_entry(obj, original_obj, root_unique):
-    """Add a unique entry to the unique entry map"""
+    """Add a unique entry to the unique entry map."""
 
     # Calculate the obj unique and the original obj unique.
     obj_unique = _generate_unique_from_obj(obj)
@@ -391,7 +407,7 @@ def _handle_simple_type(obj):
 
 
 def _handle_intermediate_type(obj, root_obj, unique, original_obj=None):
-    """Handling for a intermediate object.
+    """Handling for am intermediate object.
 
     Effectively, it's an object that's complex enough to have associated attributes and functions that we want to
     display in dd output. But for basic cases, treating it more almost as a "simple type" is generally enough
@@ -400,6 +416,11 @@ def _handle_intermediate_type(obj, root_obj, unique, original_obj=None):
     Similar to "simple type" in that we display base value output without needing to expand.
 
     Similar to "complex type" in that we display associated attributes, but do not fully recursively expand all.
+
+    :param obj: Object to iterate over and attempt to parse information from.
+    :param root_obj: Root, parent object associated with current object.
+    :param unique: Unique identifier associated with current object.
+    :param original_obj: Original object, for handling uniques if dealing with deepcopy.
     """
     # Attempt to get corresponding attribute/function values of object.
     attributes, functions = _get_obj_values(obj)
@@ -432,7 +453,7 @@ def _handle_complex_type(
     obj,
     root_obj,
     unique,
-    skip=None,
+    skip_set=None,
     current_iteration=0,
     current_depth=0,
     root_index_start=None,
@@ -443,13 +464,18 @@ def _handle_complex_type(
     Main logic for outputting information for a given "unique".
 
     :param obj: Object to iterate over and attempt to parse information from.
-    :param skip: Set of already-processed objects. Used to skip re-processing identical objects.
+    :param root_obj: Root, parent object associated with current object.
+    :param unique: Unique identifier associated with current object.
+    :param original_obj: Original object, for handling uniques if dealing with deepcopy.
+    :param skip_set: Set of already-processed objects. Used to skip re-processing identical objects.
     :param current_iteration: Current iteration-index. Used to track current index of object we're iterating through.
     :param current_depth: Current depth-index. Used to track how deep of child-members we're iterating through.
+    :param root_index_start:
+    :param root_index_end:
     """
     # Add unique to skip so it won't be processed a second time by additional
     # recursive calls to this template tag.
-    skip.add(unique)
+    skip_set.add(unique)
 
     # If the object is a query, evaluate it.
     # This prevents a crash because a lazy queryset has too many members.
@@ -481,7 +507,7 @@ def _handle_complex_type(
         'attributes': attributes,
         'functions': functions,
         'is_iterable': _is_iterable(obj),
-        'skip': skip,
+        'skip': skip_set,
         'index': current_iteration,
         'depth': current_depth,
         'root_index_start': root_index_start,
@@ -738,10 +764,7 @@ def _is_magic(obj):
 # region Misc Functions
 
 def _process_root_indices(start, end, parent_length):
-    """Process the passed in start and end indices into proper format"""
-    # Handle unique indexing logic for root element.
-    # We do not do this logic for child elements (depth > 0), but allow it for the root
-    # element, in case user wants to only run dd for a specific range of values.
+    """Parse and validate indexes into expected format. Allows use of user-specified index ranges on root element."""
 
     # Save for later processing
     orig_end = end
