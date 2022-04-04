@@ -146,7 +146,7 @@ def dd_object(
         if current_iteration >= root_index_start and current_iteration < root_index_end:
 
             # Handle for new "unique" object output.
-            return _handle_unique_obj(
+            return _handle_complex_type(
                 obj,
                 root_obj,
                 unique,
@@ -157,10 +157,10 @@ def dd_object(
             )
 
     # Handle if not at root element and/or "root_index" values are not set.
-    elif _should_render_full_object(current_depth, current_iteration):
+    elif is_complex_type(current_depth, current_iteration):
 
         # Handle for new "unique" object output.
-        return _handle_unique_obj(
+        return _handle_complex_type(
             obj,
             root_obj,
             unique,
@@ -328,7 +328,7 @@ def _is_intermediate_type(obj):
     )
 
 
-def _should_render_full_object(current_depth, current_iteration):
+def is_complex_type(current_depth, current_iteration):
     """Return if we should render the full object"""
     return (
         # Ensure all dump calls are processed.
@@ -428,7 +428,7 @@ def _handle_intermediate_type(obj, root_obj, unique, original_obj=None):
     }
 
 
-def _handle_unique_obj(
+def _handle_complex_type(
     obj,
     root_obj,
     unique,
