@@ -38,7 +38,7 @@ def example(request):
 
     def test_func():
         """Test doc string"""
-        return 42;
+        return 42
 
     def test_func_param(param1, *args, **kwargs):
         """Test param doc string"""
