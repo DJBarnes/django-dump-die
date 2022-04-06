@@ -32,7 +32,7 @@ class DumpDieViewSimpleTestCase(GenericViewTestCase):
     def test_dd_for_bool(self):
         """Test that dumping a bool has expected output"""
         response = self.client.get('/simple?type=bool')
-        expected = '<span title="Dumped Object">test_bool</span>: <code class="bool">True</code>'
+        expected = '<span title="Dumped Object">test_bool</span>: <span class="type" title="bool">bool</span> <code class="bool">True</code>'
         self.assertContains(response, expected, html=True)
 
     # TODO: Finish this test. May require more work with django to test.
@@ -44,37 +44,37 @@ class DumpDieViewSimpleTestCase(GenericViewTestCase):
     def test_dd_for_bytes(self):
         """Test that dumping bytes has expected output"""
         response = self.client.get('/simple?type=bytes')
-        expected = '<span title="Dumped Object">test_bytes</span>: <code class="number">b&#x27;test bytes&#x27;</code>'
+        expected = '<span title="Dumped Object">test_bytes</span>: <span class="type" title="bytes">bytes</span> <code class="number">b&#x27;test bytes&#x27;</code>'
         self.assertContains(response, expected, html=True)
 
     def test_dd_for_decimal(self):
         """Test that dumping a Decimal has expected output"""
         response = self.client.get('/simple?type=decimal')
-        expected = '<span title="Dumped Object">test_decimal</span>: <code class="number">Decimal(\'23.5\')</code>'
+        expected = '<span title="Dumped Object">test_decimal</span>: <span class="type" title="Decimal">Decimal</span> <code class="number">23.5</code>'
         self.assertContains(response, expected, html=True)
 
     def test_dd_for_float(self):
         """Test that dumping a float has expected output"""
         response = self.client.get('/simple?type=float')
-        expected = '<span title="Dumped Object">test_float</span>: <code class="number">23.5</code>'
+        expected = '<span title="Dumped Object">test_float</span>: <span class="type" title="float">float</span> <code class="number">23.5</code>'
         self.assertContains(response, expected, html=True)
 
     def test_dd_for_int(self):
         """Test that dumping a int has expected output"""
         response = self.client.get('/simple?type=int')
-        expected = '<span title="Dumped Object">test_int</span>: <code class="number">23</code>'
+        expected = '<span title="Dumped Object">test_int</span>: <span class="type" title="int">int</span> <code class="number">23</code>'
         self.assertContains(response, expected, html=True)
 
     def test_dd_for_module(self):
         """Test that dumping a module has expected output"""
         response = self.client.get('/simple?type=module')
-        expected = '<span title="Dumped Object">test_module</span>: <code class="module">&lt;module &#x27;django.http&#x27;&gt;</code>'
+        expected = '<span title="Dumped Object">test_module</span>: <span class="type" title="module">module</span> <code class="module">&lt;module &#x27;django.http&#x27;&gt;</code>'
         self.assertContains(response, expected, html=True)
 
     def test_dd_for_string(self):
         """Test that dumping a string has expected output"""
         response = self.client.get('/simple?type=string')
-        expected = '<span title="Dumped Object">test_string</span>: <code class="string">&#x27;test string&#x27;</code>'
+        expected = '<span title="Dumped Object">test_string</span>: <span class="type" title="str">str</span> <code class="string">&#x27;test string&#x27;</code>'
         self.assertContains(response, expected, html=True)
 
 
@@ -86,10 +86,10 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
         """Test that dumping a list has expected output"""
 
         mocked_unique_generation.side_effect = [
-            f'list_{9000}',
-            f'str_{9001}',
-            f'int_{9002}',
-            f'bool_{9003}',
+            (f'list_{9000}', ''),
+            (f'str_{9001}', ''),
+            (f'int_{9002}', ''),
+            (f'bool_{9003}', ''),
         ]
 
         response = self.client.get('/data_structure?type=list')
@@ -98,7 +98,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             <span class="type" title="list">list:3</span>
             [
             <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".list_9000" aria-label="Close">
-                <span class="unique">list_9000</span>
+                <span class="unique" data-highlight-unique="list_9000">list_9000</span>
                 <span id="arrow-list_9000" class="arrow">▶</span>
             </a>
             <div
@@ -116,14 +116,17 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
                     >
                         <li>
                             <span class="index" title="Index">0</span>:
+                            <span class="type" title="str">str</span>
                             <code class="string">&#x27;A&#x27;</code>
                         </li>
                         <li>
                             <span class="index" title="Index">1</span>:
+                            <span class="type" title="int">int</span>
                             <code class="number">12</code>
                         </li>
                         <li>
                             <span class="index" title="Index">2</span>:
+                            <span class="type" title="bool">bool</span>
                             <code class="bool">True</code>
                         </li>
                     </div>
@@ -141,10 +144,10 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
         """Test that dumping a dict has expected output"""
 
         mocked_unique_generation.side_effect = [
-            f'dict_{9004}',
-            f'str_{9005}',
-            f'int_{9006}',
-            f'bool_{9007}',
+            (f'dict_{9004}', ''),
+            (f'str_{9005}', ''),
+            (f'int_{9006}', ''),
+            (f'bool_{9007}', ''),
         ]
 
         response = self.client.get('/data_structure?type=dict')
@@ -153,7 +156,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             <span class="type" title="dict">dict:3</span>
             {
             <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".dict_9004" aria-label="Close">
-                <span class="unique">dict_9004</span>
+                <span class="unique" data-highlight-unique="dict_9004">dict_9004</span>
                 <span id="arrow-dict_9004" class="arrow">▶</span>
             </a>
             <div
@@ -171,14 +174,17 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
                     >
                         <li>
                             <span class="key" title="Key">&#x27;char&#x27;</span>:
+                            <span class="type" title="str">str</span>
                             <code class="string">&#x27;A&#x27;</code>
                         </li>
                         <li>
                             <span class="key" title="Key">&#x27;num&#x27;</span>:
+                            <span class="type" title="int">int</span>
                             <code class="number">12</code>
                         </li>
                         <li>
                             <span class="key" title="Key">&#x27;bool&#x27;</span>:
+                            <span class="type" title="bool">bool</span>
                             <code class="bool">True</code>
                         </li>
                     </div>
@@ -196,10 +202,10 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
         """Test that dumping a tuple has expected output"""
 
         mocked_unique_generation.side_effect = [
-            f'tuple_{9012}',
-            f'str_{9013}',
-            f'int_{9014}',
-            f'bool_{9015}',
+            (f'tuple_{9008}', ''),
+            (f'str_{9009}', ''),
+            (f'int_{9010}', ''),
+            (f'bool_{9011}', ''),
         ]
 
         response = self.client.get('/data_structure?type=tuple')
@@ -207,33 +213,36 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             <span title="Dumped Object">test_tuple</span>:
             <span class="type" title="tuple">tuple:3</span>
             (
-            <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".tuple_9012" aria-label="Close">
-                <span class="unique">tuple_9012</span>
-                <span id="arrow-tuple_9012" class="arrow">▶</span>
+            <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".tuple_9008" aria-label="Close">
+                <span class="unique" data-highlight-unique="tuple_9008">tuple_9008</span>
+                <span id="arrow-tuple_9008" class="arrow">▶</span>
             </a>
             <div
-                class="dd-wrapper collapse tuple_9012"
-                data-unique="tuple_9012"
+                class="dd-wrapper collapse tuple_9008"
+                data-unique="tuple_9008"
             >
                 <ul class="attribute-list">
-                    <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".tuple_9012-attributes" aria-label="Open/Close">
+                    <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".tuple_9008-attributes" aria-label="Open/Close">
                         <span>Attributes</span>
-                        <span id="arrow-tuple_9012-attributes" class="arrow">▼</span>
+                        <span id="arrow-tuple_9008-attributes" class="arrow">▼</span>
                     </a>
                     <div
-                        class="li-wrapper collapse tuple_9012-attributes show"
-                        data-unique-attributes="tuple_9012-attributes"
+                        class="li-wrapper collapse tuple_9008-attributes show"
+                        data-unique-attributes="tuple_9008-attributes"
                     >
                         <li>
                             <span class="index" title="Index">0</span>:
+                            <span class="type" title="str">str</span>
                             <code class="string">&#x27;A&#x27;</code>
                         </li>
                         <li>
                             <span class="index" title="Index">1</span>:
+                            <span class="type" title="int">int</span>
                             <code class="number">12</code>
                         </li>
                         <li>
                             <span class="index" title="Index">2</span>:
+                            <span class="type" title="bool">bool</span>
                             <code class="bool">True</code>
                         </li>
                     </div>
@@ -257,10 +266,10 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
         """
 
         mocked_unique_generation.side_effect = [
-            f'set_{9008}',
-            f'str_{9009}',
-            f'int_{9010}',
-            f'bool_{9011}',
+            (f'set_{9012}', ''),
+            (f'str_{9013}', ''),
+            (f'int_{9014}', ''),
+            (f'bool_{9015}', ''),
         ]
 
         response = self.client.get('/data_structure?type=set')
@@ -268,22 +277,22 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             <span title="Dumped Object">test_set</span>:
             <span class="type" title="set">set:3</span>
             {
-            <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".set_9008" aria-label="Close">
-                <span class="unique">set_9008</span>
-                <span id="arrow-set_9008" class="arrow"> ▶ </span>
+            <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".set_9012" aria-label="Close" >
+                <span class="unique" data-highlight-unique="set_9012">set_9012</span>
+                <span id="arrow-set_9012" class="arrow"> ▶ </span>
             </a>
             <div
-                class=" dd-wrapper collapse set_9008 "
-                data-unique="set_9008"
+                class="dd-wrapper collapse set_9012 "
+                data-unique="set_9012"
             >
                 <ul class="attribute-list">
-                    <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".set_9008-attributes" aria-label="Open/Close">
+                    <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".set_9012-attributes" aria-label="Open/Close" >
                         <span>Attributes</span>
-                        <span id="arrow-set_9008-attributes" class="arrow"> ▼ </span>
+                        <span id="arrow-set_9012-attributes" class="arrow"> ▼ </span>
                     </a>
                     <div
-                        class=" li-wrapper collapse set_9008-attributes show "
-                        data-unique-attributes="set_9008-attributes"
+                        class="li-wrapper collapse set_9012-attributes show"
+                        data-unique-attributes="set_9012-attributes"
                     >
         '''
         expected_first_half = ' '.join(expected_first_half.split())
@@ -299,9 +308,9 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
         '''
         expected_last_half = ' '.join(expected_last_half.split())
 
-        expected_set1 = '<li> <code class="string">&#x27;A&#x27;</code> </li>'
-        expected_set2 = '<li> <code class="number">12</code> </li>'
-        expected_set3 = '<li> <code class="bool">True</code> </li>'
+        expected_set1 = '<li> <span class="type" title="str">str</span> <code class="string">&#x27;A&#x27;</code> </li>'
+        expected_set2 = '<li> <span class="type" title="int">int</span> <code class="number">12</code> </li>'
+        expected_set3 = '<li> <span class="type" title="bool">bool</span> <code class="bool">True</code> </li>'
 
         actual = ' '.join((response.content.decode()).split())
 
