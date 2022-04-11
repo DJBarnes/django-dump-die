@@ -1,74 +1,52 @@
 """Template Tags for DumpDie"""
 
-import datetime
 import inspect
 import pytz
 import re
 import types
 
-from collections.abc import Sequence
 from decimal import Decimal
 
 from django import template
-from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.forms.boundfield import BoundField
-from django.utils import timezone
+
+from django_dump_die.constants import (
+    SIMPLE_TYPES,
+    INTERMEDIATE_TYPES,
+    ADDITIONAL_SIMPLE_TYPES,
+    ADDITIONAL_INTERMEDIATE_TYPES,
+    MAX_RECURSION_DEPTH,
+    MAX_ITERABLE_LENGTH,
+    INCLUDE_ATTRIBUTES,
+    INCLUDE_FUNCTIONS,
+    MULTILINE_FUNCTION_DOCS,
+    ATTR_TYPES_START_EXPANDED,
+    ATTRIBUTES_START_EXPANDED,
+    FUNCTIONS_START_EXPANDED,
+    INCLUDE_PRIVATE_METHODS,
+    INCLUDE_MAGIC_METHODS,
+)
+
+from django_dump_die.utils import (
+    get_members,
+    get_class_name,
+    get_obj_type,
+    safe_repr,
+    safe_str,
+    is_iterable,
+    is_query,
+    is_dict,
+    is_const,
+    is_key,
+    is_number,
+    is_private,
+    is_magic,
+)
 
 register = template.Library()
 
 
 # region Module Variables
-
-# Simple types that do not need to be recursively inspected.
-SIMPLE_TYPES = [
-    bool,
-    BoundField,
-    bytes,
-    Decimal,
-    float,
-    int,
-    types.ModuleType,
-    str,
-]
-
-
-# Intermediate types, that need some level of recursion and some level of "simple type" handling.
-INTERMEDIATE_TYPES = [
-    datetime.datetime,
-    datetime.date,
-    datetime.time,
-    timezone.timezone,
-    # pytz.BaseTzInfo,  # pytz timezone object. Has to be handled separately. Noted here just as a reminder.
-]
-
-
-# List of additional simple types defined as strings that do not need to be recursively inspected.
-ADDITIONAL_SIMPLE_TYPES = getattr(settings, 'DJANGO_DD_ADDITIONAL_SIMPLE_TYPES', [])
-# List of additional intermediate types defined as strings that do not need to be recursively inspected.
-ADDITIONAL_INTERMEDIATE_TYPES = getattr(settings, 'DJANGO_DD_ADDITIONAL_INTERMEDIATE_TYPES', [])
-# Max recursion depth to go while processing the dumped variable.
-MAX_RECURSION_DEPTH = getattr(settings, 'DJANGO_DD_MAX_RECURSION_DEPTH', 20)
-# Max number of iterables to recursively process before just printing the unique
-# instead of recursing further. EX: if set to 20, a list of 30 will recursively
-# inspect and print out 20 items and then simply print the unique for the last 10.
-MAX_ITERABLE_LENGTH = getattr(settings, 'DJANGO_DD_MAX_ITERABLE_LENGTH', 20)
-# Whether attributes should be included in the output.
-INCLUDE_ATTRIBUTES = getattr(settings, 'DJANGO_DD_INCLUDE_ATTRIBUTES', True)
-# Whether functions should be included in the output.
-INCLUDE_FUNCTIONS = getattr(settings, 'DJANGO_DD_INCLUDE_FUNCTIONS', False)
-# Whether function doc output should try to fit on one line, or output with original newlines.
-MULTILINE_FUNCTION_DOCS = getattr(settings, 'DJANGO_DD_MULTILINE_FUNCTION_DOCS', False)
-# Whether objects attribute types (Attribute, Function) should start expanded for viewing.
-ATTR_TYPES_START_EXPANDED = getattr(settings, 'DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED', False)
-# Whether the attributes for an object should start expanded for viewing.
-ATTRIBUTES_START_EXPANDED = getattr(settings, 'DJANGO_DD_ATTRIBUTES_START_EXPANDED', True)
-# Whether the functions for an object should start expanded for viewing.
-FUNCTIONS_START_EXPANDED = getattr(settings, 'DJANGO_DD_FUNCTIONS_START_EXPANDED', False)
-# Whether the output should include private attributes and functions.
-INCLUDE_PRIVATE_METHODS = getattr(settings, 'DJANGO_DD_INCLUDE_PRIVATE_MEMBERS', False)
-# Whether the output should include magic methods.
-INCLUDE_MAGIC_METHODS = getattr(settings, 'DJANGO_DD_INCLUDE_MAGIC_METHODS', False)
 
 # Stores the uniques for each dumped root object.
 repeat_iteration_tracker = {}
@@ -127,7 +105,7 @@ def dd_object(
         # Complex object found in skip set. Skip further handling of if clauses and go to end of function.
         # Intermediates get slightly extra handling for "simple" value output.
         if _is_intermediate_type(obj):
-            intermediate_value = _safe_str(obj)
+            intermediate_value = safe_str(obj)
 
     # Handle if obj is a simple type (Null/None, int, str, bool, and basic number types)
     # OR if direct parent is a intermediate (excluding pytz timezone objects).
@@ -142,7 +120,7 @@ def dd_object(
         return _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=skip_set, original_obj=original_obj)
 
     # Handle if element is iterable and we are at the root's element direct children (depth of 1),
-    elif _is_iterable(root_obj) and current_depth == 1:
+    elif is_iterable(root_obj) and current_depth == 1:
 
         # Handle unique indexing logic for root element.
         root_index_start, root_index_end = _process_root_indices(
@@ -189,7 +167,7 @@ def dd_object(
     # or outside the bounds of the root indexes to process.
     # In any case, just return the type and unique of the object for output.
     return {
-        'type': _get_obj_type(obj),
+        'type': get_obj_type(obj),
         'unique': unique,
         'root_count': root_count,
         'intermediate': intermediate_value,
@@ -275,7 +253,7 @@ def _generate_unique_from_obj(obj):
     except Exception:
         unique = id(obj)
     # Append the class name to the unique to really make unique.
-    unique = f'{_get_class_name(obj)}_{unique}'
+    unique = f'{get_class_name(obj)}_{unique}'
 
     return unique
 
@@ -301,8 +279,8 @@ def _add_unique_map_entry(obj, original_obj, root_unique):
     deepcopy_unique_map[root_unique][obj_unique] = original_obj_unique
 
     # Attempt to get member values of object and original object.
-    members = _get_members(obj)
-    original_members = _get_members(original_obj)
+    members = get_members(obj)
+    original_members = get_members(original_obj)
 
     # Loop through members and recursively determine unique mappings.
     # We do this because the state of an object might change over time, so child values (and mappings) might be
@@ -312,7 +290,7 @@ def _add_unique_map_entry(obj, original_obj, root_unique):
         if _is_simple_type(value) or _is_intermediate_type(obj):
             continue
         # Skip private members if not including them and functions.
-        if (_is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
+        if (is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
             continue
 
         # Loop through orig members looking for a match.
@@ -321,7 +299,7 @@ def _add_unique_map_entry(obj, original_obj, root_unique):
             if _is_simple_type(value) or _is_intermediate_type(original_obj):
                 continue
             # Skip private members if not including them and functions.
-            if (_is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
+            if (is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
                 continue
 
             # If the attrs match, make recursive call to add more entries to the unique map.
@@ -338,7 +316,7 @@ def _is_simple_type(obj):
     return (
         obj is None
         or type(obj) in SIMPLE_TYPES
-        or _get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
+        or get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
     )
 
 
@@ -352,7 +330,7 @@ def _is_intermediate_type(obj):
     # Handling for all other objects.
     return (
         type(obj) in INTERMEDIATE_TYPES
-        or _get_class_name(obj) in ADDITIONAL_INTERMEDIATE_TYPES
+        or get_class_name(obj) in ADDITIONAL_INTERMEDIATE_TYPES
     )
 
 
@@ -405,15 +383,15 @@ def _handle_simple_type(obj):
 
     # Determine which output to use.
     if _is_intermediate_type(obj) or isinstance(obj, Decimal):
-        output_value = _safe_str(obj)
+        output_value = safe_str(obj)
     else:
-        output_value = _safe_repr(obj)
+        output_value = safe_repr(obj)
 
     # Since simple type, return safe representation of simple type and
     # which css class to use.
     return {
         'simple': output_value,
-        'type': _get_obj_type(obj),
+        'type': get_obj_type(obj),
         'css_class': css_class,
     }
 
@@ -441,7 +419,7 @@ def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, 
     skip_set.add(unique)
 
     # Attempt to get corresponding attribute/function values of object.
-    attributes, functions = _get_obj_values(obj)
+    attributes, functions = get_obj_values(obj)
 
     # Return information required to render object.
     return {
@@ -452,10 +430,10 @@ def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, 
         'braces': '{}',
         'object': obj,
         'root_obj': root_obj,
-        'intermediate': _safe_str(obj),
+        'intermediate': safe_str(obj),
         'unique': unique,
         'root_count': root_count,
-        'type': _get_obj_type(obj),
+        'type': get_obj_type(obj),
         'attributes': attributes,
         'functions': functions,
         'is_iterable': False,
@@ -500,7 +478,7 @@ def _handle_complex_type(
 
     # If the object is a query, evaluate it.
     # This prevents a crash because a lazy queryset has too many members.
-    if _is_query(obj):
+    if is_query(obj):
         obj = list(obj)
 
     # Determine which type of braces should be used.
@@ -512,7 +490,7 @@ def _handle_complex_type(
         braces = '{}'
 
     # Attempt to get corresponding attribute/function values of object.
-    attributes, functions = _get_obj_values(obj)
+    attributes, functions = get_obj_values(obj)
 
     # Return information required to render object.
     return {
@@ -525,10 +503,10 @@ def _handle_complex_type(
         'root_obj': root_obj,
         'unique': unique,
         'root_count': root_count,
-        'type': _get_obj_type(obj),
+        'type': get_obj_type(obj),
         'attributes': attributes,
         'functions': functions,
-        'is_iterable': _is_iterable(obj),
+        'is_iterable': is_iterable(obj),
         'skip': skip_set,
         'index': current_iteration,
         'depth': current_depth,
@@ -542,7 +520,7 @@ def _handle_complex_type(
 
 # region Object Property Functions
 
-def _get_obj_values(obj):
+def get_obj_values(obj):
     """Determines full corresponding member values (attributes/functions) of object."""
 
     # Initialize attribute/function lists. This is what we ultimately return.
@@ -550,14 +528,14 @@ def _get_obj_values(obj):
     functions = []      # (attr, doc, access_modifier)
 
     # Attempt to get member values of object. Falls back to empty list on failure.
-    members = _get_members(obj)
+    members = get_members(obj)
 
     # Once all members have been collected, attempt to figure out what type, access modifier, css class, and title
     # should be used for each attribute/function/value in the members.
     for attr, value in members:
 
         # Skip private members if not including them.
-        if _is_private(attr) and not INCLUDE_PRIVATE_METHODS:
+        if is_private(attr) and not INCLUDE_PRIVATE_METHODS:
             continue
 
         # Determine if the value is callable (function).
@@ -566,12 +544,12 @@ def _get_obj_values(obj):
         if is_callable:  # Handle member functions.
 
             # Skip dunder (magic) methods if not including them.
-            if _is_magic(attr) and not INCLUDE_MAGIC_METHODS:
+            if is_magic(attr) and not INCLUDE_MAGIC_METHODS:
                 continue
 
             # Get the method signature and fall back to simply appending parentheses to the method name on exception.
             try:
-                attr += _safe_str(inspect.signature(value))
+                attr += safe_str(inspect.signature(value))
             except Exception:
                 attr += '()'
 
@@ -586,28 +564,28 @@ def _get_obj_values(obj):
         else:  # Handle member attributes.
 
             # Always skip dunder attributes.
-            if _is_magic(attr):
+            if is_magic(attr):
                 continue
 
             # If attr is not None (anything but set) change to safe_repr.
             if attr is not None:
-                attr = _safe_repr(attr)
+                attr = safe_repr(attr)
 
             # If not a dict and not None, remove the outside quotes so it looks more like an attribute and not a string.
-            if not _is_dict(obj) and attr is not None:
+            if not is_dict(obj) and attr is not None:
                 attr = re.sub("'", "", attr)
 
             # Determine what type attribute is so that the access modifier, css class, and title can be appropriately
             # set. Processing order is: Index, const, key, set, attribute
-            if _is_number(attr):  # Index.
+            if is_number(attr):  # Index.
                 access_modifier = None
                 css_class = 'index'
                 title = 'Index'
-            elif _is_const(attr):  # Constant.
+            elif is_const(attr):  # Constant.
                 access_modifier = _get_access_modifier(attr)
                 css_class = 'constant'
                 title = 'Constant'
-            elif _is_key(attr):  # Key.
+            elif is_key(attr):  # Key.
                 access_modifier = None
                 css_class = 'key'
                 title = 'Key'
@@ -632,153 +610,14 @@ def _get_obj_values(obj):
     return (attributes, functions)
 
 
-def _get_members(obj):
-    """Attempts to get object members. Falls back to an empty list."""
-
-    # Get initial member set or empty list.
-    try:
-        members = inspect.getmembers(obj)
-    except Exception:
-        members = []
-
-    # Add type specific members that will not be included from the use of the inspect.getmembers function.
-    if _is_dict(obj):
-        # Dictionary members.
-        members.extend(obj.items())
-    elif _is_iterable(obj):
-        # Lists, sets, etc.
-        if _is_indexable(obj):
-            # Use indexes as left half.
-            members.extend(list(enumerate(obj)))
-        else:
-            # Use None as left half. Most likely a set.
-            members.extend([(None, x) for x in obj])
-
-    return members
-
-
-def _get_class_name(obj):
-    """Get class name of an object."""
-    name = None
-    try:
-        name = obj.__class__.__name__
-    except Exception:
-        pass
-    return name
-
-
 def _get_access_modifier(obj):
     """Return the access modifier that should be used."""
-    if _is_magic(obj):
+    if is_magic(obj):
         return '-'
-    elif _is_private(obj):
+    elif is_private(obj):
         return '#'
     else:
         return '+'
-
-
-def _get_obj_type(obj):
-    """Determines the string representation of object's type."""
-
-    # Get default type value.
-    obj_type = type(obj).__name__
-
-    # Special handling for certain types.
-    if obj_type == 'NoneType':
-        obj_type = 'null'
-    elif isinstance(obj, pytz.BaseTzInfo):
-        obj_type = 'pytz_timezone'
-
-    return obj_type
-
-
-def _safe_repr(obj):
-    """Call repr() and ignore ObjectDoesNotExist."""
-    str_obj = ''
-    try:
-        str_obj = repr(obj)
-    except ObjectDoesNotExist:
-        # L8R: A list of deleted db objects will cause repr(list) to fail.
-        # We should detect this and print out the __class__ of the contents of
-        # the list.
-        str_obj = f'<{obj.__class__} DELETED>'
-
-    return str_obj
-
-
-def _safe_str(obj):
-    """Call str() and ignore TypeErrors if str() doesn't return a string."""
-    str_obj = ''
-    try:
-        str_obj = str(obj)
-    except (TypeError, ObjectDoesNotExist):
-        str_obj = _safe_repr(obj)
-
-    return str_obj
-
-
-def _in_dir(obj, attr):
-    """Simpler hasattr() function without side effects."""
-    return attr in dir(obj)
-
-
-def _is_iterable(obj):
-    """Return True if object can be iterated."""
-    try:
-        iter(obj)
-    except TypeError:
-        return False
-    return True
-
-
-def _is_indexable(obj):
-    """Return True if object can be indexed."""
-    if isinstance(obj, Sequence):
-        return True
-    else:
-        return False
-
-
-def _is_query(obj):
-    """Return True if object is most likely a query."""
-    if obj is not None:
-        return _in_dir(obj, 'as_manager') and _in_dir(obj, 'all') and _in_dir(obj, 'filter')
-
-
-def _is_dict(obj):
-    """Return True if object is most likely a dict."""
-    if obj is not None:
-        return _in_dir(obj, 'items') and _in_dir(obj, 'keys') and _in_dir(obj, 'values')
-
-
-def _is_const(obj):
-    """Return True if object is most likely a constant."""
-    if obj is not None:
-        return isinstance(obj, str) and obj[0].isalpha() and obj.upper() == obj
-
-
-def _is_key(obj):
-    """Return True if object is most likely a key."""
-    if obj is not None:
-        return "'" in obj
-
-
-def _is_number(obj):
-    """Return True if object is most likely a number."""
-    if obj is not None:
-        return isinstance(obj, (int, float)) or obj.isnumeric()
-
-
-def _is_private(obj):
-    """Return True if object is private."""
-    if obj is not None:
-        return isinstance(obj, str) and obj.startswith('_')
-
-
-def _is_magic(obj):
-    """Return True if object is private."""
-    if obj is not None:
-        return isinstance(obj, str) and obj.startswith('__') and obj.endswith('__')
 
 # endregion Object Property Functions
 
