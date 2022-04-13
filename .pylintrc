@@ -28,10 +28,10 @@ limit-inference-results=100
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
-load-plugins=pylint_django,seeds_plugin
+load-plugins=pylint_django
 
 # Provide the path to the settings for the pylint_django plugin
-django-settings-module=hybels.settings.settings
+django-settings-module=tests.settings
 
 # Pickle collected data for later comparisons.
 persistent=yes
@@ -147,7 +147,7 @@ indent-after-paren=4
 indent-string='    '
 
 # Maximum number of characters on a single line.
-max-line-length=100
+max-line-length=120
 
 # Maximum number of lines in a module.
 max-module-lines=1000
@@ -201,11 +201,15 @@ redefining-builtins-modules=six.moves,past.builtins,future.builtins,builtins,io
 [MISCELLANEOUS]
 
 # List of note tags to take in consideration, separated by a comma.
-notes=TODO,
-      FIXME,
-      L8R,
+notes=DEBUG,
+      REVIEW,
+      NOTE,
+      HACK,
       XXX,
-      HACK
+      L8R,
+      LOCK,
+      TODO
+      FIXME,
 
 
 [STRING]
@@ -378,6 +382,7 @@ good-names=pk,
            x,
            y,
            db,
+           dd,
            fs,
            by,
            ws,

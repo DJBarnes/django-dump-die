@@ -13,7 +13,7 @@ def function_example(request):
 
     class TestClass():
         """Test class to attach a function to."""
-        def test_function():
+        def test_function(self):
             """Attached Test Function Documentation."""
             return 42
 

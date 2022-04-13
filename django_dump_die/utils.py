@@ -1,4 +1,4 @@
-# Utils for dump die
+"""Utils for dump die"""
 
 import inspect
 import pytz
@@ -10,6 +10,20 @@ from django.core.exceptions import ObjectDoesNotExist
 # region Object Property Functions
 
 
+def generate_unique_from_obj(obj):
+    """Generate a unique identifier for the object passed in."""
+
+    # Create unique via hash and fallback to id on exception.
+    try:
+        unique = hash(obj)
+    except Exception:
+        unique = id(obj)
+    # Append the class name to the unique to really make unique.
+    unique = f'{get_class_name(obj)}_{unique}'
+
+    return unique
+
+
 def get_members(obj):
     """Attempts to get object members. Falls back to an empty list."""
 
@@ -19,7 +33,8 @@ def get_members(obj):
     except Exception:
         members = []
 
-    # Add type specific members that will not be included from the use of the inspect.getmembers function.
+    # Add type specific members that will not be included from the use of the
+    # inspect.getmembers function.
     if is_dict(obj):
         # Dictionary members.
         members.extend(obj.items())
@@ -28,7 +43,7 @@ def get_members(obj):
         if _is_indexable(obj):
             # Use indexes as left half.
             members.extend(list(enumerate(obj)))
-        else:
+        elif is_set(obj):
             # Use None as left half. Most likely a set.
             members.extend([(None, x) for x in obj])
 
@@ -43,6 +58,18 @@ def get_class_name(obj):
     except Exception:
         pass
     return name
+
+
+def get_callable_name(obj_name, obj):
+    """Get callable name of an object"""
+
+    # Get the method signature and fall back to simply appending
+    # parentheses to the method name on exception.
+    try:
+        obj_name += safe_str(inspect.signature(obj))
+    except Exception:
+        obj_name += '()'
+    return obj_name
 
 
 def get_obj_type(obj):
@@ -104,6 +131,11 @@ def is_dict(obj):
     """Return True if object is most likely a dict."""
     if obj is not None:
         return _in_dir(obj, 'items') and _in_dir(obj, 'keys') and _in_dir(obj, 'values')
+
+
+def is_set(obj):
+    """Return True if object is most likely a dict."""
+    return isinstance(obj, set)
 
 
 def is_const(obj):

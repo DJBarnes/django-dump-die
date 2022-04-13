@@ -28,8 +28,10 @@ from django_dump_die.constants import (
 )
 
 from django_dump_die.utils import (
+    generate_unique_from_obj,
     get_members,
     get_class_name,
+    get_callable_name,
     get_obj_type,
     safe_repr,
     safe_str,
@@ -117,7 +119,14 @@ def dd_object(
 
     # Handle if obj is an intermediate (date/time types).
     elif _is_intermediate_type(obj):
-        return _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=skip_set, original_obj=original_obj)
+        return _handle_intermediate_type(
+            obj,
+            root_obj,
+            unique,
+            root_count,
+            skip_set=skip_set,
+            original_obj=original_obj
+        )
 
     # Handle if element is iterable and we are at the root's element direct children (depth of 1),
     elif is_iterable(root_obj) and current_depth == 1:
@@ -189,10 +198,10 @@ def _generate_unique(obj, root_obj, original_obj):
     :param original_obj: Original instance of object corresponding to current obj. Used for deepcopy mapping logic.
     """
     # Get a unique for the object.
-    unique = _generate_unique_from_obj(obj)
+    unique = generate_unique_from_obj(obj)
 
     # Get a unique for the object.
-    root_unique = _generate_unique_from_obj(root_obj)
+    root_unique = generate_unique_from_obj(root_obj)
 
     # Default root_count to blank string
     root_count_string = ''
@@ -244,20 +253,6 @@ def _generate_unique(obj, root_obj, original_obj):
     return unique, root_count_string
 
 
-def _generate_unique_from_obj(obj):
-    """Generate a unique identifier for the object passed in."""
-
-    # Create unique via hash and fallback to id on exception.
-    try:
-        unique = hash(obj)
-    except Exception:
-        unique = id(obj)
-    # Append the class name to the unique to really make unique.
-    unique = f'{get_class_name(obj)}_{unique}'
-
-    return unique
-
-
 def _create_unique_map(obj, root_unique, original_obj):
     """Create an entry in the root_unique_map for this object."""
 
@@ -272,8 +267,8 @@ def _add_unique_map_entry(obj, original_obj, root_unique):
     """Add a unique entry to the unique entry map."""
 
     # Calculate the obj unique and the original obj unique.
-    obj_unique = _generate_unique_from_obj(obj)
-    original_obj_unique = _generate_unique_from_obj(original_obj)
+    obj_unique = generate_unique_from_obj(obj)
+    original_obj_unique = generate_unique_from_obj(original_obj)
 
     # Add the new unique to the root unique map.
     deepcopy_unique_map[root_unique][obj_unique] = original_obj_unique
@@ -547,11 +542,8 @@ def get_obj_values(obj):
             if is_magic(attr) and not INCLUDE_MAGIC_METHODS:
                 continue
 
-            # Get the method signature and fall back to simply appending parentheses to the method name on exception.
-            try:
-                attr += safe_str(inspect.signature(value))
-            except Exception:
-                attr += '()'
+            # Get the method signature for attr.
+            attr = get_callable_name(attr, value)
 
             # Get the documentation for the method.
             value = inspect.getdoc(value)
@@ -559,6 +551,7 @@ def get_obj_values(obj):
             # Get the access modifier for the method.
             access_modifier = _get_access_modifier(attr)
 
+            # Append function to list of functions
             functions.append([attr, value, access_modifier])
 
         else:  # Handle member attributes.

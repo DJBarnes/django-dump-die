@@ -112,6 +112,7 @@ def example(request):
 
     module_type = ModuleType('django.html')
 
+
     dump(test_func)
     dump(test_func_param)
     dump(x.copy)
