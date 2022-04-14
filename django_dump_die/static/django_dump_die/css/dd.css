@@ -23,7 +23,10 @@ a.arrow-toggle {
     margin-left: 2ch;
 }
 
-
+.location {
+    color: #93a1a1;
+    font-style: italic;
+}
 .arrow {
     color: #839496;
 }

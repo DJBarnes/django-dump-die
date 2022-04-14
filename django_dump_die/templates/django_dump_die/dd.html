@@ -23,10 +23,14 @@
 
   <body>
     {# for each object to output #}
-    {% for obj_name, obj, function_doc, root_index_start, root_index_end, original_obj in objects %}
+    {% for filename, linenumber, obj_name, obj, function_doc, root_index_start, root_index_end, original_obj in objects %}
 
       {# If it is not the first object, add a horizontal line to separate #}
       {% if not forloop.first %}<hr>{% endif %}
+
+      {% if filename and linenumber %}
+        <span title="Dumped From Location" class="location">File: {{ filename }}, Line: {{ linenumber }}</span><br>
+      {% endif %}
 
       {# If dumped object has function_docs, assume function. Otherwise object. #}
       {% if function_doc %}

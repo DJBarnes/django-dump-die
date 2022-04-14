@@ -43,6 +43,8 @@ MAX_RECURSION_DEPTH = getattr(settings, 'DJANGO_DD_MAX_RECURSION_DEPTH', 20)
 # instead of recursing further. EX: if set to 20, a list of 30 will recursively
 # inspect and print out 20 items and then simply print the unique for the last 10.
 MAX_ITERABLE_LENGTH = getattr(settings, 'DJANGO_DD_MAX_ITERABLE_LENGTH', 20)
+# Whether each dump should include the filename and linenumber of the dump call.
+INCLUDE_FILENAME_LINENUMBER = getattr(settings, 'DJANGO_DD_INCLUDE_FILENAME_LINENUMBER', False)
 # Whether attributes should be included in the output.
 INCLUDE_ATTRIBUTES = getattr(settings, 'DJANGO_DD_INCLUDE_ATTRIBUTES', True)
 # Whether functions should be included in the output.

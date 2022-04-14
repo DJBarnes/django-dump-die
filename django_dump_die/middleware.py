@@ -5,12 +5,16 @@ Middleware for DumpAndDie.
 import copy
 import inspect
 import logging
+import re
 
 from collections.abc import Sequence
 from django.conf import settings
 
 from .views import dd_view
-from django_dump_die.constants import MAX_RECURSION_DEPTH
+from django_dump_die.constants import (
+    MAX_RECURSION_DEPTH,
+    INCLUDE_FILENAME_LINENUMBER,
+)
 from django_dump_die.utils import (
     generate_unique_from_obj,
     get_callable_name,
@@ -124,6 +128,42 @@ def _retrieve_name(object_needing_name):
     return result
 
 
+def _get_dumped_object_info(object_needing_name):
+    """Look at the stack frame to figure out what the dumped var is"""
+
+    # Get the frame where the dump or dd occurred.
+    frame = inspect.getframeinfo(inspect.currentframe().f_back.f_back)
+
+    # Default to not showing filename and lineno via setting to None
+    linenumber = None
+    filename = None
+    # If we are to show the filename and linenumber
+    if INCLUDE_FILENAME_LINENUMBER:
+        # Get line number
+        linenumber = frame.lineno
+        # Get filename
+        filename = frame.filename
+
+    # Establish a couple of regular expressions to fetch out what was passed to dump or dd.
+    dump_pattern = r".*dump\((.*?)[,\)].*"
+    dd_pattern = r".*dd\((.*?)[,\)].*"
+    # Find the results for both dump and dd.
+    dumped_text_matches = re.findall(dump_pattern, frame.code_context[0])
+    dd_text_matches = re.findall(dd_pattern, frame.code_context[0])
+    # Determine if dumped or dd'd and put result in dumped_text
+    dumped_text = ''
+    if dumped_text_matches:
+        dumped_text = dumped_text_matches[0]
+    elif dd_text_matches:
+        dumped_text = dd_text_matches[0]
+
+    # If function get the callable name for each function name.
+    if callable(object_needing_name):
+        dumped_text = get_callable_name(dumped_text, object_needing_name)
+
+    return filename, linenumber, dumped_text
+
+
 def _sanitize_index_range(index_range):
     """
     Validates and sanitizes passed index values.
@@ -175,8 +215,8 @@ def dd(obj, index_range=None, deepcopy=False):
     """
 
     if settings.DEBUG:
-        # Get object name
-        obj_name = _retrieve_name(obj)
+        # Get object filename, linenumber, and name
+        filename, linenumber, obj_name = _get_dumped_object_info(obj)
 
         # Handle if function.
         function_doc = None
@@ -198,7 +238,7 @@ def dd(obj, index_range=None, deepcopy=False):
 
         # Run dd core logic.
         raise DumpAndDie(
-            (obj_name, obj, function_doc, start_index, end_index, original_obj),
+            (filename, linenumber, obj_name, obj, function_doc, start_index, end_index, original_obj),
         )
 
 
@@ -214,8 +254,8 @@ def dump(obj, index_range=None, deepcopy=False):
     """
 
     if settings.DEBUG:
-        # Get object name
-        obj_name = _retrieve_name(obj)
+        # Get object filename, linenumber, and name
+        filename, linenumber, obj_name = _get_dumped_object_info(obj)
 
         # Handle if function.
         function_doc = None
@@ -237,7 +277,7 @@ def dump(obj, index_range=None, deepcopy=False):
 
         # Run dd core logic.
         dump_objects.append(
-            (obj_name, obj, function_doc, start_index, end_index, original_obj),
+            (filename, linenumber, obj_name, obj, function_doc, start_index, end_index, original_obj),
         )
 
 

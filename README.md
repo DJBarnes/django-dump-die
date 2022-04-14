@@ -226,8 +226,16 @@ Default: ```False```<br>
 By default, Magic methods (those enclosed by dunders) are not included in the output. If you would like to include magic methods in the output, set this setting to ```True```.
 <br>
 **NOTE:** This is only for methods. Has no effect on attributes.
+
 ```python
 DJANGO_DD_INCLUDE_MAGIC_METHODS = True
+```
+
+### DJANGO_DD_INCLUDE_FILENAME_LINENUMBER
+Default: ```False```<br>
+By default, output will not include the filename and line number that dump or dd was called from. If you would like to enable this, set this setting to ```True```.
+```python
+DJANGO_DD_INCLUDE_FILENAME_LINENUMBER = True
 ```
 
 ### DJANGO_DD_INCLUDE_ATTRIBUTES

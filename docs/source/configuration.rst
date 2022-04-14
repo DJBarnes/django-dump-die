@@ -126,6 +126,21 @@ Example::
     DJANGO_DD_INCLUDE_MAGIC_METHODS = True
 
 
+DJANGO_DD_INCLUDE_FILENAME_LINENUMBER
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, output will not include the filename and line number that dump or
+dd was called from. If you would like to enable this, set this setting to
+``True``.
+
+:Type: ``bool``
+:Default: ``False``
+
+Example::
+
+    DJANGO_DD_INCLUDE_FILENAME_LINENUMBER = False
+
+
 DJANGO_DD_INCLUDE_ATTRIBUTES
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
