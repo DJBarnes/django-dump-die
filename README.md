@@ -310,6 +310,7 @@ By default, the tool uses the Solarized color scheme. If you want full control o
         'background': <value>
     },
     'types': {
+        'location': <value>,        #  File location and line number
         'arrow': <value>,           #  Expand/Collapse arrow
         'unique': <value>,          #  Unique hash for class
         'access_modifier': <value>, #  Access Modifier Char

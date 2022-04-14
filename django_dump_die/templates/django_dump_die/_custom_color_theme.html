@@ -22,6 +22,11 @@
 
   {% if custom_color_theme %}
     {% if custom_color_theme.types %}
+      {% if custom_color_theme.types.location %}
+        .location {
+          color: {{ custom_color_theme.types.location }};
+        }
+      {% endif %}
       {% if custom_color_theme.types.arrow %}
         .arrow {
           color: {{ custom_color_theme.types.arrow }};

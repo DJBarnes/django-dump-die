@@ -289,6 +289,7 @@ Example::
             'background': <value>
         },
         'types': {
+            'location': <value>,        #  File location and line number
             'arrow': <value>,           #  Expand/Collapse arrow
             'unique': <value>,          #  Unique hash for class
             'access_modifier': <value>, #  Access Modifier Char
