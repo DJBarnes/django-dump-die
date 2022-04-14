@@ -2,7 +2,7 @@
 <style>
   {% if force_light_theme %}
     body {
-      {% if custom_color_theme %}
+      {% if custom_color_theme and custom_color_theme.light %}
         background-color: {{ custom_color_theme.light.background }};
       {% else %}
         background-color: #fdf6e3;
@@ -12,7 +12,7 @@
 
   {% if force_dark_theme %}
     body {
-        {% if custom_color_theme %}
+        {% if custom_color_theme and custom_color_theme.dark %}
           background-color: {{ custom_color_theme.dark.background }};
         {% else %}
           background-color: #002b36;
