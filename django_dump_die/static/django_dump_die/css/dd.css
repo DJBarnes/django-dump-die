@@ -24,8 +24,9 @@ a.arrow-toggle {
 }
 
 .location {
-    color: #93a1a1;
+    color: #586e75;
     font-style: italic;
+    font-size: 75%;
 }
 .arrow {
     color: #839496;
