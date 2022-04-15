@@ -11,16 +11,8 @@ from collections.abc import Sequence
 from django.conf import settings
 
 from .views import dd_view
-from django_dump_die.constants import (
-    MAX_RECURSION_DEPTH,
-    INCLUDE_FILENAME_LINENUMBER,
-)
-from django_dump_die.utils import (
-    generate_unique_from_obj,
-    get_callable_name,
-    get_members,
-)
-from django_dump_die.templatetags.dump_die import _is_simple_type
+from django_dump_die.constants import INCLUDE_FILENAME_LINENUMBER
+from django_dump_die.utils import get_callable_name
 
 
 logger = logging.getLogger('django_dump_die')
@@ -35,97 +27,6 @@ class DumpAndDie(Exception):
     def __init__(self, obj):
         super().__init__(obj)
         self.object = obj
-
-
-def _find_nested_name(all_objects, object_needing_name, unique_set, depth=0):
-    """
-    Look through all the members of local vars trying to find a match.
-    If one can not be found, recurse deeper to continue looking.
-    """
-
-    # Increment the depth
-    depth += 1
-
-    # If we are past the MAX_RECURSION_DEPTH, just give up and return.
-    if depth > MAX_RECURSION_DEPTH:
-        return []
-
-    # Default to no results in case the local_objs is empty and thus does not loop.
-    results = []
-
-    # Look through the local_objs for a match.
-    for object_name, object_val in all_objects:
-
-        # Skip objs that are simple and functions.
-        if _is_simple_type(object_val) or callable(object_val):
-            continue
-
-        # Generate a unique to aid in ensuring we don't recurse indefinitely.
-        unique = generate_unique_from_obj(object_val)
-
-        # Get the members of the current obj.
-        members = get_members(object_val)
-
-        # Look for a match in the members.
-        member_results = [attr for attr, value in members if value == object_needing_name]
-
-        # If there is a match, set the inner results to the main results.
-        if member_results:
-            results = member_results
-
-        # Else if a new unique, search deeper using recursion.
-        elif unique not in unique_set:
-            # Add unique to unique set so we don't recurse indefinitely.
-            unique_set.add(unique)
-            # Recurse deeper looking for a match
-            results = _find_nested_name(members, object_needing_name, unique_set, depth=depth)
-
-        # Else, already processed unique and clearly not part of that project.
-        else:
-            results = []
-
-        # If there are results, no need to keep checking other vars.
-        if results:
-            break
-
-    return results
-
-
-def _retrieve_name(object_needing_name):
-    """
-    Inspects call stack in an attempt to grab names of variables to display in dd output.
-
-    Names are determined by value. On multiple names matching a given value,
-    all corresponding names are returned.
-    """
-
-    # Attempt to get dumped variable name.
-    callers_local_vars = inspect.currentframe().f_back.f_back.f_locals.items()
-    results = [var_name for var_name, var_val in callers_local_vars if var_val is object_needing_name]
-
-    # If no results, it might be that they dumped a function on an object
-    # rather than a direct function. We can recursively search the members of
-    # each var looking for a possible match keeping track of ones we have
-    # already considered so that we don't recurse indefinitely.
-    if not results:
-        # Unique tracker
-        unique_set = set()
-        # Search through each var from the stack frame where dd was called from.
-        results = _find_nested_name(callers_local_vars, object_needing_name, unique_set)
-
-    # If function(s) get the callable name for each function name.
-    if callable(object_needing_name):
-        new_results = []
-        for attr in results:
-            new_results.append(get_callable_name(attr, object_needing_name))
-        results = new_results
-
-    # Assume no result and if there is, comma join results as return result.
-    result = None
-    if len(results) > 0:
-        result = ", ".join(results)
-
-    return result
 
 
 def _get_dumped_object_info(object_needing_name):
