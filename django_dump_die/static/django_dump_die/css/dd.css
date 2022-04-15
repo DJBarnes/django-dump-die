@@ -1,6 +1,7 @@
 body {
     font-family: monospace;
     color: #839496;
+    background-color: #002b36;
 
     margin-top: 15px;
     margin-bottom: 15px;
@@ -9,11 +10,13 @@ hr {
     border: 1px solid;
     color: #839496;
 }
+.dump-wrapper {
+    margin-left: 10px;
+    margin-right: 10px;
+}
 a.arrow-toggle {
     cursor: pointer;
 }
-
-
 .attribute-list {
     list-style-type: none;
     margin-bottom: 0;
@@ -22,47 +25,50 @@ a.arrow-toggle {
     text-indent: -2ch;
     margin-left: 2ch;
 }
-
-.location {
-    color: #586e75;
-    font-style: italic;
-    font-size: 75%;
-}
-.arrow {
-    color: #839496;
-}
-.unique {
-    color: #6c71c4;
-}
-.access-modifier {
-    color: #657b83;
-}
-.type {
-    font-size: 75%;
-    color: #859900;
-}
-.attribute {
-    color: #93a1a1;
-}
-.function {
-    color: #268bd2;
-}
 .indent-docs p {
     margin-left: 20px;
     margin-bottom: 0;
     text-indent: 0;
 }
-.module {
-    color: #268bd2;
+
+/* Meta */
+.arrow {
+    color: #839496;
 }
-.bound {
-    color: #268bd2;
+.access-modifier {
+    color: #657b83;
 }
-.docs {
+.braces {
+    color: #839496;
+}
+.empty {
+    color: #dc322f;
+}
+.location {
     color: #586e75;
+    font-style: italic;
+    font-size: 75%;
+}
+.type {
+    color: #859900;
+    font-size: 75%;
+}
+.unique {
+    color: #6c71c4;
+}
+
+/* Identifiers */
+.attribute {
+    color: #93a1a1;
 }
 .constant {
     color: #cb4b16;
+}
+.dumped_name {
+    color: #93a1a1;
+}
+.function {
+    color: #268bd2;
 }
 .index {
     color: #d33682;
@@ -70,40 +76,96 @@ a.arrow-toggle {
 .key {
     color: #2aa198;
 }
-.string {
-    color: #2aa198;
-}
+
+/* Types */
 .bool {
+    color: #b58900;
+}
+.bound {
+    color: #268bd2;
+}
+.datetime {
+    color: #d33682;
+}
+.default {
+    color: #586e75;
+}
+.docs {
+    color: #586e75;
+}
+.module {
+    color: #268bd2;
+}
+.none {
     color: #b58900;
 }
 .number {
     color: #d33682;
 }
-.datetime {
-    color: #d33682;
-}
-.none {
-    color: #b58900;
-}
-.empty {
-    color: #dc322f;
-}
-.default {
-    color: #586e75;
+.string {
+    color: #2aa198;
 }
 
 @media (prefers-color-scheme: light)
 {
-
     body {
+        color: #657b83;
         background-color: #fdf6e3;
+    }
+    hr {
+        color: #657b83;
+    }
+    .arrow {
+        color: #657b83;
+    }
+    .access-modifier {
+        color: #657b83;
+    }
+    .braces {
+        color: #657b83;
+    }
+    .location {
+        color: #93a1a1;
+    }
+    .attribute {
+        color: #586e75;
+    }
+    .dumped_name {
+        color: #586e75;
+    }
+    .docs {
+        color: #93a1a1;
     }
 }
 
 @media (prefers-color-scheme: dark)
 {
-
     body {
+        color: #839496;
         background-color: #002b36;
+    }
+    hr {
+        color: #839496;
+    }
+    .arrow {
+        color: #839496;
+    }
+    .access-modifier {
+        color: #839496;
+    }
+    .braces {
+        color: #839496;
+    }
+    .location {
+        color: #586e75;
+    }
+    .attribute {
+        color: #93a1a1;
+    }
+    .dumped_name {
+        color: #93a1a1;
+    }
+    .docs {
+        color: #586e75;
     }
 }

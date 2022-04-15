@@ -309,27 +309,33 @@ By default, the tool uses the Solarized color scheme. If you want full control o
         'color': <value>,
         'background': <value>
     },
-    'types': {
-        'location': <value>,        #  File location and line number
+    'meta': {
         'arrow': <value>,           #  Expand/Collapse arrow
-        'unique': <value>,          #  Unique hash for class
         'access_modifier': <value>, #  Access Modifier Char
-        'type': <value>,            #  Complex Types (non-int, float, string, bool, None)
+        'braces': <value>,          #  Braces, Brackets, and Parentheses
+        'empty': <value>,           #  No Attributes or methods available
+        'location': <value>,        #  File location and line number
+        'type': <value>,            #  Type text of dumped variable
+        'unique': <value>,          #  Unique hash for class
+    },
+    'identifiers': {
         'attribute': <value>,       #  Class attribute
-        'function': <value>,        #  Class functions
-        'module': <value>,          #  Module via ModuleType
-        'bound': <value>,           #  Django Bound Form Field
-        'docs': <value>,            #  Class function documentation
         'constant': <value>,        #  Class constants
+        'dumped_name': <value>,     #  Dumped object name
+        'function': <value>,        #  Class functions
         'index': <value>,           #  Index values for indexable types
         'key': <value>,             #  Key values for dict
-        'string': <value>,          #  Strings
-        'bool': <value>,            #  Bools
-        'number': <value>,          #  Ints and Floats
+    },
+    'types': {
+        'bool': <value>,            #  Booleans
+        'bound': <value>,           #  Django Bound Form Field
         'datetime': <value>,        #  DateTimes and similar types
+        'default': <value>,         #  Default color if does not fit into any of the others
+        'docs': <value>,            #  Class function documentation
+        'module': <value>,          #  Module via ModuleType
         'none': <value>,            #  None
-        'empty': <value>,           #  No Attributes or methods available
-        'default': <value>,         #  Default color if does not fit into any of the above
+        'number': <value>,          #  Integers, Floats, and Decimals
+        'string': <value>,          #  Strings
     }
 }
 ```

@@ -59,7 +59,7 @@ def _get_dumped_object_info(object_needing_name):
         dumped_text = dd_text_matches[0]
 
     # If function get the callable name for each function name.
-    if callable(object_needing_name):
+    if callable(object_needing_name) and not inspect.isclass(object_needing_name):
         dumped_text = get_callable_name(dumped_text, object_needing_name)
 
     return filename, linenumber, dumped_text
@@ -121,7 +121,7 @@ def dd(obj, index_range=None, deepcopy=False):
 
         # Handle if function.
         function_doc = None
-        if callable(obj):
+        if callable(obj) and not inspect.isclass(obj):
             function_doc = inspect.getdoc(obj)
 
         # Sanitize and validate provided index values.
@@ -160,7 +160,7 @@ def dump(obj, index_range=None, deepcopy=False):
 
         # Handle if function.
         function_doc = None
-        if callable(obj):
+        if callable(obj) and not inspect.isclass(obj):
             function_doc = inspect.getdoc(obj)
 
         # Sanitize and validate provided index values.

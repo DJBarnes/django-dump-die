@@ -28,37 +28,39 @@
       {# If it is not the first object, add a horizontal line to separate #}
       {% if not forloop.first %}<hr>{% endif %}
 
-      {% if filename and linenumber %}
-        <span title="Dumped From Location" class="location">File: {{ filename }}, Line: {{ linenumber }}</span><br>
-      {% endif %}
+      <div class="dump-wrapper">
+        {% if filename and linenumber %}
+          <span title="Dumped From Location" class="location">File: {{ filename }}, Line: {{ linenumber }}</span><br>
+        {% endif %}
 
-      {# If dumped object has function_docs, assume function. Otherwise object. #}
-      {% if function_doc %}
+        {# If dumped object has function_docs, assume function. Otherwise object. #}
+        {% if function_doc %}
 
-        {# Display the name of the dumped object so long as not None #}
-        {% if obj_name is not None %}
-          <span title="Dumped Function" class="function">{{ obj_name }}</span>:
+          {# Display the name of the dumped object so long as not None #}
+          {% if obj_name is not None %}
+            <span title="Dumped Function" class="function">{{ obj_name }}</span>:
+          {% else %}
+            <span title="Dumped Function" class="empty">Unknown Function</span>:
+          {% endif %}
+
+          {# Handle function doc output. #}
+          {% if multiline_function_docs %}
+            <span class="docs indent-docs">{{ function_doc|linebreaks }}</span>
+          {% else  %}
+            <span class="docs">{{ function_doc }}</span>
+          {% endif %}
+
         {% else %}
-          <span title="Dumped Function" class="empty">Unknown Function</span>:
+
+          {# Display the name of the dumped object so long as not None #}
+          {% if obj_name is not None %}
+            <span class="dumped_name" title="Dumped Object">{{ obj_name }}</span>:
+          {% endif %}
+          {# Use dd_object template tag to dump object #}
+          {% dd_object obj obj None forloop.counter0 0 root_index_start root_index_end original_obj %}
+
         {% endif %}
-
-        {# Handle function doc output. #}
-        {% if multiline_function_docs %}
-          <span class="docs indent-docs">{{ function_doc|linebreaks }}</span>
-        {% else  %}
-          <span class="docs">{{ function_doc }}</span>
-        {% endif %}
-
-      {% else %}
-
-        {# Display the name of the dumped object so long as not None #}
-        {% if obj_name is not None %}
-          <span title="Dumped Object">{{ obj_name }}</span>:
-        {% endif %}
-        {# Use dd_object template tag to dump object #}
-        {% dd_object obj obj None forloop.counter0 0 root_index_start root_index_end original_obj %}
-
-      {% endif %}
+      </div>
     {% endfor %}
   </body>
 </html>

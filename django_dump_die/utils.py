@@ -4,6 +4,7 @@ import inspect
 import pytz
 
 from collections.abc import Sequence
+from decimal import Decimal
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -146,14 +147,17 @@ def is_const(obj):
 
 def is_key(obj):
     """Return True if object is most likely a key."""
-    if obj is not None:
+    if obj is not None and isinstance(obj, str):
         return "'" in obj
 
 
 def is_number(obj):
     """Return True if object is most likely a number."""
     if obj is not None:
-        return isinstance(obj, (int, float)) or obj.isnumeric()
+        return (
+            isinstance(obj, (int, float, Decimal))
+            or (getattr(obj, 'isnumeric', None) and obj.isnumeric())
+        )
 
 
 def is_private(obj):
