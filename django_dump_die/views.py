@@ -236,6 +236,9 @@ def example(request):
     dump(sample_complex_class.sample_public_simple_class.sample_public_dict)
     dump(sample_complex_class.sample_public_simple_class.sample_public_dict['first'])
 
+    dump(sample_simple_class.sample_class_func)
+    dump(sample_simple_class.sample_class_param_func)
+
     dump(EmptyClass)
     dump(SimpleClass)
     dump(ComplexClass)
