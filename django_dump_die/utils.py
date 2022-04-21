@@ -134,6 +134,8 @@ def process_object_name(object_name):
             if in_param_list and token_value != ')':
                 # Append the token to the list of params
                 params.append(token_value)
+            else:
+                in_param_list = False
 
             # Update the previous token to the current one.
             previous_token = token_value
