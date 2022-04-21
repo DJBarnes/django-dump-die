@@ -31,7 +31,7 @@ from django_dump_die.utils import (
     generate_unique_from_obj,
     get_members,
     get_class_name,
-    get_callable_name,
+    get_callable_params,
     get_obj_type,
     safe_repr,
     safe_str,
@@ -543,7 +543,7 @@ def get_obj_values(obj):
                 continue
 
             # Get the method signature for attr.
-            attr = get_callable_name(attr, value)
+            params = get_callable_params(value)
 
             # Get the documentation for the method.
             value = inspect.getdoc(value)
@@ -552,7 +552,7 @@ def get_obj_values(obj):
             access_modifier = _get_access_modifier(attr)
 
             # Append function to list of functions
-            functions.append([attr, value, access_modifier])
+            functions.append([attr, params, value, access_modifier])
 
         else:  # Handle member attributes.
 

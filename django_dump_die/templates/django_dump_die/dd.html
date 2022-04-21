@@ -38,9 +38,11 @@
 
           {# Display the name of the dumped object so long as not None #}
           {% if obj_name is not None %}
-            <span title="Dumped Function" class="function">{{ obj_name }}</span>:
+            <span class="dumped_function" title="Dumped Function">
+              {% for entry in obj_name %}<span class="{{ entry.css_class }}">{{ entry.value }}</span>{% endfor %}
+            </span>:
           {% else %}
-            <span title="Dumped Function" class="empty">Unknown Function</span>:
+            <span class="empty" title="Dumped Function">Unknown Function</span>:
           {% endif %}
 
           {# Handle function doc output. #}
@@ -54,7 +56,11 @@
 
           {# Display the name of the dumped object so long as not None #}
           {% if obj_name is not None %}
-            <span class="dumped_name" title="Dumped Object">{{ obj_name }}</span>:
+            <span class="dumped_object" title="Dumped Object">
+              {% for entry in obj_name %}<span class="{{ entry.css_class }}">{{ entry.value }}</span>{% endfor %}
+            </span>:
+          {% else %}
+            <span class="empty" title="Dumped Object">Unknown Object</span>:
           {% endif %}
           {# Use dd_object template tag to dump object #}
           {% dd_object obj obj None forloop.counter0 0 root_index_start root_index_end original_obj %}

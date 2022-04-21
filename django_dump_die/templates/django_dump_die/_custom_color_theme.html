@@ -105,6 +105,11 @@
             color: {{ custom_color_theme.identifiers.key }};
         }
       {% endif %}
+      {% if custom_color_theme.identifiers.params %}
+        .params {
+            color: {{ custom_color_theme.identifiers.params }};
+        }
+      {% endif %}
     {% endif %}
 
     /* Types section */
@@ -222,6 +227,13 @@
         color: #93a1a1;
       {% endif %}
     }
+    .params {
+      {% if custom_color_theme.type.params %}
+        color: {{ custom_color_theme.type.params }}
+      {% else %}
+        color: #586e75;
+      {% endif %}
+    }
   {% endif %}
 
   /* Forcing Dark */
@@ -286,6 +298,14 @@
       {% else %}
         color: #586e75;
       {% endif %}
+    }
+    .params {
+      {% if custom_color_theme.type.params %}
+        color: {{ custom_color_theme.type.params }}
+      {% else %}
+        color: #93a1a1;
+      {% endif %}
+    }
   {% endif %}
 
 </style>

@@ -18,13 +18,15 @@
   class="li-wrapper collapse {{ unique }}{{ root_count }}-functions {{ collapsable.function.show }}"
   data-unique-functions="{{ unique }}{{ root_count }}-functions"
 >
-  {% for attr, doc, access_modifier in functions %}
+  {% for attr, params, doc, access_modifier in functions %}
     <li class="function-li">
       {% if access_modifier %}
         <span class="access-modifier">{{ access_modifier }}</span>
       {% endif %}
 
-      <span class="function" title="Function">{{ attr }}</span>:
+      <span class="function" title="Function">
+        {{ attr }}<span class="braces">(</span><span class="params">{{ params }}</span><span class="braces">)</span>
+      </span>:
       {% if doc %}
         {# Handle function doc output. #}
         {% if multiline_function_docs %}

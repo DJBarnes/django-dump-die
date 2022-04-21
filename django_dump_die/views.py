@@ -229,6 +229,7 @@ def example(request):
 
     dump(sample_complex_list[0])
     dump(sample_complex_tuple[0])
+    dump(sample_complex_tuple[0].items)
     dump(sample_complex_dict['initial'])
 
     dump(sample_complex_class._sample_private_simple_class)

@@ -73,6 +73,21 @@ def get_callable_name(obj_name, obj):
     return obj_name
 
 
+def get_callable_params(obj):
+    """Get callable params of an object"""
+
+    # Get the method signature and fall back to simply returning
+    # parentheses on exception.
+    try:
+        signature = safe_str(inspect.signature(obj))
+    except Exception:
+        signature = '()'
+
+    signature_minus_parentheses = signature[1:-1]
+
+    return signature_minus_parentheses
+
+
 def get_obj_type(obj):
     """Determines the string representation of object's type."""
 

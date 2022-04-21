@@ -76,6 +76,9 @@ a.arrow-toggle {
 .key {
     color: #2aa198;
 }
+.params {
+    color: #93a1a1;
+}
 
 /* Types */
 .bool {
@@ -136,6 +139,9 @@ a.arrow-toggle {
     .docs {
         color: #93a1a1;
     }
+    .params {
+        color: #586e75;
+    }
 }
 
 @media (prefers-color-scheme: dark)
@@ -167,5 +173,8 @@ a.arrow-toggle {
     }
     .docs {
         color: #586e75;
+    }
+    .params {
+        color: #93a1a1;
     }
 }
