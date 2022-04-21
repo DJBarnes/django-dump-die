@@ -15,14 +15,14 @@ class DumpDieViewFunctionTestCase(GenericViewTestCase):
     def test_dd_for_standard_function(self):
         """Test that dumping a function has expected output"""
         response = self.client.get('/function?type=standard')
-        expected = '<span title="Dumped Function" class="function">test_function(arg1)</span>: <span class="docs">Standard Test Function Documentation.</span>'
+        expected = '<span class="dumped_function" title="Dumped Function"><span class="function">test_function</span><span class="braces">(</span><span class="params">arg1</span><span class="braces">)</span></span>: <span class="docs">Standard Test Function Documentation.</span>'
         self.assertContains(response, expected, html=True)
 
     def test_dd_for_attached_function(self):
         """Test that dumping a function has expected output"""
 
         response = self.client.get('/function?type=attached')
-        expected = '<span title="Dumped Function" class="function">test_function()</span>: <span class="docs">Attached Test Function Documentation.</span>'
+        expected = '<span class="dumped_function" title="Dumped Function"><span class="dumped_name">test_obj</span><span class="dumped_name">.</span><span class="function">test_function</span><span class="braces">(</span><span class="braces">)</span></span>: <span class="docs">Attached Test Function Documentation.</span>'
         self.assertContains(response, expected, html=True)
 
 
@@ -32,49 +32,49 @@ class DumpDieViewSimpleTestCase(GenericViewTestCase):
     def test_dd_for_bool(self):
         """Test that dumping a bool has expected output"""
         response = self.client.get('/simple?type=bool')
-        expected = '<span title="Dumped Object">test_bool</span>: <span class="type" title="bool">bool</span> <code class="bool">True</code>'
+        expected = '<span class="dumped_object" title="Dumped Object"><span class="dumped_name">test_bool</span></span>: <span class="type" title="bool">bool</span> <code class="bool">True</code>'
         self.assertContains(response, expected, html=True)
 
     # TODO: Finish this test. May require more work with django to test.
     # def test_dd_for_bound_field(self):
     #     response = self.client.get('/simple?type=bound_field')
-    #     expected = '<span title="Dumped Object">test_bound</span>: <code class="bound">?????</code>'
+    #     expected = '<span class="dumped_object" title="Dumped Object"><span class="dumped_name">test_bound</span></span>: <code class="bound">?????</code>'
     #     self.assertContains(response, expected, html=True)
 
     def test_dd_for_bytes(self):
         """Test that dumping bytes has expected output"""
         response = self.client.get('/simple?type=bytes')
-        expected = '<span title="Dumped Object">test_bytes</span>: <span class="type" title="bytes">bytes</span> <code class="number">b&#x27;test bytes&#x27;</code>'
+        expected = '<span class="dumped_object" title="Dumped Object"><span class="dumped_name">test_bytes</span></span>: <span class="type" title="bytes">bytes</span> <code class="number">b&#x27;test bytes&#x27;</code>'
         self.assertContains(response, expected, html=True)
 
     def test_dd_for_decimal(self):
         """Test that dumping a Decimal has expected output"""
         response = self.client.get('/simple?type=decimal')
-        expected = '<span title="Dumped Object">test_decimal</span>: <span class="type" title="Decimal">Decimal</span> <code class="number">23.5</code>'
+        expected = '<span class="dumped_object" title="Dumped Object"><span class="dumped_name">test_decimal</span></span>: <span class="type" title="Decimal">Decimal</span> <code class="number">23.5</code>'
         self.assertContains(response, expected, html=True)
 
     def test_dd_for_float(self):
         """Test that dumping a float has expected output"""
         response = self.client.get('/simple?type=float')
-        expected = '<span title="Dumped Object">test_float</span>: <span class="type" title="float">float</span> <code class="number">23.5</code>'
+        expected = '<span class="dumped_object" title="Dumped Object"><span class="dumped_name">test_float</span></span>: <span class="type" title="float">float</span> <code class="number">23.5</code>'
         self.assertContains(response, expected, html=True)
 
     def test_dd_for_int(self):
         """Test that dumping a int has expected output"""
         response = self.client.get('/simple?type=int')
-        expected = '<span title="Dumped Object">test_int</span>: <span class="type" title="int">int</span> <code class="number">23</code>'
+        expected = '<span class="dumped_object" title="Dumped Object"><span class="dumped_name">test_int</span></span>: <span class="type" title="int">int</span> <code class="number">23</code>'
         self.assertContains(response, expected, html=True)
 
     def test_dd_for_module(self):
         """Test that dumping a module has expected output"""
         response = self.client.get('/simple?type=module')
-        expected = '<span title="Dumped Object">test_module</span>: <span class="type" title="module">module</span> <code class="module">&lt;module &#x27;django.http&#x27;&gt;</code>'
+        expected = '<span class="dumped_object" title="Dumped Object"><span class="dumped_name">test_module</span></span>: <span class="type" title="module">module</span> <code class="module">&lt;module &#x27;django.http&#x27;&gt;</code>'
         self.assertContains(response, expected, html=True)
 
     def test_dd_for_string(self):
         """Test that dumping a string has expected output"""
         response = self.client.get('/simple?type=string')
-        expected = '<span title="Dumped Object">test_string</span>: <span class="type" title="str">str</span> <code class="string">&#x27;test string&#x27;</code>'
+        expected = '<span class="dumped_object" title="Dumped Object"><span class="dumped_name">test_string</span></span>: <span class="type" title="str">str</span> <code class="string">&#x27;test string&#x27;</code>'
         self.assertContains(response, expected, html=True)
 
 
@@ -94,9 +94,9 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
 
         response = self.client.get('/data_structure?type=list')
         expected = '''
-            <span title="Dumped Object">test_list</span>:
+            <span class="dumped_object" title="Dumped Object"><span class="dumped_name">test_list</span></span>:
             <span class="type" title="list">list:3</span>
-            [
+            <span class="braces">[</span>
             <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".list_9000" aria-label="Close">
                 <span class="unique" data-highlight-unique="list_9000">list_9000</span>
                 <span id="arrow-list_9000" class="arrow">▶</span>
@@ -134,7 +134,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
                 <ul class="attribute-list">
                 </ul>
             </div>
-            ]
+            <span class="braces">]</span>
         '''
         self.assertContains(response, expected, html=True)
 
@@ -152,9 +152,9 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
 
         response = self.client.get('/data_structure?type=dict')
         expected = '''
-            <span title="Dumped Object">test_dict</span>:
+            <span class="dumped_object" title="Dumped Object"><span class="dumped_name">test_dict</span></span>:
             <span class="type" title="dict">dict:3</span>
-            {
+            <span class="braces">{</span>
             <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".dict_9004" aria-label="Close">
                 <span class="unique" data-highlight-unique="dict_9004">dict_9004</span>
                 <span id="arrow-dict_9004" class="arrow">▶</span>
@@ -192,7 +192,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
                 <ul class="attribute-list">
                 </ul>
             </div>
-            }
+            <span class="braces">}</span>
         '''
         self.assertContains(response, expected, html=True)
 
@@ -210,9 +210,9 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
 
         response = self.client.get('/data_structure?type=tuple')
         expected = '''
-            <span title="Dumped Object">test_tuple</span>:
+            <span class="dumped_object" title="Dumped Object"><span class="dumped_name">test_tuple</span></span>:
             <span class="type" title="tuple">tuple:3</span>
-            (
+            <span class="braces">(</span>
             <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".tuple_9008" aria-label="Close">
                 <span class="unique" data-highlight-unique="tuple_9008">tuple_9008</span>
                 <span id="arrow-tuple_9008" class="arrow">▶</span>
@@ -250,7 +250,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
                 <ul class="attribute-list">
                 </ul>
             </div>
-            )
+            <span class="braces">)</span>
         '''
         self.assertContains(response, expected, html=True)
 
@@ -274,9 +274,9 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
 
         response = self.client.get('/data_structure?type=set')
         expected_first_half = '''
-            <span title="Dumped Object">test_set</span>:
+            <span class="dumped_object" title="Dumped Object"> <span class="dumped_name">test_set</span> </span>:
             <span class="type" title="set">set:3</span>
-            {
+            <span class="braces">{</span>
             <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".set_9012" aria-label="Close" >
                 <span class="unique" data-highlight-unique="set_9012">set_9012</span>
                 <span id="arrow-set_9012" class="arrow"> ▶ </span>
@@ -304,7 +304,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
                 <ul class="attribute-list">
                 </ul>
             </div>
-            }
+            <span class="braces">}</span>
         '''
         expected_last_half = ' '.join(expected_last_half.split())
 
