@@ -246,4 +246,4 @@ def example(request):
 
     dd('done')
 
-    return HttpResponse("Example")
+    return render(request, 'django_dump_die/sample.html', {'sample_simple_class': sample_simple_class})

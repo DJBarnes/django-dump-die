@@ -1,0 +1,16 @@
+{% load dump_die %}
+  {% if render_head %}
+    {# Load required css and js for dump to be styled correctly #}
+    {# NOTE: This may alter the look of the page as it could override site css and js. #}
+    {% include 'django_dump_die/head_partials/_css_partial.html' %}
+    {% include 'django_dump_die/head_partials/_js_partial.html' %}
+
+    {# If user wants changes to the color them, include a partial to generate needed css. #}
+    {% if force_light_theme or force_dark_theme or custom_color_theme %}
+      {% include 'django_dump_die/_custom_color_theme.html' %}
+    {% endif %}
+  {% endif %}
+
+  {# Use the dd_object template tag to do the dump #}
+  {% dump_objects objects %}
+  <hr>

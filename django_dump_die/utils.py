@@ -75,7 +75,7 @@ def get_dumped_object_name_and_location(object_needing_name):
     dumped_text_matches = re.findall(dump_pattern, frame.code_context[0])
     dd_text_matches = re.findall(dd_pattern, frame.code_context[0])
     # Determine if dumped or dd'd and put result in dumped_text
-    dumped_text = ''
+    dumped_text = 'Unknown_Object_Name'
     if dumped_text_matches:
         dumped_text = dumped_text_matches[0]
     elif dd_text_matches:
@@ -148,7 +148,10 @@ def process_object_name(object_name):
             if token_number == NEWLINE or token_number == ENDMARKER:
                 continue
 
-            if token_number == NAME and is_const(token_value):
+            if token_number == NAME and token_value == 'Unknown_Object_Name':
+                # Use empty color as object name can't be determined
+                css_class = 'empty'
+            elif token_number == NAME and is_const(token_value):
                 # Use constant color.
                 css_class = 'constant'
             elif token_number == STRING:
