@@ -183,6 +183,20 @@ Example::
     DJANGO_DD_MULTILINE_FUNCTION_DOCS = True
 
 
+DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+By default, all dumped object names are syntax highlighted.
+If you would like to disable this so that the dumped name is all the same color
+regardless of its contents, set this setting to ``False``.
+
+:Type: ``bool``
+:Default: ``True``
+
+Example::
+
+    DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME = False
+
+
 DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -304,6 +318,7 @@ Example::
             'function': <value>,        #  Class functions
             'index': <value>,           #  Index values for indexable types
             'key': <value>,             #  Key values for dict
+            'params': <value>,          #  Function parameters
         },
         'types': {
             'bool': <value>,            #  Booleans

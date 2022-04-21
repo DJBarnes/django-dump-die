@@ -259,6 +259,13 @@ By default, all function documentation output is collapsed into one line (aka li
 DJANGO_DD_MULTILINE_FUNCTION_DOCS = True
 ```
 
+### DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME
+Default: ```True```<br>
+By default, all dumped object names are syntax highlighted. If you would like to disable this so that the dumped name is all the same color regardless of its contents, set this setting to ```False```.
+```python
+DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME = False
+```
+
 ### DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED
 Default: ```False```<br>
 By default, everything is collapsed when dumped to the screen. If you would like the first level of expansion that shows the attribute types (Attributes and Functions heading) already expanded, set this setting to ```True```. This will not show you the attributes or functions for a method, but rather the headings for those sections.
@@ -325,6 +332,7 @@ By default, the tool uses the Solarized color scheme. If you want full control o
         'function': <value>,        #  Class functions
         'index': <value>,           #  Index values for indexable types
         'key': <value>,             #  Key values for dict
+        'params': <value>,          #  Function parameters
     },
     'types': {
         'bool': <value>,            #  Booleans
