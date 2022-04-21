@@ -57,7 +57,7 @@ deepcopy_unique_map = {}
 # endregion Module Variables
 
 
-@register.inclusion_tag('django_dump_die/_dd_object.html')
+@register.inclusion_tag('django_dump_die/partials/_dd_object.html')
 def dd_object(
     obj,
     root_obj,
