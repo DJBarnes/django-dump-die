@@ -155,52 +155,125 @@ const djangoDumpDie = {
      * Add handling for UtilityToolbar logic, such as button click events, etc.
      */
     setUpUtilityToolbar() {
-        let expand_button = $('.dump-toolbar .expand-all')[0];
-        let collapse_button = $('.dump-toolbar .collapse-all')[0];
 
-        console.log('Found buttons:');
-        console.log('expand_button:');
-        console.log(expand_button);
-        console.log('collapse_button:');
-        console.log(collapse_button);
+        // Set up expand/collapse button handling.
+        $('.dump-toolbar #expand-all').on('click', djangoDumpDie.expandAllElements);
+        $('.dump-toolbar #expand-types').on('click', djangoDumpDie.expandAllTypes);
+        $('.dump-toolbar #expand-attrs').on('click', djangoDumpDie.expandAllAttributes);
+        $('.dump-toolbar #expand-funcs').on('click', djangoDumpDie.expandAllFunctions);
+        $('.dump-toolbar #collapse-all').on('click', djangoDumpDie.collapseAllElements);
+        $('.dump-toolbar #collapse-types').on('click', djangoDumpDie.collapseAllTypes);
+        $('.dump-toolbar #collapse-attrs').on('click', djangoDumpDie.collapseAllAttributes);
+        $('.dump-toolbar #collapse-funcs').on('click', djangoDumpDie.collapseAllFunctions);
+    },
 
-        // Set up "expand all" button handling.
-        $(expand_button).on('click', function() {
+    /**
+     * Functions to expand various groupings of collapsable elements.
+     */
+    expandAllElements() {
+        console.log('Called expandAllElements().');
 
-            console.log('Clicked expand_all button.');
+        // Find all expandable arrow elements and expand them.
+        $('.arrow-toggle').each(function() {
 
-            // Find all expandable arrow elements and expand them.
-            $('.arrow-toggle').each(function() {
+            if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
+                $(this).click();
+            }
+        });
+    },
+    expandAllTypes() {
+        console.log('Called expandAllTypes().');
 
+        // Find all expandable arrow elements (with the "type" dataset) and expand them.
+        $('.arrow-toggle').each(function() {
+
+            if ($(this).data('dd-type') == 'type') {
                 if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
                     $(this).click();
                 }
-            });
-
+            }
         });
 
-        // Set up "collapse all" button handling.
-        $(collapse_button).on('click', function() {
+    },
+    expandAllAttributes() {
+        console.log('Called expandAllAttributes().');
 
-            console.log('Clicked collapse_button button.');
+        // Find all expandable arrow elements (with the "attr" dataset) and expand them.
+        $('.arrow-toggle').each(function() {
 
-            // Find all expandable arrow elements and collapse them.
-            $('.arrow-toggle').each(function() {
+            if ($(this).data('dd-type') == 'attr') {
+                if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
+                    $(this).click();
+                }
+            }
+        });
+    },
+    expandAllFunctions() {
+        console.log('Called expandAllFunctions().');
 
+        // Find all expandable arrow elements (with the "func" dataset) and expand them.
+        $('.arrow-toggle').each(function() {
+
+            if ($(this).data('dd-type') == 'func') {
+                if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
+                    $(this).click();
+                }
+            }
+        });
+    },
+
+    /**
+     * Functions to collapse various groupings of collapsable elements.
+     */
+    collapseAllElements() {
+        console.log('Called collapseAllElements().');
+
+        // Find all expandable arrow elements and collapse them.
+        $('.arrow-toggle').each(function() {
+
+            if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
+                $(this).click();
+            }
+        });
+    },
+    collapseAllTypes() {
+        console.log('Called collapseAllTypes().');
+
+        // Find all expandable arrow elements (with the "type" dataset) and collapse them.
+        $('.arrow-toggle').each(function() {
+
+            if ($(this).data('dd-type') == 'type') {
                 if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
                     $(this).click();
                 }
-            });
+            }
         });
-
     },
-
-    expandAllAttributes() {
-        console.log('Called expandAllAttributes().');
-    },
-
     collapseAllAttributes() {
         console.log('Called collapseAllAttributes().');
+
+        // Find all expandable arrow elements (with the "attr" dataset) and collapse them.
+        $('.arrow-toggle').each(function() {
+
+            if ($(this).data('dd-type') == 'attr') {
+                if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
+                    $(this).click();
+                }
+            }
+        });
+    },
+    collapseAllFunctions() {
+        console.log('Called collapseAllFunctions().');
+
+        // Find all expandable arrow elements (with the "func" dataset) and collapse them.
+        $('.arrow-toggle').each(function() {
+
+            if ($(this).data('dd-type') == 'func') {
+                if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
+                    $(this).click();
+                }
+            }
+        });
     }
 }
 
