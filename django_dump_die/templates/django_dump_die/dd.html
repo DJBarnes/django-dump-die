@@ -19,14 +19,9 @@
   </head>
 
   <body>
+    {# Display static "utility toolbar" at top of page. #}
     {% if include_util_toolbar %}
-      <div class="dump-toolbar">
-        <div><p>DD Output</p></div>
-        <div>
-          <p class="button expand-all">Expand All</p>
-          <p class="button collapse-all">Collapse All</p>
-        </div>
-      </div>
+      {% include 'django_dump_die/util_toolbar.html' %}
     {% endif %}
 
     {% dump_objects objects %}
