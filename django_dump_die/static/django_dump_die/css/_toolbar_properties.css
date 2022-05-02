@@ -1,0 +1,58 @@
+
+.dump-toolbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 40px 10px 40px;
+}
+.dump-toolbar div, .dump-toolbar p {
+    box-sizing: border-box;
+}
+.dump-toolbar > div {
+    display: flex;
+    flex-direction: row;
+}
+.dump-toolbar p {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+.dump-toolbar .dropdown-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    position: relative;
+    margin: 0 5px 0 5px;
+}
+.dump-toolbar .dropdown-group {
+    display: None;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    position: absolute;
+    top: 36px;
+    width: 100%;
+}
+.dump-toolbar .dropdown-container:hover .dropdown-group {
+    display: flex;
+}
+.dump-toolbar .button {
+    padding: 5px 10px 5px 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.dump-toolbar .dropdown-container > .button {
+    width: 100%;
+    padding-right: 20px;
+    padding-left: 20px;
+    white-space: nowrap;
+}
+.dump-toolbar .dropdown-group > .button {
+    text-align: center;
+    white-space: nowrap;
+}
