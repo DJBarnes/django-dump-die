@@ -97,7 +97,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             <span class="dumped_object" title="Dumped Object"><span class="dumped_name">test_list</span></span>:
             <span class="type" title="list">list:3</span>
             <span class="braces">[</span>
-            <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".list_9000" aria-label="Close">
+            <a class="arrow-toggle collapsed" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".list_9000" aria-label="Close" aria-expanded="false" >
                 <span class="unique" data-highlight-unique="list_9000">list_9000</span>
                 <span id="arrow-list_9000" class="arrow">▶</span>
             </a>
@@ -106,7 +106,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
                 data-unique="list_9000"
             >
                 <ul class="attribute-list">
-                    <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".list_9000-attributes" aria-label="Open/Close">
+                    <a class="arrow-toggle " title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".list_9000-attributes" aria-label="Open/Close" aria-expanded="true" >
                         <span>Attributes</span>
                         <span id="arrow-list_9000-attributes" class="arrow">▼</span>
                     </a>
@@ -155,7 +155,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             <span class="dumped_object" title="Dumped Object"><span class="dumped_name">test_dict</span></span>:
             <span class="type" title="dict">dict:3</span>
             <span class="braces">{</span>
-            <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".dict_9004" aria-label="Close">
+            <a class="arrow-toggle collapsed" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".dict_9004" aria-label="Close" aria-expanded="false" >
                 <span class="unique" data-highlight-unique="dict_9004">dict_9004</span>
                 <span id="arrow-dict_9004" class="arrow">▶</span>
             </a>
@@ -164,7 +164,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
                 data-unique="dict_9004"
             >
                 <ul class="attribute-list">
-                    <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".dict_9004-attributes" aria-label="Open/Close">
+                    <a class="arrow-toggle " title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".dict_9004-attributes" aria-label="Open/Close" aria-expanded="true" >
                         <span>Attributes</span>
                         <span id="arrow-dict_9004-attributes" class="arrow">▼</span>
                     </a>
@@ -213,7 +213,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             <span class="dumped_object" title="Dumped Object"><span class="dumped_name">test_tuple</span></span>:
             <span class="type" title="tuple">tuple:3</span>
             <span class="braces">(</span>
-            <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".tuple_9008" aria-label="Close">
+            <a class="arrow-toggle collapsed" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".tuple_9008" aria-label="Close" aria-expanded="false" >
                 <span class="unique" data-highlight-unique="tuple_9008">tuple_9008</span>
                 <span id="arrow-tuple_9008" class="arrow">▶</span>
             </a>
@@ -222,7 +222,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
                 data-unique="tuple_9008"
             >
                 <ul class="attribute-list">
-                    <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".tuple_9008-attributes" aria-label="Open/Close">
+                    <a class="arrow-toggle " title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".tuple_9008-attributes" aria-label="Open/Close" aria-expanded="true" >
                         <span>Attributes</span>
                         <span id="arrow-tuple_9008-attributes" class="arrow">▼</span>
                     </a>
@@ -277,7 +277,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             <span class="dumped_object" title="Dumped Object"> <span class="dumped_name">test_set</span> </span>:
             <span class="type" title="set">set:3</span>
             <span class="braces">{</span>
-            <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".set_9012" aria-label="Close" >
+            <a class="arrow-toggle collapsed" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".set_9012" aria-label="Close" aria-expanded="false" >
                 <span class="unique" data-highlight-unique="set_9012">set_9012</span>
                 <span id="arrow-set_9012" class="arrow"> ▶ </span>
             </a>
@@ -286,7 +286,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
                 data-unique="set_9012"
             >
                 <ul class="attribute-list">
-                    <a class="arrow-toggle" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".set_9012-attributes" aria-label="Open/Close" >
+                    <a class="arrow-toggle " title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".set_9012-attributes" aria-label="Open/Close" aria-expanded="true" >
                         <span>Attributes</span>
                         <span id="arrow-set_9012-attributes" class="arrow"> ▼ </span>
                     </a>
@@ -323,4 +323,3 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
         self.assertIn(expected_set2, actual)
         self.assertIn(expected_set3, actual)
         self.assertIn(expected_last_half, actual)
-

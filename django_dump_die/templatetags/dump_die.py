@@ -689,14 +689,20 @@ def _get_collapsable_values():
         'attribute_type' : {
             'arrow': '▼' if ATTR_TYPES_START_EXPANDED else '▶',
             'show': 'show' if ATTR_TYPES_START_EXPANDED else '',
+            'class': '' if ATTR_TYPES_START_EXPANDED else 'collapsed',
+            'aria': 'true' if ATTR_TYPES_START_EXPANDED else 'false',
         },
         'attribute' : {
             'arrow': '▼' if ATTRIBUTES_START_EXPANDED else '▶',
             'show': 'show' if ATTRIBUTES_START_EXPANDED else '',
+            'class': '' if ATTRIBUTES_START_EXPANDED else 'collapsed',
+            'aria': 'true' if ATTRIBUTES_START_EXPANDED else 'false',
         },
         'function' : {
             'arrow': '▼' if FUNCTIONS_START_EXPANDED else '▶',
             'show': 'show' if FUNCTIONS_START_EXPANDED else '',
+            'class': '' if FUNCTIONS_START_EXPANDED else 'collapsed',
+            'aria': 'true' if FUNCTIONS_START_EXPANDED else 'false',
         },
     }
 

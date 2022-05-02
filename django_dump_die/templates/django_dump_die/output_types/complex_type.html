@@ -8,11 +8,12 @@
 <span class="braces">{{ braces.0 }}</span>
 
 <a
-  class="arrow-toggle"
+  class="arrow-toggle {{ collapsable.attribute_type.class }}"
   title="[Ctrl+click] Expand all children"
   data-toggle="collapse"
   data-target=".{{ unique }}{{ root_count }}"
   aria-label="Close"
+  aria-expanded="{{ collapsable.attribute_type.aria }}"
 >
   <span class="unique" data-highlight-unique="{{ unique }}">{{ unique }}{{ root_count }}</span>
   <span id="arrow-{{ unique }}{{ root_count }}" class="arrow">

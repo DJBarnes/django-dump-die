@@ -2,11 +2,12 @@
 
 
 <a
-  class="arrow-toggle"
+  class="arrow-toggle {{ collapsable.attribute.class }}"
   title="[Ctrl+click] Expand all children"
   data-toggle="collapse"
   data-target=".{{ unique }}{{ root_count }}-attributes"
   aria-label="Open/Close"
+  aria-expanded="{{ collapsable.attribute.aria }}"
 >
   <span>Attributes</span>
   <span id="arrow-{{ unique }}{{ root_count }}-attributes" class="arrow">
