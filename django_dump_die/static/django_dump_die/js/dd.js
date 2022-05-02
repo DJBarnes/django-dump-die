@@ -149,6 +149,58 @@ const djangoDumpDie = {
             arrow_element = $('#arrow-' + unique);
             $(arrow_element).html('▶');
         });
+    },
+
+    /**
+     * Add handling for UtilityToolbar logic, such as button click events, etc.
+     */
+    setUpUtilityToolbar() {
+        let expand_button = $('.dump-toolbar .expand-all')[0];
+        let collapse_button = $('.dump-toolbar .collapse-all')[0];
+
+        console.log('Found buttons:');
+        console.log('expand_button:');
+        console.log(expand_button);
+        console.log('collapse_button:');
+        console.log(collapse_button);
+
+        // Set up "expand all" button handling.
+        $(expand_button).on('click', function() {
+
+            console.log('Clicked expand_all button.');
+
+            // Find all expandable arrow elements and expand them.
+            $('.arrow-toggle').each(function() {
+
+                if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
+                    $(this).click();
+                }
+            });
+
+        });
+
+        // Set up "collapse all" button handling.
+        $(collapse_button).on('click', function() {
+
+            console.log('Clicked collapse_button button.');
+
+            // Find all expandable arrow elements and collapse them.
+            $('.arrow-toggle').each(function() {
+
+                if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
+                    $(this).click();
+                }
+            });
+        });
+
+    },
+
+    expandAllAttributes() {
+        console.log('Called expandAllAttributes().');
+    },
+
+    collapseAllAttributes() {
+        console.log('Called collapseAllAttributes().');
     }
 }
 
@@ -157,11 +209,13 @@ const djangoDumpDie = {
  */
 $(document).ready(function() {
 
-    // Set up the unique duplicate highlighting
+    // Set up the unique duplicate highlighting.
     djangoDumpDie.setUpUniqueDupHighlighting();
-    // Set up the CTRL click functionality
+    // Set up the CTRL click functionality.
     djangoDumpDie.setUpCTRLClickFunctionality();
-    // Set up the Arrow Updating
+    // Set up the Arrow Updating.
     djangoDumpDie.setUpArrowUpdating();
+    // Set up toolbar handling.
+    djangoDumpDie.setUpUtilityToolbar();
 
 });

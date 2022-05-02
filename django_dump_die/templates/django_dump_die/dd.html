@@ -14,11 +14,21 @@
 
     {# If user wants changes to the color them, include a partial to generate needed css. #}
     {% if force_light_theme or force_dark_theme or custom_color_theme %}
-        {% include 'django_dump_die/partials/_custom_color_theme.html' %}
+      {% include 'django_dump_die/partials/_custom_color_theme.html' %}
     {% endif %}
   </head>
 
   <body>
+    {% if include_util_toolbar %}
+      <div class="dump-toolbar">
+        <div><p>DD Output</p></div>
+        <div>
+          <p class="button expand-all">Expand All</p>
+          <p class="button collapse-all">Collapse All</p>
+        </div>
+      </div>
+    {% endif %}
+
     {% dump_objects objects %}
   </body>
 </html>

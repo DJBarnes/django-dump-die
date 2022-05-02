@@ -3,14 +3,48 @@ body {
     color: #839496;
     background-color: #002b36;
 
-    margin-top: 15px;
     margin-bottom: 15px;
 }
 hr {
     border: 1px solid;
     color: #839496;
 }
+
+/* Utility Toolbar */
+.dump-toolbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 40px 10px 40px;
+    color: #002b36;
+    background-color: #839496;
+    border-bottom: 1px solid #002b36;
+}
+.dump-toolbar > div {
+    display: flex;
+    flex-direction: row;
+}
+.dump-toolbar p {
+    margin: 0;
+    padding: 0;
+}
+.dump-toolbar .button {
+    margin: 0 5px 0 5px;
+    padding: 5px 10px 5px 10px;
+    border: 1px solid #002b36;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.dump-toolbar .button:hover, .dump-toolbar .button:focus, .dump-toolbar .button:active {
+    color: #839496;
+    background: #00566b;
+}
+
+/* Base dd output */
 .dump-wrapper {
+    margin-top: 15px;
     margin-left: 10px;
     margin-right: 10px;
 }
