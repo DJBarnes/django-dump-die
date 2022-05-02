@@ -16,6 +16,41 @@
             background-color: {{ custom_color_theme.light.background }};
           {% endif %}
         }
+        .dump-toolbar {
+          {% if custom_color_theme.light.toolbar_color %}
+            color: {{ custom_color_theme.light.toolbar_color }};
+          {% else %}
+            color: #827b66;
+          {% endif %}
+          {% if custom_color_theme.light.toolbar_background %}
+            background-color: {{ custom_color_theme.light.toolbar_background }};
+          {% else %}
+            background-color: #fcf0cf;
+          {% endif %}
+          {% if custom_color_theme.light.border %}
+            border-color: {{ custom_color_theme.light.border }};
+          {% else %}
+            border-color: #d0c095;
+          {% endif %}
+        }
+        {# On hover, swap text and background colors #}
+        .dump-toolbar .button:hover,
+        .dump-toolbar .button:focus,
+        .dump-toolbar .button:active,
+        .dump-toolbar .dropdown-button:hover,
+        .dump-toolbar .dropdown-button:focus,
+        .dump-toolbar .dropdown-button:active {
+          {% if custom_color_theme.light.toolbar_background %}
+            color: {{ custom_color_theme.light.toolbar_background }};
+          {% else %}
+            color: #fcf0cf;
+          {% endif %}
+          {% if custom_color_theme.light.toolbar_color %}
+            background-color: {{ custom_color_theme.light.toolbar_color }};
+          {% else %}
+            background-color: #827b66;
+          {% endif %}
+        }
       }
     {% endif %}
 
@@ -29,6 +64,41 @@
           {% endif %}
           {% if custom_color_theme.dark.background %}
             background-color: {{ custom_color_theme.dark.background }};
+          {% endif %}
+        }
+        .dump-toolbar {
+          {% if custom_color_theme.dark.toolbar_color %}
+            color: {{ custom_color_theme.dark.toolbar_color }};
+          {% else %}
+            color: #839496;
+          {% endif %}
+          {% if custom_color_theme.dark.toolbar_background %}
+            background-color: {{ custom_color_theme.dark.toolbar_background }};
+          {% else %}
+            background-color: #001f29;
+          {% endif %}
+          {% if custom_color_theme.dark.border %}
+            border-color: {{ custom_color_theme.dark.border }};
+          {% else %}
+            border-color: #043b49;
+          {% endif %}
+        }
+        {# On hover, swap text and background colors #}
+        .dump-toolbar .button:hover,
+        .dump-toolbar .button:focus,
+        .dump-toolbar .button:active,
+        .dump-toolbar .dropdown-button:hover,
+        .dump-toolbar .dropdown-button:focus,
+        .dump-toolbar .dropdown-button:active {
+          {% if custom_color_theme.dark.toolbar_background %}
+            color: {{ custom_color_theme.dark.toolbar_background }};
+          {% else %}
+            color: #001f29;
+          {% endif %}
+          {% if custom_color_theme.dark.toolbar_color %}
+            background-color: {{ custom_color_theme.dark.toolbar_color }};
+          {% else %}
+            background-color: #839496;
           {% endif %}
         }
       }
@@ -170,12 +240,54 @@
       {% if custom_color_theme.light.color %}
         color: {{ custom_color_theme.light.color }};
       {% else %}
-        color: #657b83;
+        color: #827b66;
       {% endif %}
       {% if custom_color_theme.light.background %}
         background-color: {{ custom_color_theme.light.background }};
       {% else %}
         background-color: #fdf6e3;
+      {% endif %}
+    }
+    .dump-toolbar {
+      {% if custom_color_theme.light.toolbar_color %}
+        color: {{ custom_color_theme.light.toolbar_color }};
+      {% else %}
+        color: #827b66;
+      {% endif %}
+      {% if custom_color_theme.light.toolbar_background %}
+        background-color: {{ custom_color_theme.light.toolbar_background }};
+      {% else %}
+        background-color: #fcf0cf;
+      {% endif %}
+      {% if custom_color_theme.light.border %}
+        border-color: {{ custom_color_theme.light.border }};
+      {% else %}
+        border-color: #d0c095;
+      {% endif %}
+    }
+    {# On hover, swap text and background colors #}
+    .dump-toolbar .button:hover,
+    .dump-toolbar .button:focus,
+    .dump-toolbar .button:active,
+    .dump-toolbar .dropdown-button:hover,
+    .dump-toolbar .dropdown-button:focus,
+    .dump-toolbar .dropdown-button:active {
+      {% if custom_color_theme.light.toolar_background %}
+        color: {{ custom_color_theme.light.toolbar_background }};
+      {% else %}
+        color: #fcf0cf;
+      {% endif %}
+      {% if custom_color_theme.light.toolbar_color %}
+        background-color: {{ custom_color_theme.light.toolbar_color }};
+      {% else %}
+        background-color: #827b66;
+      {% endif %}
+    }
+    hr {
+      {% if custom_color_theme.light.border %}
+        color: {{ custom_color_theme.light.border }};
+      {% else %}
+        color: #d0c095;
       {% endif %}
     }
     .arrow {
@@ -248,6 +360,48 @@
         background-color: {{ custom_color_theme.dark.background }};
       {% else %}
         background-color: #002b36;
+      {% endif %}
+    }
+    .dump-toolbar {
+      {% if custom_color_theme.dark.toolbar_color %}
+        color: {{ custom_color_theme.dark.toolbar_color }};
+      {% else %}
+        color: #839496;
+      {% endif %}
+      {% if custom_color_theme.dark.toolbar_background %}
+        background-color: {{ custom_color_theme.dark.toolbar_background }};
+      {% else %}
+        background-color: #001f29;
+      {% endif %}
+      {% if custom_color_theme.dark.border %}
+        border-color: {{ custom_color_theme.dark.border }};
+      {% else %}
+        border-color: #043b49;
+      {% endif %}
+    }
+    {# On hover, swap text and background colors #}
+    .dump-toolbar .button:hover,
+    .dump-toolbar .button:focus,
+    .dump-toolbar .button:active,
+    .dump-toolbar .dropdown-button:hover,
+    .dump-toolbar .dropdown-button:focus,
+    .dump-toolbar .dropdown-button:active {
+      {% if custom_color_theme.dark.toolbar_background %}
+        color: {{ custom_color_theme.dark.toolbar_background }};
+      {% else %}
+        color: #001f29;
+      {% endif %}
+      {% if custom_color_theme.dark.toolbar_color %}
+        background-color: {{ custom_color_theme.dark.toolbar_color }};
+      {% else %}
+        background-color: #839496;
+      {% endif %}
+    }
+    hr {
+      {% if custom_color_theme.dark.border %}
+        color: {{ custom_color_theme.dark.border }};
+      {% else %}
+        color: #043b49;
       {% endif %}
     }
     .arrow {

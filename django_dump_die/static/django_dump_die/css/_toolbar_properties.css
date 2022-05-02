@@ -6,6 +6,8 @@
     align-items: center;
     width: 100%;
     padding: 10px 40px 10px 40px;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
 }
 .dump-toolbar div, .dump-toolbar p {
     box-sizing: border-box;
@@ -43,6 +45,8 @@
 }
 .dump-toolbar .button {
     padding: 5px 10px 5px 10px;
+    border-width: 1px;
+    border-style: solid;
     cursor: pointer;
     transition: all 0.3s;
 }

@@ -12,20 +12,24 @@ hr {
     color: #839496;
 }
 
-/* Utility Toolbar */
+/* Utility Toolbar Coloring */
 .dump-toolbar {
-    color: #002b36;
-    background-color: #839496;
-    border-bottom: 1px solid #002b36;
+    color: #827b66;
+    background-color: #fcf0cf;
+    border-color: #d0c095;
 }
-.dump-toolbar .button {
-    background-color: #839496;
-    border: 1px solid #002b36;
+.dump-toolbar div, .dump-toolbar p {
+    background-color: inherit;
+    border-color: inherit;
 }
-.dump-toolbar .button:hover, .dump-toolbar .button:focus, .dump-toolbar .button:active,
-.dump-toolbar .dropdown-button:hover, .dump-toolbar .dropdown-button:focus, .dump-toolbar .dropdown-button:active {
-    color: #839496;
-    background: #00566b;
+.dump-toolbar .button:hover,
+.dump-toolbar .button:focus,
+.dump-toolbar .button:active,
+.dump-toolbar .dropdown-button:hover,
+.dump-toolbar .dropdown-button:focus,
+.dump-toolbar .dropdown-button:active {
+    color: #fcf0cf;
+    background: #827b66;
 }
 
 /* Base dd output */
@@ -136,7 +140,7 @@ a.arrow-toggle {
         background-color: #fdf6e3;
     }
     hr {
-        color: #657b83;
+        color: #d0c095;
     }
     .arrow {
         color: #657b83;

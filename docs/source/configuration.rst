@@ -288,19 +288,30 @@ In the sample below, ``<value>`` should be a string hexcode for a color with
 the hash symbol included.
 EX: ``#FF88CC``.
 
+Note: Not all values need to be included. Any excluded values will fall back
+to a default. Feel free to only include the values you wish to modify.
+
 :Type: ``dict``
 :Default: ``None``
+
+
 
 Example::
 
     DJANGO_DD_COLOR_SCHEME = {
         'light': {
-            'color': <value>,
-            'background': <value>,
+            'color': <value>,               # Light theme default text color
+            'background': <value>,          # Light theme background color
+            'border': <value>,              # Light theme border color
+            'toolbar_color': <value>,       # Light theme toolbar text color
+            'toolbar_background': <value>   # Light theme toolbar background color
         },
         'dark': {
-            'color': <value>,
-            'background': <value>
+            'color': <value>,               # Dark theme default text color
+            'background': <value>,          # Dark theme background color
+            'border': <value>,              # Dark theme border color
+            'toolbar_color': <value>,       # Dark theme toolbar text color
+            'toolbar_background': <value>   # Dark theme toolbar background color
         },
         'meta': {
             'arrow': <value>,           #  Expand/Collapse arrow
