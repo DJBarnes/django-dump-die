@@ -287,6 +287,14 @@ By default, all functions are collapsed so that when you expand a specific objec
 DJANGO_DD_FUNCTIONS_START_EXPANDED = True
 ```
 
+
+### DJANGO_DD_INCLUDE_UTILITY_TOOLBAR
+:Default: ```True```<br>
+By default, a "utility toolbar" will show at top of page during DD output. To hide this toolbar, set this setting to ``False``.
+```python
+DJANGO_DD_INCLUDE_UTILITY_TOOLBAR = False
+```
+
 ### DJANGO_DD_FORCE_LIGHT_THEME
 Default: ```False```<br>
 By default, the included color theme will change depending on the setting of your browser to either light or dark. If you normally have your browser set to dark but would like to force this tool to display the light theme, change this setting to ```True```
@@ -307,14 +315,20 @@ By default, the tool uses the Solarized color scheme. If you want full control o
 <br>
 **EX:** ```#FF88CC```.
 ```python
-{
+DJANGO_DD_COLOR_SCHEME = {
     'light': {
-        'color': <value>,
-        'background': <value>,
+        'color': <value>,               # Light theme default text color
+        'background': <value>,          # Light theme background color
+        'border': <value>,              # Light theme border color
+        'toolbar_color': <value>,       # Light theme toolbar text color
+        'toolbar_background': <value>,  # Light theme toolbar background color
     },
     'dark': {
-        'color': <value>,
-        'background': <value>
+        'color': <value>,               # Dark theme default text color
+        'background': <value>,          # Dark theme background color
+        'border': <value>,              # Dark theme border color
+        'toolbar_color': <value>,       # Dark theme toolbar text color
+        'toolbar_background': <value>,  # Dark theme toolbar background color
     },
     'meta': {
         'arrow': <value>,           #  Expand/Collapse arrow
@@ -344,6 +358,6 @@ By default, the tool uses the Solarized color scheme. If you want full control o
         'none': <value>,            #  None
         'number': <value>,          #  Integers, Floats, and Decimals
         'string': <value>,          #  Strings
-    }
+    },
 }
 ```

@@ -246,6 +246,20 @@ Example::
     DJANGO_DD_FUNCTIONS_START_EXPANDED = True
 
 
+DJANGO_DD_INCLUDE_UTILITY_TOOLBAR
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, a "utility toolbar" will show at top of page during DD output. To
+hide this toolbar, set this setting to ``False``.
+
+:Type: ``bool``
+:Default: ``True``
+
+Example::
+
+    DJANGO_DD_INCLUDE_UTILITY_TOOLBAR = False
+
+
 DJANGO_DD_FORCE_LIGHT_THEME
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -304,14 +318,14 @@ Example::
             'background': <value>,          # Light theme background color
             'border': <value>,              # Light theme border color
             'toolbar_color': <value>,       # Light theme toolbar text color
-            'toolbar_background': <value>   # Light theme toolbar background color
+            'toolbar_background': <value>,  # Light theme toolbar background color
         },
         'dark': {
             'color': <value>,               # Dark theme default text color
             'background': <value>,          # Dark theme background color
             'border': <value>,              # Dark theme border color
             'toolbar_color': <value>,       # Dark theme toolbar text color
-            'toolbar_background': <value>   # Dark theme toolbar background color
+            'toolbar_background': <value>,  # Dark theme toolbar background color
         },
         'meta': {
             'arrow': <value>,           #  Expand/Collapse arrow
