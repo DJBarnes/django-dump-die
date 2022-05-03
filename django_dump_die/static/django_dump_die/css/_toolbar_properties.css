@@ -1,9 +1,15 @@
 
+.static-padding {
+    margin-top: 55px;
+    height: 1px;
+}
 .dump-toolbar {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    position: fixed;
+    top: 0;
     width: 100%;
     padding: 10px 40px 10px 40px;
     border-bottom-width: 1px;

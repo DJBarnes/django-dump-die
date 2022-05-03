@@ -1,6 +1,7 @@
 @import "./_toolbar_properties.css";
 
 body {
+    position: relative;
     font-family: monospace;
     color: #839496;
     background-color: #002b36;
