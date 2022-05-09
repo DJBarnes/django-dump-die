@@ -57,29 +57,15 @@ deepcopy_unique_map = {}
 
 # endregion Module Variables
 
-class RenderHeadSingleton:
-    """Singleton to keep track if css and js has been rendered for dump tag"""
-    render_head = True
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(
-                RenderHeadSingleton, cls
-            ).__new__(
-                cls, *args, **kwargs
-            )
-        return cls._instance
-
-
-@register.inclusion_tag('django_dump_die/partials/_dump.html')
-def dump(obj):
+@register.inclusion_tag('django_dump_die/partials/_dump.html', takes_context=True)
+def dump(context, obj):
     """Template tag that can be used in templates to use dd"""
     object_info = get_dumped_object_info(obj)
 
-    singleton = RenderHeadSingleton()
-    render_head = singleton.render_head
-    singleton.render_head = False
+    render_head = context.get('django_dd_template_tag_render_head', True)
+    if render_head:
+        context['django_dd_template_tag_render_head'] = False
+
     return {
         'objects': [object_info],
         'render_head': render_head,
