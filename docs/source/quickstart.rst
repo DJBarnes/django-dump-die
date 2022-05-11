@@ -4,7 +4,7 @@ Quickstart
 1. Install the Django App via GitHub for now. Working on getting on Pypi soon.
     .. code-block:: bash
 
-        python -m pip install -e "git+https://github.com/DJBarnes/django-dump-die#egg=django-dump-die"
+        python -m pip install -e git+https://github.com/DJBarnes/django-dump-die@master
 
 
 2. Add the corresponding app to your Django ``settings.py`` file:

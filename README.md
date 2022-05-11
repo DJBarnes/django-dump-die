@@ -10,7 +10,7 @@ Inspired by the dump and dump/die functionality from Symfony / Laravel.
 ## Installation
 Import the package via either:
 ```shell
-python -m pip install -e "git+https://github.com/DJBarnes/django-dump-die#egg=django-dump-die"
+python -m pip install -e git+https://github.com/DJBarnes/django-dump-die@master
 ```
 or
 ```shell
