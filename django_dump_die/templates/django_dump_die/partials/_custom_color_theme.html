@@ -51,6 +51,13 @@
             background-color: #827b66;
           {% endif %}
         }
+        hr {
+          {% if custom_color_theme.light.border %}
+            color: {{ custom_color_theme.light.border }};
+          {% else %}
+            color: #d0c095;
+          {% endif %}
+        }
       }
     {% endif %}
 
@@ -99,6 +106,13 @@
             background-color: {{ custom_color_theme.dark.toolbar_color }};
           {% else %}
             background-color: #839496;
+          {% endif %}
+        }
+        hr {
+          {% if custom_color_theme.dark.border %}
+            color: {{ custom_color_theme.dark.border }};
+          {% else %}
+            color: #043b49;
           {% endif %}
         }
       }

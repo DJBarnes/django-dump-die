@@ -140,6 +140,24 @@ a.arrow-toggle {
         color: #657b83;
         background-color: #fdf6e3;
     }
+    .dump-toolbar {
+        color: #827b66;
+        background-color: #fcf0cf;
+        border-color: #d0c095;
+    }
+    .dump-toolbar div, .dump-toolbar p {
+        background-color: inherit;
+        border-color: inherit;
+    }
+    .dump-toolbar .button:hover,
+    .dump-toolbar .button:focus,
+    .dump-toolbar .button:active,
+    .dump-toolbar .dropdown-button:hover,
+    .dump-toolbar .dropdown-button:focus,
+    .dump-toolbar .dropdown-button:active {
+        color: #fcf0cf;
+        background: #827b66;
+    }
     hr {
         color: #d0c095;
     }
@@ -175,8 +193,26 @@ a.arrow-toggle {
         color: #839496;
         background-color: #002b36;
     }
-    hr {
+    .dump-toolbar {
         color: #839496;
+        background-color: #001f29;
+        border-color: #043b49;
+    }
+    .dump-toolbar div, .dump-toolbar p {
+        background-color: inherit;
+        border-color: inherit;
+    }
+    .dump-toolbar .button:hover,
+    .dump-toolbar .button:focus,
+    .dump-toolbar .button:active,
+    .dump-toolbar .dropdown-button:hover,
+    .dump-toolbar .dropdown-button:focus,
+    .dump-toolbar .dropdown-button:active {
+        color: #001f29;
+        background: #839496;
+    }
+    hr {
+        color: #043b49;
     }
     .arrow {
         color: #839496;
