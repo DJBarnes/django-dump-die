@@ -186,10 +186,14 @@ const djangoDumpDie = {
         $('.dump-toolbar #expand-types').on('click', djangoDumpDie.expandAllTypes);
         $('.dump-toolbar #expand-attrs').on('click', djangoDumpDie.expandAllAttributes);
         $('.dump-toolbar #expand-funcs').on('click', djangoDumpDie.expandAllFunctions);
+        $('.dump-toolbar #expand-1st-lvl').on('click', djangoDumpDie.expandFirstLevel);
+        $('.dump-toolbar #expand-2nd-lvl').on('click', djangoDumpDie.expandSecondLevel);
         $('.dump-toolbar #collapse-all').on('click', djangoDumpDie.collapseAllElements);
         $('.dump-toolbar #collapse-types').on('click', djangoDumpDie.collapseAllTypes);
         $('.dump-toolbar #collapse-attrs').on('click', djangoDumpDie.collapseAllAttributes);
         $('.dump-toolbar #collapse-funcs').on('click', djangoDumpDie.collapseAllFunctions);
+        $('.dump-toolbar #collapse-1st-lvl').on('click', djangoDumpDie.collapseFirstLevel);
+        $('.dump-toolbar #collapse-2nd-lvl').on('click', djangoDumpDie.collapseSecondLevel);
     },
 
     /**
@@ -246,6 +250,32 @@ const djangoDumpDie = {
             }
         });
     },
+    expandFirstLevel() {
+        console.log('Called expandFirstLevel().');
+
+        // Find all elements at depth level of 1 and expand them.
+        $('.arrow-toggle').each(function() {
+
+            if ($(this).data('object-depth') == '1') {
+                if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
+                    $(this).click();
+                }
+            }
+        });
+    },
+    expandSecondLevel() {
+        console.log('Called expandSecondLevel().');
+
+        // Find all elements at depth level of 2 and expand them.
+        $('.arrow-toggle').each(function() {
+
+            if ($(this).data('object-depth') == '2') {
+                if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
+                    $(this).click();
+                }
+            }
+        });
+    },
 
     /**
      * Functions to collapse various groupings of collapsable elements.
@@ -294,6 +324,32 @@ const djangoDumpDie = {
         $('.arrow-toggle').each(function() {
 
             if ($(this).data('dd-type') == 'func') {
+                if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
+                    $(this).click();
+                }
+            }
+        });
+    },
+    collapseFirstLevel() {
+        console.log('Called collapseFirstLevel().');
+
+        // Find all elements at depth level of 1 and collapse them.
+        $('.arrow-toggle').each(function() {
+
+            if ($(this).data('object-depth') == '1') {
+                if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
+                    $(this).click();
+                }
+            }
+        });
+    },
+    collapseSecondLevel() {
+        console.log('Called collapseSecondLevel().');
+
+        // Find all elements at depth level of 2 and collapse them.
+        $('.arrow-toggle').each(function() {
+
+            if ($(this).data('object-depth') == '2') {
                 if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
                     $(this).click();
                 }
