@@ -4,7 +4,9 @@
 <a
   class="arrow-toggle {{ collapsable.function.class }}"
   title="[Ctrl+click] Expand all children"
-  data-toggle="collapse"
+  {% if collapsable.attribute.always_show == 'false' %}
+    data-toggle="collapse"
+  {% endif %}
   data-target=".{{ unique }}{{ root_count }}-functions"
   data-dd-type="func"
   aria-label="Open/Close"

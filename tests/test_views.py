@@ -106,9 +106,9 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
                 data-unique="list_9000"
             >
                 <ul class="attribute-list">
-                    <a class="arrow-toggle " title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".list_9000-attributes" data-dd-type="attr" aria-label="Open/Close" aria-expanded="true" >
+                    <a class="arrow-toggle show always-show" title="[Ctrl+click] Expand all children" data-target=".list_9000-attributes" data-dd-type="attr" aria-label="Open/Close" aria-expanded="" >
                         <span>Attributes</span>
-                        <span id="arrow-list_9000-attributes" class="arrow">▼</span>
+                        <span id="arrow-list_9000-attributes" class="arrow"></span>
                     </a>
                     <div
                         class="li-wrapper collapse list_9000-attributes show"
@@ -163,9 +163,9 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
                 data-unique="dict_9004"
             >
                 <ul class="attribute-list">
-                    <a class="arrow-toggle " title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".dict_9004-attributes" data-dd-type="attr" aria-label="Open/Close" aria-expanded="true" >
+                    <a class="arrow-toggle show always-show" title="[Ctrl+click] Expand all children" data-target=".dict_9004-attributes" data-dd-type="attr" aria-label="Open/Close" aria-expanded="" >
                         <span>Attributes</span>
-                        <span id="arrow-dict_9004-attributes" class="arrow">▼</span>
+                        <span id="arrow-dict_9004-attributes" class="arrow"></span>
                     </a>
                     <div
                         class="li-wrapper collapse dict_9004-attributes show"
@@ -220,9 +220,9 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
                 data-unique="tuple_9008"
             >
                 <ul class="attribute-list">
-                    <a class="arrow-toggle " title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".tuple_9008-attributes" data-dd-type="attr" aria-label="Open/Close" aria-expanded="true" >
+                    <a class="arrow-toggle show always-show" title="[Ctrl+click] Expand all children"data-target=".tuple_9008-attributes" data-dd-type="attr" aria-label="Open/Close" aria-expanded="" >
                         <span>Attributes</span>
-                        <span id="arrow-tuple_9008-attributes" class="arrow">▼</span>
+                        <span id="arrow-tuple_9008-attributes" class="arrow"></span>
                     </a>
                     <div
                         class="li-wrapper collapse tuple_9008-attributes show"
@@ -283,9 +283,9 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
                 data-unique="set_9012"
             >
                 <ul class="attribute-list">
-                    <a class="arrow-toggle " title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".set_9012-attributes" data-dd-type="attr" aria-label="Open/Close" aria-expanded="true" >
+                    <a class="arrow-toggle show always-show" title="[Ctrl+click] Expand all children" data-target=".set_9012-attributes" data-dd-type="attr" aria-label="Open/Close" aria-expanded="" >
                         <span>Attributes</span>
-                        <span id="arrow-set_9012-attributes" class="arrow"> ▼ </span>
+                        <span id="arrow-set_9012-attributes" class="arrow">  </span>
                     </a>
                     <div
                         class="li-wrapper collapse set_9012-attributes show"
@@ -312,7 +312,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
         actual = ' '.join((response.content.decode()).split())
 
         # Can't just compare using html=True as the inner part is a set and
-        # so order can't not be guaranteed. Instead going to compare each
+        # so order can't be guaranteed. Instead going to compare each
         # part individually removing any whitespace.
         # NOTE: This test is fragile as a result.
         self.assertIn(expected_first_half, actual)

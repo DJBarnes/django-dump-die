@@ -94,6 +94,7 @@ const djangoDumpDie = {
                     childDivs.removeClass('show');
                     // Change the arrow to the closed state.
                     childArrows.html('▶');
+
                 // Else, need to add show class to all elements.
                 } else {
                     // Add the show class.
@@ -101,6 +102,22 @@ const djangoDumpDie = {
                     // Change the arrow to the open state.
                     childArrows.html('▼');
                 }
+
+                // Handle if any child elements have value of "always-show".
+                let alwaysShowArrows = $(siblingDDWrapper).find('.always-show .arrow');
+                $(alwaysShowArrows).each(function() {
+                    let parent = $(this).parent();
+                    let parentDivs = $(parent).siblings('.dd-wrapper, .li-wrapper');
+                    let parentArrows = $(parent).children('.arrow');
+
+                    // Ensure is always shown.
+                    if (! $(parentDivs).hasClass('show')) {
+                        $(parentDivs).addClass('show');
+                    }
+                    // Ensure arrows are always hidden.
+                    $(parentArrows).html('');
+                });
+
             }
 
         });
@@ -126,28 +143,36 @@ const djangoDumpDie = {
 
         // Update arrow on show attributes header.
         $('.dd-wrapper').on('show.bs.collapse', function(event) {
-            unique = $(event.target).data('unique-attributes');
-            arrow_element = $('#arrow-' + unique);
-            $(arrow_element).html('▼');
+            if (! $(event.target).hasClass('always-show') ) {
+                unique = $(event.target).data('unique-attributes');
+                arrow_element = $('#arrow-' + unique);
+                $(arrow_element).html('▼');
+            }
         });
         // Update arrow on hide attributes header.
         $('.dd-wrapper').on('hide.bs.collapse', function(event) {
-            unique = $(event.target).data('unique-attributes');
-            arrow_element = $('#arrow-' + unique);
-            $(arrow_element).html('▶');
+            if (! $(event.target).hasClass('always-show') ) {
+                unique = $(event.target).data('unique-attributes');
+                arrow_element = $('#arrow-' + unique);
+                $(arrow_element).html('▶');
+            }
         });
 
         // Update arrow on show functions header.
         $('.dd-wrapper').on('show.bs.collapse', function(event) {
-            unique = $(event.target).data('unique-functions');
-            arrow_element = $('#arrow-' + unique);
-            $(arrow_element).html('▼');
+            if (! $(event.target).hasClass('always-show') ) {
+                unique = $(event.target).data('unique-functions');
+                arrow_element = $('#arrow-' + unique);
+                $(arrow_element).html('▼');
+            }
         });
         // Update arrow on hide functions header.
         $('.dd-wrapper').on('hide.bs.collapse', function(event) {
-            unique = $(event.target).data('unique-functions');
-            arrow_element = $('#arrow-' + unique);
-            $(arrow_element).html('▶');
+            if (! $(event.target).hasClass('always-show') ) {
+                unique = $(event.target).data('unique-functions');
+                arrow_element = $('#arrow-' + unique);
+                $(arrow_element).html('▶');
+            }
         });
     },
 

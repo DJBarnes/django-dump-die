@@ -25,6 +25,8 @@ from django_dump_die.constants import (
     FUNCTIONS_START_EXPANDED,
     INCLUDE_PRIVATE_METHODS,
     INCLUDE_MAGIC_METHODS,
+    INCLUDE_ATTRIBUTES,
+    INCLUDE_FUNCTIONS,
 )
 
 from django_dump_die.utils import (
@@ -686,25 +688,48 @@ def _process_root_indices(start, end, parent_length):
 def _get_collapsable_values():
     """Get the arrow and collapsable values"""
 
+    # Determine default sets.
+    type_set = {
+        'arrow': '▼' if ATTR_TYPES_START_EXPANDED else '▶',
+        'show': 'show' if ATTR_TYPES_START_EXPANDED else '',
+        'always_show': 'false',
+        'class': '' if ATTR_TYPES_START_EXPANDED else 'collapsed',
+        'aria': 'true' if ATTR_TYPES_START_EXPANDED else 'false',
+    }
+    attr_set = {
+        'arrow': '▼' if ATTRIBUTES_START_EXPANDED else '▶',
+        'show': 'show' if ATTRIBUTES_START_EXPANDED else '',
+        'always_show': 'false',
+        'class': '' if ATTRIBUTES_START_EXPANDED else 'collapsed',
+        'aria': 'true' if ATTRIBUTES_START_EXPANDED else 'false',
+    }
+    func_set = {
+        'arrow': '▼' if FUNCTIONS_START_EXPANDED else '▶',
+        'show': 'show' if FUNCTIONS_START_EXPANDED else '',
+        'always_show': 'false',
+        'class': '' if FUNCTIONS_START_EXPANDED else 'collapsed',
+        'aria': 'true' if FUNCTIONS_START_EXPANDED else 'false',
+    }
+
+    # Extra handling if either attr or func output is disabled.
+    # In such a case, it doesn't make sense to have expandable arrows for the remaining one.
+    if INCLUDE_FUNCTIONS is False:
+        attr_set['arrow'] = ''
+        attr_set['show'] = 'show'
+        attr_set['always_show'] = 'true'
+        attr_set['class'] = 'show always-show'
+        attr_set['aria'] = ''
+    if INCLUDE_ATTRIBUTES is False:
+        func_set['arrow'] = ''
+        func_set['show'] = 'show'
+        func_set['always_show'] = 'true'
+        func_set['class'] = 'show always-show'
+        func_set['aria'] = ''
+
     return {
-        'attribute_type': {
-            'arrow': '▼' if ATTR_TYPES_START_EXPANDED else '▶',
-            'show': 'show' if ATTR_TYPES_START_EXPANDED else '',
-            'class': '' if ATTR_TYPES_START_EXPANDED else 'collapsed',
-            'aria': 'true' if ATTR_TYPES_START_EXPANDED else 'false',
-        },
-        'attribute': {
-            'arrow': '▼' if ATTRIBUTES_START_EXPANDED else '▶',
-            'show': 'show' if ATTRIBUTES_START_EXPANDED else '',
-            'class': '' if ATTRIBUTES_START_EXPANDED else 'collapsed',
-            'aria': 'true' if ATTRIBUTES_START_EXPANDED else 'false',
-        },
-        'function': {
-            'arrow': '▼' if FUNCTIONS_START_EXPANDED else '▶',
-            'show': 'show' if FUNCTIONS_START_EXPANDED else '',
-            'class': '' if FUNCTIONS_START_EXPANDED else 'collapsed',
-            'aria': 'true' if FUNCTIONS_START_EXPANDED else 'false',
-        },
+        'attribute_type': type_set,
+        'attribute': attr_set,
+        'function': func_set,
     }
 
 # endregion Misc Functions
