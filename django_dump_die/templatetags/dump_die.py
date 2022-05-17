@@ -57,6 +57,7 @@ deepcopy_unique_map = {}
 
 # endregion Module Variables
 
+
 @register.inclusion_tag('django_dump_die/partials/_dump.html', takes_context=True)
 def dump(context, obj):
     """Template tag that can be used in templates to use dd"""
@@ -70,6 +71,7 @@ def dump(context, obj):
         'objects': [object_info],
         'render_head': render_head,
     }
+
 
 @register.inclusion_tag('django_dump_die/partials/_dump_objects.html')
 def dump_objects(objects):
@@ -411,7 +413,6 @@ def _handle_simple_type(obj):
     }
 
 
-
 def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, original_obj=None):
     """Handling for a intermediate object.
 
@@ -686,19 +687,19 @@ def _get_collapsable_values():
     """Get the arrow and collapsable values"""
 
     return {
-        'attribute_type' : {
+        'attribute_type': {
             'arrow': '▼' if ATTR_TYPES_START_EXPANDED else '▶',
             'show': 'show' if ATTR_TYPES_START_EXPANDED else '',
             'class': '' if ATTR_TYPES_START_EXPANDED else 'collapsed',
             'aria': 'true' if ATTR_TYPES_START_EXPANDED else 'false',
         },
-        'attribute' : {
+        'attribute': {
             'arrow': '▼' if ATTRIBUTES_START_EXPANDED else '▶',
             'show': 'show' if ATTRIBUTES_START_EXPANDED else '',
             'class': '' if ATTRIBUTES_START_EXPANDED else 'collapsed',
             'aria': 'true' if ATTRIBUTES_START_EXPANDED else 'false',
         },
-        'function' : {
+        'function': {
             'arrow': '▼' if FUNCTIONS_START_EXPANDED else '▶',
             'show': 'show' if FUNCTIONS_START_EXPANDED else '',
             'class': '' if FUNCTIONS_START_EXPANDED else 'collapsed',

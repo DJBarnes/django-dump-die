@@ -1,8 +1,8 @@
 """Views for DumpDie"""
+
 from datetime import datetime
 from decimal import Decimal
 from django.conf import settings
-from django.http import HttpResponse
 from django.shortcuts import render
 from types import ModuleType
 
@@ -53,7 +53,7 @@ def example(request):
     sample_none = None
     sample_bool = True
 
-    sample_set = {'A', 'B', 'C',}
+    sample_set = {'A', 'B', 'C'}
     sample_tuple = ('A', 12, True)
     sample_list = ['A', 12, True]
     sample_dict = {
@@ -126,7 +126,6 @@ def example(request):
         """Empty sample class"""
         pass
 
-
     class SimpleClass:
         """Spam sample class."""
 
@@ -147,7 +146,7 @@ def example(request):
             self._sample_private_none = None
             self._sample_private_bool = True
 
-            self._sample_private_set = {'A', 'B', 'C',}
+            self._sample_private_set = {'A', 'B', 'C'}
             self._sample_private_tuple = ('A', 12, True)
             self._sample_private_list = ['A', 12, True]
             self._sample_private_dict = {
@@ -168,7 +167,7 @@ def example(request):
             self.sample_public_none = None
             self.sample_public_bool = True
 
-            self.sample_public_set = {'A', 'B', 'C',}
+            self.sample_public_set = {'A', 'B', 'C'}
             self.sample_public_tuple = ('A', 12, True)
             self.sample_public_list = ['A', 12, True]
             self.sample_public_dict = {
@@ -185,7 +184,6 @@ def example(request):
             """Sample class param func doc string"""
             return arg1
 
-
     class ComplexClass:
         """Complex class with nested instances"""
 
@@ -194,11 +192,9 @@ def example(request):
             self.sample_public_simple_class = SimpleClass()
             self.duplicate_sample_public_simple_class = self.sample_public_simple_class
 
-
     sample_empty_class = EmptyClass()
     sample_simple_class = SimpleClass()
     sample_complex_class = ComplexClass()
-
 
     dump(SAMPLE_CONST)
     dump(sample_module)

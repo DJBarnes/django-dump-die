@@ -78,7 +78,7 @@ def data_structure_example(request):
         test_tuple = ('A', 12, True)
         dd(test_tuple)
     elif test_type == 'set':
-        test_set = {'A', 12, True,}
+        test_set = {'A', 12, True}
         dd(test_set)
 
     return HttpResponse('wrong response')

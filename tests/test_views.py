@@ -138,7 +138,6 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
         '''
         self.assertContains(response, expected, html=True)
 
-
     @patch('django_dump_die.templatetags.dump_die._generate_unique')
     def test_dd_for_dict(self, mocked_unique_generation):
         """Test that dumping a dict has expected output"""
@@ -196,7 +195,6 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
         '''
         self.assertContains(response, expected, html=True)
 
-
     @patch('django_dump_die.templatetags.dump_die._generate_unique')
     def test_dd_for_tuple(self, mocked_unique_generation):
         """Test that dumping a tuple has expected output"""
@@ -253,7 +251,6 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             <span class="braces">)</span>
         '''
         self.assertContains(response, expected, html=True)
-
 
     @patch('django_dump_die.templatetags.dump_die._generate_unique')
     def test_dd_for_set(self, mocked_unique_generation):

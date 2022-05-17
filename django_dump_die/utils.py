@@ -140,7 +140,6 @@ def process_object_name(object_name):
             # Update the previous token to the current one.
             previous_token = token_value
 
-
         # Iterate over tokens classifying them with a CSS class.
         for token_number, token_value, _, _, _ in all_tokens:
 
