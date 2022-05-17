@@ -83,6 +83,11 @@ a.arrow-toggle {
 }
 
 /* Identifiers */
+.identifier {
+    color: #586e75;
+    font-style: italic;
+    font-size: 75%;
+}
 .attribute {
     color: #93a1a1;
 }
@@ -173,6 +178,9 @@ a.arrow-toggle {
     .location {
         color: #93a1a1;
     }
+    .identifier {
+        color: #93a1a1;
+    }
     .attribute {
         color: #586e75;
     }
@@ -224,6 +232,9 @@ a.arrow-toggle {
         color: #839496;
     }
     .location {
+        color: #586e75;
+    }
+    .identifier {
         color: #586e75;
     }
     .attribute {

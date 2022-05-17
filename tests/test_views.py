@@ -107,7 +107,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             >
                 <ul class="attribute-list">
                     <a class="arrow-toggle show always-show" title="[Ctrl+click] Expand all children" data-target=".list_9000-attributes" data-dd-type="attr" aria-label="Open/Close" aria-expanded="" >
-                        <span>Attributes</span>
+                        <span class="identifier">Attributes</span>
                         <span id="arrow-list_9000-attributes" class="arrow"></span>
                     </a>
                     <div
@@ -164,7 +164,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             >
                 <ul class="attribute-list">
                     <a class="arrow-toggle show always-show" title="[Ctrl+click] Expand all children" data-target=".dict_9004-attributes" data-dd-type="attr" aria-label="Open/Close" aria-expanded="" >
-                        <span>Attributes</span>
+                        <span class="identifier">Attributes</span>
                         <span id="arrow-dict_9004-attributes" class="arrow"></span>
                     </a>
                     <div
@@ -221,7 +221,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             >
                 <ul class="attribute-list">
                     <a class="arrow-toggle show always-show" title="[Ctrl+click] Expand all children"data-target=".tuple_9008-attributes" data-dd-type="attr" aria-label="Open/Close" aria-expanded="" >
-                        <span>Attributes</span>
+                        <span class="identifier">Attributes</span>
                         <span id="arrow-tuple_9008-attributes" class="arrow"></span>
                     </a>
                     <div
@@ -284,7 +284,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             >
                 <ul class="attribute-list">
                     <a class="arrow-toggle show always-show" title="[Ctrl+click] Expand all children" data-target=".set_9012-attributes" data-dd-type="attr" aria-label="Open/Close" aria-expanded="" >
-                        <span>Attributes</span>
+                        <span class="identifier">Attributes</span>
                         <span id="arrow-set_9012-attributes" class="arrow">  </span>
                     </a>
                     <div
