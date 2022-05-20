@@ -183,20 +183,6 @@ Example::
     DJANGO_DD_MULTILINE_FUNCTION_DOCS = True
 
 
-DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-By default, all dumped object names are syntax highlighted.
-If you would like to disable this so that the dumped name is all the same color
-regardless of its contents, set this setting to ``False``.
-
-:Type: ``bool``
-:Default: ``True``
-
-Example::
-
-    DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME = False
-
-
 DJANGO_DD_CONTENT_STARTS_EXPANDED
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -272,6 +258,20 @@ hide this toolbar, set this setting to ``False``.
 Example::
 
     DJANGO_DD_INCLUDE_UTILITY_TOOLBAR = False
+
+
+DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+By default, all dumped object names are syntax highlighted.
+If you would like to disable this so that the dumped name is all the same color
+regardless of its contents, set this setting to ``False``.
+
+:Type: ``bool``
+:Default: ``True``
+
+Example::
+
+    DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME = False
 
 
 DJANGO_DD_FORCE_LIGHT_THEME
