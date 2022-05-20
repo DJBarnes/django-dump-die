@@ -200,11 +200,13 @@ Example::
 DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, everything is collapsed when dumped to the screen. If you would
-like the first level of expansion that shows the attribute types (Attributes
-and Functions heading) already expanded, set this setting to ``True``. This
-will not show you the attributes or functions for a method, but rather the
-headings for those sections.
+By default, everything is collapsed when dumped to the screen. Optionally,
+the each content item can be expanded to show the Attribute and
+Function sections.
+
+See below related ``DJANGO_DD_ATTRIBUTES_START_EXPANDED`` and
+``DJANGO_DD_FUNCTIONS_START_EXPANDED`` settings for details of how those
+sections are handled.
 
 :Type: ``bool``
 :Default: ``False``
@@ -217,26 +219,38 @@ Example::
 DJANGO_DD_ATTRIBUTES_START_EXPANDED
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, all attributes are already expanded so that when you expand a
-specific object to show the attribute types you can immediately see the
-attributes without having to also expand the attributes section. If you would
-rather have this closed by default, set this setting to ``False``.
+Only applies when ``DJANGO_DD_INCLUDE_ATTRIBUTES`` and
+``DJANGO_DD_INCLUDE_FUNCTIONS`` are both set to True.
+
+Controls if Attribute sections are expanded on page load or not.
+
+If set to ``True``, then opening an item will instantly show the fully
+expanded Attribute section.
+
+If set to ``False``, then opening an item will only show the Attribute
+section header, and will need an additional click to expand.
 
 :Type: ``bool``
-:Default: ``False``
+:Default: ``True``
 
 Example::
 
-    DJANGO_DD_ATTRIBUTES_START_EXPANDED = True
+    DJANGO_DD_ATTRIBUTES_START_EXPANDED = False
 
 
 DJANGO_DD_FUNCTIONS_START_EXPANDED
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, all functions are collapsed so that when you expand a specific
-object to show the attribute types you still have to manually expand the
-functions section. If you would rather have this section already expanded, set
-this setting to ``True``.
+Only applies when ``DJANGO_DD_INCLUDE_ATTRIBUTES`` and
+``DJANGO_DD_INCLUDE_FUNCTIONS`` are both set to True.
+
+Controls if Function sections are expanded on page load or not.
+
+If set to ``True``, then opening an item will instantly show the fully
+expanded Function section.
+
+If set to ``False``, then opening an item will only show the Function
+section header, and will need an additional click to expand.
 
 :Type: ``bool``
 :Default: ``False``
