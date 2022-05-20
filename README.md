@@ -179,8 +179,12 @@ DJANGO_DD_MAX_ITERABLE_LENGTH = 30
 ```
 
 ### DJANGO_DD_ADDITIONAL_SIMPLE_TYPES
-Default: ```[]``` (Empty List)<br>
+Default: ```[]``` (Empty List)
+
+A "simple type" is a variable type which is common in most languages, and generally the user only want to see the literal assigned value.
+
 When the tool encounters a defined simple type it will no longer recurse further and instead simply output a string representation of that simple type.
+
 Predefined simple types include:
 * bool
 * BoundField
@@ -199,8 +203,14 @@ DJANGO_DD_ADDITIONAL_SIMPLE_TYPES = [
 ```
 
 ### DJANGO_DD_ADDITIONAL_INTERMEDIATE_TYPES
-Default: ```[]``` (Empty List)<br>
-When the tool encounters a defined intermediate type it will no longer recurse further and output the object plus direct attributes.
+Default: ```[]``` (Empty List)
+
+An "intermediate type" is a variable which may have useful properties for expanded output, but generally most users will only want to see the literal assigned value.
+
+Some of these "intermediate type" variables have recurse an unhelpful number of times, if each attribute is examined fully.
+
+When the tool encounters a defined intermediate type it will no longer recurse further and instead output a string representation as well as the direct attributes. For the sake of processing times, these attributes are not further expandable.
+
 Predefined intermediate types include:
 * datetime
 * date
@@ -261,21 +271,38 @@ DJANGO_DD_MULTILINE_FUNCTION_DOCS = True
 
 ### DJANGO_DD_CONTENT_STARTS_EXPANDED
 Default: ```False```<br>
-By default, everything is collapsed when dumped to the screen. If you would like the first level of expansion that shows the attribute types (Attributes and Functions heading) already expanded, set this setting to ```True```. This will not show you the attributes or functions for a method, but rather the headings for those sections.
+By default, everything is collapsed when dumped to the screen. Optionally, the each content item can be expanded to show the Attribute and Function sections.
+
+See below related `DJANGO_DD_ATTRIBUTES_START_EXPANDED` and `DJANGO_DD_FUNCTIONS_START_EXPANDED` settings for details of how those sections are handled.
+
 ```python
 DJANGO_DD_CONTENT_STARTS_EXPANDED = True
 ```
 
 ### DJANGO_DD_ATTRIBUTES_START_EXPANDED
 Default: ```True```<br>
-By default, all attributes are already expanded so that when you expand a specific object to show the attribute types you can immediately see the attributes without having to also expand the attributes section. If you would rather have this closed by default, set this setting to ```False```.
+Only applies when `DJANGO_DD_INCLUDE_ATTRIBUTES` and `DJANGO_DD_INCLUDE_FUNCTIONS` are both set to True.
+
+Controls if Attribute sections are expanded on page load or not.
+
+If set to `True`, then opening an item will instantly show the fully expanded Attribute section.
+
+If set to `False`, then opening an item will only show the Attribute section header, and will need an additional click to expand.
+
 ```python
 DJANGO_DD_ATTRIBUTES_START_EXPANDED = False
 ```
 
 ### DJANGO_DD_FUNCTIONS_START_EXPANDED
 Default: ```False```<br>
-By default, all functions are collapsed so that when you expand a specific object to show the attribute types you still have to manually expand the functions section. If you would rather have this section already expanded, set this setting to ```True```.
+Only applies when `DJANGO_DD_INCLUDE_ATTRIBUTES` and `DJANGO_DD_INCLUDE_FUNCTIONS` are both set to True.
+
+Controls if Function sections are expanded on page load or not.
+
+If set to `True`, then opening an item will instantly show the fully expanded Function section.
+
+If set to `False`, then opening an item will only show the Function section header, and will need an additional click to expand.
+
 ```python
 DJANGO_DD_FUNCTIONS_START_EXPANDED = True
 ```
@@ -340,6 +367,7 @@ DJANGO_DD_COLOR_SCHEME = {
         'unique': <value>,          #  Unique hash for class
     },
     'identifiers': {
+        'identifier': <value>,      #  The words "Attribute" or "Function", denoting sections
         'attribute': <value>,       #  Class attribute
         'constant': <value>,        #  Class constants
         'dumped_name': <value>,     #  Dumped object name

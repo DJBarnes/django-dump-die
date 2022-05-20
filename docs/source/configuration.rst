@@ -48,6 +48,7 @@ and generally the user only want to see the literal assigned value.
 
 When the tool encounters a defined simple type it will no longer recurse
 further and instead simply output a string representation of that simple type.
+
 Predefined simple types include:
 
 * bool
@@ -80,13 +81,14 @@ An "intermediate type" is a variable which may have useful properties
 for expanded output, but generally most users will only want to see the
 literal assigned value.
 
-Some of these "intermediate type" variables have recurse an unhelpful number
+Some of these "intermediate type" variables recurse an unhelpful number
 of times, if each attribute is examined fully.
 
 When the tool encounters a defined intermediate type it will no longer recurse
 further and instead output a string representation as well as the direct
 attributes. For the sake of processing times, these attributes are not
 further expandable.
+
 Predefined intermediate types include:
 
 * datetime
