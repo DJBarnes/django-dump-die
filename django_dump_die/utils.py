@@ -353,7 +353,7 @@ def safe_str(obj):
 def is_iterable(obj):
     """Return True if object can be iterated."""
     try:
-        iter(obj)
+        iter(obj) and len(obj)
     except TypeError:
         return False
     return True
