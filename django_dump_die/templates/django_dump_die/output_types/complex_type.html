@@ -8,23 +8,23 @@
 <span class="braces">{{ braces.0 }}</span>
 
 <a
-  class="arrow-toggle {{ collapsable.attribute_type.class }}"
+  class="arrow-toggle {{ collapsable.content.class }}"
   title="[Ctrl+click] Expand all children"
   data-toggle="collapse"
   data-target=".{{ unique }}{{ root_count }}"
   data-dd-type="type"
   data-object-depth="{{ depth|add:1 }}"
   aria-label="Close"
-  aria-expanded="{{ collapsable.attribute_type.aria }}"
+  aria-expanded="{{ collapsable.content.aria }}"
 >
   <span class="unique" data-highlight-unique="{{ unique }}">{{ unique }}{{ root_count }}</span>
   <span id="arrow-{{ unique }}{{ root_count }}" class="arrow">
-    {{ collapsable.attribute_type.arrow }}
+    {{ collapsable.content.arrow }}
   </span>
 </a>
 
 <div
-    class="dd-wrapper collapse {{ unique }}{{ root_count }} {{ collapsable.attribute_type.show }}"
+    class="dd-wrapper collapse {{ unique }}{{ root_count }} {{ collapsable.content.show }}"
     data-unique="{{ unique }}{{ root_count }}"
   >
   <ul class="attribute-list">

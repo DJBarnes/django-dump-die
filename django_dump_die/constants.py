@@ -53,8 +53,8 @@ INCLUDE_FUNCTIONS = getattr(settings, 'DJANGO_DD_INCLUDE_FUNCTIONS', False)
 MULTILINE_FUNCTION_DOCS = getattr(settings, 'DJANGO_DD_MULTILINE_FUNCTION_DOCS', False)
 # Whether or not to colorize the name of the dumped object
 COLORIZE_DUMPED_OBJECT_NAME = getattr(settings, 'DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME', True)
-# Whether objects attribute types (Attribute, Function) should start expanded for viewing.
-ATTR_TYPES_START_EXPANDED = getattr(settings, 'DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED', False)
+# Whether objects overarching item content (Attribute, Function) should start expanded for viewing.
+CONTENT_STARTS_EXPANDED = getattr(settings, 'DJANGO_DD_CONTENT_STARTS_EXPANDED', False)
 # Whether the attributes for an object should start expanded for viewing.
 ATTRIBUTES_START_EXPANDED = getattr(settings, 'DJANGO_DD_ATTRIBUTES_START_EXPANDED', True)
 # Whether the functions for an object should start expanded for viewing.

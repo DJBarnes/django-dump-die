@@ -266,11 +266,11 @@ By default, all dumped object names are syntax highlighted. If you would like to
 DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME = False
 ```
 
-### DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED
+### DJANGO_DD_CONTENT_STARTS_EXPANDED
 Default: ```False```<br>
 By default, everything is collapsed when dumped to the screen. If you would like the first level of expansion that shows the attribute types (Attributes and Functions heading) already expanded, set this setting to ```True```. This will not show you the attributes or functions for a method, but rather the headings for those sections.
 ```python
-DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED = True
+DJANGO_DD_CONTENT_STARTS_EXPANDED = True
 ```
 
 ### DJANGO_DD_ATTRIBUTES_START_EXPANDED

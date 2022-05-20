@@ -20,7 +20,7 @@ from django_dump_die.constants import (
     INCLUDE_ATTRIBUTES,
     INCLUDE_FUNCTIONS,
     MULTILINE_FUNCTION_DOCS,
-    ATTR_TYPES_START_EXPANDED,
+    CONTENT_STARTS_EXPANDED,
     ATTRIBUTES_START_EXPANDED,
     FUNCTIONS_START_EXPANDED,
     INCLUDE_PRIVATE_METHODS,
@@ -689,12 +689,12 @@ def _get_collapsable_values():
     """Get the arrow and collapsable values"""
 
     # Determine default sets.
-    type_set = {
-        'arrow': '▼' if ATTR_TYPES_START_EXPANDED else '▶',
-        'show': 'show' if ATTR_TYPES_START_EXPANDED else '',
+    content_set = {
+        'arrow': '▼' if CONTENT_STARTS_EXPANDED else '▶',
+        'show': 'show' if CONTENT_STARTS_EXPANDED else '',
         'always_show': 'false',
-        'class': '' if ATTR_TYPES_START_EXPANDED else 'collapsed',
-        'aria': 'true' if ATTR_TYPES_START_EXPANDED else 'false',
+        'class': '' if CONTENT_STARTS_EXPANDED else 'collapsed',
+        'aria': 'true' if CONTENT_STARTS_EXPANDED else 'false',
     }
     attr_set = {
         'arrow': '▼' if ATTRIBUTES_START_EXPANDED else '▶',
@@ -727,7 +727,7 @@ def _get_collapsable_values():
         func_set['aria'] = ''
 
     return {
-        'attribute_type': type_set,
+        'content': content_set,
         'attribute': attr_set,
         'function': func_set,
     }

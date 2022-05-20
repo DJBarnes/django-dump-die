@@ -197,8 +197,8 @@ Example::
     DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME = False
 
 
-DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+DJANGO_DD_CONTENT_STARTS_EXPANDED
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 By default, everything is collapsed when dumped to the screen. Optionally,
 the each content item can be expanded to show the Attribute and
@@ -213,7 +213,7 @@ sections are handled.
 
 Example::
 
-    DJANGO_DD_ATTRIBUTE_TYPES_START_EXPANDED = True
+    DJANGO_DD_CONTENT_STARTS_EXPANDED = True
 
 
 DJANGO_DD_ATTRIBUTES_START_EXPANDED
