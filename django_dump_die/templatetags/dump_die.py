@@ -440,28 +440,32 @@ def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, 
     attributes, functions = get_obj_values(obj)
 
     # Return information required to render object.
-    return {
+    context = {
         'include_attributes': INCLUDE_ATTRIBUTES,
         'include_functions': INCLUDE_FUNCTIONS,
-        'multiline_function_docs': MULTILINE_FUNCTION_DOCS,
         'collapsable': _get_collapsable_values(),
         'braces': '{}',
         'object': obj,
-        'root_obj': root_obj,
         'intermediate': safe_str(obj),
         'unique': unique,
         'root_count': root_count,
         'type': get_obj_type(obj),
-        'attributes': attributes,
-        'functions': functions,
         'is_iterable': False,
-        'skip': set(),
-        'index': 0,
         'depth': 0,
         'root_index_start': None,
         'root_index_end': None,
         'original_obj': original_obj,
     }
+    if INCLUDE_ATTRIBUTES:
+        context['attributes'] = attributes
+        context['index'] = 0
+        context['root_obj'] = root_obj
+        context['skip'] = set()
+    if INCLUDE_FUNCTIONS:
+        context['functions'] = functions
+        context['multiline_function_docs'] = MULTILINE_FUNCTION_DOCS
+
+    return context
 
 
 def _handle_complex_type(
@@ -511,27 +515,31 @@ def _handle_complex_type(
     attributes, functions = get_obj_values(obj)
 
     # Return information required to render object.
-    return {
+    context = {
         'include_attributes': INCLUDE_ATTRIBUTES,
         'include_functions': INCLUDE_FUNCTIONS,
-        'multiline_function_docs': MULTILINE_FUNCTION_DOCS,
         'collapsable': _get_collapsable_values(),
         'braces': braces,
         'object': obj,
-        'root_obj': root_obj,
         'unique': unique,
         'root_count': root_count,
         'type': get_obj_type(obj),
-        'attributes': attributes,
-        'functions': functions,
         'is_iterable': is_iterable(obj),
-        'skip': skip_set,
-        'index': current_iteration,
         'depth': current_depth,
         'root_index_start': root_index_start,
         'root_index_end': root_index_end,
         'original_obj': original_obj,
     }
+    if INCLUDE_ATTRIBUTES:
+        context['attributes'] = attributes
+        context['index'] = current_iteration
+        context['root_obj'] = root_obj
+        context['skip'] = skip_set
+    if INCLUDE_FUNCTIONS:
+        context['functions'] = functions
+        context['multiline_function_docs'] = MULTILINE_FUNCTION_DOCS
+
+    return context
 
 # endregion Type Handling Functions
 
