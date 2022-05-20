@@ -51,6 +51,13 @@
             background-color: #827b66;
           {% endif %}
         }
+        .dd-wrapper {
+          {% if custom_color_theme.light.border %}
+            color: {{ custom_color_theme.light.border }};
+          {% else %}
+            color: #d0c095;
+          {% endif %}
+        }
         hr {
           {% if custom_color_theme.light.border %}
             color: {{ custom_color_theme.light.border }};
@@ -108,11 +115,18 @@
             background-color: #839496;
           {% endif %}
         }
+        .dd-wrapper {
+          {% if custom_color_theme.dark.border %}
+            color: {{ custom_color_theme.dark.border }};
+          {% else %}
+            color: #054757;
+          {% endif %}
+        }
         hr {
           {% if custom_color_theme.dark.border %}
             color: {{ custom_color_theme.dark.border }};
           {% else %}
-            color: #043b49;
+            color: #054757;
           {% endif %}
         }
       }
@@ -291,7 +305,7 @@
     .dump-toolbar .dropdown-button:hover,
     .dump-toolbar .dropdown-button:focus,
     .dump-toolbar .dropdown-button:active {
-      {% if custom_color_theme.light.toolar_background %}
+      {% if custom_color_theme.light.toolbar_background %}
         color: {{ custom_color_theme.light.toolbar_background }};
       {% else %}
         color: #fcf0cf;
@@ -300,6 +314,13 @@
         background-color: {{ custom_color_theme.light.toolbar_color }};
       {% else %}
         background-color: #827b66;
+      {% endif %}
+    }
+    .dd-wrapper {
+      {% if custom_color_theme.light.border %}
+        color: {{ custom_color_theme.light.border }};
+      {% else %}
+        color: #d0c095;
       {% endif %}
     }
     hr {
@@ -416,11 +437,18 @@
         background-color: #839496;
       {% endif %}
     }
+    .dd-wrapper {
+      {% if custom_color_theme.dark.border %}
+        color: {{ custom_color_theme.dark.border }};
+      {% else %}
+        color: #054757;
+      {% endif %}
+    }
     hr {
       {% if custom_color_theme.dark.border %}
         color: {{ custom_color_theme.dark.border }};
       {% else %}
-        color: #043b49;
+        color: #054757;
       {% endif %}
     }
     .arrow {

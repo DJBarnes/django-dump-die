@@ -10,7 +10,7 @@ body {
 }
 hr {
     border: 1px solid;
-    color: #839496;
+    color: #d0c095;
 }
 
 /* Utility Toolbar Coloring */
@@ -38,6 +38,9 @@ hr {
     margin-top: 15px;
     margin-left: 10px;
     margin-right: 10px;
+}
+.dd-wrapper {
+    border-left: 1px dashed #d0c095;
 }
 a.arrow-toggle {
     cursor: pointer;
@@ -163,6 +166,9 @@ a.arrow-toggle {
         color: #fcf0cf;
         background: #827b66;
     }
+    .dd-wrapper {
+        border-color: #d0c095;
+    }
     hr {
         color: #d0c095;
     }
@@ -219,8 +225,11 @@ a.arrow-toggle {
         color: #001f29;
         background: #839496;
     }
+    .dd-wrapper {
+        border-color: #054757;
+    }
     hr {
-        color: #043b49;
+        color: #054757;
     }
     .arrow {
         color: #839496;
