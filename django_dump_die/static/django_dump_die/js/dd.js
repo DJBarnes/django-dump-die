@@ -254,55 +254,48 @@ const djangoDumpDie = {
         console.log('Called expandFirstLevel().');
 
         // Find all elements at depth level of 1 and expand them.
-        $('.arrow-toggle').each(function() {
+        $('.arrow-toggle').filter('[data-object-depth="1"]').each(function() {
 
-            if ($(this).data('object-depth') == '1') {
-
-                // Expand parent element at first level.
-                if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
-                    $(this).click();
-                }
-
-                // Expand direct "Attribute" and "Function" sections at this level,
-                // for when both are enabled.
-                let siblingDivs = $(this).siblings('.dd-wrapper, .li-wrapper');
-                let siblingLists = $(siblingDivs).children('.attribute-list');
-
-                $(siblingLists).each(function() {
-                    let siblingArrow = $(this).children('.arrow-toggle');
-                    if ($(siblingArrow).hasClass('collapsed') || $(siblingArrow).hasClass('collapsing')) {
-                        $(siblingArrow).click();
-                    }
-                });
-
+            // Expand parent element at first level.
+            if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
+                $(this).click();
             }
+
+            // Expand direct "Attribute" and "Function" sections at this level,
+            // for when both are enabled.
+            let siblingDivs = $(this).siblings('.dd-wrapper, .li-wrapper');
+            let siblingLists = $(siblingDivs).children('.attribute-list');
+            $(siblingLists).each(function() {
+                let siblingArrow = $(this).children('.arrow-toggle');
+                if ($(siblingArrow).hasClass('collapsed') || $(siblingArrow).hasClass('collapsing')) {
+                    $(siblingArrow).click();
+                }
+            });
+
         });
     },
     expandSecondLevel() {
         console.log('Called expandSecondLevel().');
 
         // Find all elements at depth level of 2 and expand them.
-        $('.arrow-toggle').each(function() {
+        $('.arrow-toggle').filter('[data-object-depth="2"]').each(function() {
 
             // Expand parent element at second level.
-            if ($(this).data('object-depth') == '2') {
-                if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
-                    $(this).click();
-                }
-
-                // Expand direct "Attribute" and "Function" sections at this level,
-                // for when both are enabled.
-                let siblingDivs = $(this).siblings('.dd-wrapper, .li-wrapper');
-                let siblingLists = $(siblingDivs).children('.attribute-list');
-
-                $(siblingLists).each(function() {
-                    let siblingArrow = $(this).children('.arrow-toggle');
-                    if ($(siblingArrow).hasClass('collapsed') || $(siblingArrow).hasClass('collapsing')) {
-                        $(siblingArrow).click();
-                    }
-                });
-
+            if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
+                $(this).click();
             }
+
+            // Expand direct "Attribute" and "Function" sections at this level,
+            // for when both are enabled.
+            let siblingDivs = $(this).siblings('.dd-wrapper, .li-wrapper');
+            let siblingLists = $(siblingDivs).children('.attribute-list');
+            $(siblingLists).each(function() {
+                let siblingArrow = $(this).children('.arrow-toggle');
+                if ($(siblingArrow).hasClass('collapsed') || $(siblingArrow).hasClass('collapsing')) {
+                    $(siblingArrow).click();
+                }
+            });
+
         });
     },
 
@@ -363,54 +356,48 @@ const djangoDumpDie = {
         console.log('Called collapseFirstLevel().');
 
         // Find all elements at depth level of 1 and collapse them.
-        $('.arrow-toggle').each(function() {
+        $('.arrow-toggle').filter('[data-object-depth="1"]').each(function() {
 
             // Expand parent element at first level.
-            if ($(this).data('object-depth') == '1') {
-                if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
-                    $(this).click();
-                }
-
-                // Collapse direct "Attribute" and "Function" sections at this level,
-                // for when both are enabled.
-                let siblingDivs = $(this).siblings('.dd-wrapper, .li-wrapper');
-                let siblingLists = $(siblingDivs).children('.attribute-list');
-
-                $(siblingLists).each(function() {
-                    let siblingArrow = $(this).children('.arrow-toggle');
-                    if (! ($(siblingArrow).hasClass('collapsed') || $(siblingArrow).hasClass('collapsing'))) {
-                        $(siblingArrow).click();
-                    }
-                });
-
+            if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
+                $(this).click();
             }
+
+            // Collapse direct "Attribute" and "Function" sections at this level,
+            // for when both are enabled.
+            let siblingDivs = $(this).siblings('.dd-wrapper, .li-wrapper');
+            let siblingLists = $(siblingDivs).children('.attribute-list');
+            $(siblingLists).each(function() {
+                let siblingArrow = $(this).children('.arrow-toggle');
+                if (! ($(siblingArrow).hasClass('collapsed') || $(siblingArrow).hasClass('collapsing'))) {
+                    $(siblingArrow).click();
+                }
+            });
+
         });
     },
     collapseSecondLevel() {
         console.log('Called collapseSecondLevel().');
 
         // Find all elements at depth level of 2 and collapse them.
-        $('.arrow-toggle').each(function() {
+        $('.arrow-toggle').filter('[data-object-depth="2"]').each(function() {
 
             // Expand parent element at second level.
-            if ($(this).data('object-depth') == '2') {
-                if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
-                    $(this).click();
-                }
-
-                // Collapse direct "Attribute" and "Function" sections at this level,
-                // for when both are enabled.
-                let siblingDivs = $(this).siblings('.dd-wrapper, .li-wrapper');
-                let siblingLists = $(siblingDivs).children('.attribute-list');
-
-                $(siblingLists).each(function() {
-                    let siblingArrow = $(this).children('.arrow-toggle');
-                    if (! ($(siblingArrow).hasClass('collapsed') || $(siblingArrow).hasClass('collapsing'))) {
-                        $(siblingArrow).click();
-                    }
-                });
-
+            if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
+                $(this).click();
             }
+
+            // Collapse direct "Attribute" and "Function" sections at this level,
+            // for when both are enabled.
+            let siblingDivs = $(this).siblings('.dd-wrapper, .li-wrapper');
+            let siblingLists = $(siblingDivs).children('.attribute-list');
+            $(siblingLists).each(function() {
+                let siblingArrow = $(this).children('.arrow-toggle');
+                if (! ($(siblingArrow).hasClass('collapsed') || $(siblingArrow).hasClass('collapsing'))) {
+                    $(siblingArrow).click();
+                }
+            });
+
         });
     }
 }
