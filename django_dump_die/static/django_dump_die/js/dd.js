@@ -214,12 +214,10 @@ const djangoDumpDie = {
         console.log('Called expandAllTypes().');
 
         // Find all expandable arrow elements (with the "type" dataset) and expand them.
-        $('.arrow-toggle').each(function() {
+        $('.arrow-toggle').filter('[data-dd-type="type"]').each(function() {
 
-            if ($(this).data('dd-type') == 'type') {
-                if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
-                    $(this).click();
-                }
+            if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
+                $(this).click();
             }
         });
 
@@ -228,12 +226,10 @@ const djangoDumpDie = {
         console.log('Called expandAllAttributes().');
 
         // Find all expandable arrow elements (with the "attr" dataset) and expand them.
-        $('.arrow-toggle').each(function() {
+        $('.arrow-toggle').filter('[data-dd-type="attr"]').each(function() {
 
-            if ($(this).data('dd-type') == 'attr') {
-                if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
-                    $(this).click();
-                }
+            if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
+                $(this).click();
             }
         });
     },
@@ -241,12 +237,10 @@ const djangoDumpDie = {
         console.log('Called expandAllFunctions().');
 
         // Find all expandable arrow elements (with the "func" dataset) and expand them.
-        $('.arrow-toggle').each(function() {
+        $('.arrow-toggle').filter('[data-dd-type="func"]').each(function() {
 
-            if ($(this).data('dd-type') == 'func') {
-                if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
-                    $(this).click();
-                }
+            if ($(this).hasClass('collapsed') || $(this).hasClass('collapsing')) {
+                $(this).click();
             }
         });
     },
@@ -317,12 +311,10 @@ const djangoDumpDie = {
         console.log('Called collapseAllTypes().');
 
         // Find all expandable arrow elements (with the "type" dataset) and collapse them.
-        $('.arrow-toggle').each(function() {
+        $('.arrow-toggle').filter('[data-dd-type="type"]').each(function() {
 
-            if ($(this).data('dd-type') == 'type') {
-                if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
-                    $(this).click();
-                }
+            if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
+                $(this).click();
             }
         });
     },
@@ -330,12 +322,10 @@ const djangoDumpDie = {
         console.log('Called collapseAllAttributes().');
 
         // Find all expandable arrow elements (with the "attr" dataset) and collapse them.
-        $('.arrow-toggle').each(function() {
+        $('.arrow-toggle').filter('[data-dd-type="attr"]').each(function() {
 
-            if ($(this).data('dd-type') == 'attr') {
-                if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
-                    $(this).click();
-                }
+            if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
+                $(this).click();
             }
         });
     },
@@ -343,12 +333,10 @@ const djangoDumpDie = {
         console.log('Called collapseAllFunctions().');
 
         // Find all expandable arrow elements (with the "func" dataset) and collapse them.
-        $('.arrow-toggle').each(function() {
+        $('.arrow-toggle').filter('[data-dd-type="func"]').each(function() {
 
-            if ($(this).data('dd-type') == 'func') {
-                if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
-                    $(this).click();
-                }
+            if (! ($(this).hasClass('collapsed') || $(this).hasClass('collapsing'))) {
+                $(this).click();
             }
         });
     },
