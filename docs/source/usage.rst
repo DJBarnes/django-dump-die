@@ -135,7 +135,7 @@ However, the use of this tag comes with a lot of caveats.
 
     Only the dump tag is provided. A dd tag is not provided as template
     rendering is already occurring and trying to stop execution of the
-    rendering mid-render is can be difficult.
+    rendering mid-render can be difficult.
 
 .. warning::
 

@@ -96,8 +96,8 @@ Predefined intermediate types include:
 * time
 * timezone
 
-If you would like to add additional intermediate types that are specific to your
-project, you can do that here. Be sure to list each type in the list as a
+If you would like to add additional intermediate types that are specific to
+your project, you can do that here. Be sure to list each type in the list as a
 string of the type to treat as an intermediate type.
 
 :Type: ``list``
@@ -201,7 +201,7 @@ DJANGO_DD_CONTENT_STARTS_EXPANDED
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 By default, everything is collapsed when dumped to the screen. Optionally,
-the each content item can be expanded to show the Attribute and
+each content item can be expanded to show the Attribute and
 Function sections.
 
 See below related ``DJANGO_DD_ATTRIBUTES_START_EXPANDED`` and
