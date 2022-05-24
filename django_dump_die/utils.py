@@ -68,9 +68,11 @@ def get_dumped_object_name_and_location(object_needing_name):
         # Get filename
         filename = frame.filename
 
+    # TODO: This work of using RegEx to get down to the dumped object name can probably be improved.
     # Establish a couple of regular expressions to fetch out what was passed to dump or dd.
-    dump_pattern = r".*dump\((.*?)[,\)].*"
-    dd_pattern = r".*dd\((.*?)[,\)].*"
+    dump_pattern = r".*dump\((.*)[\)]"
+    dd_pattern = r".*dd\((.*)[\)]"
+    options_pattern = r"(.*)(?=,.*=.*)"
     # Find the results for both dump and dd.
     dumped_text_matches = re.findall(dump_pattern, frame.code_context[0])
     dd_text_matches = re.findall(dd_pattern, frame.code_context[0])
@@ -80,6 +82,13 @@ def get_dumped_object_name_and_location(object_needing_name):
         dumped_text = dumped_text_matches[0]
     elif dd_text_matches:
         dumped_text = dd_text_matches[0]
+
+    while 'deepcopy' in dumped_text or 'index_range' in dumped_text:
+        dumped_text_matches = re.findall(options_pattern, dumped_text)
+        if dumped_text_matches:
+            dumped_text = dumped_text_matches[0]
+        else:
+            break
 
     # If function get the callable name for each function name.
     if callable(object_needing_name) and not inspect.isclass(object_needing_name):

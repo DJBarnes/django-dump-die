@@ -226,6 +226,12 @@ def example(request):
     dump(sample_func)
     dump(sample_func_param)
 
+    dump(sample_func())
+    dump(sample_func_param(32), deepcopy=True)
+    dump(sample_func_param(32), index_range=(0,1))
+    dump(sample_func_param(32), deepcopy=True, index_range=(0,1))
+    dump(sample_func_param(32, foo=12), deepcopy=True)
+
     dump(sample_empty_class)
     dump(sample_simple_class)
     dump(sample_complex_class)
