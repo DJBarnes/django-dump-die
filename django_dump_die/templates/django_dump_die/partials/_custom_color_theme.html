@@ -173,9 +173,9 @@
 
     /* Identifier section */
     {% if custom_color_theme.identifiers %}
-      {% if custom_color_theme.identifiers.identifier %}
-      .identifier {
-        color: {{ custom_color_theme.identifiers.identifier }};
+      {% if custom_color_theme.identifiers.section_name %}
+      .section_name {
+        color: {{ custom_color_theme.identifiers.section_name }};
       }
       {% endif %}
       {% if custom_color_theme.identifiers.attribute %}

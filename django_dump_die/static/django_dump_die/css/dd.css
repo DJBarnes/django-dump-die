@@ -86,7 +86,7 @@ a.arrow-toggle {
 }
 
 /* Identifiers */
-.identifier {
+.section_name {
     color: #586e75;
     font-style: italic;
     font-size: 75%;
@@ -184,7 +184,7 @@ a.arrow-toggle {
     .location {
         color: #93a1a1;
     }
-    .identifier {
+    .section_name {
         color: #93a1a1;
     }
     .attribute {
@@ -243,7 +243,7 @@ a.arrow-toggle {
     .location {
         color: #586e75;
     }
-    .identifier {
+    .section_name {
         color: #586e75;
     }
     .attribute {

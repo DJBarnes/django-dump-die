@@ -367,7 +367,7 @@ DJANGO_DD_COLOR_SCHEME = {
         'unique': <value>,          #  Unique hash for class
     },
     'identifiers': {
-        'identifier': <value>,      #  The words "Attribute" or "Function", denoting sections
+        'section_name': <value>,    #  The words "Attribute" or "Function", denoting each sections
         'attribute': <value>,       #  Class attribute
         'constant': <value>,        #  Class constants
         'dumped_name': <value>,     #  Dumped object name
