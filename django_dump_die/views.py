@@ -1,11 +1,16 @@
 """Views for DumpDie"""
+import os
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from django.conf import settings
+from django.core.files import File
+from django.db import models
+from django.forms import ModelForm
 from django.shortcuts import render
 from types import ModuleType
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def dd_view(request, objects):
     """
@@ -196,9 +201,93 @@ def example(request):
             self.sample_public_simple_class = SimpleClass()
             self.duplicate_sample_public_simple_class = self.sample_public_simple_class
 
+
+    class SampleRelation(models.Model):
+        """Sample Class for foreign relation"""
+        relate_name = models.TextField()
+
+    class SampleManyRelation(models.Model):
+        """Sample Class for many to many relation"""
+        relate_name = models.TextField()
+
+    class SampleOneRelation(models.Model):
+        """Sample Class for one to one relation"""
+        relate_name = models.TextField()
+
+    class SampleDjangoModel(models.Model):
+        """Sample Django Model with all field types"""
+        sample_big_int = models.BigIntegerField()
+        sample_binary = models.BinaryField()
+        sample_bool = models.BooleanField()
+        sample_char = models.CharField(max_length=200)
+        sample_date = models.DateField()
+        sample_datetime = models.DateTimeField()
+        sample_decimal = models.DecimalField(decimal_places=8, max_digits=16)
+        sample_duration = models.DurationField()
+        sample_email = models.EmailField()
+        sample_file = models.FileField(upload_to='uploads')
+        sample_file_path = models.FilePathField(path='/')
+        sample_float = models.FloatField()
+        sample_ip = models.GenericIPAddressField()
+        sample_image = models.ImageField(upload_to='uploads')
+        sample_int = models.IntegerField()
+        sample_json = models.JSONField()
+        sample_pos_bint = models.PositiveBigIntegerField()
+        sample_pos_int = models.PositiveIntegerField()
+        sample_pos_sint = models.PositiveSmallIntegerField()
+        sample_slug = models.SlugField()
+        sample_sint = models.SmallIntegerField()
+        sample_text = models.TextField()
+        sample_time = models.TimeField()
+        sample_url = models.URLField()
+        sample_uuid = models.UUIDField()
+        sample_foreign = models.ForeignKey(SampleRelation, on_delete=models.CASCADE, related_name='sample_foreign')
+        sample_many = models.ManyToManyField(SampleManyRelation, 'sample_many')
+        sample_one = models.OneToOneField(SampleOneRelation, on_delete=models.CASCADE, related_name='sample_one')
+
+
+    class SampleModelForm(ModelForm):
+        """Sample Model Form"""
+        class Meta:
+            """Meta info"""
+            model = SampleDjangoModel
+            fields = [
+                'sample_big_int',
+                'sample_bool',
+                'sample_char',
+                'sample_date',
+                'sample_datetime',
+                'sample_decimal',
+                'sample_duration',
+                'sample_email',
+                'sample_file',
+                'sample_file_path',
+                'sample_float',
+                'sample_ip',
+                'sample_image',
+                'sample_int',
+                'sample_json',
+                'sample_pos_bint',
+                'sample_pos_int',
+                'sample_pos_sint',
+                'sample_slug',
+                'sample_sint',
+                'sample_text',
+                'sample_time',
+                'sample_url',
+                'sample_uuid',
+                'sample_foreign',
+                'sample_many',
+                'sample_one',
+            ]
+
+
     sample_empty_class = EmptyClass()
     sample_simple_class = SimpleClass()
     sample_complex_class = ComplexClass()
+
+    sample_django_model_empty = SampleDjangoModel(id=1)  # Must provide id so many to many field can be dumped.
+    sample_model_form = SampleModelForm()
 
     dump(SAMPLE_CONST)
     dump(sample_module)
@@ -253,6 +342,49 @@ def example(request):
     dump(EmptyClass)
     dump(SimpleClass)
     dump(ComplexClass)
+
+    dump(sample_django_model_empty)
+    dump(sample_model_form)
+
+    dump(SampleDjangoModel)
+    dump(SampleModelForm)
+
+    # Populate model with values and re-check.
+    path = os.path.join(BASE_DIR, '../media/uploads/test_img.png')
+    with open(path, 'rb') as local_file:
+        django_file = File(local_file, name=os.path.basename(local_file.name))
+
+        sample_django_model_populated = SampleDjangoModel(
+            pk=1,
+            sample_big_int=1,
+            sample_binary=b'',
+            sample_bool=True,
+            sample_char='A',
+            sample_date=datetime.now().date(),
+            sample_datetime=datetime.now(),
+            sample_decimal=Decimal(42.42),
+            sample_duration=None,
+            sample_email='someone@example.com',
+            sample_file=django_file,
+            sample_file_path='../media',
+            sample_float = 42.42,
+            sample_image=django_file,
+            sample_int=5,
+            sample_ip='127.0.0.1',
+            sample_json='{"key": "my_val"}',
+            sample_pos_bint=345,
+            sample_pos_int=34,
+            sample_pos_sint=3,
+            sample_sint=3,
+            sample_slug='foobar',
+            sample_text='All my text',
+            sample_time=datetime.now().time(),
+            sample_url='https://github.com',
+            sample_uuid='asdfasdfas',
+        )
+
+        dump(sample_django_model_populated)
+
 
     dd('done')
 

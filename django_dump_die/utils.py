@@ -260,10 +260,7 @@ def get_members(obj):
     """Attempts to get object members. Falls back to an empty list."""
 
     # Get initial member set or empty list.
-    try:
-        members = inspect.getmembers(obj)
-    except Exception:
-        members = []
+    members = inspect.getmembers(obj)
 
     # Add type specific members that will not be included from the use of the
     # inspect.getmembers function.
@@ -364,6 +361,8 @@ def is_iterable(obj):
     try:
         iter(obj) and len(obj)
     except TypeError:
+        return False
+    except ValueError:
         return False
     return True
 
