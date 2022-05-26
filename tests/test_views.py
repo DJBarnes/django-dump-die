@@ -99,7 +99,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             <span class="braces">[</span>
             <a class="arrow-toggle collapsed" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".list_9000" data-dd-type="type" data-object-depth="1" aria-label="Close" aria-expanded="false" >
                 <span class="unique" data-highlight-unique="list_9000">list_9000</span>
-                <span id="arrow-list_9000" class="arrow">▶</span>
+                <span id="arrow-list_9000" class="arrow arrow-list_9000">▶</span>
             </a>
             <div
                 class="dd-wrapper collapse list_9000"
@@ -156,7 +156,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             <span class="braces">{</span>
             <a class="arrow-toggle collapsed" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".dict_9004" data-dd-type="type" data-object-depth="1" aria-label="Close" aria-expanded="false" >
                 <span class="unique" data-highlight-unique="dict_9004">dict_9004</span>
-                <span id="arrow-dict_9004" class="arrow">▶</span>
+                <span id="arrow-dict_9004" class="arrow arrow-dict_9004">▶</span>
             </a>
             <div
                 class="dd-wrapper collapse dict_9004"
@@ -213,7 +213,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             <span class="braces">(</span>
             <a class="arrow-toggle collapsed" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".tuple_9008" data-dd-type="type" data-object-depth="1" aria-label="Close" aria-expanded="false" >
                 <span class="unique" data-highlight-unique="tuple_9008">tuple_9008</span>
-                <span id="arrow-tuple_9008" class="arrow">▶</span>
+                <span id="arrow-tuple_9008" class="arrow arrow-tuple_9008">▶</span>
             </a>
             <div
                 class="dd-wrapper collapse tuple_9008"
@@ -276,7 +276,7 @@ class DumpDieViewDataStructureTestCase(GenericViewTestCase):
             <span class="braces">{</span>
             <a class="arrow-toggle collapsed" title="[Ctrl+click] Expand all children" data-toggle="collapse" data-target=".set_9012" data-dd-type="type" data-object-depth="1" aria-label="Close" aria-expanded="false" >
                 <span class="unique" data-highlight-unique="set_9012">set_9012</span>
-                <span id="arrow-set_9012" class="arrow"> ▶ </span>
+                <span id="arrow-set_9012" class="arrow arrow-set_9012"> ▶ </span>
             </a>
             <div
                 class="dd-wrapper collapse set_9012 "
