@@ -1,3 +1,64 @@
 [build-system]
 requires = ['setuptools>=40.8.0', 'wheel']
 build-backend = 'setuptools.build_meta:__legacy__'
+
+[project]
+name = "django-dump-die"
+version = "0.1.0"
+description = "A Django app to add Laravel/Symfony-like dump and die functionality."
+readme = "README.md"
+authors = [{ name = "David Barnes", email = "barnesdavidj@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Framework :: Django :: 3",
+    "Framework :: Django :: 3.0",
+    "Framework :: Django :: 3.1",
+    "Framework :: Django :: 3.2",
+    "Framework :: Django :: 4",
+    "Framework :: Django :: 4.0",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+]
+keywords = [
+    "debug",
+    "die",
+    "django",
+    "dump",
+    "inspect",
+]
+dependencies = [
+    "django >= 3.0.0",
+]
+requires-python = ">=3.7"
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "coverage",
+    "pylint",
+    "pylint-django",
+]
+doc = [
+    "doc8",
+    "esbonio",
+    "pip-tools",
+    "rstcheck",
+    "sphinx",
+    "sphinx-autobuild",
+    "sphinx-rtd-theme",
+]
+
+[project.urls]
+Homepage = "https://github.com/djbarnes/django-dump-die"
