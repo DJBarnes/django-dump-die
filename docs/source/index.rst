@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Django-AdminLTE-2's documentation!
+Welcome to Django-Dump-Die's documentation!
 =============================================
 
 Django App providing a mechanism for extracting the details of any python
