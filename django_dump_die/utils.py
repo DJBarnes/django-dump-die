@@ -2,6 +2,7 @@
 
 import copy
 import inspect
+import linecache
 import pytz
 import io
 import re
@@ -56,7 +57,8 @@ def get_dumped_object_name_and_location(object_needing_name):
     """Look at the stack frame to figure out what the dumped var is"""
 
     # Get the frame where the dump or dd occurred.
-    frame = inspect.getframeinfo(inspect.currentframe().f_back.f_back.f_back)
+    base_frame = inspect.currentframe().f_back.f_back.f_back
+    frame_info = inspect.getframeinfo(base_frame)
 
     # Default to not showing filename and lineno via setting to None
     linenumber = None
@@ -64,9 +66,13 @@ def get_dumped_object_name_and_location(object_needing_name):
     # If we are to show the filename and linenumber
     if INCLUDE_FILENAME_LINENUMBER:
         # Get line number
-        linenumber = frame.lineno
+        linenumber = frame_info.lineno
         # Get filename
-        filename = frame.filename
+        filename = frame_info.filename
+
+    # Parse line that called, for full "name" to output.
+    # Accounts for things like functions that span multiple lines.
+    code_context = get_fully_qualified_dumped_line(base_frame, frame_info)
 
     # TODO: This work of using RegEx to get down to the dumped object name can probably be improved.
     # Establish a couple of regular expressions to fetch out what was passed to dump or dd.
@@ -74,8 +80,8 @@ def get_dumped_object_name_and_location(object_needing_name):
     dd_pattern = r".*dd\((.*)[\)]"
     options_pattern = r"(.*)(?=,.*=.*)"
     # Find the results for both dump and dd.
-    dumped_text_matches = re.findall(dump_pattern, frame.code_context[0])
-    dd_text_matches = re.findall(dd_pattern, frame.code_context[0])
+    dumped_text_matches = re.findall(dump_pattern, code_context)
+    dd_text_matches = re.findall(dd_pattern, code_context)
     # Determine if dumped or dd'd and put result in dumped_text
     dumped_text = 'Unknown_Object_Name'
     if dumped_text_matches:
@@ -95,6 +101,41 @@ def get_dumped_object_name_and_location(object_needing_name):
         dumped_text = get_callable_name(dumped_text, object_needing_name)
 
     return filename, linenumber, dumped_text
+
+
+def get_fully_qualified_dumped_line(base_frame, frame_info):
+    """"""
+
+    # Loop through frame info until we get full object name.
+    # Required for definitions of things that span multiple lines, within a given dump/dd statement.
+    # This logic breaks if there is ever a passed a "(" or ")" character without the matching pair.
+    # Such as if the user passes an arg of a single paren as a str, without also providing the match.
+    # Ex: dd('(')
+    # Annoyingly, works fine if this string is first assigned to a variable, then that variable is passed in.
+    line_num = base_frame.f_lineno - 1
+    code_context = ''
+    counter = None
+    total_loops = 0
+    while counter is None or (0 < counter < 100 and total_loops < 1000):
+        # Initialize counter for first loop.
+        if counter is None:
+            counter = 0
+
+        # Check line for parsing actual name info.
+        line_num += 1
+        line = linecache.getline(frame_info.filename, line_num, base_frame.f_globals)
+        code_context += line
+
+        # Update counter, based on the number of parens found.
+        counter += line.count('(')
+        counter -= line.count(')')
+        total_loops += 1
+
+    # Strip out extra whitespace, if present.
+    code_context = re.sub('\s+', ' ', code_context)
+
+    # Return final result.
+    return code_context
 
 
 def process_object_name(object_name):
