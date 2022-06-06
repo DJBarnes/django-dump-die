@@ -1,0 +1,38 @@
+###
+ # EditorConfig file for Django Framework projects.
+ # See https://editorconfig.org/ for documentation.
+ #
+ # https://git.brandon-rodriguez.com/other/editorconfig
+ # Version 1.1.0
+ ##
+
+
+# Stop editorconfig from searching further above current directory.
+root = true
+
+
+###
+ # Default styles for all files.
+ ##
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+
+###
+ # Tab styles that should be four spaces per tab.
+ # Most languages will fall under this.
+ ##
+[*.{css,js,json,md,py,scss,sh,yaml}]
+indent_size = 4
+
+
+###
+ # Tab styles that should be two spaces per tab.
+ # Only very nested languages should be put here.
+ ##
+[*.html]
+indent_size = 2
