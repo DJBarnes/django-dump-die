@@ -3,6 +3,8 @@
 import copy
 import inspect
 import linecache
+import tokenize
+
 import pytz
 import io
 import re
@@ -104,19 +106,21 @@ def get_dumped_object_name_and_location(object_needing_name):
 
 
 def get_fully_qualified_dumped_line(base_frame, frame_info):
-    """"""
+    """Loop through frame info until we get full object name.
 
-    # Loop through frame info until we get full object name.
-    # Required for definitions of things that span multiple lines, within a given dump/dd statement.
-    # This logic breaks if there is ever a passed a "(" or ")" character without the matching pair.
-    # Such as if the user passes an arg of a single paren as a str, without also providing the match.
-    # Ex: dd('(')
-    # Annoyingly, works fine if this string is first assigned to a variable, then that variable is passed in.
+    Required for definitions of things that span multiple lines, within a given dump/dd statement.
+    """
+
     line_num = base_frame.f_lineno - 1
     code_context = ''
     counter = None
     total_loops = 0
+    # Loop through lines until counter goes back to 0, to account for newlines.
+    # Counter increments for every proper ( token found, and decriments for every proper ) token found.
+    # Additional checks are present so that the page does not hang forever, in event of input we did not account for.
     while counter is None or (0 < counter < 100 and total_loops < 1000):
+        total_loops += 1
+
         # Initialize counter for first loop.
         if counter is None:
             counter = 0
@@ -126,10 +130,21 @@ def get_fully_qualified_dumped_line(base_frame, frame_info):
         line = linecache.getline(frame_info.filename, line_num, base_frame.f_globals)
         code_context += line
 
-        # Update counter, based on the number of parens found.
-        counter += line.count('(')
-        counter -= line.count(')')
-        total_loops += 1
+        # Get the tokens out of the string.
+        # NOTE: generate_tokens returns an iterator and not a data structure.
+        tokens = generate_tokens(io.StringIO(line).readline)
+
+        # Iterate through all tokens from line, and adjust counter if paren tokens are found.
+        try:
+            for token in tokens:
+                if token.exact_type == 7:
+                    counter += 1
+                elif token.exact_type == 8:
+                    counter -= 1
+
+        except tokenize.TokenError:
+            # Seems to only come up for end of line. We can safely ignore, probably?
+            pass
 
     # Strip out extra whitespace, if present.
     code_context = re.sub('\s+', ' ', code_context)
@@ -174,14 +189,14 @@ def process_object_name(object_name):
             token_value = token[1]
 
             # If token is a opening paren
-            if token_number == OP and token_value == '(':
+            if token_number == OP and token.exact_type == 7:
                 # Append previous token to the function list
                 functions.append(previous_token)
                 # Flip flag to indicate that we are now processing the parameter list.
                 in_param_list = True
 
             # If we are inside the param list and not at the ending paren
-            if in_param_list and token_value != ')':
+            if in_param_list and token.exact_type != 8:
                 # Append the token to the list of params
                 params.append(token_value)
             else:
