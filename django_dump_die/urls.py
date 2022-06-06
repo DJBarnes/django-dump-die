@@ -6,6 +6,7 @@ Used exclusively to show example output.
 from django.urls import path
 
 from .views import (
+    index,
     simple_type_example,
     intermediate_type_example,
     complex_type_example,
@@ -16,6 +17,7 @@ from .views import (
 )
 
 
+app_name = 'django_dump_die'
 urlpatterns = [
     # Various example views, in order of increasing complexity.
     path('simple-type-example', simple_type_example, name='simple-type-example'),
@@ -25,4 +27,5 @@ urlpatterns = [
     path('class-example', class_type_example, name='class-example'),
     path('django-model-example', django_model_type_example, name='django-model-example'),
     path('full-example', full_example, name='full-example'),
+    path('', index, name='index'),
 ]

@@ -185,6 +185,10 @@ class SampleModelForm(ModelForm):
 
 # region Example Views
 
+def index(request):
+    """Index view, to easily navigate to example views."""
+    return render(request, 'django_dump_die/index.html')
+
 def simple_type_example(request):
     """Example view, rendering only "simple type" object output."""
 

@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en">
+  <meta charset="utf-8">
+  <head>
+    <title>Django DumpDie Examples</title>
+  </head>
+
+  <body>
+    <h1>Django DumpDie Example Index Page</h1>
+
+    <p>The following pages are examples of outputting with the Django DumpDie package.</p>
+    <p>So you can quickly see what output might look like, for various objects and types.</p>
+
+    <br>
+
+    <ul>
+      <li><p><a href="{% url 'django_dump_die:simple-type-example' %}">"Simple" Type Example</a></p></li>
+      <li><p><a href="{% url 'django_dump_die:intermediate-type-example' %}">"Intermediate" Type Example</a></p></li>
+      <li><p><a href="{% url 'django_dump_die:complex-type-example' %}">"Complex" Type Example</a></p></li>
+      <li><p><a href="{% url 'django_dump_die:function-example' %}">Function Example</a></p></li>
+      <li><p><a href="{% url 'django_dump_die:class-example' %}">Class Example</a></p></li>
+      <li><p><a href="{% url 'django_dump_die:django-model-example' %}">Django Model Example</a></p></li>
+      <li><p><a href="{% url 'django_dump_die:full-example' %}">Full Example</a></p></li>
+    </ul>
+  </body>
+</html>

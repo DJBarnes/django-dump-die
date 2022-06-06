@@ -1,6 +1,7 @@
 
 from .dd_view import dd_view
 from .example_views import (
+    index,
     simple_type_example,
     intermediate_type_example,
     complex_type_example,
