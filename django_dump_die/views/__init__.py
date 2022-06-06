@@ -9,4 +9,5 @@ from .example_views import (
     class_type_example,
     django_model_type_example,
     full_example,
+    edge_case_example,
 )

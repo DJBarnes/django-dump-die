@@ -14,6 +14,7 @@ from .views import (
     class_type_example,
     django_model_type_example,
     full_example,
+    edge_case_example,
 )
 
 
@@ -27,5 +28,6 @@ urlpatterns = [
     path('class-example', class_type_example, name='class-example'),
     path('django-model-example', django_model_type_example, name='django-model-example'),
     path('full-example', full_example, name='full-example'),
+    path('edge-case-example', edge_case_example, name='edge-case-example'),
     path('', index, name='index'),
 ]

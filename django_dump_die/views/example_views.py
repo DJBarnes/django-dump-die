@@ -189,6 +189,7 @@ def index(request):
     """Index view, to easily navigate to example views."""
     return render(request, 'django_dump_die/index.html')
 
+
 def simple_type_example(request):
     """Example view, rendering only "simple type" object output."""
 
@@ -363,30 +364,10 @@ def function_type_example(request):
 
     dump('')
     dump('Function call examples:')
-    # TODO: Uncomment after merging function call dd fix.
-    # dump(sample_func())
-    # dump(sample_func_param(32), deepcopy=True)
-    # dump(sample_func_param(32), index_range=(0,1))
-    # dump(sample_func_param(32), deepcopy=True, index_range=(0,1))
-    # dump(sample_func_param(32, foo=12), deepcopy=True)
-    # dump(sample_func_param('test_param', some_kwarg=True))
-    # dump(sample_func_param('test_param', 'extra_arg_1', 2, True))
-    # dump(sample_func_param(
-    #     'test_param',
-    #     some_kwarg=False,
-    #     extra_kwarg_1='extra_kwarg',
-    #     extra_kwarg_2=2,
-    #     extra_kwarg_3=3,
-    # ))
-    # dump(sample_func_param(
-    #     'test_param',
-    #     'extra_arg_1',
-    #     2,
-    #     True,
-    #     extra_kwarg_1='extra_kwarg',
-    #     extra_kwarg_2=2,
-    #     extra_kwarg_3=3,
-    # ))
+    dump(sample_func())
+    dump(sample_func_param(32))
+    dump(sample_func_param('test_param', some_kwarg=True))
+    dump(sample_func_param('test_param', 'extra_arg_1', 2, True))
 
     # Force dd to prevent further view parsing.
     dump('')
@@ -421,17 +402,15 @@ def class_type_example(request):
     dump(sample_complex_class)
 
     dump('')
-    # TODO: Uncomment after merging function call dd fix.
-    # dump('Examples of pulling nested items (classes/functions/data/etc) from above classes.')
+    dump('Examples of pulling nested items (classes/functions/data/etc) from above classes.')
     dump(sample_complex_class._sample_private_simple_class)
     dump(sample_complex_class.sample_public_simple_class)
     dump(sample_complex_class.sample_public_simple_class.sample_public_dict)
     dump(sample_complex_class.sample_public_simple_class.sample_public_dict['first'])
     dump(sample_simple_class.sample_class_func)
     dump(sample_simple_class.sample_class_param_func)
-    # TODO: Uncomment after merging function call dd fix.
-    # dump(sample_simple_class.sample_class_func())
-    # dump(sample_simple_class.sample_class_param_func('test'))
+    dump(sample_simple_class.sample_class_func())
+    dump(sample_simple_class.sample_class_param_func('test'))
 
     # Force dd to prevent further view parsing.
     dump('')
@@ -650,26 +629,10 @@ def full_example(request):
     dump(sample_func_param)
     dump('')
     dump('Function call examples:')
-    # TODO: Uncomment after merging function call dd fix.
-    # dump(sample_func())
-    # dump(sample_func_param('test_param', some_kwarg=True))
-    # dump(sample_func_param('test_param', 'extra_arg_1', 2, True))
-    # dump(sample_func_param(
-    #     'test_param',
-    #     some_kwarg=False,
-    #     extra_kwarg_1='extra_kwarg',
-    #     extra_kwarg_2=2,
-    #     extra_kwarg_3=3,
-    # ))
-    # dump(sample_func_param(
-    #     'test_param',
-    #     'extra_arg_1',
-    #     2,
-    #     True,
-    #     extra_kwarg_1='extra_kwarg',
-    #     extra_kwarg_2=2,
-    #     extra_kwarg_3=3,
-    # ))
+    dump(sample_func())
+    dump(sample_func_param(32))
+    dump(sample_func_param('test_param', some_kwarg=True))
+    dump(sample_func_param('test_param', 'extra_arg_1', 2, True))
 
     dump('')
     dump('')
@@ -688,17 +651,15 @@ def full_example(request):
     dump(sample_complex_class)
     dump(sample_complex_class)
     dump('')
-    # TODO: Uncomment after merging function call dd fix.
-    # dump('Examples of pulling nested items (classes/functions/data/etc) from above classes.')
+    dump('Examples of pulling nested items (classes/functions/data/etc) from above classes.')
     dump(sample_complex_class._sample_private_simple_class)
     dump(sample_complex_class.sample_public_simple_class)
     dump(sample_complex_class.sample_public_simple_class.sample_public_dict)
     dump(sample_complex_class.sample_public_simple_class.sample_public_dict['first'])
     dump(sample_simple_class.sample_class_func)
     dump(sample_simple_class.sample_class_param_func)
-    # TODO: Uncomment after merging function call dd fix.
-    # dump(sample_simple_class.sample_class_func())
-    # dump(sample_simple_class.sample_class_param_func('test'))
+    dump(sample_simple_class.sample_class_func())
+    dump(sample_simple_class.sample_class_param_func('test'))
 
     dump('')
     dump('')
@@ -757,5 +718,61 @@ def full_example(request):
 
     # Show that any calls after dd() end up ignored.
     return render(request, 'django_dump_die/sample.html', {'sample_simple_class': sample_simple_class})
+
+
+def edge_case_example(request):
+    """Example view, rendering various edge-case output.
+
+    These are output types that don't necessarily belong in the other example views, but have
+    resulted in errors/bad output, in the past.
+
+    This view allows easily checking them to make sure they are still handled correctly.
+    """
+
+    # Call dump on problem children.
+    dump('Displaying example of various edge-case output.')
+
+    dump('')
+    dump('Output of parens as string within dd parameters:')
+    dump(')')
+    dump('(')
+    dump(')()))(')
+    dump(')((()(')
+    dump(sample_func_param('('))
+    dump(sample_func_param(')'))
+
+    dump('')
+    dump('Function call examples (when also passing DumpDie-specific kwargs. Those should be excluded from output):')
+    dump(sample_func_param(32), deepcopy=True)
+    dump(sample_func_param(32), index_range=(0, 1))
+    dump(sample_func_param(32), deepcopy=True, index_range=(0, 1))
+    dump(sample_func_param(32, foo=12), deepcopy=True)
+
+    dump('')
+    dump('Function call examples (spanning multiple lines, in code):')
+    dump(sample_func_param(
+        'test_param',
+        some_kwarg=False,
+        extra_kwarg_1='extra_kwarg',
+        extra_kwarg_2=2,
+        extra_kwarg_3=3,
+    ))
+    dump(sample_func_param(
+        'test_param',
+        'extra_arg_1',
+        2,
+        True,
+        extra_kwarg_1='extra_kwarg',
+        extra_kwarg_2=2,
+        extra_kwarg_3=3,
+    ))
+
+    # Force dd to prevent further view parsing.
+    dump('')
+    dd('done')
+
+    # Show that any calls after dd() end up ignored.
+    return render(request, 'django_dump_die/sample.html', {})
+
 
 # endregion Example Views
