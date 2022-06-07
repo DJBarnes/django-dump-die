@@ -1,7 +1,8 @@
 Usage
-=====
+*****
+
 General
-^^^^^^^
+=======
 The middleware is where most of this package's heavy lifting happens.
 
 By having the middleware installed, you can run ``dump(<variable>)`` and/or
@@ -25,7 +26,7 @@ the data that has been dumped thus far.
 
 
 Example
-^^^^^^^
+=======
 
 .. code-block:: python
 
@@ -75,12 +76,13 @@ Example
     removed before any actual commits.
 
 Available Parameters
-^^^^^^^^^^^^^^^^^^^^
+====================
+
 Both the ``dd()`` and ``dump()`` functions take the same parameters, in the
 same ordering:
 
 index_range
-***********
+-----------
 
 :Type: ``int, list, tuple``
 :Default: ``None``
@@ -107,7 +109,7 @@ Example::
     dd(my_list, index_range=(18, 37))  # Will do from index 18 to 37
 
 deepcopy
-********
+--------
 
 :Type: ``bool``
 :Default: ``False``
@@ -127,7 +129,8 @@ Example::
     dd(my_list)
 
 Inside A Template
-^^^^^^^^^^^^^^^^^
+=================
+
 There is a template tag that can also be used to dump from inside a template.
 However, the use of this tag comes with a lot of caveats.
 

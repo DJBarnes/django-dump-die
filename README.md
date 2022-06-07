@@ -1,55 +1,59 @@
 Django Dump & Die
 ============================
 
-Django App providing a mechanism for extracting the details of any python variable and dumping it to the browser.
-This is effectively a debugging tool, used to quickly and easily output an object's full data to screen.
+Django-Dump-Die is a [Django](https://www.djangoproject.com/) app that
+provides a couple of debug tools in the form of built-in methods
+`dump` and `dd` that allow you to send details about a variable to the
+browser for inspection. Dumped variables are presented in an easy to read and
+fully expandable / collapsible tree. You can easily understand complex objects
+and the results of django queries with a simple call to either method.
+The entire concept is heavily based on the dump die functionality that comes
+with Laravel and Symfony.
 
-Inspired by the dump and dump/die functionality from Symfony / Laravel.
-
-
-## Installation
-Import the package via either:
-```shell
-python -m pip install -e git+https://github.com/DJBarnes/django-dump-die@master
-```
-or
-```shell
-pipenv install -e "git+https://github.com/DJBarnes/django-dump-die#egg=django-dump-die"
-```
-
-<br>
-
-Next add the corresponding app to your Django `settings.py` file:
-```python
-INSTALLED_APPS = [
-    ...
-
-    'django_dump_die',
-
-    ...
-]
-```
+## Quickstart
+1.  Install the Django App via GitHub for now. Working on getting on Pypi soon.
+    ```shell
+    python -m pip install -e git+https://github.com/DJBarnes/django-dump-die@master
+    ```
+    or
+    ```shell
+    pipenv install -e "git+https://github.com/DJBarnes/django-dump-die#egg=django-dump-die"
+    ```
 
 <br>
 
-Next add the corresponding middleware to your Django `settings.py` file:
-```python
-MIDDLEWARE = [
-    ...
+2.  Add the corresponding app to your Django ``settings.py`` file:
+    ```python
+    INSTALLED_APPS = [
 
-    'django_dump_die.middleware.DumpAndDieMiddleware',
+        'django_dump_die',
+        ...
+    ]
+    ```
 
-    ...
-]
-```
+<br>
 
-Lastly, ensure that you have DEBUG set to True in your Django `settings.py` file:
-```python
-DEBUG = True
-```
-**Note:** Neither the dump command nor the dd command will do anything if DEBUG is not set to True.
-With that said, this is a tool for debugging. You should not include this package
-in production nor should you ever have DEBUG set to True in production.
+3.  Add the corresponding middleware to your Django ``settings.py`` file:
+    ```python
+    MIDDLEWARE = [
+
+        'django_dump_die.middleware.DumpAndDieMiddleware',
+        ...
+    ]
+    ```
+
+4.  Ensure that you have DEBUG set to True in your Django ``settings.py`` file:
+    ```python
+    DEBUG = True
+    ```
+
+    ---
+    :information_source: **NOTE**
+    Neither the `dump` command nor the `dd` command will do anything if **DEBUG** is not set to `True`.
+    With that said, this is a tool for debugging. You should not include this package
+    in production nor should you ever have **DEBUG** set to `True` in production.
+
+    ---
 
 ## Usage
 The middleware is where most of this package's heavy lifting happens.
@@ -113,16 +117,21 @@ dd(some_class)
 
 <br>
 
-**Note:** that most editors will give a red error squiggle for the dd command.
+---
+:information_source: **NOTE**
+Most editors will give a red error squiggle for the dd command.
+This is intentional, and the command will still run. This is because this
+command is meant to be used for debugging, and is not meant to stay
+long-term. The red squiggle helps identify it as something that should be
+removed before any actual commits.
 
-This is intentional, and the command will still run. This is because this command is meant to be used for debugging,
-and is not meant to stay long-term. The red squiggle helps identify it as something that should be removed before
-any actual commits.
+---
 
 ### Available Parameters
 Both the `dd()` and `dump()` functions take the same parameters, in the same ordering:
 
 #### Arg1 / Kwarg: index_range
+Type: ```int, list, tuple```
 Default: ```None```
 
 An index range to modify output values of parent entity (if iterable).<br>
@@ -134,6 +143,8 @@ When an index range is passed, the end index of that range overrides the `DJANGO
 Value can be:
 * A single index.
 * A range of two values, to specify starting and ending index (defined such as in a list or tuple).
+
+**Example:**
 ```python
 # Single index
 dump(my_list, index_range=18)  # Will do from index 18 to 18 + DJANGO_DD_MAX_ITERABLE_LENGTH
@@ -142,11 +153,14 @@ dd(my_list, index_range=(18, 37))  # Will do from index 18 to 37
 ```
 
 #### Arg2 / Kwarg: deepcopy
+Type: ```bool```
 Default: ```False```
 
 A boolean to specify if passed objects should be deep-copied before being passed into dd/dump logic.<br>
 If set to `True`, then preserves exact state of object at time of passing into dd/dump.
 Useful if you are dumping an object, then making changes to that object, and then dumping it again.
+
+**Example:**
 ```python
 # Dump starting state
 dump(my_list, deepcopy=True)
@@ -164,7 +178,13 @@ The package has a few configuration options available to you. Each of the follow
 Default: ```20```<br>
 As the tool inspects an object it recurses into other objects that are part of the original object. This recursion could become quite deep depending on the size of the object being dumped. This setting will limit the depth of recursion as to prevent long processing times.
 <br>
-**NOTE:** Setting the value to ```None``` will mean no limit.
+
+---
+:information_source: **NOTE**
+Setting the value to ```None``` will mean no limit.
+
+---
+
 ```python
 DJANGO_DD_MAX_RECURSION_DEPTH = 30
 ```
@@ -173,7 +193,13 @@ DJANGO_DD_MAX_RECURSION_DEPTH = 30
 Default: ```20```<br>
 As the tool inspects an iterable object it will recurse into each object in the iterable. This may mean a lot of recursion for a very long iterable. This setting will limit the length or processed elements in an iterable to prevent long processing times.
 <br>
-**NOTE:** Setting the value to ```None``` will mean no limit.
+
+---
+:information_source: **NOTE**
+Setting the value to ```None``` will mean no limit.
+
+---
+
 ```python
 DJANGO_DD_MAX_ITERABLE_LENGTH = 30
 ```
@@ -235,7 +261,13 @@ DJANGO_DD_INCLUDE_PRIVATE_MEMBERS = True
 Default: ```False```<br>
 By default, Magic methods (those enclosed by dunders) are not included in the output. If you would like to include magic methods in the output, set this setting to ```True```.
 <br>
-**NOTE:** This is only for methods. Has no effect on attributes.
+
+---
+:information_source: **NOTE**
+This is only for methods. Has no effect on attributes.
+
+---
+
 
 ```python
 DJANGO_DD_INCLUDE_MAGIC_METHODS = True
@@ -281,9 +313,19 @@ DJANGO_DD_CONTENT_STARTS_EXPANDED = True
 
 ### DJANGO_DD_ATTRIBUTES_START_EXPANDED
 Default: ```True```<br>
-Only applies when `DJANGO_DD_INCLUDE_ATTRIBUTES` and `DJANGO_DD_INCLUDE_FUNCTIONS` are both set to True.
 
 Controls if Attribute sections are expanded on page load or not.
+
+---
+:information_source: **NOTE**
+Only applies when ``DJANGO_DD_INCLUDE_ATTRIBUTES`` and
+``DJANGO_DD_INCLUDE_FUNCTIONS`` are both set to ``True``.
+If **Attributes** are not turned on, they can't be expanded.
+If **Functions** are not also turned on, **Attributes** will automatically
+be expanded as they will be the only content available for the dumped
+object.
+
+---
 
 If set to `True`, then opening an item will instantly show the fully expanded Attribute section.
 
@@ -295,9 +337,19 @@ DJANGO_DD_ATTRIBUTES_START_EXPANDED = False
 
 ### DJANGO_DD_FUNCTIONS_START_EXPANDED
 Default: ```False```<br>
-Only applies when `DJANGO_DD_INCLUDE_ATTRIBUTES` and `DJANGO_DD_INCLUDE_FUNCTIONS` are both set to True.
 
 Controls if Function sections are expanded on page load or not.
+
+---
+:information_source: **NOTE**
+Only applies when ``DJANGO_DD_INCLUDE_ATTRIBUTES`` and
+``DJANGO_DD_INCLUDE_FUNCTIONS`` are both set to ``True``.
+If **Functions** are not turned on, they can't be expanded.
+If **Attributes** are not also turned on, **Functions** will automatically
+be expanded as they will be the only content available for the dumped
+object.
+
+---
 
 If set to `True`, then opening an item will instantly show the fully expanded Function section.
 
@@ -310,7 +362,9 @@ DJANGO_DD_FUNCTIONS_START_EXPANDED = True
 
 ### DJANGO_DD_INCLUDE_UTILITY_TOOLBAR
 :Default: ```True```<br>
-By default, a "utility toolbar" will show at top of page during DD output. To hide this toolbar, set this setting to ``False``.
+By default, a **Utility Toolbar** will show at top of the page during DD output.
+This toolbar provides buttons to easily expand and collapse multiple objects
+at once.
 ```python
 DJANGO_DD_INCLUDE_UTILITY_TOOLBAR = False
 ```
@@ -340,7 +394,16 @@ DJANGO_DD_FORCE_DARK_THEME = True
 Default: ```None```<br>
 By default, the tool uses the Solarized color scheme. If you want full control over the color theme and would like to define your own, here is where you do that. The format is in dictionary format and needs to follow the same format. In the sample below, ```<value>``` should be a string hexcode for a color with the hash symbol included.
 <br>
+
 **EX:** ```#FF88CC```.
+
+---
+:information_source: **NOTE**
+Not all values need to be included. Any excluded values will fall back
+to a default. Feel free to only include the values you wish to modify.
+
+---
+
 ```python
 DJANGO_DD_COLOR_SCHEME = {
     'light': {
@@ -358,34 +421,34 @@ DJANGO_DD_COLOR_SCHEME = {
         'toolbar_background': <value>,  # Dark theme toolbar background color
     },
     'meta': {
-        'arrow': <value>,           #  Expand/Collapse arrow
-        'access_modifier': <value>, #  Access Modifier Char
-        'braces': <value>,          #  Braces, Brackets, and Parentheses
-        'empty': <value>,           #  No Attributes or methods available
-        'location': <value>,        #  File location and line number
-        'type': <value>,            #  Type text of dumped variable
-        'unique': <value>,          #  Unique hash for class
+        'arrow': <value>,               #  Expand/Collapse arrow
+        'access_modifier': <value>,     #  Access Modifier Char
+        'braces': <value>,              #  Braces, Brackets, and Parentheses
+        'empty': <value>,               #  No Attributes or methods available
+        'location': <value>,            #  File location and line number
+        'type': <value>,                #  Type text of dumped variable
+        'unique': <value>,              #  Unique hash for class
     },
     'identifiers': {
-        'section_name': <value>,    #  The words "Attribute" or "Function", denoting each sections
-        'attribute': <value>,       #  Class attribute
-        'constant': <value>,        #  Class constants
-        'dumped_name': <value>,     #  Dumped object name
-        'function': <value>,        #  Class functions
-        'index': <value>,           #  Index values for indexable types
-        'key': <value>,             #  Key values for dict
-        'params': <value>,          #  Function parameters
+        'section_name': <value>,        #  The words "Attribute" or "Function", denoting each sections
+        'attribute': <value>,           #  Class attribute
+        'constant': <value>,            #  Class constants
+        'dumped_name': <value>,         #  Dumped object name
+        'function': <value>,            #  Class functions
+        'index': <value>,               #  Index values for indexable types
+        'key': <value>,                 #  Key values for dict
+        'params': <value>,              #  Function parameters
     },
     'types': {
-        'bool': <value>,            #  Booleans
-        'bound': <value>,           #  Django Bound Form Field
-        'datetime': <value>,        #  DateTimes and similar types
-        'default': <value>,         #  Default color if does not fit into any of the others
-        'docs': <value>,            #  Class function documentation
-        'module': <value>,          #  Module via ModuleType
-        'none': <value>,            #  None
-        'number': <value>,          #  Integers, Floats, and Decimals
-        'string': <value>,          #  Strings
+        'bool': <value>,                #  Booleans
+        'bound': <value>,               #  Django Bound Form Field
+        'datetime': <value>,            #  DateTimes and similar types
+        'default': <value>,             #  Default color if does not fit into any of the others
+        'docs': <value>,                #  Class function documentation
+        'module': <value>,              #  Module via ModuleType
+        'none': <value>,                #  None
+        'number': <value>,              #  Integers, Floats, and Decimals
+        'string': <value>,              #  Strings
     },
 }
 ```

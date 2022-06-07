@@ -1,18 +1,20 @@
-.. Django-Dump-Die documentation master file, created by
-   sphinx-quickstart on Sat Mar  6 10:30:55 2021.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to Django-Dump-Die's documentation!
-=============================================
+*******************************************
 
-Django App providing a mechanism for extracting the details of any python
-variable and dumping it to the browser. This is effectively a debugging tool,
-used to quickly and easily output an object's full data to screen.
+Django-Dump-Die is a `Django <https://www.djangoproject.com/>`_ app that
+provides a couple of debug tools in the form of built-in methods
+``dump`` and ``dd`` that allow you to send details about a variable to the
+browser for inspection. Dumped variables are presented in an easy to read and
+fully expandable / collapsible tree. You can easily understand complex objects
+and the results of django queries with a simple call to either method.
+The entire concept is heavily based on the dump die functionality that comes
+with Laravel and Symfony.
+
+.. image:: img/dd_sample_output.png
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Table of Contents
 
    quickstart
    usage
@@ -21,7 +23,7 @@ used to quickly and easily output an object's full data to screen.
 
 
 Indices and tables
-==================
+******************
 
 * :ref:`genindex`
 * :ref:`modindex`
