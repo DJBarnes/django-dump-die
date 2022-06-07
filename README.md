@@ -10,6 +10,8 @@ and the results of django queries with a simple call to either method.
 The entire concept is heavily based on the dump die functionality that comes
 with Laravel and Symfony.
 
+![django-dump-die-sample-output](https://github.com/DJBarnes/django-dump-die/blob/documentation/docs/source/img/dd_sample_output.png)
+
 ## Quickstart
 1.  Install the Django App via GitHub for now. Working on getting on Pypi soon.
     ```shell
