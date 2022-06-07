@@ -133,7 +133,7 @@ removed before any actual commits.
 Both the `dd()` and `dump()` functions take the same parameters, in the same ordering:
 
 #### Arg1 / Kwarg: index_range
-Type: ```int, list, tuple```
+Type: ```int, list, tuple```<br>
 Default: ```None```
 
 An index range to modify output values of parent entity (if iterable).<br>
@@ -155,7 +155,7 @@ dd(my_list, index_range=(18, 37))  # Will do from index 18 to 37
 ```
 
 #### Arg2 / Kwarg: deepcopy
-Type: ```bool```
+Type: ```bool```<br>
 Default: ```False```
 
 A boolean to specify if passed objects should be deep-copied before being passed into dd/dump logic.<br>
@@ -177,7 +177,6 @@ dd(my_list)
 The package has a few configuration options available to you. Each of the following options can be set by adding the associated option and value into your settings file for Django.
 
 ### DJANGO_DD_MAX_RECURSION_DEPTH
-Default: ```20```<br>
 As the tool inspects an object it recurses into other objects that are part of the original object. This recursion could become quite deep depending on the size of the object being dumped. This setting will limit the depth of recursion as to prevent long processing times.
 <br>
 
@@ -187,12 +186,15 @@ Setting the value to ```None``` will mean no limit.
 
 ---
 
+Type: ```int```<br>
+Default: ```20```
+
+Example:
 ```python
 DJANGO_DD_MAX_RECURSION_DEPTH = 30
 ```
 
 ### DJANGO_DD_MAX_ITERABLE_LENGTH
-Default: ```20```<br>
 As the tool inspects an iterable object it will recurse into each object in the iterable. This may mean a lot of recursion for a very long iterable. This setting will limit the length or processed elements in an iterable to prevent long processing times.
 <br>
 
@@ -202,13 +204,15 @@ Setting the value to ```None``` will mean no limit.
 
 ---
 
+Type: ```int```<br>
+Default: ```20```
+
+Example:
 ```python
 DJANGO_DD_MAX_ITERABLE_LENGTH = 30
 ```
 
 ### DJANGO_DD_ADDITIONAL_SIMPLE_TYPES
-Default: ```[]``` (Empty List)
-
 A "simple type" is a variable type which is common in most languages, and generally the user only want to see the literal assigned value.
 
 When the tool encounters a defined simple type it will no longer recurse further and instead simply output a string representation of that simple type.
@@ -224,6 +228,11 @@ Predefined simple types include:
 * str
 
 If you would like to add additional simple types that are specific to your project, you can do that here. Be sure to list each type in the list as a string of the type to treat as a simple type.
+
+Type: ```list```<br>
+Default: ```[]```
+
+Example:
 ```python
 DJANGO_DD_ADDITIONAL_SIMPLE_TYPES = [
     'Cell' #  From openpyxl package
@@ -231,8 +240,6 @@ DJANGO_DD_ADDITIONAL_SIMPLE_TYPES = [
 ```
 
 ### DJANGO_DD_ADDITIONAL_INTERMEDIATE_TYPES
-Default: ```[]``` (Empty List)
-
 An "intermediate type" is a variable which may have useful properties for expanded output, but generally most users will only want to see the literal assigned value.
 
 Some of these "intermediate type" variables have recurse an unhelpful number of times, if each attribute is examined fully.
@@ -246,6 +253,11 @@ Predefined intermediate types include:
 * timezone
 
 If you would like to add additional intermediate types that are specific to your project, you can do that here. Be sure to list each type in the list as a string of the type to treat as an intermediate type.
+
+Type: ```list```<br>
+Default: ```[]```
+
+Example:
 ```python
 DJANGO_DD_ADDITIONAL_INTERMEDIATE_TYPES = [
     'Cell' #  From openpyxl package
@@ -253,14 +265,17 @@ DJANGO_DD_ADDITIONAL_INTERMEDIATE_TYPES = [
 ```
 
 ### DJANGO_DD_INCLUDE_PRIVATE_MEMBERS
-Default: ```False```<br>
 By default, Private members (those that start with an underscore) are not included in the output. If you would like to include private members in the output set this setting to ```True```.
+
+Type: ```bool```<br>
+Default: ```False```
+
+Example:
 ```python
 DJANGO_DD_INCLUDE_PRIVATE_MEMBERS = True
 ```
 
 ### DJANGO_DD_INCLUDE_MAGIC_METHODS
-Default: ```False```<br>
 By default, Magic methods (those enclosed by dunders) are not included in the output. If you would like to include magic methods in the output, set this setting to ```True```.
 <br>
 
@@ -270,52 +285,72 @@ This is only for methods. Has no effect on attributes.
 
 ---
 
+Type: ```bool```<br>
+Default: ```False```
 
+Example:
 ```python
 DJANGO_DD_INCLUDE_MAGIC_METHODS = True
 ```
 
 ### DJANGO_DD_INCLUDE_FILENAME_LINENUMBER
-Default: ```False```<br>
 By default, output will not include the filename and line number that dump or dd was called from. If you would like to enable this, set this setting to ```True```.
+
+Type: ```bool```<br>
+Default: ```False```
+
+Example:
 ```python
 DJANGO_DD_INCLUDE_FILENAME_LINENUMBER = True
 ```
 
 ### DJANGO_DD_INCLUDE_ATTRIBUTES
-Default: ```True```<br>
 By default, all attributes for an object are included in the output. If you would like to disable this, set this setting to ```False```.
+
+Type: ```bool```<br>
+Default: ```True```
+
+Example:
 ```python
 DJANGO_DD_INCLUDE_ATTRIBUTES = False
 ```
 
 ### DJANGO_DD_INCLUDE_FUNCTIONS
-Default: ```False```<br>
 By default, all methods for an object are not included in the output. If you would like to include them, set this setting to ```True```.
+
+Type: ```bool```<br>
+Default: ```False```
+
+Example:
 ```python
 DJANGO_DD_INCLUDE_FUNCTIONS = True
 ```
 
 ### DJANGO_DD_MULTILINE_FUNCTION_DOCS
-Default: ```False```<br>
 By default, all function documentation output is collapsed into one line (aka line breaks are ignored). To expand function doc output to multiple lines, set this setting to ```True```.
+
+Type: ```bool```<br>
+Default: ```False```
+
+Example:
 ```python
 DJANGO_DD_MULTILINE_FUNCTION_DOCS = True
 ```
 
 ### DJANGO_DD_CONTENT_STARTS_EXPANDED
-Default: ```False```<br>
 By default, everything is collapsed when dumped to the screen. Optionally, the each content item can be expanded to show the Attribute and Function sections.
 
 See below related `DJANGO_DD_ATTRIBUTES_START_EXPANDED` and `DJANGO_DD_FUNCTIONS_START_EXPANDED` settings for details of how those sections are handled.
 
+Type: ```bool```<br>
+Default: ```False```
+
+Example:
 ```python
 DJANGO_DD_CONTENT_STARTS_EXPANDED = True
 ```
 
 ### DJANGO_DD_ATTRIBUTES_START_EXPANDED
-Default: ```True```<br>
-
 Controls if Attribute sections are expanded on page load or not.
 
 ---
@@ -333,13 +368,15 @@ If set to `True`, then opening an item will instantly show the fully expanded At
 
 If set to `False`, then opening an item will only show the Attribute section header, and will need an additional click to expand.
 
+Type: ```bool```<br>
+Default: ```True```
+
+Example:
 ```python
 DJANGO_DD_ATTRIBUTES_START_EXPANDED = False
 ```
 
 ### DJANGO_DD_FUNCTIONS_START_EXPANDED
-Default: ```False```<br>
-
 Controls if Function sections are expanded on page load or not.
 
 ---
@@ -357,45 +394,63 @@ If set to `True`, then opening an item will instantly show the fully expanded Fu
 
 If set to `False`, then opening an item will only show the Function section header, and will need an additional click to expand.
 
+Type: ```bool```<br>
+Default: ```False```
+
+Example:
 ```python
 DJANGO_DD_FUNCTIONS_START_EXPANDED = True
 ```
 
 
 ### DJANGO_DD_INCLUDE_UTILITY_TOOLBAR
-:Default: ```True```<br>
 By default, a **Utility Toolbar** will show at top of the page during DD output.
 This toolbar provides buttons to easily expand and collapse multiple objects
 at once.
+
+Type: ```bool```<br>
+Default: ```True```
+
+Example:
 ```python
 DJANGO_DD_INCLUDE_UTILITY_TOOLBAR = False
 ```
 
 ### DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME
-Default: ```True```<br>
 By default, all dumped object names are syntax highlighted. If you would like to disable this so that the dumped name is all the same color regardless of its contents, set this setting to ```False```.
+
+Type: ```bool```<br>
+Default: ```True```
+
+Example:
 ```python
 DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME = False
 ```
 
 ### DJANGO_DD_FORCE_LIGHT_THEME
-Default: ```False```<br>
-By default, the included color theme will change depending on the setting of your browser to either light or dark. If you normally have your browser set to dark but would like to force this tool to display the light theme, change this setting to ```True```
+By default, the included color theme will change depending on the setting of your browser to either light or dark. If you normally have your browser set to dark but would like to force this tool to display the light theme, change this setting to ```True```.
+
+Type: ```bool```<br>
+Default: ```False```
+
+Example:
 ```python
 DJANGO_DD_FORCE_LIGHT_THEME = True
 ```
 
 ### DJANGO_DD_FORCE_DARK_THEME
-Default: ```False```<br>
 By default, the included color theme will change depending on the setting of your browser to either light or dark. If you normally have your browser set to light but would like to force this tool to display the dark theme, change this setting to ```True```
+
+Type: ```bool```<br>
+Default: ```False```
+
+Example:
 ```python
 DJANGO_DD_FORCE_DARK_THEME = True
 ```
 
 ### DJANGO_DD_COLOR_SCHEME
-Default: ```None```<br>
 By default, the tool uses the Solarized color scheme. If you want full control over the color theme and would like to define your own, here is where you do that. The format is in dictionary format and needs to follow the same format. In the sample below, ```<value>``` should be a string hexcode for a color with the hash symbol included.
-<br>
 
 **EX:** ```#FF88CC```.
 
@@ -406,6 +461,10 @@ to a default. Feel free to only include the values you wish to modify.
 
 ---
 
+Type: ```dict```<br>
+Default: ```None```
+
+Example:
 ```python
 DJANGO_DD_COLOR_SCHEME = {
     'light': {
