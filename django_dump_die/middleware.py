@@ -87,7 +87,7 @@ class DumpAndDieMiddleware:
         response = self.get_response(request)
 
         # If there are no items in the dump_objects list or there is no exception raised
-        if not dump_objects or getattr(request, '_has_exception', False):
+        if not dump_objects or getattr(request, 'has_exception', False):
             return response
         else:
             # Create a copy of the list, and clear it.
@@ -104,7 +104,7 @@ class DumpAndDieMiddleware:
         If not, ignore and allow standard exception handling.
         """
         if not isinstance(exception, DumpAndDie):
-            request._has_exception = True
+            request.has_exception = True
             return None
 
         # Create a copy of the list, and clear it.

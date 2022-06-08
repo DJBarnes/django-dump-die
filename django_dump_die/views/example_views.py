@@ -60,6 +60,7 @@ def intermediate_type_example(request):
     sample_date = datetime.now().date()
     sample_datetime = datetime.now()
     sample_time = datetime.now().time()
+    sample_timedelta = timedelta(days=1)
 
     os_path = os.path.abspath(os.getcwd())
     pure_path = PurePath(Path.cwd())
@@ -80,6 +81,7 @@ def intermediate_type_example(request):
     dump(sample_date)
     dump(sample_datetime)
     dump(sample_time)
+    dump(sample_timedelta)
 
     dump('')
     dump('Python os.path examples:')
