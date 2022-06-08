@@ -341,7 +341,7 @@ def django_model_type_example(request):
             sample_text='All my text',
             sample_time=datetime.now().time(),
             sample_url='https://github.com',
-            sample_uuid='asdfasdfas',
+            sample_uuid='asdfasdf',
         )
 
         dump(sample_django_model_populated)
@@ -623,7 +623,7 @@ def full_example(request):
             sample_text='All my text',
             sample_time=datetime.now().time(),
             sample_url='https://github.com',
-            sample_uuid='asdfasdfas',
+            sample_uuid='asdfasdf',
         )
 
         dump(sample_django_model_populated)

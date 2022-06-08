@@ -1,0 +1,32 @@
+# System
+automodule
+endfor
+endregion
+formset
+formsets
+funcs
+genindex
+kwarg
+kwargs
+htmldjango
+maxdepth
+modindex
+pytz
+quickstart
+subpackages
+templatetags
+toctree
+undoc
+urlpatterns
+
+# Domain
+asdfasdf
+bint
+dunders
+endmarkers
+hexcode
+laravel
+linenumber
+openpyxl
+sample_const
+symfony

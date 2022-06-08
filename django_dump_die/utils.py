@@ -116,7 +116,7 @@ def get_fully_qualified_dumped_line(base_frame, frame_info):
     counter = None
     total_loops = 0
     # Loop through lines until counter goes back to 0, to account for newlines.
-    # Counter increments for every proper ( token found, and decriments for every proper ) token found.
+    # Counter increments for every proper ( token found, and decrements for every proper ) token found.
     # Additional checks are present so that the page does not hang forever, in event of input we did not account for.
     while counter is None or (0 < counter < 100 and total_loops < 1000):
         total_loops += 1

@@ -1,0 +1,20 @@
+// cSpell Settings
+{
+    // Version of the setting file.  Always 0.2
+    "version": "0.2",
+    // language - current active spelling language
+    "language": "en",
+    // Additional dictionaries
+    "dictionaryDefinitions": [
+        {"name": "main", "path": ".cspell.txt"}
+    ],
+    // Dictionaries to use.
+    "dictionaries": [
+        "main",
+        "en_US",
+        "softwareTerms",
+        "python",
+        "html",
+        "bash"
+    ]
+}
