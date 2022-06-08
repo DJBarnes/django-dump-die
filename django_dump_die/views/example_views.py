@@ -130,8 +130,8 @@ class SampleDjangoModel(models.Model):
     sample_ip = models.GenericIPAddressField()
     sample_image = models.ImageField(upload_to='uploads')
     sample_int = models.IntegerField()
-    sample_json = models.JSONField()
-    sample_pos_bint = models.PositiveBigIntegerField()
+    # sample_json = models.JSONField() #  Commented out until support for Django 3.0 is dropped.
+    # sample_pos_bint = models.PositiveBigIntegerField() #  Commented out until support for Django 3.0 is dropped.
     sample_pos_int = models.PositiveIntegerField()
     sample_pos_sint = models.PositiveSmallIntegerField()
     sample_slug = models.SlugField()
@@ -165,8 +165,8 @@ class SampleModelForm(ModelForm):
             'sample_ip',
             'sample_image',
             'sample_int',
-            'sample_json',
-            'sample_pos_bint',
+            # 'sample_json', #  Commented out until support for Django 3.0 is dropped.
+            # 'sample_pos_bint', #  Commented out until support for Django 3.0 is dropped.
             'sample_pos_int',
             'sample_pos_sint',
             'sample_slug',
@@ -464,8 +464,8 @@ def django_model_type_example(request):
             sample_image=django_file,
             sample_int=5,
             sample_ip='127.0.0.1',
-            sample_json='{"key": "my_val"}',
-            sample_pos_bint=345,
+            # sample_json='{"key": "my_val"}',
+            # sample_pos_bint=345,
             sample_pos_int=34,
             sample_pos_sint=3,
             sample_sint=3,
@@ -698,8 +698,8 @@ def full_example(request):
             sample_image=django_file,
             sample_int=5,
             sample_ip='127.0.0.1',
-            sample_json='{"key": "my_val"}',
-            sample_pos_bint=345,
+            # sample_json='{"key": "my_val"}',
+            # sample_pos_bint=345,
             sample_pos_int=34,
             sample_pos_sint=3,
             sample_sint=3,
