@@ -28,7 +28,7 @@ limit-inference-results=100
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
-load-plugins=pylint_django
+load-plugins=pylint_django, pylint.extensions.no_self_use
 
 # Provide the path to the settings for the pylint_django plugin
 django-settings-module=tests.settings
@@ -68,7 +68,6 @@ disable=arguments-differ,
     duplicate-code,
     no-else-raise,
     no-else-return,
-    no-self-use,
     signature-differs,
     too-few-public-methods,
     too-many-ancestors,
@@ -151,13 +150,6 @@ max-line-length=120
 
 # Maximum number of lines in a module.
 max-module-lines=1000
-
-# List of optional constructs for which whitespace checking is disabled. `dict-
-# separator` is used to allow tabulation in dicts, etc.: {1  : 1,\n222: 2}.
-# `trailing-comma` allows a space between comma and closing bracket: (a, ).
-# `empty-line` allows space-only lines.
-no-space-check=trailing-comma,
-               dict-separator
 
 # Allow the body of a class to be on the same line as the declaration if body
 # contains single statement.
