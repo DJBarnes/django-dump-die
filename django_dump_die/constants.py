@@ -1,4 +1,4 @@
-# Constants for dump die
+"""Constants for dump die"""
 
 import datetime
 import types
