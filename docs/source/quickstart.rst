@@ -49,16 +49,16 @@ Quickstart
     ``dd(<variable>)`` anywhere you want, and it will run the dump logic.
     No importing or extra logic is required.
 
-    Each ``dump(<variable>)`` command will add the object passed to dump to an
-    internal list that will be dumped either when a ``dd(<variable>)`` is used
-    or if the entirety of the request finishes.
-    You can have as many ``dump(<variable>)`` statements as you want leading up
-    to a ``dd(<variable>)``.
+    Each ``dump(<variable>)`` command will add the passed object to an internal
+    list that will be dumped either when a ``dd(<variable>)`` is used, or if the
+    entirety of the request finishes. You can have as many ``dump(<variable>)``
+    statements as you want leading up to a ``dd(<variable>)``.
 
     If you make a call to ``dd(<variable>)``, execution will immediately stop
-    and all dumped objects including the the one sent to dd will be output.
+    and all dumped objects (including the the one sent to dd) will be output.
 
     If you do not make a call to ``dd(<variable>)`` and only use
     ``dump(<variable>)`` statements, the request will continue processing until
-    it is time to return the response at which point it will replace the
-    response with the data that has been dumped thus far.
+    it is time to return the response. At this point, Django-Dump-Die will
+    intercept and replace the response with the data that has been dumped thus
+    far.

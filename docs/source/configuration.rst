@@ -85,13 +85,13 @@ An "intermediate type" is a variable which may have useful properties
 for expanded output, but generally most users will only want to see the
 literal assigned value.
 
-Some of these "intermediate type" variables recurse an unhelpful number
-of times, if each attribute is examined fully.
+Furthermore, some of these "intermediate type" objects have child members which
+recurse an unhelpful number of times, if each attribute is examined fully.
 
 When the tool encounters a defined intermediate type it will no longer recurse
-further and instead output a string representation as well as the direct
-attributes. For the sake of processing times, these attributes are not
-further expandable.
+further, instead outputing a string representation as well as allowing
+examination of only the direct-child attributes. For the sake of processing
+times, these direct-child attributes are not further expandable.
 
 Predefined intermediate types include:
 
@@ -132,9 +132,9 @@ Example::
 DJANGO_DD_INCLUDE_MAGIC_METHODS
 ===============================
 
-By default, Magic methods (those enclosed by dunders) are not included in the
-output. If you would like to include magic methods in the output, set this
-setting to ``True``.
+By default, Magic methods (those enclosed by dunders, ie `__str__`) are not
+included in the output. If you would like to include magic methods in the
+output, set this setting to ``True``.
 
 :Type: ``bool``
 :Default: ``False``
