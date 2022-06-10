@@ -27,11 +27,15 @@ SIMPLE_TYPES = [
 
 # Intermediate types, that need some level of recursion and some level of "simple type" handling.
 INTERMEDIATE_TYPES = [
+    bytearray,
+    complex,
+
     datetime.datetime,
     datetime.date,
     datetime.time,
     timezone.timezone,
     # pytz.BaseTzInfo,  # pytz timezone object. Has to be handled separately. Noted here just as a reminder.
+
     PosixPath,
     PurePath,
     PurePosixPath,

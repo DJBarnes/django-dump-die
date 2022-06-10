@@ -57,6 +57,10 @@ def intermediate_type_example(request):
     """Example view, rendering only "intermediate type" object output."""
 
     # Generate variables to dump.
+    sample_bytes_array = bytearray([8, 9, 10, 11])
+    sample_memory_view = memoryview(sample_bytes_array)
+    sample_complex = 3-1j
+
     sample_date = datetime.now().date()
     sample_datetime = datetime.now()
     sample_time = datetime.now().time()
@@ -75,6 +79,11 @@ def intermediate_type_example(request):
 
     # Call dump on all generated variables.
     dump('Displaying example of "intermediate type" object output.')
+
+    dump('')
+    dump('Python type examples:')
+    dump(sample_bytes_array)
+    dump(sample_complex)
 
     dump('')
     dump('Date/Time examples:')
@@ -112,6 +121,7 @@ def complex_type_example(request):
 
     # Generate variables to dump.
     sample_set = {'A', 'B', 'C'}
+    sample_frozen_set = frozenset({'D', 'E', 'F'})
     sample_tuple = ('A', 12, True)
     sample_list = ['A', 12, True]
     sample_dict = {
@@ -119,6 +129,7 @@ def complex_type_example(request):
         'second': 12,
         'third': True,
     }
+    sample_memory_view = memoryview(bytearray([8, 9, 10, 11]))
 
     sample_complex_set = {
         (
@@ -178,9 +189,11 @@ def complex_type_example(request):
     dump('')
     dump('Basic object examples:')
     dump(sample_set)
+    dump(sample_frozen_set)
     dump(sample_tuple)
     dump(sample_list)
     dump(sample_dict)
+    dump(sample_memory_view)
 
     dump('')
     dump('Elaborate object examples:')

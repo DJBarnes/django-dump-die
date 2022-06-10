@@ -437,7 +437,7 @@ def is_dict(obj):
 
 def is_set(obj):
     """Return True if object is most likely a dict."""
-    return isinstance(obj, set)
+    return isinstance(obj, set) or isinstance(obj, frozenset)
 
 
 def is_const(obj):
