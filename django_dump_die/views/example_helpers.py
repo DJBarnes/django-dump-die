@@ -14,6 +14,8 @@ from django.forms import ModelForm
 from types import ModuleType
 
 
+# region Helper Functions/Classes
+
 def sample_func():
     """Sample doc string"""
     return 42
@@ -333,3 +335,403 @@ class SampleModelForm(ModelForm):
             fields += ['sample_many']
         if hasattr(SampleDjangoModel, 'sample_one'):
             fields += ['sample_one']
+
+# endregion Helper Functions/Classes
+
+
+# region DD Display Functions
+
+def dump_simple_types():
+    """"""
+    # Generate variables to dump.
+    SAMPLE_CONST = 'Sample Constant Content'
+    sample_module = ModuleType('django.html')
+    sample_bytes = b'sample bytes'
+    sample_int = 42
+    sample_float = 42.42
+    sample_decimal = Decimal(42.42)
+    sample_string = 'Sample String Content'
+    sample_none = None
+    sample_bool = True
+
+    # Call dump on all generated variables.
+    dump('')
+    dump(SAMPLE_CONST)
+    dump(sample_module)
+    dump(sample_bytes)
+    dump(sample_int)
+    dump(sample_float)
+    dump(sample_decimal)
+    dump(sample_string)
+    dump(sample_none)
+    dump(sample_bool)
+
+
+def dump_intermediate_types():
+    """"""
+    # Generate variables to dump.
+    sample_bytes_array = bytearray([8, 9, 10, 11])
+    sample_complex = 3 - 1j
+
+    # Call dump on all generated variables.
+    dump('')
+    dump('Python type examples:')
+    dump(sample_bytes_array)
+    dump(sample_complex)
+
+    dump_datetime_types()
+
+    from pathlib import Path, PosixPath, PurePath, WindowsPath
+
+    # Generate variables to dump.
+    os_path = os.path.abspath(os.getcwd())
+    pure_path = PurePath(Path.cwd())
+    try:
+        posix_path = PosixPath(Path.cwd())
+    except NotImplementedError:
+        posix_path = None
+    try:
+        windows_path = WindowsPath(Path.cwd())
+    except NotImplementedError:
+        windows_path = None
+
+    # Call dump on all generated variables.
+    dump('')
+    dump('Python pathlib examples:')
+    dump(PurePath)
+    dump(pure_path)
+    if posix_path:
+        dump(PosixPath)
+        dump(posix_path)
+    if windows_path:
+        dump(WindowsPath)
+        dump(windows_path)
+
+
+def dump_complex_types():
+    """"""
+    # Generate variables to dump.
+    sample_set = {'A', 'B', 'C'}
+    sample_frozen_set = frozenset({'D', 'E', 'F'})
+    sample_tuple = ('A', 12, True)
+    sample_list = ['A', 12, True]
+    sample_dict = {
+        'first': 'A',
+        'second': 12,
+        'third': True,
+    }
+    sample_memory_view = memoryview(bytearray([8, 9, 10, 11]))
+
+    sample_complex_set = {
+        (
+            'A',
+            12,
+            True,
+        ),
+        (
+            'B',
+            24,
+            False,
+        ),
+    }
+
+    sample_complex_tuple = (
+        {
+            'first': 'A',
+            'second': 12,
+            'third': True,
+        },
+        {
+            'fourth': 'B',
+            'fifth': 24,
+            'sixth': False,
+        },
+    )
+
+    sample_complex_list = [
+        {
+            'first': 'A',
+            'second': 12,
+            'third': True,
+        },
+        {
+            'fourth': 'B',
+            'fifth': 24,
+            'sixth': False,
+        },
+    ]
+
+    sample_complex_dict = {
+        'initial': {
+            'first': 'A',
+            'second': 12,
+            'third': True,
+        },
+        'secondary': {
+            'fourth': 'B',
+            'fifth': 24,
+            'sixth': False,
+        },
+    }
+
+    # Call dump on all generated variables.
+    dump('')
+    dump('Basic object examples:')
+    dump(sample_set)
+    dump(sample_frozen_set)
+    dump(sample_tuple)
+    dump(sample_list)
+    dump(sample_dict)
+    dump(sample_memory_view)
+
+    dump('')
+    dump('Elaborate object examples:')
+    dump(sample_complex_set)
+    dump(sample_complex_tuple)
+    dump(sample_complex_list)
+    dump(sample_complex_dict)
+
+    dump('')
+    dump('Examples of pulling items/indexes/subsets from above objects:')
+    dump(sample_complex_list[0])
+    dump(sample_complex_tuple[0])
+    dump(sample_complex_tuple[0].items)
+    dump(sample_complex_dict['initial'])
+
+
+def dump_function_types():
+    """"""
+    # Generate variables to dump.
+    # None for this view.
+
+    # Call dump on all generated variables.
+    dump('')
+    dump('Function examples:')
+    dump(sample_func)
+    dump(sample_func_param)
+
+    dump('')
+    dump('Function call examples:')
+    dump(sample_func())
+    dump(sample_func_param(32))
+    dump(sample_func_param('test_param', some_kwarg=True))
+    dump(sample_func_param('test_param', 'extra_arg_1', 2, True))
+
+
+def dump_class_types():
+    """"""
+    # Import applicable helper functions/classes.
+    # Imported here so that these are only loaded on view access, and not package initialization.
+    from .example_helpers import ComplexClass, EmptyClass, SimpleClass
+
+    # Generate variables to dump.
+    sample_empty_class = EmptyClass()
+    sample_simple_class = SimpleClass()
+    sample_complex_class = ComplexClass()
+
+    # Call dump on all generated variables.
+    dump('')
+    dump('Class object examples:')
+    dump(EmptyClass)
+    dump(SimpleClass)
+    dump(ComplexClass)
+
+    dump('')
+    dump('Class instance examples:')
+    dump(sample_empty_class)
+    dump(sample_simple_class)
+    dump(sample_complex_class)
+    dump(sample_complex_class)
+
+    dump('')
+    dump('Examples of pulling nested items (classes/functions/data/etc) from above classes.')
+    dump(sample_complex_class._sample_private_simple_class)
+    dump(sample_complex_class.sample_public_simple_class)
+    dump(sample_complex_class.sample_public_simple_class.sample_public_dict)
+    dump(sample_complex_class.sample_public_simple_class.sample_public_dict['first'])
+    dump(sample_simple_class.sample_class_func)
+    dump(sample_simple_class.sample_class_param_func)
+    dump(sample_simple_class.sample_class_func())
+    dump(sample_simple_class.sample_class_param_func('test'))
+
+
+def dump_numeric_types():
+    """"""
+    # Generate variables to dump.
+    sample_int = 42
+    sample_float = 42.42
+    sample_decimal = Decimal(42.42)
+    sample_complex = 3 - 1j
+
+    # Call dump on all generated variables.
+    dump('')
+    dump('Numeric examples:')
+    dump(sample_int)
+    dump(sample_float)
+    dump(sample_decimal)
+    dump(sample_complex)
+
+
+def dump_datetime_types():
+    """"""
+    # Generate variables to dump.
+    sample_date = datetime.now().date()
+    sample_datetime = datetime.now()
+    sample_time = datetime.now().time()
+    sample_timedelta = timedelta(days=1)
+
+    # Call dump on all generated variables.
+    dump('')
+    dump('Date/Time examples:')
+    dump(sample_date)
+    dump(sample_datetime)
+    dump(sample_time)
+    dump(sample_timedelta)
+
+
+def dump_model_types():
+    """"""
+
+    # Import applicable helper functions/classes.
+    # Imported here so that these are only loaded on view access, and not package initialization.
+    import os
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+    # Generate variables to dump.
+    sample_django_model_empty = SampleDjangoModel(id=1)  # Must provide id so many to many field can be dumped.
+    sample_model_form = SampleModelForm()
+
+    # Call dump on all generated variables.
+    dump('')
+    dump('Model and ModelForm class examples:')
+    dump(SampleDjangoModel)
+    dump(SampleModelForm)
+
+    dump('')
+    dump('Model and ModelForm instance examples:')
+    dump(sample_django_model_empty)
+    dump(sample_model_form)
+
+    # Populate model with values and re-check.
+    dump('')
+    dump('Example of model with all values populated/updated from above.')
+    path = os.path.join(BASE_DIR, '../../media/uploads/test_img.png')
+    with open(path, 'rb') as local_file:
+        django_file = File(local_file, name=os.path.basename(local_file.name))
+
+        sample_django_model_populated = SampleDjangoModel(
+            pk=1,
+            sample_big_int=1,
+            sample_binary=b'',
+            sample_bool=True,
+            sample_char='A',
+            sample_date=datetime.now().date(),
+            sample_datetime=datetime.now(),
+            sample_decimal=Decimal(42.42),
+            sample_duration=None,
+            sample_email='someone@example.com',
+            sample_file=django_file,
+            sample_file_path='../media',
+            sample_float=42.42,
+            sample_image=django_file,
+            sample_int=5,
+            sample_ip='127.0.0.1',
+            # sample_json='{"key": "my_val"}',
+            # sample_pos_bint=345,
+            sample_pos_int=34,
+            sample_pos_sint=3,
+            sample_sint=3,
+            sample_slug='foobar',
+            sample_text='All my text',
+            sample_time=datetime.now().time(),
+            sample_url='https://github.com',
+            sample_uuid='asdfasdf',
+        )
+
+        dump(sample_django_model_populated)
+
+
+def dump_iterable_group_types():
+    """"""
+    dump_complex_types()
+
+
+def dump_syspath_types():
+    """"""
+    # Import applicable helper functions/classes.
+    # Imported here so that these are only loaded on view access, and not package initialization.
+    from pathlib import Path, PosixPath, PurePath, WindowsPath
+
+    # Generate variables to dump.
+    os_path = os.path.abspath(os.getcwd())
+    pure_path = PurePath(Path.cwd())
+    try:
+        posix_path = PosixPath(Path.cwd())
+    except NotImplementedError:
+        posix_path = None
+    try:
+        windows_path = WindowsPath(Path.cwd())
+    except NotImplementedError:
+        windows_path = None
+
+    # Call dump on all generated variables.
+    dump('')
+    dump('Python os.path examples:')
+    dump(os.path)
+    dump(os_path)
+
+    dump('')
+    dump('Python pathlib examples:')
+    dump(PurePath)
+    dump(pure_path)
+    if posix_path:
+        dump(PosixPath)
+        dump(posix_path)
+    if windows_path:
+        dump(WindowsPath)
+        dump(windows_path)
+
+
+def dump_edgecase_types():
+    """"""
+    # Call dump on problem children.
+    dump('Displaying example of various edge-case output.')
+    dump('')
+
+    dump('')
+    dump('Output of parens as string within dd parameters:')
+    dump(')')
+    dump('(')
+    dump(')()))(')
+    dump(')((()(')
+    dump(sample_func_param('('))
+    dump(sample_func_param(')'))
+
+    dump('')
+    dump('Function call examples (when also passing DumpDie-specific kwargs. Those should be excluded from output):')
+    dump(sample_func_param(32), deepcopy=True)
+    dump(sample_func_param(32), index_range=(0, 1))
+    dump(sample_func_param(32), deepcopy=True, index_range=(0, 1))
+    dump(sample_func_param(32, foo=12), deepcopy=True)
+
+    dump('')
+    dump('Function call examples (spanning multiple lines, in code):')
+    dump('')
+    dump(sample_func_param(
+        'test_param',
+        some_kwarg=False,
+        extra_kwarg_1='extra_kwarg',
+        extra_kwarg_2=2,
+        extra_kwarg_3=3,
+    ))
+    dump(sample_func_param(
+        'test_param',
+        'extra_arg_1',
+        2,
+        True,
+        extra_kwarg_1='extra_kwarg',
+        extra_kwarg_2=2,
+        extra_kwarg_3=3,
+    ))
+
+# endregion DD Display Functions

@@ -16,16 +16,31 @@
 
     <br>
 
+
+
+    <h2>By DumpDie Category:</h2>
     <ul>
       <li><p><a href="{% url 'django_dump_die:simple-type-example' %}">"Simple" Type Example</a></p></li>
       <li><p><a href="{% url 'django_dump_die:intermediate-type-example' %}">"Intermediate" Type Example</a></p></li>
       <li><p><a href="{% url 'django_dump_die:complex-type-example' %}">"Complex" Type Example</a></p></li>
       <li><p><a href="{% url 'django_dump_die:function-example' %}">Function Example</a></p></li>
       <li><p><a href="{% url 'django_dump_die:class-example' %}">Class Example</a></p></li>
-      <li><p><a href="{% url 'django_dump_die:django-model-example' %}">Django Model Example</a></p></li>
-      <li><p><a href="{% url 'django_dump_die:system-path-example' %}">System Path Example</a></p></li>
-      <li><p><a href="{% url 'django_dump_die:full-example' %}">Full Example</a></p></li>
-      <li><p><a href="{% url 'django_dump_die:edge-case-example' %}">Edge Case Example</a></p></li>
+      <li><p><a href="{% url 'django_dump_die:full-category-example' %}">Full Example</a></p></li>
     </ul>
+
+    <h2>By General Purpose</h2>
+    <ul>
+      <li><p><a href="{% url 'django_dump_die:numeric-example' %}">Numeric Example</a></p></li>
+      <li><p><a href="{% url 'django_dump_die:datetime-example' %}">DateTime Example</a></p></li>
+      <li><p><a href="{% url 'django_dump_die:django-model-example' %}">Django Model Example</a></p></li>
+      <li><p><a href="{% url 'django_dump_die:iterable-group-example' %}">Iterable Group Example</a></p></li>
+      <li><p><a href="{% url 'django_dump_die:system-path-example' %}">System Path Example</a></p></li>
+      <li><p><a href="{% url 'django_dump_die:full-purpose-example' %}">Full Example</a></p></li>
+    </ul>
+
+    <br>
+
+    <p><a href="{% url 'django_dump_die:edge-case-example' %}">Edge Case Example</a></p>
+
   </body>
 </html>
