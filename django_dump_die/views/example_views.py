@@ -7,6 +7,7 @@ from django.core.files import File
 from django.db import models
 from django.forms import ModelForm
 from django.shortcuts import render
+from pathlib import Path, PosixPath, PurePath, WindowsPath
 from types import ModuleType
 
 
@@ -230,18 +231,45 @@ def intermediate_type_example(request):
     """Example view, rendering only "intermediate type" object output."""
 
     # Generate variables to dump.
-
     sample_date = datetime.now().date()
     sample_datetime = datetime.now()
     sample_time = datetime.now().time()
+
+    os_path = os.path.abspath(os.getcwd())
+    pure_path = PurePath(Path.cwd())
+    try:
+        posix_path = PosixPath(Path.cwd())
+    except NotImplementedError:
+        posix_path = None
+    try:
+        windows_path = WindowsPath(Path.cwd())
+    except NotImplementedError:
+        windows_path = None
 
     # Call dump on all generated variables.
     dump('Displaying example of "intermediate type" object output.')
 
     dump('')
+    dump('Date/Time examples:')
     dump(sample_date)
     dump(sample_datetime)
     dump(sample_time)
+
+    dump('')
+    dump('Python os.path examples:')
+    dump(os.path)
+    dump(os_path)
+
+    dump('')
+    dump('Python pathlib examples:')
+    dump(PurePath)
+    dump(pure_path)
+    if posix_path:
+        dump(PosixPath)
+        dump(posix_path)
+    if windows_path:
+        dump(WindowsPath)
+        dump(windows_path)
 
     # Force dd to prevent further view parsing.
     dump('')
@@ -477,6 +505,48 @@ def django_model_type_example(request):
         )
 
         dump(sample_django_model_populated)
+
+    # Force dd to prevent further view parsing.
+    dump('')
+    dd('done')
+
+    # Show that any calls after dd() end up ignored.
+    return render(request, 'django_dump_die/sample.html', {})
+
+
+def system_path_example(request):
+    """Example view, rendering only "system path" object output."""
+
+    # Generate variables to dump.
+    os_path = os.path.abspath(os.getcwd())
+    pure_path = PurePath(Path.cwd())
+    try:
+        posix_path = PosixPath(Path.cwd())
+    except NotImplementedError:
+        posix_path = None
+    try:
+        windows_path = WindowsPath(Path.cwd())
+    except NotImplementedError:
+        windows_path = None
+
+    # Call dump on all generated variables.
+    dump('Displaying example of "system path" object output.')
+
+    dump('')
+    dump('Python os.path examples:')
+    dump(os.path)
+    dump(os_path)
+
+    dump('')
+    dump('Python pathlib examples:')
+    dump(PurePath)
+    dump(pure_path)
+    if posix_path:
+        dump(PosixPath)
+        dump(posix_path)
+    if windows_path:
+        dump(WindowsPath)
+        dump(windows_path)
 
     # Force dd to prevent further view parsing.
     dump('')

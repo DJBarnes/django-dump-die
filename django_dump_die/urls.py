@@ -13,6 +13,7 @@ from .views import (
     function_type_example,
     class_type_example,
     django_model_type_example,
+    system_path_example,
     full_example,
     edge_case_example,
 )
@@ -27,6 +28,7 @@ urlpatterns = [
     path('function-example', function_type_example, name='function-example'),
     path('class-example', class_type_example, name='class-example'),
     path('django-model-example', django_model_type_example, name='django-model-example'),
+    path('system-path-example', system_path_example, name='system-path-example'),
     path('full-example', full_example, name='full-example'),
     path('edge-case-example', edge_case_example, name='edge-case-example'),
     path('', index, name='index'),

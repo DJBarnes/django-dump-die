@@ -9,6 +9,8 @@ from django.conf import settings
 from django.forms.boundfield import BoundField
 from django.utils import timezone
 
+from pathlib import PosixPath, PurePath, PurePosixPath, PureWindowsPath
+
 
 # Simple types that do not need to be recursively inspected.
 SIMPLE_TYPES = [
@@ -30,6 +32,10 @@ INTERMEDIATE_TYPES = [
     datetime.time,
     timezone.timezone,
     # pytz.BaseTzInfo,  # pytz timezone object. Has to be handled separately. Noted here just as a reminder.
+    PosixPath,
+    PurePath,
+    PurePosixPath,
+    PureWindowsPath,
 ]
 
 
