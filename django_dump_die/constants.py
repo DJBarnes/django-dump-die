@@ -2,6 +2,7 @@
 
 import datetime
 import types
+import zoneinfo
 
 from decimal import Decimal
 
@@ -33,8 +34,9 @@ INTERMEDIATE_TYPES = [
     datetime.datetime,
     datetime.date,
     datetime.time,
+    datetime.timedelta,
     timezone.timezone,
-    # pytz.BaseTzInfo,  # pytz timezone object. Has to be handled separately. Noted here just as a reminder.
+    zoneinfo.ZoneInfo,
 
     PosixPath,
     PurePath,

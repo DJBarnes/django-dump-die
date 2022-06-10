@@ -5,13 +5,20 @@ Helps prevent package errors relating to example view load from propagating
 to general package usage.
 """
 
+import pytz
 import os
 from datetime import datetime, timedelta
 from decimal import Decimal
 from django.core.files import File
 from django.db import models
 from django.forms import ModelForm
+from django.utils import timezone
+from pathlib import Path, PosixPath, PurePath, WindowsPath
 from types import ModuleType
+from zoneinfo import ZoneInfo
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 # region Helper Functions/Classes
@@ -336,6 +343,7 @@ class SampleModelForm(ModelForm):
         if hasattr(SampleDjangoModel, 'sample_one'):
             fields += ['sample_one']
 
+
 # endregion Helper Functions/Classes
 
 
@@ -384,7 +392,6 @@ def dump_intermediate_types():
     from pathlib import Path, PosixPath, PurePath, WindowsPath
 
     # Generate variables to dump.
-    os_path = os.path.abspath(os.getcwd())
     pure_path = PurePath(Path.cwd())
     try:
         posix_path = PosixPath(Path.cwd())
@@ -398,13 +405,10 @@ def dump_intermediate_types():
     # Call dump on all generated variables.
     dump('')
     dump('Python pathlib examples:')
-    dump(PurePath)
     dump(pure_path)
     if posix_path:
-        dump(PosixPath)
         dump(posix_path)
     if windows_path:
-        dump(WindowsPath)
         dump(windows_path)
 
 
@@ -520,10 +524,6 @@ def dump_function_types():
 
 def dump_class_types():
     """"""
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import ComplexClass, EmptyClass, SimpleClass
-
     # Generate variables to dump.
     sample_empty_class = EmptyClass()
     sample_simple_class = SimpleClass()
@@ -575,28 +575,34 @@ def dump_numeric_types():
 def dump_datetime_types():
     """"""
     # Generate variables to dump.
-    sample_date = datetime.now().date()
-    sample_datetime = datetime.now()
-    sample_time = datetime.now().time()
-    sample_timedelta = timedelta(days=1)
+    sample_dt_date = datetime.now().date()
+    sample_tz_date = timezone.now().date()
+    sample_dt_datetime = datetime.now()
+    sample_tz_datetime = timezone.now()
+    sample_dt_time = datetime.now().time()
+    sample_tz_time = timezone.now().time()
+    sample_dt_timedelta = timedelta(days=1)
+    sample_tz_timedelta = timezone.timedelta(days=2)
+    sample_pytz_timezone = pytz.timezone('UTC')
+    sample_zoneinfo_timezone = ZoneInfo('UTC')
 
     # Call dump on all generated variables.
     dump('')
     dump('Date/Time examples:')
-    dump(sample_date)
-    dump(sample_datetime)
-    dump(sample_time)
-    dump(sample_timedelta)
+    dump(sample_dt_date)
+    dump(sample_tz_date)
+    dump(sample_dt_datetime)
+    dump(sample_tz_datetime)
+    dump(sample_dt_time)
+    dump(sample_tz_time)
+    dump(sample_dt_timedelta)
+    dump(sample_tz_timedelta)
+    dump(sample_pytz_timezone)
+    dump(sample_zoneinfo_timezone)
 
 
 def dump_model_types():
     """"""
-
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    import os
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
     # Generate variables to dump.
     sample_django_model_empty = SampleDjangoModel(id=1)  # Must provide id so many to many field can be dumped.
     sample_model_form = SampleModelForm()
@@ -658,10 +664,6 @@ def dump_iterable_group_types():
 
 def dump_syspath_types():
     """"""
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from pathlib import Path, PosixPath, PurePath, WindowsPath
-
     # Generate variables to dump.
     os_path = os.path.abspath(os.getcwd())
     pure_path = PurePath(Path.cwd())
@@ -682,13 +684,10 @@ def dump_syspath_types():
 
     dump('')
     dump('Python pathlib examples:')
-    dump(PurePath)
     dump(pure_path)
     if posix_path:
-        dump(PosixPath)
         dump(posix_path)
     if windows_path:
-        dump(WindowsPath)
         dump(windows_path)
 
 
