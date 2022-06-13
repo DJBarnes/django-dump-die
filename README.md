@@ -27,6 +27,8 @@ The entire concept is heavily based on the dump die functionality that comes
 with Php's [Laravel](https://laravel.com/)
 and [Symfony](https://symfony.com/) frameworks.
 
+![dd_sample_output](https://user-images.githubusercontent.com/4390026/173413467-afcea349-a28b-42c0-bd18-5922df17b453.png)
+
 ## Quickstart
 1.  Install the Django App via GitHub for now. Working on getting on Pypi soon.
     ```shell
