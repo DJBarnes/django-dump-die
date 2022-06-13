@@ -2,15 +2,6 @@ Django Dump & Die
 ============================
 
 Django-Dump-Die is a [Django](https://www.djangoproject.com/) app that
-provides a couple of debug tools in the form of built-in methods
-`dump` and `dd` that allow you to send details about a variable to the
-browser for inspection. Dumped variables are presented in an easy to read and
-fully expandable / collapsible tree. You can easily understand complex objects
-and the results of django queries with a simple call to either method.
-The entire concept is heavily based on the dump die functionality that comes
-with Laravel and Symfony.
-
-Django-Dump-Die is a [Django](https://www.djangoproject.com/) app that
 provides a couple of debug tools, in the form of built-in methods
 `dump` and `dd`. These allow sending details about a variable to the
 browser for inspection.
