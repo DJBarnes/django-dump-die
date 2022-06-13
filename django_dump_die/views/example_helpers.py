@@ -107,6 +107,12 @@ class ComplexClass:
         self.duplicate_sample_public_simple_class = self.sample_public_simple_class
 
 
+class SampleEnum(Enum):
+    """Sample Enum"""
+    RED = 1
+    BLUE = 2
+
+
 class SampleRelation(models.Model):
     """Sample Class for foreign relation"""
     relate_name = models.TextField()
@@ -491,6 +497,8 @@ def dump_complex_types():
 
     dump('')
     dump('Elaborate object examples:')
+    dump(SampleEnum.RED)
+    dump(SampleEnum.BLUE)
     dump(sample_complex_set)
     dump(sample_complex_tuple)
     dump(sample_complex_list)
