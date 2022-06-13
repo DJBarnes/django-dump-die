@@ -5,6 +5,7 @@ Helps prevent package errors relating to example view load from propagating
 to general package usage.
 """
 
+from enum import Enum
 import pytz
 import os
 from datetime import datetime, timedelta
@@ -350,7 +351,7 @@ class SampleModelForm(ModelForm):
 # region DD Display Functions
 
 def dump_simple_types():
-    """"""
+    """Dump Simple Types"""
     # Generate variables to dump.
     SAMPLE_CONST = 'Sample Constant Content'
     sample_module = ModuleType('django.html')
@@ -376,7 +377,7 @@ def dump_simple_types():
 
 
 def dump_intermediate_types():
-    """"""
+    """Dump Intermediate Types"""
     # Generate variables to dump.
     sample_bytes_array = bytearray([8, 9, 10, 11])
     sample_complex = 3 - 1j
@@ -413,7 +414,7 @@ def dump_intermediate_types():
 
 
 def dump_complex_types():
-    """"""
+    """Dump Complex Types"""
     # Generate variables to dump.
     sample_set = {'A', 'B', 'C'}
     sample_frozen_set = frozenset({'D', 'E', 'F'})
@@ -504,7 +505,7 @@ def dump_complex_types():
 
 
 def dump_function_types():
-    """"""
+    """Dump Function Types"""
     # Generate variables to dump.
     # None for this view.
 
@@ -523,7 +524,7 @@ def dump_function_types():
 
 
 def dump_class_types():
-    """"""
+    """Dump Class Types"""
     # Generate variables to dump.
     sample_empty_class = EmptyClass()
     sample_simple_class = SimpleClass()
@@ -556,7 +557,7 @@ def dump_class_types():
 
 
 def dump_numeric_types():
-    """"""
+    """Dump Numeric Types"""
     # Generate variables to dump.
     sample_int = 42
     sample_float = 42.42
@@ -573,7 +574,7 @@ def dump_numeric_types():
 
 
 def dump_datetime_types():
-    """"""
+    """Dump Datetime Types"""
     # Generate variables to dump.
     sample_dt_date = datetime.now().date()
     sample_tz_date = timezone.now().date()
@@ -602,7 +603,7 @@ def dump_datetime_types():
 
 
 def dump_model_types():
-    """"""
+    """Dump Model Types"""
     # Generate variables to dump.
     sample_django_model_empty = SampleDjangoModel(id=1)  # Must provide id so many to many field can be dumped.
     sample_model_form = SampleModelForm()
@@ -658,12 +659,12 @@ def dump_model_types():
 
 
 def dump_iterable_group_types():
-    """"""
+    """Dump Iterable Group Types"""
     dump_complex_types()
 
 
 def dump_syspath_types():
-    """"""
+    """Dump System Path Types"""
     # Generate variables to dump.
     os_path = os.path.abspath(os.getcwd())
     pure_path = PurePath(Path.cwd())
@@ -692,7 +693,7 @@ def dump_syspath_types():
 
 
 def dump_edgecase_types():
-    """"""
+    """Dump Edge Case Types"""
     # Call dump on problem children.
     dump('Displaying example of various edge-case output.')
     dump('')
