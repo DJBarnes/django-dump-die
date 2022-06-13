@@ -10,12 +10,13 @@ Dumped variables are presented in an easy to read and
 fully expandable / collapsible tree. You can easily understand complex objects
 and the results of django queries with a simple call to either method.
 
-This dump die output will intercept any page rendering, instead providing a
-separate response provided by Django-Dump-Die, with detailed information about
-the corresponding variables passed for inspection.
+When ``dump`` and/or ``dd`` are called, dump die will intercept the page
+response and replace the contents of the response with detailed information
+about the corresponding variables passed for inspection.
 
 The entire concept is heavily based on the dump die functionality that comes
-with Php's `Laravel <https://laravel.com/>`_ and Symfony.
+with Php's `Laravel <https://laravel.com/>`_
+and `Symfony <https://symfony.com/>`_ frameworks.
 
 .. image:: img/dd_sample_output.png
 

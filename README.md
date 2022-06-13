@@ -10,6 +10,23 @@ and the results of django queries with a simple call to either method.
 The entire concept is heavily based on the dump die functionality that comes
 with Laravel and Symfony.
 
+Django-Dump-Die is a [Django](https://www.djangoproject.com/) app that
+provides a couple of debug tools, in the form of built-in methods
+`dump` and `dd`. These allow sending details about a variable to the
+browser for inspection.
+
+Dumped variables are presented in an easy to read and
+fully expandable / collapsible tree. You can easily understand complex objects
+and the results of django queries with a simple call to either method.
+
+When `dump` and/or `dd` are called, dump die will intercept the page
+response and replace the contents of the response with detailed information
+about the corresponding variables passed for inspection.
+
+The entire concept is heavily based on the dump die functionality that comes
+with Php's [Laravel](https://laravel.com/)
+and [Symfony](https://symfony.com/) frameworks.
+
 ![django-dump-die-sample-output](https://github.com/DJBarnes/django-dump-die/blob/documentation/docs/source/img/dd_sample_output.png)
 
 ## Quickstart
@@ -61,20 +78,33 @@ with Laravel and Symfony.
 The middleware is where most of this package's heavy lifting happens.
 
 By having the middleware installed, you can run ``dump(<variable>)`` and/or
-``dd(<variable>)`` anywhere you want, and it will run the dump logic.
-No importing or extra logic is required.
+``dd(<variable>)`` in any file that is part of the request response cycle,
+and it will run the dump logic. No importing or extra logic is required.
 
-Each ``dump(<variable>)`` command will add the object passed to dump to an
-internal list that will be dumped either when a ``dd(<variable>)`` is used
-or if the entirety of the request finishes.
-You can have as many ``dump(<variable>)`` statements as you want leading up to a ``dd(<variable>)``.
+Each ``dump(<variable>)`` command will add the passed object to an internal
+list that will be dumped either when a ``dd(<variable>)`` is used, or if the
+entirety of the request finishes. You can have as many ``dump(<variable>)``
+statements as you want leading up to an optional ``dd(<variable>)``.
 
-If you make a call to ``dd(<variable>)``, execution will immediately stop and all dumped
-objects including the the one sent to dd will be output.
+If you make a call to ``dd(<variable>)``, execution will immediately stop
+and all dumped objects (including the the one sent to dd) will be output.
 
-If you do not make a call to ``dd(<variable>)`` and only use ``dump(<variable>)`` statements,
-the request will continue processing until it is time to return the response at which
-point it will replace the response with the data that has been dumped thus far.
+If you do not make a call to ``dd(<variable>)`` and only use
+``dump(<variable>)`` statements, the request will continue processing until
+it is time to return the response. At this point, Django-Dump-Die will
+intercept and replace the response with the data that has been dumped thus
+far.
+
+---
+:information_source: **NOTE**
+Because dump die uses middleware to internally handle keeping track of
+what to dump and then actually dumping the data to the browser, any
+call to ``dump`` or ``dd`` must be done in a file that will be processed
+during the request response cycle. Most commonly this will be a
+``views.py`` file, but could also be utils called from a view.
+Attempting to ``dump`` or ``dd`` from a console command will not work.
+
+---
 
 <br>
 
