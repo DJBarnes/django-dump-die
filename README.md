@@ -27,8 +27,6 @@ The entire concept is heavily based on the dump die functionality that comes
 with Php's [Laravel](https://laravel.com/)
 and [Symfony](https://symfony.com/) frameworks.
 
-![django-dump-die-sample-output](https://github.com/DJBarnes/django-dump-die/blob/documentation/docs/source/img/dd_sample_output.png)
-
 ## Quickstart
 1.  Install the Django App via GitHub for now. Working on getting on Pypi soon.
     ```shell
@@ -61,7 +59,7 @@ and [Symfony](https://symfony.com/) frameworks.
     ]
     ```
 
-4.  Ensure that you have DEBUG set to True in your Django ``settings.py`` file:
+4.  Ensure that you have **DEBUG** set to ``True`` in your Django ``settings.py`` file:
     ```python
     DEBUG = True
     ```
@@ -73,6 +71,16 @@ and [Symfony](https://symfony.com/) frameworks.
     in production nor should you ever have **DEBUG** set to `True` in production.
 
     ---
+
+5.  From a file that is part of the request / response cycle such as a Django
+    View in `views.py`, make a call to dd sending it the contents of a variable
+    to inspect.
+
+    **views.py**
+    ```python
+    def my_awesome_view(request):
+        dd(request)
+    ```
 
 ## Usage
 The middleware is where most of this package's heavy lifting happens.
