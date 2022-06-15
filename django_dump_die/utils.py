@@ -20,10 +20,18 @@ from tokenize import (
 
 from collections.abc import Sequence
 from decimal import Decimal
+from enum import EnumMeta
 
 from django.core.exceptions import ObjectDoesNotExist
 
 from django_dump_die.constants import INCLUDE_FILENAME_LINENUMBER, COLORIZE_DUMPED_OBJECT_NAME
+
+class Enum:
+    """Enum faker class so an entire Enum can be dumped correctly."""
+    def __init__(self, *args, **kwargs):
+        """Set attrs on this class for each kwarg passed in."""
+        for key, val in kwargs.items():
+            setattr(self, key, val)
 
 
 def get_dumped_object_info(obj, index_range=None, deepcopy=False):
@@ -41,6 +49,11 @@ def get_dumped_object_info(obj, index_range=None, deepcopy=False):
 
     # Sanitize and validate provided index values.
     start_index, end_index = sanitize_index_range(index_range)
+
+    # Handle if Enum by converting to a standard class.
+    # NOTE: Dumping an Enum without conversion results in a blank string being dumped.
+    if isinstance(obj, EnumMeta):
+        obj = Enum(**obj.__members__)
 
     # Handle if deepcopy set.
     original_obj = None

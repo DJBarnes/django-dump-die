@@ -497,12 +497,11 @@ def dump_complex_types():
 
     dump('')
     dump('Elaborate object examples:')
-    dump(SampleEnum.RED)
-    dump(SampleEnum.BLUE)
     dump(sample_complex_set)
     dump(sample_complex_tuple)
     dump(sample_complex_list)
     dump(sample_complex_dict)
+    dump(SampleEnum)
 
     dump('')
     dump('Examples of pulling items/indexes/subsets from above objects:')
@@ -510,6 +509,8 @@ def dump_complex_types():
     dump(sample_complex_tuple[0])
     dump(sample_complex_tuple[0].items)
     dump(sample_complex_dict['initial'])
+    dump(SampleEnum.RED)
+    dump(SampleEnum.BLUE)
 
 
 def dump_function_types():
