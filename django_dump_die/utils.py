@@ -147,7 +147,7 @@ def get_fully_qualified_dumped_line(base_frame, frame_info):
             pass
 
     # Strip out extra whitespace, if present.
-    code_context = re.sub('\s+', ' ', code_context)
+    code_context = re.sub(r'\s+', ' ', code_context)
 
     # Return final result.
     return code_context
