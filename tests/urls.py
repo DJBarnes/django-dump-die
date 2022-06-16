@@ -1,15 +1,13 @@
 """
-django_dump_die URL Configuration.
-Used exclusively to show example output.
+Testing URL configuration for django-dump-die project.
+
+Mocks being the "project settings root" urls.py file.
 """
 
-from django.urls import path
-
-from . import views
+# System Imports.
+from django.urls import include, path
 
 
 urlpatterns = [
-    path('function', views.function_example, name='function_example'),
-    path('simple', views.simple_example, name='simple_example'),
-    path('data_structure', views.data_structure_example, name='data_structure_example'),
+    path('', (include('django_dump_die.urls', namespace='django_dump_die'))),
 ]
