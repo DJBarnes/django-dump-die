@@ -7,7 +7,10 @@ name = "django-dump-die"
 version = "0.1.0"
 description = "A Django app to add Laravel/Symfony-like dump and die functionality."
 readme = "README.md"
-authors = [{ name = "David Barnes", email = "barnesdavidj@gmail.com" }]
+authors = [
+    { name = "David Barnes", email = "barnesdavidj@gmail.com" },
+    { name = "Brandon Rodriguez", email = "brodriguez8774@gmail.com"},
+]
 license = { file = "LICENSE" }
 classifiers = [
     "Environment :: Web Environment",
