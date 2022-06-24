@@ -429,6 +429,8 @@ def is_iterable(obj):
     """Return True if object can be iterated."""
     try:
         iter(obj) and len(obj)
+    except NotImplementedError:
+        return False
     except TypeError:
         return False
     except ValueError:
