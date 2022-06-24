@@ -36,6 +36,7 @@ pylint-plugin-utils = "*"       # Additional pylint functionality for things lik
 
 # Testing/Pytest dependencies.
 coverage = "*"                  # Outputs testing coverage data.
+django-expanded-test-cases = "*"    # Utilities for easier testing.
 pytest = "*"                    # Base Pytest package. Current preferred testing method.
 pytest-django = "*"             # Additional Pytest logic for Django support.
 pytest-xdist = "*"              # Additional Pytest features, such as multithreading and looping.
