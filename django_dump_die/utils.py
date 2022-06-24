@@ -406,8 +406,8 @@ def safe_repr(obj):
     try:
         str_obj = repr(obj)
     except ObjectDoesNotExist:
-        # L8R: A list of deleted db objects will cause repr(list) to fail.
-        # We should detect this and print out the __class__ of the contents of
+        # NOTE: A list of deleted db objects will cause repr(list) to fail.
+        # So, we detect this and print out the __class__ of the contents of
         # the list.
         str_obj = f'<{obj.__class__} DELETED>'
 

@@ -195,7 +195,6 @@ redefining-builtins-modules=six.moves,past.builtins,future.builtins,builtins,io
 # List of note tags to take in consideration, separated by a comma.
 notes=DEBUG,
       REVIEW,
-      NOTE,
       HACK,
       XXX,
       L8R,
