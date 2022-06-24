@@ -18,14 +18,13 @@ python_version = "3.9"
  ##
 [packages]
 django = "*"
-pytz = "*"  # Needed until fully on ZoneInfo.
+pillow = "*"                    # Required to make sure image field dumping works correctly.
+pytz = "*"                      # Needed until fully on ZoneInfo.
 
 ###
  # Development and testing packages, installed via `pipenv sync --dev`.
  ##
 [dev-packages]
-# Image handling dependencies.
-pillow = "*"                    # Required to make sure image field dumping works correctly.
 # Syntax-checking dependencies.
 autopep8 = "*"                  # Auto-formats files for pep8 recommendations. See `setup.cfg` for our exceptions.
 black="*"                       # "Uncompromising" Python code formatter.
@@ -37,6 +36,7 @@ pylint-plugin-utils = "*"       # Additional pylint functionality for things lik
 # Testing/Pytest dependencies.
 coverage = "*"                  # Outputs testing coverage data.
 django-expanded-test-cases = "*"    # Utilities for easier testing.
+freezegun = "*"                 # Allows "freezing" tests to specific datetimes, for consistent checking and output.
 pytest = "*"                    # Base Pytest package. Current preferred testing method.
 pytest-django = "*"             # Additional Pytest logic for Django support.
 pytest-xdist = "*"              # Additional Pytest features, such as multithreading and looping.
