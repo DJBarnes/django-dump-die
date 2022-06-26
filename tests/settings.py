@@ -6,15 +6,16 @@ DATABASES = {
 }
 
 INSTALLED_APPS = (
+    'django.contrib.sessions',
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
     'django.contrib.auth',
     'django_dump_die',
-    'tests',
 )
 
 MIDDLEWARE = [
     'django_dump_die.middleware.DumpAndDieMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
 ]
 
 ROOT_URLCONF = 'tests.urls'
