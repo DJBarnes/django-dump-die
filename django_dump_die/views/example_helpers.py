@@ -30,8 +30,11 @@ def sample_func():
 
 
 def sample_func_param(param1, *args, some_kwarg=None, **kwargs):
-    """Sample param doc string"""
-    return param1
+    """Sample param doc string.
+
+    :param param1: Doc for param1.
+    """
+    return 'MyReturnValue with param1 as: {0}'.format(param1)
 
 
 class EmptyClass:
@@ -350,7 +353,6 @@ class SampleModelForm(ModelForm):
         if hasattr(SampleDjangoModel, 'sample_one'):
             fields += ['sample_one']
 
-
 # endregion Helper Functions/Classes
 
 
@@ -399,24 +401,24 @@ def dump_intermediate_types():
     from pathlib import Path, PosixPath, PurePath, WindowsPath
 
     # Generate variables to dump.
-    pure_path = PurePath(Path.cwd())
+    sample_pure_path = PurePath(Path.cwd())
     try:
-        posix_path = PosixPath(Path.cwd())
+        sample_posix_path = PosixPath(Path.cwd())
     except NotImplementedError:
-        posix_path = None
+        sample_posix_path = None
     try:
-        windows_path = WindowsPath(Path.cwd())
+        sample_windows_path = WindowsPath(Path.cwd())
     except NotImplementedError:
-        windows_path = None
+        sample_windows_path = None
 
     # Call dump on all generated variables.
     dump('')
     dump('Python pathlib examples:')
-    dump(pure_path)
-    if posix_path:
-        dump(posix_path)
-    if windows_path:
-        dump(windows_path)
+    dump(sample_pure_path)
+    if sample_posix_path:
+        dump(sample_posix_path)
+    if sample_windows_path:
+        dump(sample_windows_path)
 
 
 def dump_complex_types():
@@ -521,14 +523,20 @@ def dump_function_types():
     # Call dump on all generated variables.
     dump('')
     dump('Function examples:')
+    # Minimal function with no args.
     dump(sample_func)
+    # Function with args & kwargs.
     dump(sample_func_param)
 
     dump('')
     dump('Function call examples:')
+    # Calling above "minimal function with no args".
     dump(sample_func())
+    # Calling function with one arg.
     dump(sample_func_param(32))
+    # Calling function with both args & kwargs.
     dump(sample_func_param('test_param', some_kwarg=True))
+    # Calling function with multiple args.
     dump(sample_func_param('test_param', 'extra_arg_1', 2, True))
 
 

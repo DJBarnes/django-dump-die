@@ -37,7 +37,7 @@ def intermediate_type_example(request):
     from .example_helpers import dump_intermediate_types
 
     # Output desired dump values.
-    dump('Displaying example of "intermediate type" object.')
+    dump('Displaying example of "intermediate type" object output.')
     dump('')
     dump_intermediate_types()
     dump('')
