@@ -278,10 +278,13 @@ Some of these "intermediate type" variables have recurse an unhelpful number of 
 When the tool encounters a defined intermediate type it will no longer recurse further and instead output a string representation as well as the direct attributes. For the sake of processing times, these attributes are not further expandable.
 
 Predefined intermediate types include:
+* bytesarray
+* complex number
 * datetime
 * date
 * time
 * timezone
+* pathlib paths
 
 If you would like to add additional intermediate types that are specific to your project, you can do that here. Be sure to list each type in the list as a string of the type to treat as an intermediate type.
 
@@ -534,9 +537,9 @@ DJANGO_DD_COLOR_SCHEME = {
     'types': {
         'bool': <value>,                #  Booleans
         'bound': <value>,               #  Django Bound Form Field
-        'datetime': <value>,            #  DateTimes and similar types
         'default': <value>,             #  Default color if does not fit into any of the others
         'docs': <value>,                #  Class function documentation
+        'intermediate': <value>,        #  The brief description output for "Intermediate" types
         'module': <value>,              #  Module via ModuleType
         'none': <value>,                #  None
         'number': <value>,              #  Integers, Floats, and Decimals

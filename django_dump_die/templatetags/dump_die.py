@@ -390,7 +390,7 @@ def _handle_simple_type(obj):
     elif isinstance(obj, (int, Decimal, float, bytes)):
         css_class = 'number'
     elif _is_intermediate_type(obj):
-        css_class = 'datetime'
+        css_class = 'intermediate'
     elif isinstance(obj, types.ModuleType):
         css_class = 'module'
     elif isinstance(obj, BoundField):
