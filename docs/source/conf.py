@@ -25,7 +25,7 @@ copyright = '2022, David Barnes'
 author = 'David Barnes'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '0.1.1'
 
 
 # -- General configuration ---------------------------------------------------
