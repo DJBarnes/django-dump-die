@@ -21,13 +21,9 @@ and [Symfony](https://symfony.com/) frameworks.
 ![dd_sample_output](https://user-images.githubusercontent.com/4390026/173413467-afcea349-a28b-42c0-bd18-5922df17b453.png)
 
 ## Quickstart
-1.  Install the Django App via GitHub for now. Working on getting on Pypi soon.
+1.  Install the Django App via Pypi.
     ```shell
-    python -m pip install -e git+https://github.com/DJBarnes/django-dump-die@master
-    ```
-    or
-    ```shell
-    pipenv install -e "git+https://github.com/DJBarnes/django-dump-die#egg=django-dump-die"
+    python -m pip install django-dump-die
     ```
 
 <br>
