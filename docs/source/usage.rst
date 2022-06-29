@@ -155,8 +155,9 @@ However, the use of this tag comes with a lot of caveats.
     Bootstrap and jQuery. These lines are loaded in as part of the processing
     that the dump tag does. As a result, these loads are done immediately
     before rendering out the dumped data and thus may occur in the middle of
-    the HTML document. Due to this, it is possible that CSP rules could prevent
-    the required JS & CSS from properly loading.
+    the HTML document. Due to this, it is possible that
+    `CSP rules <https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP>`_ could
+    prevent the required JS & CSS from properly loading.
 
 In order to use the template tag from a template you must load the template
 tags via a load tag before you can use the dump tag.
