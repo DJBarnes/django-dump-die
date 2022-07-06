@@ -16,7 +16,8 @@ from django.forms import ModelForm
 from django.utils import timezone
 from pathlib import Path, PosixPath, PurePath, WindowsPath
 from types import ModuleType
-from zoneinfo import ZoneInfo
+
+from django_dump_die.constants import ZONEINFO_PRESENT
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -398,8 +399,6 @@ def dump_intermediate_types():
 
     dump_datetime_types()
 
-    from pathlib import Path, PosixPath, PurePath, WindowsPath
-
     # Generate variables to dump.
     sample_pure_path = PurePath(Path.cwd())
     try:
@@ -602,7 +601,8 @@ def dump_datetime_types():
     sample_dt_timedelta = timedelta(days=1)
     sample_tz_timedelta = timezone.timedelta(days=2)
     sample_pytz_timezone = pytz.timezone('UTC')
-    sample_zoneinfo_timezone = ZoneInfo('UTC')
+    if ZONEINFO_PRESENT:
+        sample_zoneinfo_timezone = ZoneInfo('UTC')
 
     # Call dump on all generated variables.
     dump('')
@@ -616,7 +616,8 @@ def dump_datetime_types():
     dump(sample_dt_timedelta)
     dump(sample_tz_timedelta)
     dump(sample_pytz_timezone)
-    dump(sample_zoneinfo_timezone)
+    if ZONEINFO_PRESENT:
+        dump(sample_zoneinfo_timezone)
 
 
 def dump_model_types():

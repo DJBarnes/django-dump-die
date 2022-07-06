@@ -2,7 +2,11 @@
 
 import datetime
 import types
-import zoneinfo
+try:
+    from zoneinfo import ZoneInfo
+    ZONEINFO_PRESENT = True
+except ImportError:
+    ZONEINFO_PRESENT = False
 
 from decimal import Decimal
 
@@ -36,13 +40,15 @@ INTERMEDIATE_TYPES = [
     datetime.time,
     datetime.timedelta,
     timezone.timezone,
-    zoneinfo.ZoneInfo,
 
     PosixPath,
     PurePath,
     PurePosixPath,
     PureWindowsPath,
 ]
+
+if ZONEINFO_PRESENT:
+    INTERMEDIATE_TYPES.append(zoneinfo.ZoneInfo)
 
 
 # List of additional simple types defined as strings that do not need to be recursively inspected.
