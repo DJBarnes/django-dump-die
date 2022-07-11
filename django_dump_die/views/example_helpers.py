@@ -19,6 +19,9 @@ from types import ModuleType
 
 from django_dump_die.constants import ZONEINFO_PRESENT
 
+if ZONEINFO_PRESENT:
+    from zoneinfo import ZoneInfo
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 

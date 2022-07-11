@@ -48,7 +48,7 @@ INTERMEDIATE_TYPES = [
 ]
 
 if ZONEINFO_PRESENT:
-    INTERMEDIATE_TYPES.append(zoneinfo.ZoneInfo)
+    INTERMEDIATE_TYPES.append(ZoneInfo)
 
 
 # List of additional simple types defined as strings that do not need to be recursively inspected.
