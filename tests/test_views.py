@@ -1,11 +1,15 @@
 
 import datetime
 import os
+import unittest
+
 from django.test import override_settings
 from django.utils import timezone
 from django_expanded_test_cases import IntegrationTestCase
 from freezegun import freeze_time
 from unittest.mock import patch
+
+from django_dump_die.constants import PYTZ_PRESENT, ZONEINFO_PRESENT
 
 
 # Set datetime for freezegun and template render comparison.
@@ -1762,6 +1766,7 @@ class DumpDieIntermediateTypeTestCase(GenericViewTestCase):
             content_ends_before='sample_pytz_timezone',
         )
 
+    @unittest.skipIf(not PYTZ_PRESENT, 'Pytz not present. Likely Django >= 4.0.')
     @patch('django_dump_die.templatetags.dump_die._generate_unique')
     def test_pytz_timezone_display(self, mocked_unique_generation):
         """Verify dumping a "pytz timezone" type has expected output."""
@@ -1850,6 +1855,7 @@ class DumpDieIntermediateTypeTestCase(GenericViewTestCase):
             content_ends_before='sample_zoneinfo_timezone',
         )
 
+    @unittest.skipIf(not ZONEINFO_PRESENT, 'ZoneInfo not present. Likely Python < 3.9.')
     @patch('django_dump_die.templatetags.dump_die._generate_unique')
     def test_zoneinfo_timezone_display(self, mocked_unique_generation):
         """Verify dumping a "zoneinfo timezone" type has expected output."""

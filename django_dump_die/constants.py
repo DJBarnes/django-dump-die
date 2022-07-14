@@ -2,19 +2,25 @@
 
 import datetime
 import types
-try:
-    from zoneinfo import ZoneInfo
-    ZONEINFO_PRESENT = True
-except ImportError:
-    ZONEINFO_PRESENT = False
 
 from decimal import Decimal
-
 from django.conf import settings
 from django.forms.boundfield import BoundField
 from django.utils import timezone
 
 from pathlib import PosixPath, PurePath, PurePosixPath, PureWindowsPath
+
+# Imports that may not be accessible, depending on local python environment setup.
+try:
+    from zoneinfo import ZoneInfo
+    ZONEINFO_PRESENT = True
+except ImportError:
+    ZONEINFO_PRESENT = False
+try:
+    import pytz
+    PYTZ_PRESENT = True
+except ImportError:
+    PYTZ_PRESENT = False
 
 
 # Simple types that do not need to be recursively inspected.
