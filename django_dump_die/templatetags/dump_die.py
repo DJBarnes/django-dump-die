@@ -1,7 +1,6 @@
 """Template Tags for DumpDie"""
 
 import inspect
-import pytz
 import re
 import types
 
@@ -25,6 +24,7 @@ from django_dump_die.constants import (
     INCLUDE_MAGIC_METHODS,
     INCLUDE_ATTRIBUTES,
     INCLUDE_FUNCTIONS,
+    PYTZ_PRESENT,
 )
 
 from django_dump_die.utils import (
@@ -45,6 +45,11 @@ from django_dump_die.utils import (
     is_private,
     is_magic,
 )
+
+# Imports that may not be accessible, depending on local python environment setup.
+if PYTZ_PRESENT:
+    import pytz
+
 
 register = template.Library()
 
@@ -135,7 +140,7 @@ def dump_object(
     # OR if direct parent is a intermediate (excluding pytz timezone objects).
     elif (
         _is_simple_type(obj)
-        or (parent_is_intermediate and not isinstance(obj, pytz.BaseTzInfo))
+        or (PYTZ_PRESENT and parent_is_intermediate and not isinstance(obj, pytz.BaseTzInfo))
     ):
         return _handle_simple_type(obj)
 
@@ -341,7 +346,7 @@ def _is_intermediate_type(obj):
     """Return if the obj is an intermediate type."""
 
     # Special handling for pytz timezone objects.
-    if isinstance(obj, pytz.BaseTzInfo):
+    if PYTZ_PRESENT and isinstance(obj, pytz.BaseTzInfo):
         return True
 
     # Handling for all other objects.

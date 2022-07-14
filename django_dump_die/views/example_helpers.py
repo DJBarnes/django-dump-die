@@ -6,7 +6,6 @@ to general package usage.
 """
 
 from enum import Enum
-import pytz
 import os
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -17,8 +16,10 @@ from django.utils import timezone
 from pathlib import Path, PosixPath, PurePath, WindowsPath
 from types import ModuleType
 
-from django_dump_die.constants import ZONEINFO_PRESENT
+from django_dump_die.constants import PYTZ_PRESENT, ZONEINFO_PRESENT
 
+if PYTZ_PRESENT:
+    import pytz
 if ZONEINFO_PRESENT:
     from zoneinfo import ZoneInfo
 
@@ -603,7 +604,8 @@ def dump_datetime_types():
     sample_tz_time = timezone.now().time()
     sample_dt_timedelta = timedelta(days=1)
     sample_tz_timedelta = timezone.timedelta(days=2)
-    sample_pytz_timezone = pytz.timezone('UTC')
+    if PYTZ_PRESENT:
+        sample_pytz_timezone = pytz.timezone('UTC')
     if ZONEINFO_PRESENT:
         sample_zoneinfo_timezone = ZoneInfo('UTC')
 
@@ -618,7 +620,8 @@ def dump_datetime_types():
     dump(sample_tz_time)
     dump(sample_dt_timedelta)
     dump(sample_tz_timedelta)
-    dump(sample_pytz_timezone)
+    if PYTZ_PRESENT:
+        dump(sample_pytz_timezone)
     if ZONEINFO_PRESENT:
         dump(sample_zoneinfo_timezone)
 

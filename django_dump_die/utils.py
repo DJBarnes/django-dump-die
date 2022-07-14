@@ -5,7 +5,6 @@ import inspect
 import linecache
 import tokenize
 
-import pytz
 import io
 import re
 from tokenize import (
@@ -24,7 +23,12 @@ from enum import EnumMeta
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from django_dump_die.constants import INCLUDE_FILENAME_LINENUMBER, COLORIZE_DUMPED_OBJECT_NAME
+from django_dump_die.constants import COLORIZE_DUMPED_OBJECT_NAME, INCLUDE_FILENAME_LINENUMBER, PYTZ_PRESENT
+
+# Imports that may not be accessible, depending on local python environment setup.
+if PYTZ_PRESENT:
+    import pytz
+
 
 class Enum:
     """Enum faker class so an entire Enum can be dumped correctly."""
@@ -394,7 +398,7 @@ def get_obj_type(obj):
     # Special handling for certain types.
     if obj_type == 'NoneType':
         obj_type = 'null'
-    elif isinstance(obj, pytz.BaseTzInfo):
+    elif PYTZ_PRESENT and isinstance(obj, pytz.BaseTzInfo):
         obj_type = 'pytz_timezone'
 
     return obj_type
