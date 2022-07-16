@@ -1763,7 +1763,7 @@ class DumpDieIntermediateTypeTestCase(GenericViewTestCase):
                 '<hr>',
             ],
             content_starts_after='sample_dt_timedelta',
-            content_ends_before='sample_pytz_timezone',
+            content_ends_before='Python pathlib examples:',
         )
 
     @unittest.skipIf(not PYTZ_PRESENT, 'Pytz not present. Likely Django >= 4.0.')
@@ -1852,7 +1852,7 @@ class DumpDieIntermediateTypeTestCase(GenericViewTestCase):
                 '<hr>',
             ],
             content_starts_after='sample_tz_timedelta',
-            content_ends_before='sample_zoneinfo_timezone',
+            content_ends_before='Python pathlib examples:',
         )
 
     @unittest.skipIf(not ZONEINFO_PRESENT, 'ZoneInfo not present. Likely Python < 3.9.')
@@ -1940,7 +1940,7 @@ class DumpDieIntermediateTypeTestCase(GenericViewTestCase):
 
                 '<hr>',
             ],
-            content_starts_after='sample_pytz_timezone',
+            content_starts_after='sample_tz_timedelta',
             content_ends_before='Python pathlib examples:',
         )
 

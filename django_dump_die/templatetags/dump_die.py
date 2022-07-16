@@ -137,10 +137,13 @@ def dump_object(
             intermediate_value = safe_str(obj)
 
     # Handle if obj is a simple type (Null/None, int, str, bool, and basic number types)
-    # OR if direct parent is a intermediate (excluding pytz timezone objects).
+    # OR if direct parent is an intermediate (excluding pytz timezone objects).
     elif (
         _is_simple_type(obj)
-        or (PYTZ_PRESENT and parent_is_intermediate and not isinstance(obj, pytz.BaseTzInfo))
+        or (
+            (PYTZ_PRESENT and parent_is_intermediate and not isinstance(obj, pytz.BaseTzInfo))
+            or parent_is_intermediate
+        )
     ):
         return _handle_simple_type(obj)
 
