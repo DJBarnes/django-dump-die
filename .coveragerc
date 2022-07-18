@@ -1,0 +1,32 @@
+# .coveragerc to control coverage.py
+[run]
+branch = True
+omit =
+    # Omit the virtual environment
+    ./.venv/*
+
+    # Omit the test folders
+    */tests/*
+    */tests.py
+
+    # Omit the migration folders
+    */migrations/*
+
+    # Omit django files
+    */manage.py
+    */wsgi.py
+    */settings.py
+    */asgi.py
+
+    # Omit management commands
+    */management/commands/*.py
+
+    # Omit init files.
+    */__init__.py
+
+    # Omit setup files
+    ./setup.py
+
+    # Omit Testing Scripts
+    ./runpytests.py
+    ./runtests.py

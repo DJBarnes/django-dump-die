@@ -73,6 +73,7 @@ htmlcov/
 nosetests.xml
 coverage.xml
 .pytest_cache
+.django_dump_die_coverage_html_report/
 
 # Translations
 *.mo
