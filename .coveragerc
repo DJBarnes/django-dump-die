@@ -1,4 +1,12 @@
 # .coveragerc to control coverage.py
+[report]
+exclude_lines =
+    pragma: no cover
+    return render.request, .*
+    except ImportError:
+    if ZONEINFO_PRESENT:
+    if PYTZ_PRESENT:
+
 [run]
 branch = True
 omit =
