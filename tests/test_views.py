@@ -1,4 +1,4 @@
-
+"""Views for testing dd output."""
 import datetime
 import os
 import unittest
@@ -3706,7 +3706,7 @@ class DumpDieViewFunctionTestCase(GenericViewTestCase):
         )
 
     def test_func_with_args_display(self):
-        """Verify dumping a "function" type (with args/kwawrgs) has expected output."""
+        """Verify dumping a "function" type (with args/kwargs) has expected output."""
         self.assertGetResponse(
             self.url,
             expected_title='DD',

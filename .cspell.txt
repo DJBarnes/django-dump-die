@@ -1,5 +1,8 @@
 # System
 automodule
+bint
+bools
+bytesarray
 endfor
 endregion
 formset
@@ -11,9 +14,12 @@ kwargs
 htmldjango
 maxdepth
 modindex
+nbytes
+ndim
 pytz
 quickstart
 subpackages
+syspath
 templatetags
 toctree
 undoc
@@ -21,12 +27,17 @@ urlpatterns
 
 # Domain
 asdfasdf
-bint
+deepcopied
+dunder
 dunders
+edgecase
 endmarkers
+freezegun
 hexcode
+itemsize
 laravel
 linenumber
 openpyxl
 sample_const
+suboffsets
 symfony
