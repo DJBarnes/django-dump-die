@@ -4,7 +4,7 @@ build-backend = 'setuptools.build_meta:__legacy__'
 
 [project]
 name = "django-dump-die"
-version = "0.1.2"
+version = "0.1.3"
 description = "A Django app to add Laravel/Symfony-like dump and die functionality."
 readme = "README.md"
 authors = [
