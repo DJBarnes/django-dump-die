@@ -22,6 +22,7 @@ from decimal import Decimal
 from enum import EnumMeta
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import QueryDict
 
 from django_dump_die.constants import COLORIZE_DUMPED_OBJECT_NAME, INCLUDE_FILENAME_LINENUMBER, PYTZ_PRESENT
 
@@ -335,11 +336,19 @@ def get_members(obj):
     # Get initial member set or empty list.
     members = inspect.getmembers(obj)
 
-    # Add type specific members that will not be included from the use of the
-    # inspect.getmembers function.
+    # Add type specific members that will not be included from the use of the inspect.getmembers function.
     if is_dict(obj):
-        # Dictionary members.
-        members.extend(obj.items())
+        if isinstance(obj, QueryDict):
+            # Django QueryDict members. Has handling for multiple unique values referencing the same key.
+            # https://docs.djangoproject.com/en/dev/ref/request-response/#querydict-objects
+            obj_copy = copy.deepcopy(obj)
+            for key in obj_copy.keys():
+                item = obj.pop(key)
+                members.append((key, item))
+        else:
+            # Standard dictionary members.
+            members.extend(obj.items())
+
     elif is_iterable(obj):
         # Lists, sets, etc.
         if _is_indexable(obj):

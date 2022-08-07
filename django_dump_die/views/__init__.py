@@ -17,5 +17,6 @@ from .example_views import (
     system_path_example,
     full_purpose_example,
 
+    django_request_response_cycle_example,
     edge_case_example,
 )

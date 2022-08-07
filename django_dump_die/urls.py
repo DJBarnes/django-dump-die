@@ -22,6 +22,7 @@ from .views import (
     system_path_example,
     full_purpose_example,
 
+    django_request_response_cycle_example,
     edge_case_example,
 )
 
@@ -46,6 +47,11 @@ urlpatterns = [
 
     path('full-purpose-example/', full_purpose_example, name='full-purpose-example'),
 
+    path(
+        'django-request-response-cycle-example/',
+        django_request_response_cycle_example,
+        name='django-request-response-cycle-example',
+    ),
     path('edge-case-example/', edge_case_example, name='edge-case-example'),
 
     path('', index, name='index'),

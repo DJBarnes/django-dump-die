@@ -292,6 +292,24 @@ def full_purpose_example(request):
     return render(request, 'django_dump_die/sample.html', {})
 
 
+def django_request_response_cycle_example(request):
+    """"""
+    from .example_helpers import dump_django_request_response_cycle_types
+
+    # Output desired dump values.
+    dump('Displaying Django request-response-cycle example output.')
+    dump('')
+    dump_django_request_response_cycle_types(request)
+    dump('')
+    dump('')
+
+    # Force dd to prevent further view parsing.
+    dd('done')
+
+    # Show that any calls after dd() end up ignored.
+    return render(request, 'django_dump_die/sample.html', {})
+
+
 def edge_case_example(request):
     """Example view, rendering various edge-case output.
 

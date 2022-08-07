@@ -5,14 +5,18 @@ Helps prevent package errors relating to example view load from propagating
 to general package usage.
 """
 
-from enum import Enum
+import copy
 import os
 from datetime import datetime, timedelta
 from decimal import Decimal
 from django.core.files import File
 from django.db import models
 from django.forms import ModelForm
+from django.http import QueryDict
+from django.shortcuts import render
+from django.template.response import TemplateResponse
 from django.utils import timezone
+from enum import Enum
 from pathlib import Path, PosixPath, PurePath, WindowsPath
 from types import ModuleType
 
@@ -714,6 +718,43 @@ def dump_syspath_types():
         dump(posix_path)
     if windows_path:
         dump(windows_path)
+
+
+def dump_django_request_response_cycle_types(request):
+    """Dump Django request-response cycle Types."""
+
+    # Generate variables to dump.
+    sample_query_dict = QueryDict('one_val=test&two_vals=one&two_vals=2')
+    sample_query_dict = copy.deepcopy(sample_query_dict)
+    sample_query_dict.appendlist('example_field_list', 'username')
+    sample_query_dict.appendlist('example_field_list', 'first_name')
+    sample_query_dict.appendlist('example_field_list', 'last_name')
+    sample_query_dict.appendlist('example_types', None)
+    sample_query_dict.appendlist('example_types', True)
+    sample_query_dict.appendlist('example_types', 5)
+    sample_query_dict.appendlist('example_types', 3.0)
+
+    sample_request = request
+    sample_http_response = render(request, 'django_dump_die/sample.html', {})
+    sample_template_response = TemplateResponse(request, 'django_dump_die/sample.html', {})
+    sample_template_response.render()
+
+    # Call dump on generated variables.
+    dump('')
+    dump('QueryDict object (GET and POST are instances of this):')
+    dump(sample_query_dict)
+
+    dump('')
+    dump('Request object:')
+    dump(sample_request)
+
+    dump('')
+    dump('HttpResponse object:')
+    dump(sample_http_response)
+
+    dump('')
+    dump('TemplateResponse object:')
+    dump(sample_template_response)
 
 
 def dump_edgecase_types():
