@@ -560,13 +560,24 @@ def get_obj_values(obj):
     functions = []      # (attr, doc, access_modifier)
 
     try:
-
         # Attempt to get member values of object. Falls back to empty list on failure.
         members = get_members(obj)
 
     except Exception as exception:
         # On exception, add exception to attributes and return the attributes.
-        attributes.append(['EXCEPTION', str(exception), None, 'empty', 'Exception'])
+
+        # First get exception data.
+        tb = exception.__traceback__
+        title = 'Exception:\n'
+        while tb is not None:
+            line_num = tb.tb_lineno
+            name = tb.tb_frame.f_code.co_name
+            filename = tb.tb_frame.f_code.co_filename
+            tb = tb.tb_next
+            title += '\n[ {0} : {1} ] {2}\n'.format(line_num, name, filename)
+
+        # Add exception data to attributes and return.
+        attributes.append(['EXCEPTION', str(exception), None, 'empty', title])
         return (attributes, functions)
 
     # Once all members have been collected, attempt to figure out what type, access modifier, css class, and title
@@ -643,7 +654,18 @@ def get_obj_values(obj):
                 attributes.append([attr, value, access_modifier, css_class, title])
 
         except Exception as inner_exception:
-            attributes.append(['EXCEPTION', str(inner_exception), None, 'empty', 'Exception'])
+            # First get exception data.
+            tb = inner_exception.__traceback__
+            title = 'Exception:\n'
+            while tb is not None:
+                line_num = tb.tb_lineno
+                name = tb.tb_frame.f_code.co_name
+                filename = tb.tb_frame.f_code.co_filename
+                tb = tb.tb_next
+                title += '\n[ {0} : {1} ] {2}\n'.format(line_num, name, filename)
+
+            # Add exception data to attributes and return.
+            attributes.append(['EXCEPTION', str(inner_exception), None, 'empty', title])
 
     # Attempt to sort the functions and just ignore any errors.
     try:
