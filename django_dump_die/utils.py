@@ -342,8 +342,8 @@ def get_members(obj):
             # Django QueryDict members. Has handling for multiple unique values referencing the same key.
             # https://docs.djangoproject.com/en/dev/ref/request-response/#querydict-objects
             obj_copy = copy.deepcopy(obj)
-            for key in obj_copy.keys():
-                item = obj.pop(key)
+            for key in obj.keys():
+                item = obj_copy.pop(key)
                 members.append((key, item))
         else:
             # Standard dictionary members.
