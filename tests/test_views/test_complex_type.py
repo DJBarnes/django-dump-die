@@ -2,10 +2,11 @@
 Tests for "complex" type DD output.
 """
 
+# System Imports.
+from unittest.mock import patch
 
 # Third-Party Imports.
 from django.test import override_settings
-from unittest.mock import patch
 from django_expanded_test_cases import IntegrationTestCase
 
 

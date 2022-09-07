@@ -1,12 +1,15 @@
 """Utils for dump die"""
 
+# System Imports.
 import copy
 import inspect
-import linecache
-import tokenize
-
 import io
+import linecache
 import re
+import tokenize
+from collections.abc import Sequence
+from decimal import Decimal
+from enum import EnumMeta
 from tokenize import (
     generate_tokens,
     ENDMARKER,
@@ -17,13 +20,11 @@ from tokenize import (
     STRING,
 )
 
-from collections.abc import Sequence
-from decimal import Decimal
-from enum import EnumMeta
-
+# Third-Party Imports.
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import QueryDict
 
+# Internal Imports.
 from django_dump_die.constants import COLORIZE_DUMPED_OBJECT_NAME, INCLUDE_FILENAME_LINENUMBER, PYTZ_PRESENT
 
 # Imports that may not be accessible, depending on local python environment setup.

@@ -2,10 +2,13 @@
 Middleware for DumpAndDie.
 """
 
+# System Imports.
 import logging
 
+# Third-Party Imports.
 from django.conf import settings
 
+# Internal Imports.
 from .views import dd_view
 from django_dump_die.utils import get_dumped_object_info
 

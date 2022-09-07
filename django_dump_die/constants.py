@@ -1,14 +1,15 @@
 """Constants for dump die"""
 
+# System Imports.
 import datetime
 import types
-
 from decimal import Decimal
+from pathlib import PosixPath, PurePath, PurePosixPath, PureWindowsPath
+
+# Third-Party Imports.
 from django.conf import settings
 from django.forms.boundfield import BoundField
 from django.utils import timezone
-
-from pathlib import PosixPath, PurePath, PurePosixPath, PureWindowsPath
 
 # Imports that may not be accessible, depending on local python environment setup.
 try:

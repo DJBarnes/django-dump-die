@@ -4,8 +4,6 @@ Tests for "simple" type DD output.
 
 # Third-Party Imports.
 from django.test import override_settings
-
-# Internal Imports.
 from django_expanded_test_cases import IntegrationTestCase
 
 

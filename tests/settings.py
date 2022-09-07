@@ -1,4 +1,8 @@
+"""
+Project testing settings, so that tests can run project as if it was a proper Django application.
+"""
 
+# System Imports.
 import sys
 
 

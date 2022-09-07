@@ -1,7 +1,11 @@
 """Views for testing DumpDie"""
+
+# System Imports.
 from decimal import Decimal
-from django.http import HttpResponse
 from types import ModuleType
+
+# Third-Party Imports.
+from django.http import HttpResponse
 
 
 def function_example(request):
