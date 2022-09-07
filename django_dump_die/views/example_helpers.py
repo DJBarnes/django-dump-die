@@ -5,10 +5,16 @@ Helps prevent package errors relating to example view load from propagating
 to general package usage.
 """
 
+# System Imports.
 import copy
 import os
 from datetime import datetime, timedelta
 from decimal import Decimal
+from enum import Enum
+from pathlib import Path, PosixPath, PurePath, WindowsPath
+from types import ModuleType
+
+# Third-Party Imports.
 from django.core.files import File
 from django.db import models
 from django.forms import ModelForm
@@ -16,10 +22,8 @@ from django.http import QueryDict
 from django.shortcuts import render
 from django.template.response import TemplateResponse
 from django.utils import timezone
-from enum import Enum
-from pathlib import Path, PosixPath, PurePath, WindowsPath
-from types import ModuleType
 
+# Internal Imports.
 from django_dump_die.constants import PYTZ_PRESENT, ZONEINFO_PRESENT
 
 if PYTZ_PRESENT:
@@ -428,21 +432,10 @@ def dump_intermediate_types():
         dump(sample_windows_path)
 
 
-def dump_complex_types():
+class dump_complex_types():
     """Dump Complex Types"""
-    # Generate variables to dump.
-    sample_set = {'A', 'B', 'C'}
-    sample_frozen_set = frozenset({'D', 'E', 'F'})
-    sample_tuple = ('A', 12, True)
-    sample_list = ['A', 12, True]
-    sample_dict = {
-        'first': 'A',
-        'second': 12,
-        'third': True,
-    }
-    sample_memory_view = memoryview(bytearray([8, 9, 10, 11]))
 
-    sample_complex_set = {
+    sample_multilevel_set = {
         (
             'A',
             12,
@@ -455,7 +448,7 @@ def dump_complex_types():
         ),
     }
 
-    sample_complex_tuple = (
+    sample_multilevel_tuple = (
         {
             'first': 'A',
             'second': 12,
@@ -468,7 +461,7 @@ def dump_complex_types():
         },
     )
 
-    sample_complex_list = [
+    sample_multilevel_list = [
         {
             'first': 'A',
             'second': 12,
@@ -481,7 +474,7 @@ def dump_complex_types():
         },
     ]
 
-    sample_complex_dict = {
+    sample_multilevel_dict = {
         'initial': {
             'first': 'A',
             'second': 12,
@@ -494,32 +487,118 @@ def dump_complex_types():
         },
     }
 
-    # Call dump on all generated variables.
-    dump('')
-    dump('Basic object examples:')
-    dump(sample_set)
-    dump(sample_frozen_set)
-    dump(sample_tuple)
-    dump(sample_list)
-    dump(sample_dict)
-    dump(sample_memory_view)
+    def dump_set(self):
+        # Generate variables to dump.
+        sample_set = {'A', 'B', 'C'}
 
-    dump('')
-    dump('Elaborate object examples:')
-    dump(sample_complex_set)
-    dump(sample_complex_tuple)
-    dump(sample_complex_list)
-    dump(sample_complex_dict)
-    dump(SampleEnum)
+        # Dump variable.
+        dump(sample_set)
 
-    dump('')
-    dump('Examples of pulling items/indexes/subsets from above objects:')
-    dump(sample_complex_list[0])
-    dump(sample_complex_tuple[0])
-    dump(sample_complex_tuple[0].items)
-    dump(sample_complex_dict['initial'])
-    dump(SampleEnum.RED)
-    dump(SampleEnum.BLUE)
+    def dump_frozen_set(self):
+        # Generate variables to dump.
+        sample_frozen_set = frozenset({'D', 'E', 'F'})
+
+        # Dump variable.
+        dump(sample_frozen_set)
+
+    def dump_tuple(self):
+        # Generate variables to dump.
+        sample_tuple = ('A', 12, True)
+
+        # Dump variable.
+        dump(sample_tuple)
+
+    def dump_list(self):
+        # Generate variables to dump.
+        sample_list = ['A', 12, True]
+
+        # Dump variable.
+        dump(sample_list)
+
+    def dump_dict(self):
+        # Generate variables to dump.
+        sample_dict = {
+            'first': 'A',
+            'second': 12,
+            'third': True,
+        }
+
+        # Dump variable.
+        dump(sample_dict)
+
+    def dump_enum(self):
+        # Dump variable.
+        dump(SampleEnum)
+
+    def dump_memory_view(self):
+        # Generate variables to dump.
+        sample_memory_view = memoryview(bytearray([8, 9, 10, 11]))
+
+        # Dump variable.
+        dump(sample_memory_view)
+
+    def dump_multilevel_set(self):
+        # Dump variable.
+        dump(self.sample_multilevel_set)
+
+    def dump_multilevel_tuple(self):
+        # Dump variable.
+        dump(self.sample_multilevel_tuple)
+
+    def dump_multilevel_list(self):
+        dump(self.sample_multilevel_list)
+
+    def dump_multilevel_dict(self):
+        # Dump variable.
+        dump(self.sample_multilevel_dict)
+
+    def dump_list_subitem(self):
+        # Dump variable.
+        dump(self.sample_multilevel_list[0])
+
+    def dump_tuple_subitem(self):
+        # Dump variable.
+        dump(self.sample_multilevel_tuple[0])
+
+    def dump_tuple_subitem_function(self):
+        # Dump variable.
+        dump(self.sample_multilevel_tuple[0].items)
+
+    def dump_dict_subitem(self):
+        # Dump variable.
+        dump(self.sample_multilevel_dict['initial'])
+
+    def dump_enum_subitem(self):
+        # Dump variable.
+        dump(SampleEnum.RED)
+        dump(SampleEnum.BLUE)
+
+    def dump_all_objects(self):
+        # Call dump on all generated variables.
+        dump('')
+        dump('Minimal object examples:')
+        self.dump_set()
+        self.dump_frozen_set()
+        self.dump_tuple()
+        self.dump_list()
+        self.dump_dict()
+        self.dump_memory_view()
+        self.dump_enum()
+
+        dump('')
+        dump('Nested object examples:')
+        self.dump_multilevel_set()
+        self.dump_multilevel_tuple()
+        self.dump_multilevel_list()
+        self.dump_multilevel_dict()
+
+        dump('')
+        dump('Examples of pulling items/indexes/subsets from above objects:')
+        self.dump_list_subitem()
+        self.dump_tuple_subitem()
+        self.dump_tuple_subitem_function()
+        self.dump_dict_subitem()
+        self.dump_enum_subitem()
 
 
 def dump_function_types():

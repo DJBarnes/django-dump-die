@@ -1,5 +1,6 @@
-"""Various example views for DumpDie library."""
+"""Various example views for DumpDie library. To showcase how various outputs look in practice."""
 
+# Third-Party Imports.
 from django.shortcuts import render
 
 
@@ -60,7 +61,7 @@ def complex_type_example(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" object output.')
     dump('')
-    dump_complex_types()
+    dump_complex_types().dump_all_objects()
     dump('')
     dump('')
 

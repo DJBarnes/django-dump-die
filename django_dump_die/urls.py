@@ -1,10 +1,12 @@
 """
-django_dump_die URL Configuration.
+DjangoDumpDie example URL Configuration.
 Used exclusively to show example output.
 """
 
+# Third-Party Imports.
 from django.urls import path
 
+# Internal Imports.
 from .views import (
     index,
 
