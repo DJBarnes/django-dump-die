@@ -526,6 +526,13 @@ class dump_complex_types():
         # Dump variable.
         dump(sample_dict)
 
+    def dump_querydict(self):
+        # Generate variables to dump.
+        sample_querydict = QueryDict('first="A"&second=12&third=True&first="B"&first="C"')
+
+        # Dump variable.
+        dump(sample_querydict)
+
     def dump_enum(self):
         # Dump variable.
         dump(SampleEnum)
@@ -582,6 +589,7 @@ class dump_complex_types():
         self.dump_tuple()
         self.dump_list()
         self.dump_dict()
+        self.dump_querydict()
         self.dump_memory_view()
         self.dump_enum()
 

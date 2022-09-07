@@ -117,6 +117,27 @@ def complex_type_example__dict(request):
     return render(request, 'django_dump_die/sample.html', {})
 
 
+def complex_type_example__querydict(request):
+    """Example view, rendering only "complex type" QueryDict object output."""
+
+    # Import applicable helper functions/classes.
+    # Imported here so that these are only loaded on view access, and not package initialization.
+    from .example_helpers import dump_complex_types
+
+    # Output desired dump values.
+    dump('Displaying example of "complex type" QueryDict object output.')
+    dump('')
+    dump_complex_types().dump_querydict()
+    dump('')
+    dump('')
+
+    # Force dd to prevent further view parsing.
+    dd('done')
+
+    # Show that any calls after dd() end up ignored.
+    return render(request, 'django_dump_die/sample.html', {})
+
+
 def complex_type_example__memory_view(request):
     """Example view, rendering only "complex type" MemoryView object output."""
 

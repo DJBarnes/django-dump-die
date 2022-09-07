@@ -683,6 +683,234 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         )
 
     @patch('django_dump_die.templatetags.dump_die._generate_unique')
+    def test_querydict_display(self, mocked_unique_generation):
+        """Verify dumping a "querydict" type has expected output."""
+
+        # Override url, to use testing-specific view, which will only display a single object.
+        self.url = 'django_dump_die_tests:complex__querydict'
+
+        # Override default "unique" generation logic, for reproduce-able tests.
+        # This generates enough uniques to guarantee mock does not raise errors.
+        side_effects = []
+        for index in range(5000):
+            side_effects += [
+                (f'data_900{index}', ''),
+            ]
+        mocked_unique_generation.side_effect = side_effects
+
+        self.assertGetResponse(
+            self.url,
+            expected_title='DD',
+            expected_header='Django DumpDie',
+            expected_content=[
+                '<hr>',
+
+                # Object opening tags.
+                """
+                <div class="dump-wrapper">
+                    <span class="dumped_object" title="Dumped Object">
+                        <span class="dumped_name">sample_querydict</span>
+                    </span>:
+                    <span class="type" title="QueryDict">QueryDict:3</span>
+                    <span class="braces">{</span>
+                    <a
+                        class="arrow-toggle collapsed"
+                        title="[Ctrl+click] Expand all children"
+                        data-toggle="collapse"
+                        data-target=".data_9002"
+                        data-dd-type="type"
+                        data-object-depth="1"
+                        aria-label="Close"
+                        aria-expanded="false"
+                    >
+                        <span class="unique" data-highlight-unique="data_9002">data_9002</span>
+                        <span id="arrow-data_9002" class="arrow arrow-data_9002">▶</span>
+                    </a>
+                    <div class="dd-wrapper collapse data_9002 " data-unique="data_9002">
+                        <ul class="attribute-list">
+                            <a
+                                class="arrow-toggle show always-show"
+                                title="[Ctrl+click] Expand all children"
+                                data-target=".data_9002-attributes"
+                                data-dd-type="attr"
+                                aria-label="Open/Close"
+                                aria-expanded=""
+                            >
+                                <span class="section_name">Attributes</span>
+                                    <span id="arrow-data_9002-attributes" class="arrow">
+                                </span>
+                            </a>
+                            <div
+                                class="li-wrapper collapse data_9002-attributes show"
+                                data-unique-attributes="data_9002-attributes"
+                            >
+                """,
+
+                # Object child elements.
+                """
+                <li>
+                    <span class="key" title="Key">'first'</span>:
+                    <span class="type" title="list">list:3</span>
+                    <span class="braces">[</span>
+                    <a
+                        class="arrow-toggle collapsed"
+                        title="[Ctrl+click] Expand all children"
+                        data-toggle="collapse"
+                        data-target=".data_9004"
+                        data-dd-type="type"
+                        data-object-depth="2"
+                        aria-label="Close"
+                        aria-expanded="false"
+                    >
+                        <span class="unique" data-highlight-unique="data_9004">data_9004</span>
+                        <span id="arrow-data_9004" class="arrow arrow-data_9004">▶</span>
+                    </a>
+                    <div class="dd-wrapper collapse data_9004 " data-unique="data_9004">
+                        <ul class="attribute-list">
+                            <a
+                                class="arrow-toggle show always-show"
+                                title="[Ctrl+click] Expand all children"
+                                data-target=".data_9004-attributes"
+                                data-dd-type="attr"
+                                aria-label="Open/Close"
+                                aria-expanded=""
+                            >
+                                <span class="section_name">Attributes</span>
+                                <span id="arrow-data_9004-attributes" class="arrow"></span>
+                            </a>
+                            <div
+                                class="li-wrapper collapse data_9004-attributes show"
+                                data-unique-attributes="data_9004-attributes"
+                            >
+                                <li>
+                                    <span class="index" title="Index">0</span>:
+                                    <span class="type" title="str">str</span> <code class="string">'"A"'</code>
+                                </li>
+                                <li>
+                                    <span class="index" title="Index">1</span>:
+                                    <span class="type" title="str">str</span> <code class="string">'"B"'</code>
+                                </li>
+                                <li>
+                                    <span class="index" title="Index">2</span>:
+                                    <span class="type" title="str">str</span> <code class="string">'"C"'</code>
+                                </li>
+                            </div>
+                        </ul>
+                        <ul class="attribute-list"></ul>
+                    </div>
+                    <span class="braces">]</span>
+                </li>
+                """,
+                """
+                <li>
+                    <span class="key" title="Key">'second'</span>:
+                    <span class="type" title="list">list:1</span>
+                    <span class="braces">[</span>
+                    <a
+                        class="arrow-toggle collapsed"
+                        title="[Ctrl+click] Expand all children"
+                        data-toggle="collapse"
+                        data-target=".data_9008"
+                        data-dd-type="type"
+                        data-object-depth="2"
+                        aria-label="Close"
+                        aria-expanded="false"
+                    >
+                        <span class="unique" data-highlight-unique="data_9008">data_9008</span>
+                        <span id="arrow-data_9008" class="arrow arrow-data_9008">▶</span>
+                    </a>
+                    <div class="dd-wrapper collapse data_9008 " data-unique="data_9008">
+                        <ul class="attribute-list">
+                            <a
+                                class="arrow-toggle show always-show"
+                                title="[Ctrl+click] Expand all children"
+                                data-target=".data_9008-attributes"
+                                data-dd-type="attr"
+                                aria-label="Open/Close"
+                                aria-expanded=""
+                            >
+                            <span class="section_name">Attributes</span>
+                            <span id="arrow-data_9008-attributes" class="arrow"></span>
+                            </a>
+                            <div
+                                class="li-wrapper collapse data_9008-attributes show"
+                                data-unique-attributes="data_9008-attributes"
+                            >
+                                <li>
+                                    <span class="index" title="Index">0</span>:
+                                    <span class="type" title="str">str</span> <code class="string">'12'</code>
+                                </li>
+                            </div>
+                        </ul>
+                        <ul class="attribute-list"></ul>
+                    </div>
+                    <span class="braces">]</span>
+                </li>
+                """,
+                """
+                <li>
+                    <span class="key" title="Key">'third'</span>:
+                    <span class="type" title="list">list:1</span>
+                    <span class="braces">[</span>
+                    <a
+                        class="arrow-toggle collapsed"
+                        title="[Ctrl+click] Expand all children"
+                        data-toggle="collapse"
+                        data-target=".data_90010"
+                        data-dd-type="type"
+                        data-object-depth="2"
+                        aria-label="Close"
+                        aria-expanded="false"
+                    >
+                        <span class="unique" data-highlight-unique="data_90010">data_90010</span>
+                        <span id="arrow-data_90010" class="arrow arrow-data_90010">▶</span>
+                    </a>
+                    <div class="dd-wrapper collapse data_90010 " data-unique="data_90010">
+                        <ul class="attribute-list">
+                            <a
+                                class="arrow-toggle show always-show"
+                                title="[Ctrl+click] Expand all children"
+                                data-target=".data_90010-attributes"
+                                data-dd-type="attr"
+                                aria-label="Open/Close"
+                                aria-expanded=""
+                            >
+                                <span class="section_name">Attributes</span>
+                                <span id="arrow-data_90010-attributes" class="arrow"></span>
+                            </a>
+                            <div
+                                class="li-wrapper collapse data_90010-attributes show"
+                                data-unique-attributes="data_90010-attributes"
+                            >
+                                <li>
+                                    <span class="index" title="Index">0</span>:
+                                    <span class="type" title="str">str</span> <code class="string">'True'</code>
+                                </li>
+                            </div>
+                        </ul>
+                        <ul class="attribute-list"></ul>
+                    </div>
+                    <span class="braces">]</span>
+                </li>
+                """,
+
+                # Object closing tags.
+                """
+                                    </div>
+                                </ul>
+                            <ul class="attribute-list"></ul>
+                        </div>
+                    <span class="braces">}</span>
+                </div>
+                """,
+
+                '<hr>',
+            ],
+            content_starts_after='Displaying example of "complex type" QueryDict object output.',
+            content_ends_before="""<span class="string">'done'</span>""",
+        )
+
+    @patch('django_dump_die.templatetags.dump_die._generate_unique')
     def test_memory_view_display(self, mocked_unique_generation):
         """Verify dumping a "memory view" type has expected output."""
 

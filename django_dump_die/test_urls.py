@@ -13,6 +13,7 @@ from .views.test_views import (
     complex_type_example__tuple,
     complex_type_example__list,
     complex_type_example__dict,
+    complex_type_example__querydict,
     complex_type_example__memory_view,
     complex_type_example__enum,
 
@@ -37,6 +38,7 @@ urlpatterns = [
     path('complex/tuple/', complex_type_example__tuple, name='complex__tuple'),
     path('complex/list/', complex_type_example__list, name='complex__list'),
     path('complex/dict/', complex_type_example__dict, name='complex__dict'),
+    path('complex/querydict/', complex_type_example__querydict, name='complex__querydict'),
     path('complex/memory_view/', complex_type_example__memory_view, name='complex__memory_view'),
     path('complex/enum/', complex_type_example__enum, name='complex__enum'),
 
