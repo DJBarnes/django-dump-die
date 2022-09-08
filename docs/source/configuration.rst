@@ -1,7 +1,8 @@
 Configuration
 *************
 
-There are various configuration options that can be set via Django Settings to
+There are various configuration options that can be set via
+`Django Settings <https://docs.djangoproject.com/en/dev/topics/settings/>`_ to
 control the overall look, feel, and functionality of the tool.
 
 

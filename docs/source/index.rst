@@ -26,6 +26,7 @@ and `Symfony <https://symfony.com/>`_ frameworks.
 
    quickstart
    usage
+   built_in_examples
    configuration
    api_reference
 
