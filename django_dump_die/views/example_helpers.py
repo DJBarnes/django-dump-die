@@ -727,7 +727,16 @@ def dump_model_types():
     # Call dump on all generated variables.
     dump('')
     dump('Model and ModelForm class examples:')
-    dump(SampleDjangoModel)
+    # TODO: See if there is a better way to "fix" this.
+    # Need to remove the Many-To-Many relationship when dumping the class
+    # definition (non-instance) because python's get_members can't handle a
+    # m2m when the "object" does not have an id. Which it can't due to it being
+    # a class definition and not an instance. Problem is solved when an instance
+    # is created. See below dump of instance.
+    SampleDjangoModelNoManyRelation = copy.deepcopy(SampleDjangoModel)
+    delattr(SampleDjangoModelNoManyRelation, 'sample_many')
+    dump(SampleDjangoModelNoManyRelation)
+
     dump(SampleModelForm)
 
     dump('')
