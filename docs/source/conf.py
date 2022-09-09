@@ -21,11 +21,11 @@ from django.conf import settings
 # -- Project information -----------------------------------------------------
 
 project = 'Django-Dump-Die'
-copyright = '2022, David Barnes'
-author = 'David Barnes'
+copyright = '2022, David Barnes, Brandon Rodriguez'
+author = 'David Barnes, Brandon Rodriguez'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1.2'
+release = '0.1.4'
 
 
 # -- General configuration ---------------------------------------------------
