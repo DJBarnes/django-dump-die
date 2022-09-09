@@ -3,6 +3,7 @@
 # System Imports.
 import inspect
 import re
+import traceback
 import types
 from decimal import Decimal
 
@@ -569,13 +570,13 @@ def get_obj_values(obj):
 
         # First get exception data.
         tb = exception.__traceback__
-        title = 'Exception:\n'
-        while tb is not None:
-            line_num = tb.tb_lineno
-            name = tb.tb_frame.f_code.co_name
-            filename = tb.tb_frame.f_code.co_filename
-            tb = tb.tb_next
-            title += '\n[ {0} : {1} ] {2}\n'.format(line_num, name, filename)
+        title = 'Exception Occurred\n\n'
+        title += f'Exception Type: {type(exception).__name__}\n'
+        title += f'Exception Value: {str(exception)}\n\n'
+        title += 'Traceback (most recent call last):\n\n'
+        for entry in traceback.format_tb(tb):
+            title += f'{entry}\n'
+        title += 'End of traceback'
 
         # Add exception data to attributes and return.
         attributes.append(['EXCEPTION', str(exception), None, 'empty', title])
