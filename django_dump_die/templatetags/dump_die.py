@@ -161,7 +161,7 @@ def dump_object(
         )
 
     # Handle if element is iterable and we are at the root's element direct children (depth of 1),
-    elif is_iterable(root_obj) and current_depth == 1:
+    elif is_iterable(root_obj) and current_depth == 0:
 
         # Handle unique indexing logic for root element.
         root_index_start, root_index_end = _process_root_indices(
@@ -371,14 +371,14 @@ def is_complex_type(current_depth, current_iteration):
             # Check if the max_recursion is set to None or we have not reached it yet.
             (
                 MAX_RECURSION_DEPTH is None
-                or current_depth <= MAX_RECURSION_DEPTH
+                or current_depth < MAX_RECURSION_DEPTH
             )
 
             # And if the max_iterable_length is set to None,
             # or we have not reached it yet or we are at the root level.
             and (
                 MAX_ITERABLE_LENGTH is None
-                or current_iteration <= MAX_ITERABLE_LENGTH
+                or current_iteration < MAX_ITERABLE_LENGTH
             )
         )
     )
@@ -522,6 +522,8 @@ def _handle_complex_type(
     # Attempt to get corresponding attribute/function values of object.
     attributes, functions = get_obj_values(obj)
 
+    is_iterable_obj = is_iterable(obj) and not is_dict(obj) and not isinstance(obj, memoryview)
+
     # Return information required to render object.
     context = {
         'include_attributes': INCLUDE_ATTRIBUTES,
@@ -532,7 +534,7 @@ def _handle_complex_type(
         'unique': unique,
         'root_count': root_count,
         'type': get_obj_type(obj),
-        'is_iterable': is_iterable(obj),
+        'is_iterable': is_iterable_obj,
         'depth': current_depth,
         'root_index_start': root_index_start,
         'root_index_end': root_index_end,

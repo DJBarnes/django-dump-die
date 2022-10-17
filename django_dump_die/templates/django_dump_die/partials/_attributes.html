@@ -32,9 +32,11 @@
           <span class="{{ css_class }}" title="{{ title }}">{{ attr }}</span>:
         {% endif %}
         {% if intermediate %}
-          {% dump_object value root_obj skip forloop.counter0 new_depth root_index_start root_index_end original_obj True %}
-        {% else %}
+          {% dump_object value root_obj skip 0 new_depth root_index_start root_index_end original_obj True %}
+        {% elif is_iterable %}
           {% dump_object value root_obj skip forloop.counter0 new_depth root_index_start root_index_end original_obj False %}
+        {% else %}
+          {% dump_object value root_obj skip 0 new_depth root_index_start root_index_end original_obj False %}
         {% endif %}
       {% endwith %}
     </li>
