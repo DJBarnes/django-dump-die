@@ -18,11 +18,11 @@ as to prevent long processing times.
     Setting the value to ```None``` will mean no limit.
 
 :Type: ``int``
-:Default: ``20``
+:Default: ``5``
 
 Example::
 
-    DJANGO_DD_MAX_RECURSION_DEPTH = 30
+    DJANGO_DD_MAX_RECURSION_DEPTH = 10
 
 
 

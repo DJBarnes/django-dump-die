@@ -63,10 +63,13 @@ ADDITIONAL_SIMPLE_TYPES = getattr(settings, 'DJANGO_DD_ADDITIONAL_SIMPLE_TYPES',
 # List of additional intermediate types defined as strings that do not need to be recursively inspected.
 ADDITIONAL_INTERMEDIATE_TYPES = getattr(settings, 'DJANGO_DD_ADDITIONAL_INTERMEDIATE_TYPES', [])
 # Max recursion depth to go while processing the dumped variable.
-MAX_RECURSION_DEPTH = getattr(settings, 'DJANGO_DD_MAX_RECURSION_DEPTH', 20)
-# Max number of iterables to recursively process before just printing the unique
-# instead of recursing further. EX: if set to 20, a list of 30 will recursively
-# inspect and print out 20 items and then simply print the unique for the last 10.
+# Deep recursion will cause DD to take forever on complex structures.
+MAX_RECURSION_DEPTH = getattr(settings, 'DJANGO_DD_MAX_RECURSION_DEPTH', 5)
+# Max number of entries in an iterable to process further with recursion.
+# After reaching an entry beyond this length, it will just print the unique
+# instead of recursing into the entry to find further details.
+# EX: if set to 20, a list of 30 will recursively inspect and print out 20
+# items and then simply print the unique for the last 10.
 MAX_ITERABLE_LENGTH = getattr(settings, 'DJANGO_DD_MAX_ITERABLE_LENGTH', 20)
 # Whether each dump should include the filename and linenumber of the dump call.
 INCLUDE_FILENAME_LINENUMBER = getattr(settings, 'DJANGO_DD_INCLUDE_FILENAME_LINENUMBER', False)
