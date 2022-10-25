@@ -1,5 +1,5 @@
 
-<span class="type" title="{{ type }}">{{ type }}{% if is_iterable %}:{{ object|length }}{% endif %}</span>
+<span class="type" title="{{ type }}">{{ type }}{% if is_iterable or is_dict %}:{{ object|length }}{% endif %}</span>
 
 {% if intermediate %}
   <code class="intermediate">{{ intermediate }}</code>

@@ -523,6 +523,7 @@ def _handle_complex_type(
     attributes, functions = get_obj_values(obj)
 
     is_iterable_obj = is_iterable(obj) and not is_dict(obj) and not isinstance(obj, memoryview)
+    is_dict_obj = is_dict(obj)
 
     # Return information required to render object.
     context = {
@@ -535,6 +536,7 @@ def _handle_complex_type(
         'root_count': root_count,
         'type': get_obj_type(obj),
         'is_iterable': is_iterable_obj,
+        'is_dict': is_dict_obj,
         'depth': current_depth,
         'root_index_start': root_index_start,
         'root_index_end': root_index_end,

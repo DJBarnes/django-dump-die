@@ -944,7 +944,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <span class="dumped_object" title="Dumped Object">
                         <span class="dumped_name">sample_memory_view</span>
                     </span>:
-                    <span class="type" title="memoryview">memoryview:4</span>
+                    <span class="type" title="memoryview">memoryview</span>
                     <span class="braces">{</span>
                     <a
                         class="arrow-toggle collapsed"
