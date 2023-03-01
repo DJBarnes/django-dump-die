@@ -8,6 +8,8 @@ from django.urls import path
 
 # Internal Imports.
 from .views.test_views import (
+    index,
+
     complex_type_example__set,
     complex_type_example__frozen_set,
     complex_type_example__tuple,
@@ -56,4 +58,6 @@ urlpatterns = [
     ),
     path('complex/sub_item/dict/', complex_type_example__dict_subitem, name='complex__sub_item__dict'),
     path('complex/sub_item/enum/', complex_type_example__enum_subitem, name='complex__sub_item__enum'),
+
+    path('', index, name='index'),
 ]

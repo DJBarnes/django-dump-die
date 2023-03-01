@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en">
+  <meta charset="utf-8">
+  <head>
+    <title>Django DumpDie TESTING Examples</title>
+  </head>
+
+  <body>
+    <h1>Django DumpDie TESTING Index Page</h1>
+
+    <p>The following pages provide example output when using the Django DumpDie package.</p>
+    <p>Exclusively used for easy access to visual examine test views while debugging tests.</p>
+
+    <br>
+
+    <h2>"Complex" Objects:</h2>
+    <ul>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__set' %}">complex__set</a></p></li>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__frozen_set' %}">complex__frozen_set</a></p></li>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__tuple' %}">complex__tuple</a></p></li>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__list' %}">complex__list</a></p></li>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__dict' %}">complex__dict</a></p></li>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__querydict' %}">complex__querydict</a></p></li>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__memory_view' %}">complex__memory_view</a></p></li>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__enum' %}">complex__enum</a></p></li>
+    </ul>
+
+    <h2>Multi-Level "Complex" Objects:</h2>
+    <ul>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__multi_level__set' %}">complex__multi_level__set</a></p></li>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__multi_level__tuple' %}">complex__multi_level__tuple</a></p></li>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__multi_level__list' %}">complex__multi_level__list</a></p></li>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__multi_level__dict' %}">complex__multi_level__dict</a></p></li>
+    </ul>
+
+    <h2>Multi-Level "Complex" Objects:</h2>
+    <ul>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__sub_item__list' %}">complex__sub_item__list</a></p></li>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__sub_item__tuple' %}">complex__sub_item__tuple</a></p></li>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__sub_item__tuple_func' %}">complex__sub_item__tuple_func</a></p></li>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__sub_item__dict' %}">complex__sub_item__dict</a></p></li>
+      <li><p><a href="{% url 'django_dump_die_tests:complex__sub_item__enum' %}">complex__sub_item__enum</a></p></li>
+    </ul>
+
+  </body>
+</html>
