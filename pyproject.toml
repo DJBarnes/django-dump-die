@@ -42,7 +42,7 @@ keywords = [
     "inspect",
 ]
 dependencies = [
-    "django >= 3.0.0",
+    "django >= 2.2.0",
 ]
 requires-python = ">=3.7"
 
