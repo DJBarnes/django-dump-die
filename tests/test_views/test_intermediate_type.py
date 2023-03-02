@@ -1686,6 +1686,21 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
     def test_pure_path_display(self, mocked_unique_generation):
         """Verify dumping a "pure path" type has expected output."""
 
+        # Get project root dir.
+        # Verify it is of either format "django-dump-die" or "django_dump_die".
+        # Allows tests to handle regardless of how local user prefers local project naming.
+        ROOT_DIR = os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        try:
+            self.assertEqual(ROOT_DIR, 'django-dump-die')
+        except AssertionError:
+            try:
+                self.assertEqual(ROOT_DIR, 'django_dump_die')
+            except AssertionError:
+                err_msg = 'Failed to parse project root folder name. Recieved unexpected value of "{0}"'.format(
+                    ROOT_DIR,
+                )
+                raise AssertionError(err_msg)
+
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
         side_effects = []
@@ -1769,9 +1784,9 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="access-modifier">+</span>
                     <span class="attribute" title="Attribute">name</span>:
                     <span class="type" title="str">str</span>
-                    <code class="string">'django-dump-die'</code>
+                    <code class="string">'{0}'</code>
                 </li>
-                """,
+                """.format(ROOT_DIR),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1809,9 +1824,9 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="access-modifier">+</span>
                     <span class="attribute" title="Attribute">stem</span>:
                     <span class="type" title="str">str</span>
-                    <code class="string">'django-dump-die'</code>
+                    <code class="string">'{0}'</code>
                 </li>
-                """,
+                """.format(ROOT_DIR),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1848,6 +1863,21 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
     @patch('django_dump_die.templatetags.dump_die._generate_unique')
     def test_posix_path_display(self, mocked_unique_generation):
         """Verify dumping a "posix path" type has expected output."""
+
+        # Get project root dir.
+        # Verify it is of either format "django-dump-die" or "django_dump_die".
+        # Allows tests to handle regardless of how local user prefers local project naming.
+        ROOT_DIR = os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        try:
+            self.assertEqual(ROOT_DIR, 'django-dump-die')
+        except AssertionError:
+            try:
+                self.assertEqual(ROOT_DIR, 'django_dump_die')
+            except AssertionError:
+                err_msg = 'Failed to parse project root folder name. Recieved unexpected value of "{0}"'.format(
+                    ROOT_DIR,
+                )
+                raise AssertionError(err_msg)
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -1933,9 +1963,9 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="access-modifier">+</span>
                     <span class="attribute" title="Attribute">name</span>:
                     <span class="type" title="str">str</span>
-                    <code class="string">'django-dump-die'</code>
+                    <code class="string">'{0}'</code>
                 </li>
-                """,
+                """.format(ROOT_DIR),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1973,9 +2003,9 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="access-modifier">+</span>
                     <span class="attribute" title="Attribute">stem</span>:
                     <span class="type" title="str">str</span>
-                    <code class="string">'django-dump-die'</code>
+                    <code class="string">'{0}'</code>
                 </li>
-                """,
+                """.format(ROOT_DIR),
                 """
                 <li>
                     <span class="access-modifier">+</span>
