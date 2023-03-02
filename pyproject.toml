@@ -9,7 +9,11 @@ description = "A Django app to add Laravel/Symfony-like dump and die functionali
 readme = "README.md"
 authors = [
     { name = "David Barnes", email = "barnesdavidj@gmail.com" },
-    { name = "Brandon Rodriguez", email = "brodriguez8774@gmail.com"},
+    { name = "Brandon Rodriguez", email = "brodriguez8774@gmail.com" },
+]
+maintainers = [
+    { name = "David Barnes", email = "barnesdavidj@gmail.com" },
+    { name = "Brandon Rodriguez", email = "brodriguez8774@gmail.com" },
 ]
 license = { file = "LICENSE" }
 classifiers = [
