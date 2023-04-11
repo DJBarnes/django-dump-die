@@ -3,9 +3,11 @@ Django Dump & Die
 
 [![Documentation Status](https://readthedocs.org/projects/django-dump-die/badge/?version=latest)](https://django-dump-die.readthedocs.io/en/latest/?badge=latest)
 [![PyPI](https://img.shields.io/pypi/v/django-dump-die?color=blue)](https://img.shields.io/pypi/v/django-dump-die?color=blue)
-[![Python versions](https://img.shields.io/badge/python-%3E%3D3.7-brightgreen)](https://img.shields.io/badge/python-%3E%3D3.7-brightgreen)
+[![Python Versions](https://img.shields.io/badge/python-%3E%3D3.7-brightgreen)](https://img.shields.io/badge/python-%3E%3D3.7-brightgreen)
 [![Django Versions](https://img.shields.io/badge/django-%3E%3D3-brightgreen)](https://img.shields.io/badge/django-%3E%3D3-brightgreen)
 [![GitHub](https://img.shields.io/github/license/DJBarnes/django-dump-die)](https://img.shields.io/github/license/DJBarnes/django-dump-die)
+[![PyPI Downloads per Month](https://img.shields.io/pypi/dm/django-dump-die.svg)](https://pypi.python.org/pypi/django-dump-die)
+
 
 Django-Dump-Die is a [Django](https://www.djangoproject.com/) app that
 provides a couple of debug tools, in the form of built-in methods
