@@ -4,7 +4,7 @@ build-backend = 'setuptools.build_meta:__legacy__'
 
 [project]
 name = "django-dump-die"
-version = "0.1.5"
+version = "0.1.6"
 description = "A Django app to add Laravel/Symfony-like dump and die functionality."
 readme = "README.md"
 authors = [
@@ -20,35 +20,37 @@ classifiers = [
     "Environment :: Web Environment",
     "Framework :: Django",
     "Framework :: Django :: 3",
-    "Framework :: Django :: 3.0",
-    "Framework :: Django :: 3.1",
     "Framework :: Django :: 3.2",
     "Framework :: Django :: 4",
     "Framework :: Django :: 4.0",
+    "Framework :: Django :: 4.1",
+    "Framework :: Django :: 4.2",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Topic :: Internet :: WWW/HTTP",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
 ]
 keywords = [
     "debug",
+    "dd",
     "die",
     "django",
     "dump",
     "inspect",
+    "tool",
 ]
 dependencies = [
-    "django >= 2.2.0",
+    "django >= 3.2.0",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 
 [project.optional-dependencies]
 dev = [
