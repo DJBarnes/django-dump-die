@@ -9,7 +9,7 @@ import re
 import tokenize
 from collections.abc import Sequence
 from decimal import Decimal
-from enum import EnumMeta
+from enum import EnumMeta, Enum as OrigEnum
 from tokenize import (
     generate_tokens,
     ENDMARKER,
@@ -358,6 +358,9 @@ def get_members(obj):
         elif is_set(obj):
             # Use None as left half. Most likely a set.
             members.extend([(None, x) for x in obj])
+    elif is_enum_member(obj):
+        # Prevent enum entry from recursively showing up in entries members.
+        members = [m for m in members if not is_enum_member(m[1])]
 
     return members
 
@@ -468,6 +471,9 @@ def is_set(obj):
     """Return True if object is most likely a dict."""
     return isinstance(obj, set) or isinstance(obj, frozenset)
 
+def is_enum_member(obj):
+    """Return True if object is most likely a enum"""
+    return issubclass(type(obj), OrigEnum)
 
 def is_const(obj):
     """Return True if object is most likely a constant."""
