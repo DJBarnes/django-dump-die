@@ -10,6 +10,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import datetime
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
@@ -21,7 +22,7 @@ from django.conf import settings
 # -- Project information -----------------------------------------------------
 
 project = 'Django-Dump-Die'
-copyright = '2022, David Barnes, Brandon Rodriguez'
+copyright = f'{datetime.date.today().year}, David Barnes, Brandon Rodriguez'
 author = 'David Barnes, Brandon Rodriguez'
 
 # The full version, including alpha/beta/rc tags
