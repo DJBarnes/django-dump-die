@@ -12,7 +12,7 @@ DJANGO_DD_MAX_RECURSION_DEPTH
 As the tool inspects an object it recurses into other objects that are part of
 the original object. This recursion could become quite deep depending on the
 size of the object being dumped. This setting will limit the depth of recursion
-as to prevent long processing times.
+to prevent long processing times.
 
 .. note::
     Setting the value to ```None``` will mean no limit.
@@ -31,7 +31,7 @@ DJANGO_DD_MAX_ITERABLE_LENGTH
 
 As the tool inspects an iterable object it will recurse into each object in the
 iterable. This may mean a lot of recursion for a very long iterable. This
-setting will limit the length or processed elements in an iterable to prevent
+setting will limit the length of processed elements in an iterable to prevent
 long processing times.
 
 .. note::
@@ -49,7 +49,7 @@ DJANGO_DD_ADDITIONAL_SIMPLE_TYPES
 =================================
 
 A "simple type" is a variable type which is common in most languages,
-and generally the user only want to see the literal assigned value.
+and generally, the user only wants to see the literal assigned value.
 
 When the tool encounters a defined simple type it will no longer recurse
 further and instead simply output a string representation of that simple type.
@@ -83,14 +83,14 @@ DJANGO_DD_ADDITIONAL_INTERMEDIATE_TYPES
 =======================================
 
 An "intermediate type" is a variable which may have useful properties
-for expanded output, but generally most users will only want to see the
+for expanded output, but generally, most users will only want to see the
 literal assigned value.
 
 Furthermore, some of these "intermediate type" objects have child members which
 recurse an unhelpful number of times, if each attribute is examined fully.
 
 When the tool encounters a defined intermediate type it will no longer recurse
-further, instead outputing a string representation as well as allowing
+further, instead outputting a string representation as well as allowing
 examination of only the direct-child attributes. For the sake of processing
 times, these direct-child attributes are not further expandable.
 
@@ -208,7 +208,7 @@ Example::
 DJANGO_DD_CONTENT_STARTS_EXPANDED
 =================================
 
-By default, everything is collapsed when dumped to the screen. Optionally,
+By default, everything is collapsed when dumped on the screen. Optionally,
 each content item can be expanded to show the **Attribute** and
 **Function** sections.
 
@@ -283,7 +283,8 @@ Example::
 DJANGO_DD_INCLUDE_UTILITY_TOOLBAR
 =================================
 
-By default, a **Utility Toolbar** will show at top of the page during DD output.
+By default, a **Utility Toolbar** will show at the top of the page during DD
+output.
 This toolbar provides buttons to easily expand and collapse multiple objects
 at once.
 
@@ -349,7 +350,7 @@ DJANGO_DD_COLOR_SCHEME
 By default, the tool uses the Solarized color scheme. If you want full control
 over the color theme and would like to define your own, here is where you do
 that. The format is in dictionary format and needs to follow the same format.
-In the sample below, ``<value>`` should be a string hexcode for a color with
+In the sample below, ``<value>`` should be a string hex code for a color with
 the hash symbol included.
 EX: ``#FF88CC``.
 
@@ -389,7 +390,7 @@ Example::
             'unique': <value>,              #  Unique hash for class
         },
         'identifiers': {
-            'section_name': <value>,        #  The words "Attribute" or "Function", denoting each sections
+            'section_name': <value>,        #  The words "Attribute" or "Function", denoting each section
             'attribute': <value>,           #  Class attribute
             'constant': <value>,            #  Class constants
             'dumped_name': <value>,         #  Dumped object name
@@ -401,7 +402,7 @@ Example::
         'types': {
             'bool': <value>,                #  Booleans
             'bound': <value>,               #  Django Bound Form Field
-            'default': <value>,             #  Default color if does not fit into any of the others
+            'default': <value>,             #  Default color when it does not fit into any of the others
             'docs': <value>,                #  Class function documentation
             'intermediate': <value>,        #  The brief description output for "Intermediate" types
             'module': <value>,              #  Module via ModuleType

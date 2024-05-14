@@ -6,7 +6,7 @@ General
 The middleware is where most of this package's heavy lifting happens.
 
 By having the middleware installed, you can run ``dump(<variable>)`` and/or
-``dd(<variable>)`` in any file that is part of the request response cycle,
+``dd(<variable>)`` in any file that is part of the request-response cycle,
 and it will run the dump logic. No importing or extra logic is required.
 
 Each ``dump(<variable>)`` command will add the passed object to an internal
@@ -15,7 +15,7 @@ entirety of the request finishes. You can have as many ``dump(<variable>)``
 statements as you want leading up to an optional ``dd(<variable>)``.
 
 If you make a call to ``dd(<variable>)``, execution will immediately stop
-and all dumped objects (including the the one sent to dd) will be output.
+and all dumped objects (including the one sent to dd) will be output.
 
 If you do not make a call to ``dd(<variable>)`` and only use
 ``dump(<variable>)`` statements, the request will continue processing until
@@ -28,7 +28,7 @@ far.
     Because dump die uses middleware to internally handle keeping track of
     what to dump and then actually dumping the data to the browser, any
     call to ``dump`` or ``dd`` must be done in a file that will be processed
-    during the request response cycle. Most commonly this will be a
+    during the request-response cycle. Most commonly this will be a
     ``views.py`` file, but could also be utils called from a view.
     Attempting to ``dump`` or ``dd`` from a console command will not work.
 
@@ -96,7 +96,7 @@ index_range
 :Type: ``int, list, tuple``
 :Default: ``None``
 
-An index range to modify output values of parent entity (if iterable).
+An index range to modify output values of the parent entity (if iterable).
 Allows changing the range of which direct-child indexes are fully examined.
 Only affects the direct children of the outermost parent object. Can be useful
 with large datasets, when only wanting to examine a specific range of values.
@@ -124,9 +124,9 @@ deepcopy
 :Default: ``False``
 
 A boolean to specify if passed objects should be deep-copied before being
-passed into dd/dump logic. If set to ``True``, then preserves exact state of
-object at time of passing into dd/dump. Useful if you are dumping an object,
-then making changes to that object, and then dumping it again.
+passed into dd/dump logic. If set to ``True``, then preserves the exact state
+of the object at the time of passing into dd/dump. Useful if you are dumping an
+object, then making changes to that object, and then dumping it again.
 
 Example::
 
@@ -146,7 +146,7 @@ However, the use of this tag comes with a lot of caveats.
 .. note::
 
     Only the dump tag is provided. A dd tag is not provided as template
-    rendering is already occurring and trying to stop execution of the
+    rendering is already occurring and trying to stop the execution of the
     rendering mid-render can be difficult.
 
 .. warning::
@@ -159,7 +159,7 @@ However, the use of this tag comes with a lot of caveats.
     `CSP rules <https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP>`_ could
     prevent the required JS & CSS from properly loading.
 
-In order to use the template tag from a template you must load the template
+To use the template tag from a template you must load the template
 tags via a load tag before you can use the dump tag.
 
 .. code:: html+django
@@ -176,9 +176,9 @@ dump tag.
 .. note::
 
     There are no extra parameters that can be sent to the tag like there are
-    for the python code versions. The only parameter that can be sent is the
+    for the Python code versions. The only parameter that can be sent is the
     object to be dumped. In general, you should be doing the majority of your
-    dumping from python code.
+    dumping from Python code.
 
 .. note::
 
@@ -188,5 +188,5 @@ dump tag.
 .. note::
 
     Because the CSS for the page will be a mash-up of your project and the
-    required styling for the dump, it is likely that you will see lots of
+    required styling for the dump, you will likely see lots of
     changes to your site when using this tag. This is normal.

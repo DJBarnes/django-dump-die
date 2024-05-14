@@ -22,8 +22,7 @@ The following describes how to access them from a given Django project.
         For production deployment, you probably don't want this url added to
         your project.
         It's probably best to not commit this line to your repository,
-        and to remove it before deployment in event that it is accidentally
-        committed.
+        and to remove it before deployment if it is accidentally committed.
 
         These urls are meant for debugging and example output only.
 
@@ -37,8 +36,8 @@ The following describes how to access them from a given Django project.
 
 3. Launch your project with the standard ``python manage.py runserver`` command.
 
-4. Open a new web browser to ``http://127.0.0.1:8000/dd/``. You should see page
-   output similar to below.
+4. Open a new web browser to ``http://127.0.0.1:8000/dd/``. You should see
+   some page output similar to below.
 
 ----
 
@@ -46,7 +45,7 @@ The following describes how to access them from a given Django project.
 
 ----
 
-5. From here, click any of the links to view what the DD project looks like,
+1. From here, click any of the links to view what the DD project looks like,
    for each given output grouping.
 
    For example:

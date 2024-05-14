@@ -43,8 +43,8 @@ Quickstart
         You should not include this package in production
         nor should you ever have ``DEBUG`` set to ``True`` in production.
 
-5.  From a file that is part of the request / response cycle such as a Django
-    View in ``views.py``, make a call to dd sending it the contents of a variable
+5.  From a file that is part of the request-response cycle such as a Django
+    View in ``views.py``, make a call to ``dd`` passing it a variable
     to inspect.
 
     **views.py**
