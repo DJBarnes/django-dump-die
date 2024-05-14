@@ -34,7 +34,7 @@ jobs:
           rm -f Pipfile.lock
           pipenv install --dev
           echo "Pipenv installed Django version:"
-          django-admin --version
+          pipenv run django-admin --version
       - name: Test with tox
         run: pipenv run tox
 
@@ -42,16 +42,20 @@ jobs:
   run-tests-36:
     strategy:
       fail-fast: false
+      matrix:
+        os: [ubuntu-20.04]
+        python-version:
+          - "3.6"
     name: Test Py3.6
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.6
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.6"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
@@ -60,6 +64,6 @@ jobs:
           rm -f Pipfile.lock
           pipenv install --dev
           echo "Pipenv installed Django version:"
-          django-admin --version
+          pipenv run django-admin --version
       - name: Test with tox
         run: pipenv run tox
