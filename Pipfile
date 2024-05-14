@@ -8,50 +8,43 @@ verify_ssl = true
 name = "pypi"
 
 ###
- # Python version declaration.
- ##
-[requires]
-python_version = "3.11"
-
-###
  # General packages, installed via `pipenv sync`.
  ##
 [packages]
 django = "*"
-pillow = "*"                    # Required to make sure image field dumping works correctly.
-pytz = "*"                      # Needed until fully on ZoneInfo.
+pillow = "*"                      # Required to make sure image field dumping works correctly.
+pytz = "*"                        # Needed until fully on ZoneInfo.
 
 ###
  # Development and testing packages, installed via `pipenv sync --dev`.
  ##
 [dev-packages]
-# Syntax-checking dependencies.
-autopep8 = "*"                  # Auto-formats files for pep8 recommendations. See `setup.cfg` for our exceptions.
-black="*"                       # "Uncompromising" Python code formatter.
-flake8 = "*"                    # Wrapper for autopep8 that allows extra configuration, etc.
-pylint = "*"                    # Linter for Python syntax. Must be run in console via "pylint" command.
-pylint-django = "*"             # Improves code analysis for Django projects.
-pylint-plugin-utils = "*"       # Additional pylint functionality for things like Django and Celery.
+# Syntax formatting and checking dependencies.
+black="*"                         # "Uncompromising" Python code formatter.
+pylint = "*"                      # Linter for Python syntax. Must be run in console via "pylint" command.
+pylint-django = "*"               # Improves code analysis for Django projects.
+pylint-plugin-utils = "*"         # Additional pylint functionality for things like Django and Celery.
 
 # Testing/Pytest dependencies.
-coverage = "*"                  # Outputs testing coverage data.
-django-expanded-test-cases = "*"    # Utilities for easier testing.
-freezegun = "*"                 # Allows "freezing" tests to specific datetimes, for consistent checking and output.
-pytest = "*"                    # Base Pytest package. Current preferred testing method.
-pytest-django = "*"             # Additional Pytest logic for Django support.
-pytest-xdist = "*"              # Additional Pytest features, such as multithreading and looping.
+coverage = "*"                    # Outputs testing coverage data.
+django-expanded-test-cases = "*"  # Utilities for easier testing.
+freezegun = "*"                   # Allows "freezing" tests to specific datetimes, for consistent checking and output.
+pytest = "*"                      # Base Pytest package. Current preferred testing method.
+pytest-cov = "*"                  # Additional Pytest logic for coverage support.
+pytest-django = "*"               # Additional Pytest logic for Django support.
+pytest-xdist = "*"                # Additional Pytest features, such as multithreading and looping.
 
 # Docs build dependencies.
-esbonio="*"                     # A "Language Server" to help build docs.
-sphinx = "*"                    # Core package to build project docs.
-sphinx-autobuild = "*"          # Additional Sphinx logic to autobuild from project code documentation.
-sphinx-rtd-theme = "*"          # Additional Sphinx logic for building with standard ReadTheDocs theme.
+esbonio="*"                       # A "Language Server" to help build docs.
+pip-tools = "*"                   # Management of Documentation Package dependencies and building.
+sphinx = "*"                      # Core package to build project docs.
+sphinx-autobuild = "*"            # Additional Sphinx logic to autobuild from project code documentation.
+sphinx-rtd-theme = "*"            # Additional Sphinx logic for building with standard ReadTheDocs theme.
 
 # Docs syntax-checking dependencies.
-doc8="*"                        # Checks reStructuredText (aka Sphinx) syntax.
-rstcheck = "~=3.5.0"            # Checks reStructuredText (aka Sphinx) syntax.
+doc8="*"                          # Checks reStructuredText (aka Sphinx) syntax.
+rstcheck = "~=3.5.0"              # Checks reStructuredText (aka Sphinx) syntax.
 
 # Project pypi dependencies.
-build = "*"                     # For building packages according to PEP 517 standards (for PyPi deployment).
-pip-tools = "*"                 # Management of Documentation Package dependencies and building.
-twine = "*"                     # For pushing/publishing packages.
+build = "*"                       # For building packages according to PEP 517 standards (for PyPi deployment).
+twine = "*"                       # For pushing/publishing packages.
