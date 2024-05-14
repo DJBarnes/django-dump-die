@@ -34,4 +34,4 @@ jobs:
           python -m pip install pipenv tox tox-gh-actions
           pipenv sync --dev
       - name: Test with tox
-        run: tox
+        run: pipenv run tox
