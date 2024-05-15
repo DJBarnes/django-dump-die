@@ -11,6 +11,7 @@ import os
 from datetime import datetime, timedelta
 from decimal import Decimal
 from enum import Enum
+from importlib.util import find_spec
 from pathlib import Path, PosixPath, PurePath, WindowsPath
 from types import ModuleType
 
@@ -222,7 +223,8 @@ class SampleDjangoModel(models.Model):
         pass
 
     try:
-        sample_image = models.ImageField(upload_to='uploads')
+        if find_spec("pillow"):
+            sample_image = models.ImageField(upload_to='uploads')
     except AttributeError:
         pass
 
