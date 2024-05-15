@@ -11,6 +11,9 @@ The solution was to divide objects out, displaying only one object per view, whi
 # Third-Party Imports.
 from django.shortcuts import render
 
+# Internal Imports.
+from .example_helpers import dump_complex_types
+
 
 def index(request):
     """Exclusively used for easy access to visual examine test views while debugging tests."""
@@ -19,10 +22,6 @@ def index(request):
 
 def complex_type_example__set(request):
     """Example view, rendering only "complex type" Set object output."""
-
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Set object output.')
@@ -41,10 +40,6 @@ def complex_type_example__set(request):
 def complex_type_example__frozen_set(request):
     """Example view, rendering only "complex type" FrozenSet object output."""
 
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
-
     # Output desired dump values.
     dump('Displaying example of "complex type" FrozenSet object output.')
     dump('')
@@ -61,10 +56,6 @@ def complex_type_example__frozen_set(request):
 
 def complex_type_example__tuple(request):
     """Example view, rendering only "complex type" Tuple object output."""
-
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Tuple object output.')
@@ -83,10 +74,6 @@ def complex_type_example__tuple(request):
 def complex_type_example__list(request):
     """Example view, rendering only "complex type" List object output."""
 
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
-
     # Output desired dump values.
     dump('Displaying example of "complex type" List object output.')
     dump('')
@@ -103,10 +90,6 @@ def complex_type_example__list(request):
 
 def complex_type_example__dict(request):
     """Example view, rendering only "complex type" Dict object output."""
-
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Dict object output.')
@@ -125,10 +108,6 @@ def complex_type_example__dict(request):
 def complex_type_example__querydict(request):
     """Example view, rendering only "complex type" QueryDict object output."""
 
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
-
     # Output desired dump values.
     dump('Displaying example of "complex type" QueryDict object output.')
     dump('')
@@ -145,10 +124,6 @@ def complex_type_example__querydict(request):
 
 def complex_type_example__memory_view(request):
     """Example view, rendering only "complex type" MemoryView object output."""
-
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
 
     # Output desired dump values.
     dump('Displaying example of "complex type" MemoryView object output.')
@@ -167,10 +142,6 @@ def complex_type_example__memory_view(request):
 def complex_type_example__enum(request):
     """Example view, rendering only "complex type" Enum object output."""
 
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
-
     # Output desired dump values.
     dump('Displaying example of "complex type" Enum object output.')
     dump('')
@@ -187,10 +158,6 @@ def complex_type_example__enum(request):
 
 def complex_type_example__multilevel_set(request):
     """Example view, rendering only "complex type" Multi-Level Set object output."""
-
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Multi-Level Set object output.')
@@ -209,10 +176,6 @@ def complex_type_example__multilevel_set(request):
 def complex_type_example__multilevel_tuple(request):
     """Example view, rendering only "complex type" Multi-Level Tuple object output."""
 
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
-
     # Output desired dump values.
     dump('Displaying example of "complex type" Multi-Level Tuple object output.')
     dump('')
@@ -229,10 +192,6 @@ def complex_type_example__multilevel_tuple(request):
 
 def complex_type_example__multilevel_list(request):
     """Example view, rendering only "complex type" Multi-Level List object output."""
-
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Multi-Level List object output.')
@@ -251,10 +210,6 @@ def complex_type_example__multilevel_list(request):
 def complex_type_example__multilevel_dict(request):
     """Example view, rendering only "complex type" Multi-Level Dict object output."""
 
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
-
     # Output desired dump values.
     dump('Displaying example of "complex type" Multi-Level Dict object output.')
     dump('')
@@ -271,10 +226,6 @@ def complex_type_example__multilevel_dict(request):
 
 def complex_type_example__list_subitem(request):
     """Example view, rendering only "complex type" List sub-item object output."""
-
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
 
     # Output desired dump values.
     dump('Displaying example of "complex type" List sub-item object output.')
@@ -293,10 +244,6 @@ def complex_type_example__list_subitem(request):
 def complex_type_example__tuple_subitem(request):
     """Example view, rendering only "complex type" Tuple sub-item object output."""
 
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
-
     # Output desired dump values.
     dump('Displaying example of "complex type" Tuple sub-item object output.')
     dump('')
@@ -313,10 +260,6 @@ def complex_type_example__tuple_subitem(request):
 
 def complex_type_example__tuple_subitem_func(request):
     """Example view, rendering only "complex type" Tuple sub-item function object output."""
-
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Tuple sub-item function object output.')
@@ -335,10 +278,6 @@ def complex_type_example__tuple_subitem_func(request):
 def complex_type_example__dict_subitem(request):
     """Example view, rendering only "complex type" Dict sub-item object output."""
 
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
-
     # Output desired dump values.
     dump('Displaying example of "complex type" Dict sub-item object output.')
     dump('')
@@ -355,10 +294,6 @@ def complex_type_example__dict_subitem(request):
 
 def complex_type_example__enum_subitem(request):
     """Example view, rendering only "complex type" Enum sub-item object output."""
-
-    # Import applicable helper functions/classes.
-    # Imported here so that these are only loaded on view access, and not package initialization.
-    from .example_helpers import dump_complex_types
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Enum sub-item object output.')
