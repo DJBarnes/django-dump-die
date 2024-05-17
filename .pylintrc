@@ -134,9 +134,8 @@ expected-line-ending-format=
 # Allow long lines if they have any of the following:
 # - URL
 # - def test_{long_function_name}
-# - PHP: test_file.php:test_function
-#   Used to signify which O2G test an O3G test replaces, in it's docstring.
-ignore-long-lines=([^A-Za-z0-9_]https?:\/\/\S+|(\s|^)def test_|PHP: \w+\.php:\w+| pragma: )
+# - Model <model> was already registered - Warnings that should be ignored.
+ignore-long-lines=([^A-Za-z0-9_]https?:\/\/\S+|(\s|^)def test_|Model .* was already registered)
 
 # Number of spaces of indent required inside a hanging or continued line.
 indent-after-paren=4
