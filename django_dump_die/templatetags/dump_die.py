@@ -65,28 +65,28 @@ deepcopy_unique_map = {}
 # endregion Module Variables
 
 
-@register.inclusion_tag('django_dump_die/partials/_dump.html', takes_context=True)
+@register.inclusion_tag("django_dump_die/partials/_dump.html", takes_context=True)
 def dump(context, obj):
     """Template tag that can be used in templates to use dd"""
     object_info = get_dumped_object_info(obj)
 
-    render_head = context.get('django_dd_template_tag_render_head', True)
+    render_head = context.get("django_dd_template_tag_render_head", True)
     if render_head:
-        context['django_dd_template_tag_render_head'] = False
+        context["django_dd_template_tag_render_head"] = False
 
     return {
-        'objects': [object_info],
-        'render_head': render_head,
+        "objects": [object_info],
+        "render_head": render_head,
     }
 
 
-@register.inclusion_tag('django_dump_die/partials/_dump_objects.html')
+@register.inclusion_tag("django_dump_die/partials/_dump_objects.html")
 def dump_objects(objects):
     """Template tag that can be used to dump a list of objects"""
-    return {'objects': objects}
+    return {"objects": objects}
 
 
-@register.inclusion_tag('django_dump_die/partials/_dump_object.html')
+@register.inclusion_tag("django_dump_die/partials/_dump_object.html")
 def dump_object(
     obj,
     root_obj,
@@ -131,6 +131,9 @@ def dump_object(
     # Following section will determine what should get rendered out.
     intermediate_value = None
 
+    # Determine if pytz timezone object for use in below decisions.
+    is_pytz_timezone = PYTZ_PRESENT and isinstance(obj, pytz.BaseTzInfo)
+
     # Handle if object is in skip set, aka already processed.
     if unique in skip_set:
         # Complex object found in skip set. Skip further handling of if clauses and go to end of function.
@@ -140,13 +143,7 @@ def dump_object(
 
     # Handle if obj is a simple type (Null/None, int, str, bool, and basic number types)
     # OR if direct parent is an intermediate (excluding pytz timezone objects).
-    elif (
-        _is_simple_type(obj)
-        or (
-            (PYTZ_PRESENT and parent_is_intermediate and not isinstance(obj, pytz.BaseTzInfo))
-            or parent_is_intermediate
-        )
-    ):
+    elif _is_simple_type(obj) or (parent_is_intermediate and not is_pytz_timezone):
         return _handle_simple_type(obj)
 
     # Handle if obj is an intermediate (date/time types).
@@ -157,7 +154,7 @@ def dump_object(
             unique,
             root_count,
             skip_set=skip_set,
-            original_obj=original_obj
+            original_obj=original_obj,
         )
 
     # Handle if element is iterable and we are at the root's element direct children (depth of 1),
@@ -167,7 +164,7 @@ def dump_object(
         root_index_start, root_index_end = _process_root_indices(
             root_index_start,
             root_index_end,
-            len(root_obj)
+            len(root_obj),
         )
 
         # Handle if current index is between root_index values.
@@ -208,14 +205,15 @@ def dump_object(
     # or outside the bounds of the root indexes to process.
     # In any case, just return the type and unique of the object for output.
     return {
-        'type': get_obj_type(obj),
-        'unique': unique,
-        'root_count': root_count,
-        'intermediate': intermediate_value,
+        "type": get_obj_type(obj),
+        "unique": unique,
+        "root_count": root_count,
+        "intermediate": intermediate_value,
     }
 
 
 # region Unique Mapping Functions
+
 
 def _generate_unique(obj, root_obj, original_obj):
     """Generates object "unique" identifier.
@@ -236,7 +234,7 @@ def _generate_unique(obj, root_obj, original_obj):
     root_unique = generate_unique_from_obj(root_obj)
 
     # Default root_count to blank string
-    root_count_string = ''
+    root_count_string = ""
 
     # If there is an original_obj, we may need to create the unique map so that
     # we can restore the original uniques to the deepcopied object.
@@ -274,9 +272,9 @@ def _generate_unique(obj, root_obj, original_obj):
         # If the root count is greater than zero, use it.
         if root_count > 0:
             # Update root_count_string.
-            root_count_string = f'_{root_count}'
+            root_count_string = f"_{root_count}"
         else:
-            root_count_string = ''
+            root_count_string = ""
 
     else:
         # Unique not found in tracker. Add the unique to the repeat_iteration_tracker.
@@ -333,18 +331,16 @@ def _add_unique_map_entry(obj, original_obj, root_unique):
             if orig_attr == attr:
                 _add_unique_map_entry(value, orig_value, root_unique)
 
+
 # endregion Unique Mapping Functions
 
 
 # region Type Handling Functions
 
+
 def _is_simple_type(obj):
     """Return if the obj is a simple type."""
-    return (
-        obj is None
-        or type(obj) in SIMPLE_TYPES
-        or get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
-    )
+    return obj is None or type(obj) in SIMPLE_TYPES or get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
 
 
 def _is_intermediate_type(obj):
@@ -355,10 +351,7 @@ def _is_intermediate_type(obj):
         return True
 
     # Handling for all other objects.
-    return (
-        type(obj) in INTERMEDIATE_TYPES
-        or get_class_name(obj) in ADDITIONAL_INTERMEDIATE_TYPES
-    )
+    return type(obj) in INTERMEDIATE_TYPES or get_class_name(obj) in ADDITIONAL_INTERMEDIATE_TYPES
 
 
 def is_complex_type(current_depth, current_iteration):
@@ -369,17 +362,10 @@ def is_complex_type(current_depth, current_iteration):
         # Check for any nested objects
         or (
             # Check if the max_recursion is set to None or we have not reached it yet.
-            (
-                MAX_RECURSION_DEPTH is None
-                or current_depth < MAX_RECURSION_DEPTH
-            )
-
+            (MAX_RECURSION_DEPTH is None or current_depth < MAX_RECURSION_DEPTH)
             # And if the max_iterable_length is set to None,
             # or we have not reached it yet or we are at the root level.
-            and (
-                MAX_ITERABLE_LENGTH is None
-                or current_iteration < MAX_ITERABLE_LENGTH
-            )
+            and (MAX_ITERABLE_LENGTH is None or current_iteration < MAX_ITERABLE_LENGTH)
         )
     )
 
@@ -390,23 +376,23 @@ def _handle_simple_type(obj):
     Includes str, numbers, bools, etc.
     """
     # Determine which css class to use.
-    css_class = ''
+    css_class = ""
     if obj is None:
-        css_class = 'none'
+        css_class = "none"
     elif isinstance(obj, str):
-        css_class = 'string'
+        css_class = "string"
     elif isinstance(obj, bool):
-        css_class = 'bool'
+        css_class = "bool"
     elif isinstance(obj, (int, Decimal, float, bytes)):
-        css_class = 'number'
+        css_class = "number"
     elif _is_intermediate_type(obj):
-        css_class = 'intermediate'
+        css_class = "intermediate"
     elif isinstance(obj, types.ModuleType):
-        css_class = 'module'
+        css_class = "module"
     elif isinstance(obj, BoundField):
-        css_class = 'bound'
+        css_class = "bound"
     else:
-        css_class = 'default'
+        css_class = "default"
 
     # Determine which output to use.
     if _is_intermediate_type(obj) or isinstance(obj, Decimal):
@@ -417,9 +403,9 @@ def _handle_simple_type(obj):
     # Since simple type, return safe representation of simple type and
     # which css class to use.
     return {
-        'simple': output_value,
-        'type': get_obj_type(obj),
-        'css_class': css_class,
+        "simple": output_value,
+        "type": get_obj_type(obj),
+        "css_class": css_class,
     }
 
 
@@ -449,29 +435,29 @@ def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, 
 
     # Return information required to render object.
     context = {
-        'include_attributes': INCLUDE_ATTRIBUTES,
-        'include_functions': INCLUDE_FUNCTIONS,
-        'collapsable': _get_collapsable_values(),
-        'braces': '{}',
-        'object': obj,
-        'intermediate': safe_str(obj),
-        'unique': unique,
-        'root_count': root_count,
-        'type': get_obj_type(obj),
-        'is_iterable': False,
-        'depth': 0,
-        'root_index_start': None,
-        'root_index_end': None,
-        'original_obj': original_obj,
+        "include_attributes": INCLUDE_ATTRIBUTES,
+        "include_functions": INCLUDE_FUNCTIONS,
+        "collapsable": _get_collapsable_values(),
+        "braces": "{}",
+        "object": obj,
+        "intermediate": safe_str(obj),
+        "unique": unique,
+        "root_count": root_count,
+        "type": get_obj_type(obj),
+        "is_iterable": False,
+        "depth": 0,
+        "root_index_start": None,
+        "root_index_end": None,
+        "original_obj": original_obj,
     }
     if INCLUDE_ATTRIBUTES:
-        context['attributes'] = attributes
-        context['index'] = 0
-        context['root_obj'] = root_obj
-        context['skip'] = set()
+        context["attributes"] = attributes
+        context["index"] = 0
+        context["root_obj"] = root_obj
+        context["skip"] = set()
     if INCLUDE_FUNCTIONS:
-        context['functions'] = functions
-        context['multiline_function_docs'] = MULTILINE_FUNCTION_DOCS
+        context["functions"] = functions
+        context["multiline_function_docs"] = MULTILINE_FUNCTION_DOCS
 
     return context
 
@@ -513,11 +499,11 @@ def _handle_complex_type(
 
     # Determine which type of braces should be used.
     if isinstance(obj, list):
-        braces = '[]'
+        braces = "[]"
     elif isinstance(obj, tuple):
-        braces = '()'
+        braces = "()"
     else:
-        braces = '{}'
+        braces = "{}"
 
     # Attempt to get corresponding attribute/function values of object.
     attributes, functions = get_obj_values(obj)
@@ -527,43 +513,45 @@ def _handle_complex_type(
 
     # Return information required to render object.
     context = {
-        'include_attributes': INCLUDE_ATTRIBUTES,
-        'include_functions': INCLUDE_FUNCTIONS,
-        'collapsable': _get_collapsable_values(),
-        'braces': braces,
-        'object': obj,
-        'unique': unique,
-        'root_count': root_count,
-        'type': get_obj_type(obj),
-        'is_iterable': is_iterable_obj,
-        'is_dict': is_dict_obj,
-        'depth': current_depth,
-        'root_index_start': root_index_start,
-        'root_index_end': root_index_end,
-        'original_obj': original_obj,
+        "include_attributes": INCLUDE_ATTRIBUTES,
+        "include_functions": INCLUDE_FUNCTIONS,
+        "collapsable": _get_collapsable_values(),
+        "braces": braces,
+        "object": obj,
+        "unique": unique,
+        "root_count": root_count,
+        "type": get_obj_type(obj),
+        "is_iterable": is_iterable_obj,
+        "is_dict": is_dict_obj,
+        "depth": current_depth,
+        "root_index_start": root_index_start,
+        "root_index_end": root_index_end,
+        "original_obj": original_obj,
     }
     if INCLUDE_ATTRIBUTES:
-        context['attributes'] = attributes
-        context['index'] = current_iteration
-        context['root_obj'] = root_obj
-        context['skip'] = skip_set
+        context["attributes"] = attributes
+        context["index"] = current_iteration
+        context["root_obj"] = root_obj
+        context["skip"] = skip_set
     if INCLUDE_FUNCTIONS:
-        context['functions'] = functions
-        context['multiline_function_docs'] = MULTILINE_FUNCTION_DOCS
+        context["functions"] = functions
+        context["multiline_function_docs"] = MULTILINE_FUNCTION_DOCS
 
     return context
+
 
 # endregion Type Handling Functions
 
 
 # region Object Property Functions
 
+
 def get_obj_values(obj):
     """Determines full corresponding member values (attributes/functions) of object."""
 
     # Initialize attribute/function lists. This is what we ultimately return.
-    attributes = []     # (attr, value, access_modifier, css_class, title)
-    functions = []      # (attr, doc, access_modifier)
+    attributes = []  # (attr, value, access_modifier, css_class, title)
+    functions = []  # (attr, doc, access_modifier)
 
     try:
         # Attempt to get member values of object. Falls back to empty list on failure.
@@ -574,16 +562,16 @@ def get_obj_values(obj):
 
         # First get exception data.
         tb = exception.__traceback__
-        title = 'Exception Occurred\n\n'
-        title += f'Exception Type: {type(exception).__name__}\n'
-        title += f'Exception Value: {str(exception)}\n\n'
-        title += 'Traceback (most recent call last):\n\n'
+        title = "Exception Occurred\n\n"
+        title += f"Exception Type: {type(exception).__name__}\n"
+        title += f"Exception Value: {str(exception)}\n\n"
+        title += "Traceback (most recent call last):\n\n"
         for entry in traceback.format_tb(tb):
-            title += f'{entry}\n'
-        title += 'End of traceback'
+            title += f"{entry}\n"
+        title += "End of traceback"
 
         # Add exception data to attributes and return.
-        attributes.append(['EXCEPTION', str(exception), None, 'empty', title])
+        attributes.append(["EXCEPTION", str(exception), None, "empty", title])
         return (attributes, functions)
 
     # Once all members have been collected, attempt to figure out what type, access modifier, css class, and title
@@ -637,24 +625,24 @@ def get_obj_values(obj):
                 # Processing order is: Index, const, key, set, attribute
                 if is_number(attr):  # Index.
                     access_modifier = None
-                    css_class = 'index'
-                    title = 'Index'
+                    css_class = "index"
+                    title = "Index"
                 elif is_const(attr):  # Constant.
                     access_modifier = _get_access_modifier(attr)
-                    css_class = 'constant'
-                    title = 'Constant'
+                    css_class = "constant"
+                    title = "Constant"
                 elif is_key(attr):  # Key.
                     access_modifier = None
-                    css_class = 'key'
-                    title = 'Key'
+                    css_class = "key"
+                    title = "Key"
                 elif attr is None:  # Set.
                     access_modifier = None
-                    css_class = ''
-                    title = ''
+                    css_class = ""
+                    title = ""
                 else:  # Class Attribute.
                     access_modifier = _get_access_modifier(attr)
-                    css_class = 'attribute'
-                    title = 'Attribute'
+                    css_class = "attribute"
+                    title = "Attribute"
 
                 # Append the attribute information to the list of attributes.
                 attributes.append([attr, value, access_modifier, css_class, title])
@@ -662,16 +650,16 @@ def get_obj_values(obj):
         except Exception as inner_exception:
             # First get exception data.
             tb = inner_exception.__traceback__
-            title = 'Exception:\n'
+            title = "Exception:\n"
             while tb is not None:
                 line_num = tb.tb_lineno
                 name = tb.tb_frame.f_code.co_name
                 filename = tb.tb_frame.f_code.co_filename
                 tb = tb.tb_next
-                title += '\n[ {0} : {1} ] {2}\n'.format(line_num, name, filename)
+                title += f"\n[ {line_num} : {name} ] {filename}\n"
 
             # Add exception data to attributes and return.
-            attributes.append(['EXCEPTION', str(inner_exception), None, 'empty', title])
+            attributes.append(["EXCEPTION", str(inner_exception), None, "empty", title])
 
     # Attempt to sort the functions and just ignore any errors.
     try:
@@ -685,16 +673,18 @@ def get_obj_values(obj):
 def _get_access_modifier(obj):
     """Return the access modifier that should be used."""
     if is_magic(obj):
-        return '-'
+        return "-"
     elif is_private(obj):
-        return '#'
+        return "#"
     else:
-        return '+'
+        return "+"
+
 
 # endregion Object Property Functions
 
 
 # region Misc Functions
+
 
 def _process_root_indices(start, end, parent_length):
     """Parse and validate indexes into expected format. Allows use of user-specified index ranges on root element."""
@@ -746,46 +736,47 @@ def _get_collapsable_values():
 
     # Determine default sets.
     content_set = {
-        'arrow': '▼' if CONTENT_STARTS_EXPANDED else '▶',
-        'show': 'show' if CONTENT_STARTS_EXPANDED else '',
-        'always_show': 'false',
-        'class': '' if CONTENT_STARTS_EXPANDED else 'collapsed',
-        'aria': 'true' if CONTENT_STARTS_EXPANDED else 'false',
+        "arrow": "▼" if CONTENT_STARTS_EXPANDED else "▶",
+        "show": "show" if CONTENT_STARTS_EXPANDED else "",
+        "always_show": "false",
+        "class": "" if CONTENT_STARTS_EXPANDED else "collapsed",
+        "aria": "true" if CONTENT_STARTS_EXPANDED else "false",
     }
     attr_set = {
-        'arrow': '▼' if ATTRIBUTES_START_EXPANDED else '▶',
-        'show': 'show' if ATTRIBUTES_START_EXPANDED else '',
-        'always_show': 'false',
-        'class': '' if ATTRIBUTES_START_EXPANDED else 'collapsed',
-        'aria': 'true' if ATTRIBUTES_START_EXPANDED else 'false',
+        "arrow": "▼" if ATTRIBUTES_START_EXPANDED else "▶",
+        "show": "show" if ATTRIBUTES_START_EXPANDED else "",
+        "always_show": "false",
+        "class": "" if ATTRIBUTES_START_EXPANDED else "collapsed",
+        "aria": "true" if ATTRIBUTES_START_EXPANDED else "false",
     }
     func_set = {
-        'arrow': '▼' if FUNCTIONS_START_EXPANDED else '▶',
-        'show': 'show' if FUNCTIONS_START_EXPANDED else '',
-        'always_show': 'false',
-        'class': '' if FUNCTIONS_START_EXPANDED else 'collapsed',
-        'aria': 'true' if FUNCTIONS_START_EXPANDED else 'false',
+        "arrow": "▼" if FUNCTIONS_START_EXPANDED else "▶",
+        "show": "show" if FUNCTIONS_START_EXPANDED else "",
+        "always_show": "false",
+        "class": "" if FUNCTIONS_START_EXPANDED else "collapsed",
+        "aria": "true" if FUNCTIONS_START_EXPANDED else "false",
     }
 
     # Extra handling if either attr or func output is disabled.
     # In such a case, it doesn't make sense to have expandable arrows for the remaining one.
     if INCLUDE_FUNCTIONS is False:
-        attr_set['arrow'] = ''
-        attr_set['show'] = 'show'
-        attr_set['always_show'] = 'true'
-        attr_set['class'] = 'show always-show'
-        attr_set['aria'] = ''
+        attr_set["arrow"] = ""
+        attr_set["show"] = "show"
+        attr_set["always_show"] = "true"
+        attr_set["class"] = "show always-show"
+        attr_set["aria"] = ""
     if INCLUDE_ATTRIBUTES is False:
-        func_set['arrow'] = ''
-        func_set['show'] = 'show'
-        func_set['always_show'] = 'true'
-        func_set['class'] = 'show always-show'
-        func_set['aria'] = ''
+        func_set["arrow"] = ""
+        func_set["show"] = "show"
+        func_set["always_show"] = "true"
+        func_set["class"] = "show always-show"
+        func_set["aria"] = ""
 
     return {
-        'content': content_set,
-        'attribute': attr_set,
-        'function': func_set,
+        "content": content_set,
+        "attribute": attr_set,
+        "function": func_set,
     }
+
 
 # endregion Misc Functions
