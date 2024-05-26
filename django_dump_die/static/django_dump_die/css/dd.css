@@ -8,6 +8,7 @@ body {
 
     margin-bottom: 15px;
 }
+
 hr {
     border: 1px solid;
     color: #d0c095;
@@ -19,10 +20,13 @@ hr {
     background-color: #fcf0cf;
     border-color: #d0c095;
 }
-.dump-toolbar div, .dump-toolbar p {
+
+.dump-toolbar div,
+.dump-toolbar p {
     background-color: inherit;
     border-color: inherit;
 }
+
 .dump-toolbar .button:hover,
 .dump-toolbar .button:focus,
 .dump-toolbar .button:active,
@@ -39,20 +43,25 @@ hr {
     margin-left: 10px;
     margin-right: 10px;
 }
+
 .dd-wrapper {
     border-left: 1px dashed #d0c095;
 }
+
 a.arrow-toggle {
     cursor: pointer;
 }
+
 .attribute-list {
     list-style-type: none;
     margin-bottom: 0;
 }
+
 .function-li {
     text-indent: -2ch;
     margin-left: 2ch;
 }
+
 .indent-docs p {
     margin-left: 20px;
     margin-bottom: 0;
@@ -63,24 +72,30 @@ a.arrow-toggle {
 .arrow {
     color: #839496;
 }
+
 .access-modifier {
     color: #657b83;
 }
+
 .braces {
     color: #839496;
 }
+
 .empty {
     color: #dc322f;
 }
+
 .location {
     color: #586e75;
     font-style: italic;
     font-size: 75%;
 }
+
 .type {
     color: #859900;
     font-size: 75%;
 }
+
 .unique {
     color: #6c71c4;
 }
@@ -91,24 +106,31 @@ a.arrow-toggle {
     font-style: italic;
     font-size: 75%;
 }
+
 .attribute {
     color: #93a1a1;
 }
+
 .constant {
     color: #cb4b16;
 }
+
 .dumped_name {
     color: #93a1a1;
 }
+
 .function {
     color: #268bd2;
 }
+
 .index {
     color: #d33682;
 }
+
 .key {
     color: #2aa198;
 }
+
 .params {
     color: #93a1a1;
 }
@@ -117,46 +139,57 @@ a.arrow-toggle {
 .bool {
     color: #b58900;
 }
+
 .bound {
     color: #268bd2;
 }
+
 .intermediate {
     color: #d33682;
 }
+
 .default {
     color: #586e75;
 }
+
 .docs {
     color: #586e75;
 }
+
 .module {
     color: #268bd2;
 }
+
 .none {
     color: #b58900;
 }
+
 .number {
     color: #d33682;
 }
+
 .string {
     color: #2aa198;
 }
 
-@media (prefers-color-scheme: light)
-{
+@media (prefers-color-scheme: light) {
     body {
         color: #657b83;
         background-color: #fdf6e3;
     }
+
     .dump-toolbar {
         color: #827b66;
         background-color: #fcf0cf;
         border-color: #d0c095;
     }
-    .dump-toolbar div, .dump-toolbar p {
+
+    .dump-toolbar div,
+    .dump-toolbar p {
         background-color: inherit;
         border-color: inherit;
     }
+
     .dump-toolbar .button:hover,
     .dump-toolbar .button:focus,
     .dump-toolbar .button:active,
@@ -166,56 +199,70 @@ a.arrow-toggle {
         color: #fcf0cf;
         background: #827b66;
     }
+
     .dd-wrapper {
         border-color: #d0c095;
     }
+
     hr {
         color: #d0c095;
     }
+
     .arrow {
         color: #657b83;
     }
+
     .access-modifier {
         color: #657b83;
     }
+
     .braces {
         color: #657b83;
     }
+
     .location {
         color: #93a1a1;
     }
+
     .section_name {
         color: #93a1a1;
     }
+
     .attribute {
         color: #586e75;
     }
+
     .dumped_name {
         color: #586e75;
     }
+
     .docs {
         color: #93a1a1;
     }
+
     .params {
         color: #586e75;
     }
 }
 
-@media (prefers-color-scheme: dark)
-{
+@media (prefers-color-scheme: dark) {
     body {
         color: #839496;
         background-color: #002b36;
     }
+
     .dump-toolbar {
         color: #839496;
         background-color: #001f29;
         border-color: #043b49;
     }
-    .dump-toolbar div, .dump-toolbar p {
+
+    .dump-toolbar div,
+    .dump-toolbar p {
         background-color: inherit;
         border-color: inherit;
     }
+
     .dump-toolbar .button:hover,
     .dump-toolbar .button:focus,
     .dump-toolbar .button:active,
@@ -225,36 +272,47 @@ a.arrow-toggle {
         color: #001f29;
         background: #839496;
     }
+
     .dd-wrapper {
         border-color: #054757;
     }
+
     hr {
         color: #054757;
     }
+
     .arrow {
         color: #839496;
     }
+
     .access-modifier {
         color: #839496;
     }
+
     .braces {
         color: #839496;
     }
+
     .location {
         color: #586e75;
     }
+
     .section_name {
         color: #586e75;
     }
+
     .attribute {
         color: #93a1a1;
     }
+
     .dumped_name {
         color: #93a1a1;
     }
+
     .docs {
         color: #586e75;
     }
+
     .params {
         color: #93a1a1;
     }
