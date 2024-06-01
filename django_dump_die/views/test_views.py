@@ -17,7 +17,7 @@ from .example_helpers import dump_complex_types
 
 def index(request):
     """Exclusively used for easy access to visual examine test views while debugging tests."""
-    return render(request, 'django_dump_die/test_index.html', {})
+    return render(request, "django_dump_die/test_index.html", {})
 
 
 def complex_type_example__set(request):
@@ -25,16 +25,16 @@ def complex_type_example__set(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Set object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_set()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__frozen_set(request):
@@ -42,16 +42,16 @@ def complex_type_example__frozen_set(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" FrozenSet object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_frozen_set()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__tuple(request):
@@ -59,16 +59,16 @@ def complex_type_example__tuple(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Tuple object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_tuple()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__list(request):
@@ -76,16 +76,16 @@ def complex_type_example__list(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" List object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_list()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__dict(request):
@@ -93,16 +93,16 @@ def complex_type_example__dict(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Dict object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_dict()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__querydict(request):
@@ -110,16 +110,16 @@ def complex_type_example__querydict(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" QueryDict object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_querydict()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__memory_view(request):
@@ -127,16 +127,16 @@ def complex_type_example__memory_view(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" MemoryView object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_memory_view()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__enum(request):
@@ -144,16 +144,16 @@ def complex_type_example__enum(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Enum object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_enum()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__multilevel_set(request):
@@ -161,16 +161,16 @@ def complex_type_example__multilevel_set(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Multi-Level Set object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_multilevel_set()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__multilevel_tuple(request):
@@ -178,16 +178,16 @@ def complex_type_example__multilevel_tuple(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Multi-Level Tuple object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_multilevel_tuple()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__multilevel_list(request):
@@ -195,16 +195,16 @@ def complex_type_example__multilevel_list(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Multi-Level List object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_multilevel_list()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__multilevel_dict(request):
@@ -212,16 +212,16 @@ def complex_type_example__multilevel_dict(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Multi-Level Dict object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_multilevel_dict()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__list_subitem(request):
@@ -229,16 +229,16 @@ def complex_type_example__list_subitem(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" List sub-item object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_list_subitem()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__tuple_subitem(request):
@@ -246,16 +246,16 @@ def complex_type_example__tuple_subitem(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Tuple sub-item object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_tuple_subitem()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__tuple_subitem_func(request):
@@ -263,16 +263,16 @@ def complex_type_example__tuple_subitem_func(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Tuple sub-item function object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_tuple_subitem_function()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__dict_subitem(request):
@@ -280,16 +280,16 @@ def complex_type_example__dict_subitem(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Dict sub-item object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_dict_subitem()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example__enum_subitem(request):
@@ -297,13 +297,13 @@ def complex_type_example__enum_subitem(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" Enum sub-item object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_enum_subitem()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
