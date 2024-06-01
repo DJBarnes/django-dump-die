@@ -82,7 +82,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <div class="dump-wrapper">
                     <span class="dumped_object" title="Dumped Object">
-                        <span class="string">''</span>
+                        <span class="string">""</span>
                     </span>:
                     <span class="type" title="str">str</span>
                     <code class="string">''</code>

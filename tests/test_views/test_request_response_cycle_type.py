@@ -47,10 +47,10 @@ class DumpDieDjangoRequestResponseCycleTestCase(IntegrationTestCase):
                 """
                 <div class="dump-wrapper">
                     <span class="dumped_object" title="Dumped Object">
-                        <span class="string">'Displaying Django request-response-cycle example output.'</span>
+                        <span class="string">'Displaying Django "request-response-cycle" example output.'</span>
                     </span>:
                     <span class="type" title="str">str</span>
-                    <code class="string">'Displaying Django request-response-cycle example output.'</code>
+                    <code class="string">'Displaying Django "request-response-cycle" example output.'</code>
                 </div>
                 """,
                 "<hr>",
@@ -58,7 +58,7 @@ class DumpDieDjangoRequestResponseCycleTestCase(IntegrationTestCase):
                 """
                 <div class="dump-wrapper">
                     <span class="dumped_object" title="Dumped Object">
-                        <span class="string">''</span>
+                        <span class="string">""</span>
                     </span>:
                     <span class="type" title="str">str</span>
                     <code class="string">''</code>
