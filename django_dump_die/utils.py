@@ -34,6 +34,7 @@ if PYTZ_PRESENT:
 
 class Enum:
     """Enum faker class so an entire Enum can be dumped correctly."""
+
     def __init__(self, *args, **kwargs):
         """Set attrs on this class for each kwarg passed in."""
         for key, val in kwargs.items():
@@ -104,13 +105,13 @@ def get_dumped_object_name_and_location(object_needing_name):
     dumped_text_matches = re.findall(dump_pattern, code_context)
     dd_text_matches = re.findall(dd_pattern, code_context)
     # Determine if dumped or dd'd and put result in dumped_text
-    dumped_text = 'Unknown_Object_Name'
+    dumped_text = "Unknown_Object_Name"
     if dumped_text_matches:
         dumped_text = dumped_text_matches[0]
     elif dd_text_matches:
         dumped_text = dd_text_matches[0]
 
-    while 'deepcopy' in dumped_text or 'index_range' in dumped_text:
+    while "deepcopy" in dumped_text or "index_range" in dumped_text:
         dumped_text_matches = re.findall(options_pattern, dumped_text)
         if dumped_text_matches:
             dumped_text = dumped_text_matches[0]
@@ -131,7 +132,7 @@ def get_fully_qualified_dumped_line(base_frame, frame_info):
     """
 
     line_num = base_frame.f_lineno - 1
-    code_context = ''
+    code_context = ""
     counter = None
     total_loops = 0
     # Loop through lines until counter goes back to 0, to account for newlines.
@@ -166,7 +167,7 @@ def get_fully_qualified_dumped_line(base_frame, frame_info):
             pass
 
     # Strip out extra whitespace, if present.
-    code_context = re.sub(r'\s+', ' ', code_context)
+    code_context = re.sub(r"\s+", " ", code_context)
 
     # Return final result.
     return code_context
@@ -194,7 +195,7 @@ def process_object_name(object_name):
         # Stores all tokens extracted from the iterator.
         all_tokens = []
         # Stores the previous token as we iterate.
-        previous_token = ''
+        previous_token = ""
         # Whether we are inside a param list. Default to False
         in_param_list = False
 
@@ -231,43 +232,47 @@ def process_object_name(object_name):
             if token_number == NEWLINE or token_number == ENDMARKER:
                 continue
 
-            if token_number == NAME and token_value == 'Unknown_Object_Name':
+            if token_number == NAME and token_value == "Unknown_Object_Name":
                 # Use empty color as object name can't be determined
-                css_class = 'empty'
+                css_class = "empty"
             elif token_number == NAME and is_const(token_value):
                 # Use constant color.
-                css_class = 'constant'
+                css_class = "constant"
             elif token_number == STRING:
                 # Use string color.
-                css_class = 'string'
+                css_class = "string"
             elif token_number == NUMBER:
                 # Use number color.
-                css_class = 'number'
-            elif token_number == OP and token_value in '(){}[]':
+                css_class = "number"
+            elif token_number == OP and token_value in "(){}[]":
                 # Use braces color.
-                css_class = 'braces'
+                css_class = "braces"
             elif token_value in functions:
                 # Use function color
-                css_class = 'function'
+                css_class = "function"
             elif token_value in params:
                 # User param color
-                css_class = 'params'
+                css_class = "params"
             else:
                 # Use default color.
-                css_class = 'dumped_name'
+                css_class = "dumped_name"
 
             # Append the info on to the name list
-            name.append({
-                'css_class': css_class,
-                'value': token_value,
-            })
+            name.append(
+                {
+                    "css_class": css_class,
+                    "value": token_value,
+                }
+            )
 
     else:
         # Convert object name to the format expected by the template.
-        name.append({
-            'css_class': '',
-            'value': object_name,
-        })
+        name.append(
+            {
+                "css_class": "",
+                "value": object_name,
+            }
+        )
 
     return name
 
@@ -326,7 +331,7 @@ def generate_unique_from_obj(obj):
     except Exception:
         unique = id(obj)
     # Append the class name to the unique to really make unique.
-    unique = f'{get_class_name(obj)}_{unique}'
+    unique = f"{get_class_name(obj)}_{unique}"
 
     return unique
 
@@ -383,7 +388,7 @@ def get_callable_name(obj_name, obj):
     try:
         obj_name += safe_str(inspect.signature(obj))
     except Exception:
-        obj_name += '()'
+        obj_name += "()"
     return obj_name
 
 
@@ -395,7 +400,7 @@ def get_callable_params(obj):
     try:
         signature = safe_str(inspect.signature(obj))
     except Exception:
-        signature = '()'
+        signature = "()"
 
     signature_minus_parentheses = signature[1:-1]
 
@@ -409,31 +414,31 @@ def get_obj_type(obj):
     obj_type = type(obj).__name__
 
     # Special handling for certain types.
-    if obj_type == 'NoneType':
-        obj_type = 'null'
+    if obj_type == "NoneType":
+        obj_type = "null"
     elif PYTZ_PRESENT and isinstance(obj, pytz.BaseTzInfo):
-        obj_type = 'pytz_timezone'
+        obj_type = "pytz_timezone"
 
     return obj_type
 
 
 def safe_repr(obj):
     """Call repr() and ignore ObjectDoesNotExist."""
-    str_obj = ''
+    str_obj = ""
     try:
         str_obj = repr(obj)
     except ObjectDoesNotExist:
         # NOTE: A list of deleted db objects will cause repr(list) to fail.
         # So, we detect this and print out the __class__ of the contents of
         # the list.
-        str_obj = f'<{obj.__class__} DELETED>'
+        str_obj = f"<{obj.__class__} DELETED>"
 
     return str_obj
 
 
 def safe_str(obj):
     """Call str() and ignore TypeErrors if str() doesn't return a string."""
-    str_obj = ''
+    str_obj = ""
     try:
         str_obj = str(obj)
     except (TypeError, ObjectDoesNotExist):
@@ -458,22 +463,24 @@ def is_iterable(obj):
 def is_query(obj):
     """Return True if object is most likely a query."""
     if obj is not None:
-        return _in_dir(obj, 'as_manager') and _in_dir(obj, 'all') and _in_dir(obj, 'filter')
+        return _in_dir(obj, "as_manager") and _in_dir(obj, "all") and _in_dir(obj, "filter")
 
 
 def is_dict(obj):
     """Return True if object is most likely a dict."""
     if obj is not None:
-        return _in_dir(obj, 'items') and _in_dir(obj, 'keys') and _in_dir(obj, 'values')
+        return _in_dir(obj, "items") and _in_dir(obj, "keys") and _in_dir(obj, "values")
 
 
 def is_set(obj):
     """Return True if object is most likely a dict."""
     return isinstance(obj, set) or isinstance(obj, frozenset)
 
+
 def is_enum_member(obj):
     """Return True if object is most likely a enum"""
     return issubclass(type(obj), OrigEnum)
+
 
 def is_const(obj):
     """Return True if object is most likely a constant."""
@@ -490,22 +497,19 @@ def is_key(obj):
 def is_number(obj):
     """Return True if object is most likely a number."""
     if obj is not None:
-        return (
-            isinstance(obj, (int, float, Decimal))
-            or (getattr(obj, 'isnumeric', None) and obj.isnumeric())
-        )
+        return isinstance(obj, (int, float, Decimal)) or (getattr(obj, "isnumeric", None) and obj.isnumeric())
 
 
 def is_private(obj):
     """Return True if object is private."""
     if obj is not None:
-        return isinstance(obj, str) and obj.startswith('_')
+        return isinstance(obj, str) and obj.startswith("_")
 
 
 def is_magic(obj):
     """Return True if object is private."""
     if obj is not None:
-        return isinstance(obj, str) and obj.startswith('__') and obj.endswith('__')
+        return isinstance(obj, str) and obj.startswith("__") and obj.endswith("__")
 
 
 def _in_dir(obj, attr):
@@ -519,5 +523,6 @@ def _is_indexable(obj):
         return True
     else:
         return False
+
 
 # endregion Object Property Functions

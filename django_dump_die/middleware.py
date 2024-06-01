@@ -13,7 +13,7 @@ from .views import dd_view
 from django_dump_die.utils import get_dumped_object_info
 
 
-logger = logging.getLogger('django_dump_die')
+logger = logging.getLogger("django_dump_die")
 dump_objects = []
 
 
@@ -22,6 +22,7 @@ class DumpAndDie(Exception):
     DumpAndDie Exception.
     Triggers the middleware exception logic which outputs the alternate dd debug view.
     """
+
     def __init__(self, obj):
         super().__init__(obj)
         self.object = obj
@@ -70,6 +71,7 @@ class DumpAndDieMiddleware:
 
     Allows access to php/laravel-like function dd().
     """
+
     def __init__(self, get_response):
         """
         Add our dd() and dump() commands to be universally accessible.
@@ -77,9 +79,9 @@ class DumpAndDieMiddleware:
         self.get_response = get_response
 
         # Add global dd() function.
-        __builtins__['dd'] = dd
+        __builtins__["dd"] = dd
         # Add global dump() function.
-        __builtins__['dump'] = dump
+        __builtins__["dump"] = dump
 
     def __call__(self, request):
         """
@@ -90,7 +92,7 @@ class DumpAndDieMiddleware:
         response = self.get_response(request)
 
         # If there are no items in the dump_objects list or there is no exception raised
-        if not dump_objects or getattr(request, 'has_exception', False):
+        if not dump_objects or getattr(request, "has_exception", False):
             return response
         else:
             # Create a copy of the list, and clear it.
