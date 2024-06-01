@@ -22,7 +22,7 @@ from .example_helpers import (
 
 def index(request):
     """Index view, to easily navigate to example views."""
-    return render(request, 'django_dump_die/index.html')
+    return render(request, "django_dump_die/index.html")
 
 
 def simple_type_example(request):
@@ -30,16 +30,16 @@ def simple_type_example(request):
 
     # Output desired dump values.
     dump('Displaying example of "simple type" object output.')
-    dump('')
+    dump("")
     dump_simple_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def intermediate_type_example(request):
@@ -47,16 +47,16 @@ def intermediate_type_example(request):
 
     # Output desired dump values.
     dump('Displaying example of "intermediate type" object output.')
-    dump('')
+    dump("")
     dump_intermediate_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def complex_type_example(request):
@@ -64,77 +64,77 @@ def complex_type_example(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" object output.')
-    dump('')
+    dump("")
     dump_complex_types().dump_all_objects()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def function_type_example(request):
     """Example view, rendering only function object output."""
 
     # Output desired dump values.
-    dump('Displaying example of function object output.')
-    dump('')
+    dump('Displaying example of "function" object output.')
+    dump("")
     dump_function_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def class_type_example(request):
     """Example view, rendering only class object output."""
 
     # Output desired dump values.
-    dump('Displaying example of class object output.')
-    dump('')
+    dump("Displaying example of class object output.")
+    dump("")
     dump_class_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def full_category_example(request):
     """Example view, rendering all examples shown in all other views, all in one page."""
 
     # Output desired dump values.
-    dump('')
+    dump("")
     dump_simple_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
     dump_intermediate_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
     dump_complex_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
     dump_function_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
     dump_class_types()
-    dump('')
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def datetime_example(request):
@@ -142,33 +142,33 @@ def datetime_example(request):
 
     # Output desired dump values.
     dump('Displaying example of "datetime" object output.')
-    dump('')
+    dump("")
     dump_datetime_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def django_model_example(request):
     """Example view, rendering only Django model object output."""
 
     # Output desired dump values.
-    dump('Displaying example of Django model object output.')
-    dump('')
+    dump("Displaying example of Django model object output.")
+    dump("")
     dump_model_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def iterable_group_example(request):
@@ -176,16 +176,16 @@ def iterable_group_example(request):
 
     # Output desired dump values.
     dump('Displaying example of "iterable group" (arrays) object output.')
-    dump('')
+    dump("")
     dump_iterable_group_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def numeric_example(request):
@@ -193,16 +193,16 @@ def numeric_example(request):
 
     # Output desired dump values.
     dump('Displaying example of "numeric type" object output.')
-    dump('')
+    dump("")
     dump_numeric_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def system_path_example(request):
@@ -210,60 +210,60 @@ def system_path_example(request):
 
     # Output desired dump values.
     dump('Displaying example of "syspath" object output.')
-    dump('')
+    dump("")
     dump_syspath_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def full_purpose_example(request):
     """Example view, rendering all examples shown in all other views, all in one page."""
 
     # Output desired dump values.
-    dump('')
+    dump("")
     dump_numeric_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
     dump_datetime_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
     dump_model_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
     dump_iterable_group_types()
-    dump('')
-    dump('')
+    dump("")
+    dump("")
     dump_syspath_types()
-    dump('')
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def django_request_response_cycle_example(request):
     """Example view, rendering a request object."""
 
     # Output desired dump values.
-    dump('Displaying Django request-response-cycle example output.')
-    dump('')
+    dump('Displaying Django "request-response-cycle" example output.')
+    dump("")
     dump_django_request_response_cycle_types(request)
-    dump('')
-    dump('')
+    dump("")
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
 
 
 def edge_case_example(request):
@@ -276,12 +276,12 @@ def edge_case_example(request):
     """
 
     # Output desired dump values.
-    dump('')
+    dump("")
     dump_edgecase_types()
-    dump('')
+    dump("")
 
     # Force dd to prevent further view parsing.
-    dd('done')
+    dd("done")
 
     # Show that any calls after dd() end up ignored.
-    return render(request, 'django_dump_die/sample.html', {})
+    return render(request, "django_dump_die/sample.html", {})
