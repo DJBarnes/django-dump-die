@@ -185,7 +185,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" Set object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
         # Test child elements.
@@ -331,7 +331,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" FrozenSet object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
         # Test child elements.
@@ -471,7 +471,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" Tuple object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -570,7 +570,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" List object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -665,7 +665,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" Dict object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -889,7 +889,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" QueryDict object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -1267,7 +1267,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" MemoryView object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -1451,7 +1451,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" Enum object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -1567,7 +1567,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" Multi-Level Set object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
         # Test child elements.
@@ -1896,7 +1896,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" Multi-Level Tuple object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -2084,7 +2084,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" Multi-Level List object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -2273,7 +2273,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" Multi-Level Dict object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -2373,7 +2373,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" List sub-item object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -2473,7 +2473,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" Tuple sub-item object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -2525,7 +2525,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" Tuple sub-item function object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -2625,7 +2625,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" Dict sub-item object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -2718,7 +2718,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" Enum sub-item object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
 
         # For second enum sub-item.
@@ -2795,5 +2795,5 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='Displaying example of "complex type" Enum sub-item object output.',
-            content_ends_before="""<span class="string">'done'</span>""",
+            content_ends_before='<span class="string">"done"</span>',
         )
