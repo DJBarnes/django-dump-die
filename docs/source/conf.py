@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.abspath("../.."))
 # Make Django happy
 import django
 from django.conf import settings
+from django_dump_die import __version__
 
 # -- Project information -----------------------------------------------------
 
@@ -26,8 +27,14 @@ project = "Django-Dump-Die"
 copyright = f"{datetime.date.today().year}, David Barnes, Brandon Rodriguez"
 author = "David Barnes, Brandon Rodriguez"
 
-# The full version, including alpha/beta/rc tags
-release = "0.1.7"
+# The version info for the project you're documenting, acts as replacement for
+# |version| and |release|, also used in various other places throughout the
+# built documents.
+#
+# The short X.Y version.
+version = __version__
+# The full version, including alpha/beta/rc tags.
+release = __version__
 
 
 # -- General configuration ---------------------------------------------------

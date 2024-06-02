@@ -1,10 +1,9 @@
 [build-system]
-requires = ['setuptools>=40.8.0', 'wheel']
-build-backend = 'setuptools.build_meta:__legacy__'
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
 
 [project]
 name = "django-dump-die"
-version = "0.1.7"
 description = "A Django app to add Laravel/Symfony-like dump and die functionality."
 readme = "README.md"
 authors = [
@@ -27,7 +26,6 @@ classifiers = [
     "Framework :: Django :: 4.0",
     "Framework :: Django :: 4.1",
     "Framework :: Django :: 4.2",
-    "Framework :: Django :: 5",
     "Framework :: Django :: 5.0",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
@@ -45,31 +43,15 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
 ]
-keywords = [
-    "debug",
-    "dd",
-    "die",
-    "django",
-    "dump",
-    "inspect",
-    "tool",
-]
-dependencies = [
-    "django >= 2.2.0",
-]
+keywords = ["debug", "dd", "die", "django", "dump", "inspect", "tool"]
 requires-python = ">=3.6"
+dependencies = ["django >= 2.2.0"]
+dynamic = ["version"]
 
 [project.optional-dependencies]
-dev = [
-    "black",
-    "coverage",
-    "pylint",
-    "pylint-django",
-    "pylint-plugin-utils",
-]
+dev = ["black", "coverage", "pylint", "pylint-django", "pylint-plugin-utils"]
 doc = [
     "doc8",
-    "esbonio",
     "pip-tools",
     "rstcheck",
     "sphinx",
@@ -77,7 +59,7 @@ doc = [
     "sphinx-rtd-theme",
 ]
 test = [
-    "coverate",
+    "coverage",
     "django-expanded-test-cases",
     "freezegun",
     "pytest",
