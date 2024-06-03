@@ -4,7 +4,7 @@ on:
   - pull_request
 
 jobs:
-  run-tests:
+  tests:
     strategy:
       fail-fast: false
       matrix:
@@ -39,7 +39,7 @@ jobs:
         run: pipenv run tox
 
   # Run tests for python 3.6. Requires Ubuntu 20.04
-  run-tests-36:
+  tests-36:
     strategy:
       fail-fast: false
       matrix:
