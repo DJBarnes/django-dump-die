@@ -1,10 +1,16 @@
 name: Run Tests
 on:
-  - push
-  - pull_request
+  push:
+    branches:
+      - master
+      - development
+      - coverage
+  pull_request:
 
 jobs:
   test:
+    # Only run tests when NOT pushing tags. Assumes tests already passed from pushed commit that tag is based on.
+    if: ${{ !startsWith(github.ref, 'refs/tags') }}
     strategy:
       fail-fast: false
       matrix:
@@ -18,6 +24,8 @@ jobs:
           - "3.12"
     name: Test
     runs-on: ${{ matrix.os }}
+    environment:
+      name: test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,11 +43,24 @@ jobs:
           pipenv install --dev
           echo "Pipenv installed Django version:"
           pipenv run django-admin --version
+
       - name: Test with tox
         run: pipenv run tox
 
+      - name: Rename coverage results
+        run: mv .coverage .coverage.${{ matrix.python-version }}
+
+      - name: Upload coverage results
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.python-version }}
+          path: .coverage.${{ matrix.python-version }}
+          overwrite: true
+
   # Run tests for python 3.6. Requires Ubuntu 20.04
   test-36:
+    # Only run tests when NOT pushing tags. Assumes tests already passed from pushed commit that tag is based on.
+    if: ${{ !startsWith(github.ref, 'refs/tags') }}
     strategy:
       fail-fast: false
       matrix:
@@ -48,6 +69,8 @@ jobs:
           - "3.6"
     name: Test Py3.6
     runs-on: ${{ matrix.os }}
+    environment:
+      name: test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -65,5 +88,52 @@ jobs:
           pipenv install --dev
           echo "Pipenv installed Django version:"
           pipenv run django-admin --version
+
       - name: Test with tox
         run: pipenv run tox
+
+      - name: Rename coverage results
+        run: mv .coverage .coverage.${{ matrix.python-version }}
+
+      - name: Upload coverage results
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.python-version }}
+          path: .coverage.${{ matrix.python-version }}
+          overwrite: true
+
+  coverage:
+    name: Upload coverage results to Coveralls
+    runs-on: ubuntu-latest
+    environment:
+      name: test
+    # Need to run this after tests succeed so that coverage reflects test runs with all django and python combinations.
+    needs:
+      - test
+      - test-36
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Retrieve coverage results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          merge-multiple: true
+
+      - name: Combine coverage files
+        run: |
+          python -m pip install coverage
+          coverage --version
+          coverage combine
+
+      - name: Create coverage report
+        run: coverage lcov
+
+      - name: Upload Coverage to Coveralls
+        uses: coverallsapp/github-action@v2
