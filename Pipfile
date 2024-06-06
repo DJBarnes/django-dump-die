@@ -20,7 +20,7 @@ pytz = "*"                        # Needed until fully on ZoneInfo.
  ##
 [dev-packages]
 # Syntax formatting and checking dependencies.
-black = "*"                         # "Uncompromising" Python code formatter.
+black = "*"                       # "Uncompromising" Python code formatter.
 pylint = "*"                      # Linter for Python syntax. Must be run in console via "pylint" command.
 pylint-django = "*"               # Improves code analysis for Django projects.
 
