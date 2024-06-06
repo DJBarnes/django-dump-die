@@ -33,7 +33,7 @@ def run_tests():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
 
     # Run tests.
-    argv = sys.argv[:1] + ["test"] + sys.argv[1:]
+    argv = sys.argv[:1] + ["test"] + sys.argv[1:] + ["--buffer"]
     execute_from_command_line(argv)
 
 
