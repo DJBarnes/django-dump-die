@@ -11,20 +11,34 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def run_tests_with_pytest():
-    """Run tests"""
+    """Run tests with pytest format.
+    Has very helpful and verbose testing output.
+    """
+
+    # Set environment values.
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
     os.environ.setdefault("PYTHONPATH", ROOT_DIR)
+
+    # Run tests.
     argv = ["pytest"] + sys.argv[1:]
     subprocess.run(argv, check=False)
 
 
 def run_tests():
-    """Run tests"""
+    """Run tests with manage.py format.
+    Has less helpful testing output.
+    """
+
+    # Set environment values.
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
+
+    # Run tests.
     argv = sys.argv[:1] + ["test"] + sys.argv[1:]
     execute_from_command_line(argv)
 
 
+# Determine which testing format to run, based on environment.
+# Pytest is preferred.
 if __name__ == "__main__":
     if which("pytest") is not None:
         run_tests_with_pytest()
