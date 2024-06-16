@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: release
-      url: https://test.pypi.org/p/django-dump-die
+      url: https://pypi.org/p/django-dump-die
     needs:
       - release-build
     permissions:
@@ -51,9 +51,32 @@ jobs:
           name: release-dists
           path: dist/
 
-      - name: Publish release distributions to TestPyPI
+      - name: Publish release distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          repository-url: https://test.pypi.org/legacy/
-          skip-existing: true
-          verbose: true
+          repository-url: https://pypi.org/legacy/
+
+  # test-pypi-publish:
+  #   name: Upload release to Test PyPI
+  #   runs-on: ubuntu-latest
+  #   environment:
+  #     name: release
+  #     url: https://test.pypi.org/p/django-dump-die
+  #   needs:
+  #     - release-build
+  #   permissions:
+  #     id-token: write
+
+  #   steps:
+  #     - name: Retrieve release distributions
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: release-dists
+  #         path: dist/
+
+  #     - name: Publish release distributions to TestPyPI
+  #       uses: pypa/gh-action-pypi-publish@release/v1
+  #       with:
+  #         repository-url: https://test.pypi.org/legacy/
+  #         skip-existing: true
+  #         verbose: true
