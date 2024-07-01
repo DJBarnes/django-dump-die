@@ -13,7 +13,7 @@ from django.utils import timezone
 
 # Imports that may not be accessible, depending on local python environment setup.
 try:
-    import pytz
+    import pytz  # pylint: disable=unused-import
 
     PYTZ_PRESENT = True
 except ImportError:

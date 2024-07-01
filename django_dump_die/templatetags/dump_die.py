@@ -132,7 +132,7 @@ def dump_object(
     intermediate_value = None
 
     # Determine if pytz timezone object for use in below decisions.
-    is_pytz_timezone = PYTZ_PRESENT and isinstance(obj, pytz.BaseTzInfo)
+    is_pytz_timezone = PYTZ_PRESENT and isinstance(obj, pytz.BaseTzInfo)  # pylint: disable=E0606
 
     # Handle if object is in skip set, aka already processed.
     if unique in skip_set:

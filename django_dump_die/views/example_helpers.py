@@ -56,7 +56,7 @@ def sample_func_param(param1, *args, some_kwarg=None, **kwargs):  # pylint: disa
 class EmptyClass:
     """Empty sample class"""
 
-    pass
+    pass  # pylint: disable=unnecessary-pass
 
 
 class SimpleClass:
@@ -383,6 +383,8 @@ class SampleModelForm(ModelForm):
 
 # region DD Display Classes
 
+SAMPLE_CONST = "Sample Constant Content"
+
 
 class SimpleTypesHelper:
     """Class containing methods to dump simple types"""
@@ -395,7 +397,6 @@ class SimpleTypesHelper:
     def dump_non_numeric_types(self):
         """Dump Non-numeric Types"""
         # Generate variables to dump.
-        SAMPLE_CONST = "Sample Constant Content"
         sample_module = ModuleType("django.html")
         sample_bytes = b"sample bytes"
         sample_string = "Sample String Content"
@@ -826,7 +827,7 @@ class DjangoTypesHelper:
         # m2m when the "object" does not have an id. Which it can't due to it being
         # a class definition and not an instance. Problem is solved when an instance
         # is created. See below dump of instance.
-        SampleDjangoModelNoManyRelation = copy.deepcopy(SampleDjangoModel)
+        SampleDjangoModelNoManyRelation = copy.deepcopy(SampleDjangoModel)  # pylint: disable=invalid-name
         delattr(SampleDjangoModelNoManyRelation, "sample_many")
         dump(SampleDjangoModelNoManyRelation)
 

@@ -416,7 +416,7 @@ def get_obj_type(obj):
     # Special handling for certain types.
     if obj_type == "NoneType":
         obj_type = "null"
-    elif PYTZ_PRESENT and isinstance(obj, pytz.BaseTzInfo):
+    elif PYTZ_PRESENT and isinstance(obj, pytz.BaseTzInfo):  # pylint: disable=E0606
         obj_type = "pytz_timezone"
 
     return obj_type
