@@ -5,11 +5,12 @@ from django.shortcuts import render
 
 # Internal Imports.
 from .example_helpers import (
-    SimpleTypesHelper,
-    IntermediateTypesHelper,
     ComplexTypesHelper,
     DjangoTypesHelper,
     EdgeCasesHelper,
+    FunctionTypesHelper,
+    IntermediateTypesHelper,
+    SimpleTypesHelper,
 )
 
 # region Main views showcasing functionality.
@@ -86,23 +87,6 @@ def iterable_type_example(request):
     return render(request, "django_dump_die.sample.html", {})
 
 
-def function_type_example(request):
-    """Example view, rendering only function object output."""
-
-    # Output desired dump values.
-    dump('Displaying example of "function" object output.')
-    dump("")
-    ComplexTypesHelper().dump_function_types()
-    dump("")
-    dump("")
-
-    # Force dd to prevent further view parsing.
-    dd("done")
-
-    # Show that any calls after dd() end up ignored.
-    return render(request, "django_dump_die/sample.html", {})
-
-
 def class_type_example(request):
     """Example view, rendering only class object output."""
 
@@ -171,6 +155,23 @@ def django_request_response_cycle_example(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
+def function_type_example(request):
+    """Example view, rendering only function object output."""
+
+    # Output desired dump values.
+    dump('Displaying example of "function" object output.')
+    dump("")
+    FunctionTypesHelper().dump_function_types()
+    dump("")
+    dump("")
+
+    # Force dd to prevent further view parsing.
+    dd("done")
+
+    # Show that any calls after dd() end up ignored.
+    return render(request, "django_dump_die/sample.html", {})
+
+
 def full_category_example(request):
     """Example view, rendering all examples shown in all other views, all in one page."""
 
@@ -186,6 +187,9 @@ def full_category_example(request):
     dump("")
     dump("")
     DjangoTypesHelper().dump_all_django_types(request)
+    dump("")
+    dump("")
+    FunctionTypesHelper().dump_function_types()
     dump("")
 
     # Force dd to prevent further view parsing.
@@ -207,6 +211,7 @@ def numeric_example(request):
     dump('Displaying example of "numeric type" object output.')
     dump("")
     SimpleTypesHelper().dump_numeric_types()
+    IntermediateTypesHelper().dump_complex_number_type()
     dump("")
     dump("")
 
@@ -241,23 +246,6 @@ def system_path_example(request):
     dump('Displaying example of "syspath" object output.')
     dump("")
     IntermediateTypesHelper().dump_syspath_types()
-    dump("")
-    dump("")
-
-    # Force dd to prevent further view parsing.
-    dd("done")
-
-    # Show that any calls after dd() end up ignored.
-    return render(request, "django_dump_die/sample.html", {})
-
-
-def iterable_group_example(request):
-    """Example view, rendering only "iterable group" object output."""
-
-    # Output desired dump values.
-    dump('Displaying example of "iterable group" (arrays) object output.')
-    dump("")
-    ComplexTypesHelper().dump_all_iterables()
     dump("")
     dump("")
 

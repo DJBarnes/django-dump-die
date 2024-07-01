@@ -12,7 +12,7 @@ The solution was to divide objects out, displaying only one object per view, whi
 from django.shortcuts import render
 
 # Internal Imports.
-from .example_helpers import dump_complex_types
+from .example_helpers import ComplexTypesHelper
 
 
 def index(request):
@@ -26,7 +26,7 @@ def complex_type_example__set(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" Set object output.')
     dump("")
-    dump_complex_types().dump_set()
+    ComplexTypesHelper().dump_set()
     dump("")
     dump("")
 
@@ -43,7 +43,7 @@ def complex_type_example__frozen_set(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" FrozenSet object output.')
     dump("")
-    dump_complex_types().dump_frozen_set()
+    ComplexTypesHelper().dump_frozen_set()
     dump("")
     dump("")
 
@@ -60,7 +60,7 @@ def complex_type_example__tuple(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" Tuple object output.')
     dump("")
-    dump_complex_types().dump_tuple()
+    ComplexTypesHelper().dump_tuple()
     dump("")
     dump("")
 
@@ -77,7 +77,7 @@ def complex_type_example__list(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" List object output.')
     dump("")
-    dump_complex_types().dump_list()
+    ComplexTypesHelper().dump_list()
     dump("")
     dump("")
 
@@ -94,7 +94,7 @@ def complex_type_example__dict(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" Dict object output.')
     dump("")
-    dump_complex_types().dump_dict()
+    ComplexTypesHelper().dump_dict()
     dump("")
     dump("")
 
@@ -111,7 +111,7 @@ def complex_type_example__querydict(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" QueryDict object output.')
     dump("")
-    dump_complex_types().dump_querydict()
+    ComplexTypesHelper().dump_querydict()
     dump("")
     dump("")
 
@@ -128,7 +128,7 @@ def complex_type_example__memory_view(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" MemoryView object output.')
     dump("")
-    dump_complex_types().dump_memory_view()
+    ComplexTypesHelper().dump_memory_view()
     dump("")
     dump("")
 
@@ -145,7 +145,7 @@ def complex_type_example__enum(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" Enum object output.')
     dump("")
-    dump_complex_types().dump_enum()
+    ComplexTypesHelper().dump_enum()
     dump("")
     dump("")
 
@@ -162,7 +162,7 @@ def complex_type_example__multilevel_set(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" Multi-Level Set object output.')
     dump("")
-    dump_complex_types().dump_multilevel_set()
+    ComplexTypesHelper().dump_multilevel_set()
     dump("")
     dump("")
 
@@ -179,7 +179,7 @@ def complex_type_example__multilevel_tuple(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" Multi-Level Tuple object output.')
     dump("")
-    dump_complex_types().dump_multilevel_tuple()
+    ComplexTypesHelper().dump_multilevel_tuple()
     dump("")
     dump("")
 
@@ -196,7 +196,7 @@ def complex_type_example__multilevel_list(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" Multi-Level List object output.')
     dump("")
-    dump_complex_types().dump_multilevel_list()
+    ComplexTypesHelper().dump_multilevel_list()
     dump("")
     dump("")
 
@@ -213,7 +213,7 @@ def complex_type_example__multilevel_dict(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" Multi-Level Dict object output.')
     dump("")
-    dump_complex_types().dump_multilevel_dict()
+    ComplexTypesHelper().dump_multilevel_dict()
     dump("")
     dump("")
 
@@ -230,7 +230,7 @@ def complex_type_example__list_subitem(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" List sub-item object output.')
     dump("")
-    dump_complex_types().dump_list_subitem()
+    ComplexTypesHelper().dump_list_element()
     dump("")
     dump("")
 
@@ -247,7 +247,7 @@ def complex_type_example__tuple_subitem(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" Tuple sub-item object output.')
     dump("")
-    dump_complex_types().dump_tuple_subitem()
+    ComplexTypesHelper().dump_tuple_element()
     dump("")
     dump("")
 
@@ -264,7 +264,7 @@ def complex_type_example__tuple_subitem_func(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" Tuple sub-item function object output.')
     dump("")
-    dump_complex_types().dump_tuple_subitem_function()
+    ComplexTypesHelper().dump_tuple_element_function()
     dump("")
     dump("")
 
@@ -281,7 +281,7 @@ def complex_type_example__dict_subitem(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" Dict sub-item object output.')
     dump("")
-    dump_complex_types().dump_dict_subitem()
+    ComplexTypesHelper().dump_dict_element()
     dump("")
     dump("")
 
@@ -298,7 +298,7 @@ def complex_type_example__enum_subitem(request):
     # Output desired dump values.
     dump('Displaying example of "complex type" Enum sub-item object output.')
     dump("")
-    dump_complex_types().dump_enum_subitem()
+    ComplexTypesHelper().dump_enum_element()
     dump("")
     dump("")
 

@@ -149,75 +149,6 @@ class DumpDieSimpleTypeTestCase(IntegrationTestCase):
             content_ends_before="sample_int",
         )
 
-    def test_int_display(self):
-        """Verify dumping a "int" type has expected output."""
-        self.assertGetResponse(
-            self.url,
-            expected_title="DD",
-            expected_header="Django DumpDie",
-            expected_content=[
-                "<hr>",
-                """
-                <div class="dump-wrapper">
-                    <span class="dumped_object" title="Dumped Object">
-                        <span class="dumped_name">sample_int</span>
-                    </span>:
-                    <span class="type" title="int">int</span>
-                    <code class="number">42</code>
-                </div>
-                """,
-                "<hr>",
-            ],
-            content_starts_after="sample_bytes",
-            content_ends_before="sample_float",
-        )
-
-    def test_float_display(self):
-        """Verify dumping a "float" type has expected output."""
-        self.assertGetResponse(
-            self.url,
-            expected_title="DD",
-            expected_header="Django DumpDie",
-            expected_content=[
-                "<hr>",
-                """
-                <div class="dump-wrapper">
-                    <span class="dumped_object" title="Dumped Object">
-                        <span class="dumped_name">sample_float</span>
-                    </span>:
-                    <span class="type" title="float">float</span>
-                    <code class="number">42.42</code>
-                </div>
-                """,
-                "<hr>",
-            ],
-            content_starts_after="sample_int",
-            content_ends_before="sample_decimal",
-        )
-
-    def test_decimal_display(self):
-        """Verify dumping a "decimal" type has expected output."""
-        self.assertGetResponse(
-            self.url,
-            expected_title="DD",
-            expected_header="Django DumpDie",
-            expected_content=[
-                "<hr>",
-                """
-                <div class="dump-wrapper">
-                    <span class="dumped_object" title="Dumped Object">
-                        <span class="dumped_name">sample_decimal</span>
-                    </span>:
-                    <span class="type" title="Decimal">Decimal</span>
-                    <code class="number">42.4200000000000017053025658242404460906982421875</code>
-                </div>
-                """,
-                "<hr>",
-            ],
-            content_starts_after="sample_float",
-            content_ends_before="sample_string",
-        )
-
     def test_string_display(self):
         """Verify dumping a "string" type has expected output."""
         self.assertGetResponse(
@@ -237,7 +168,7 @@ class DumpDieSimpleTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after="sample_decimal",
+            content_starts_after="sample_bytes",
             content_ends_before="sample_none",
         )
 
@@ -284,6 +215,75 @@ class DumpDieSimpleTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after="sample_none",
+            content_ends_before="Numeric examples",
+        )
+
+    def test_int_display(self):
+        """Verify dumping a "int" type has expected output."""
+        self.assertGetResponse(
+            self.url,
+            expected_title="DD",
+            expected_header="Django DumpDie",
+            expected_content=[
+                "<hr>",
+                """
+                <div class="dump-wrapper">
+                    <span class="dumped_object" title="Dumped Object">
+                        <span class="dumped_name">sample_int</span>
+                    </span>:
+                    <span class="type" title="int">int</span>
+                    <code class="number">42</code>
+                </div>
+                """,
+                "<hr>",
+            ],
+            content_starts_after="Numeric examples",
+            content_ends_before="sample_float",
+        )
+
+    def test_float_display(self):
+        """Verify dumping a "float" type has expected output."""
+        self.assertGetResponse(
+            self.url,
+            expected_title="DD",
+            expected_header="Django DumpDie",
+            expected_content=[
+                "<hr>",
+                """
+                <div class="dump-wrapper">
+                    <span class="dumped_object" title="Dumped Object">
+                        <span class="dumped_name">sample_float</span>
+                    </span>:
+                    <span class="type" title="float">float</span>
+                    <code class="number">42.42</code>
+                </div>
+                """,
+                "<hr>",
+            ],
+            content_starts_after="sample_int",
+            content_ends_before="sample_decimal",
+        )
+
+    def test_decimal_display(self):
+        """Verify dumping a "decimal" type has expected output."""
+        self.assertGetResponse(
+            self.url,
+            expected_title="DD",
+            expected_header="Django DumpDie",
+            expected_content=[
+                "<hr>",
+                """
+                <div class="dump-wrapper">
+                    <span class="dumped_object" title="Dumped Object">
+                        <span class="dumped_name">sample_decimal</span>
+                    </span>:
+                    <span class="type" title="Decimal">Decimal</span>
+                    <code class="number">42.4200000000000017053025658242404460906982421875</code>
+                </div>
+                """,
+                "<hr>",
+            ],
+            content_starts_after="sample_float",
             content_ends_before="done",
         )
 

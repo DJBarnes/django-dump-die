@@ -403,6 +403,8 @@ class SimpleTypesHelper:
         sample_bool = True
 
         # Call dump on all generated variables.
+        dump("")
+        dump("Non-Numeric examples:")
         dump(SAMPLE_CONST)
         dump(sample_module)
         dump(sample_bytes)
@@ -411,12 +413,11 @@ class SimpleTypesHelper:
         dump(sample_bool)
 
     def dump_numeric_types(self):
-        """Dump Numeric Types"""
+        """Dump Simple Numeric Types"""
         # Generate variables to dump.
         sample_int = 42
         sample_float = 42.42
         sample_decimal = Decimal(42.42)
-        sample_complex = 3 - 1j
 
         # Call dump on all generated variables.
         dump("")
@@ -424,7 +425,6 @@ class SimpleTypesHelper:
         dump(sample_int)
         dump(sample_float)
         dump(sample_decimal)
-        dump(sample_complex)
 
 
 class IntermediateTypesHelper:
@@ -432,19 +432,35 @@ class IntermediateTypesHelper:
 
     def dump_intermediate_types(self):
         """Dump Intermediate Types"""
-        # Generate variables to dump.
-        sample_bytes_array = bytearray([8, 9, 10, 11])
-        sample_complex = 3 - 1j
+        self.dump_bytes_array_type()
 
-        # Call dump on all generated variables.
-        dump("")
-        dump("Python type examples:")
-        dump(sample_bytes_array)
-        dump(sample_complex)
+        self.dump_complex_number_type()
 
         self.dump_datetime_types()
 
         self.dump_syspath_types()
+
+    def dump_bytes_array_type(self):
+        """Dump Bytes Array Type"""
+
+        # Generate variables to dump.
+        sample_bytes_array = bytearray([8, 9, 10, 11])
+
+        # Call dump on all generated variables.
+        dump("")
+        dump("Python bytes array examples:")
+        dump(sample_bytes_array)
+
+    def dump_complex_number_type(self):
+        """Dump Complex Number Type"""
+
+        # Generate variables to dump.
+        sample_complex = 3 - 1j
+
+        # Call dump on all generated variables.
+        dump("")
+        dump("Python complex number examples:")
+        dump(sample_complex)
 
     def dump_datetime_types(self):
         """Dump Datetime Types"""
@@ -568,8 +584,6 @@ class ComplexTypesHelper:
         """Dump All Complex Types"""
 
         self.dump_all_iterables()
-
-        self.dump_function_types()
 
         self.dump_class_types()
 
@@ -752,31 +766,6 @@ class ComplexTypesHelper:
         dump(SampleEnum.RED)
         dump(SampleEnum.BLUE)
 
-    def dump_function_types(self):
-        """Dump Function Types"""
-
-        # Generate variables to dump.
-        # None for this view.
-
-        # Call dump on all generated variables.
-        dump("")
-        dump("Function examples:")
-        # Minimal function with no args.
-        dump(sample_func)
-        # Function with args & kwargs.
-        dump(sample_func_param)
-
-        dump("")
-        dump("Function call examples:")
-        # Calling above "minimal function with no args".
-        dump(sample_func())
-        # Calling function with one arg.
-        dump(sample_func_param(32))
-        # Calling function with both args & kwargs.
-        dump(sample_func_param("test_param", some_kwarg=True))
-        # Calling function with multiple args.
-        dump(sample_func_param("test_param", "extra_arg_1", 2, True))
-
     def dump_class_types(self):
         """Dump Class Types"""
 
@@ -921,6 +910,35 @@ class DjangoTypesHelper:
         dump("")
         dump("TemplateResponse object:")
         dump(sample_template_response)
+
+
+class FunctionTypesHelper:
+    """Class containing methods to dump functions"""
+
+    def dump_function_types(self):
+        """Dump Function Types"""
+
+        # Generate variables to dump.
+        # None for this view.
+
+        # Call dump on all generated variables.
+        dump("")
+        dump("Function examples:")
+        # Minimal function with no args.
+        dump(sample_func)
+        # Function with args & kwargs.
+        dump(sample_func_param)
+
+        dump("")
+        dump("Function call examples:")
+        # Calling above "minimal function with no args".
+        dump(sample_func())
+        # Calling function with one arg.
+        dump(sample_func_param(32))
+        # Calling function with both args & kwargs.
+        dump(sample_func_param("test_param", some_kwarg=True))
+        # Calling function with multiple args.
+        dump(sample_func_param("test_param", "extra_arg_1", 2, True))
 
 
 class EdgeCasesHelper:

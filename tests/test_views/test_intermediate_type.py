@@ -101,7 +101,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after='<div class="static-padding"></div>',
-            content_ends_before="Python type examples:",
+            content_ends_before="Python bytes array examples:",
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -204,7 +204,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after="Python type examples:",
+            content_starts_after="Python bytes array examples:",
             content_ends_before="sample_complex",
         )
 
@@ -1719,7 +1719,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <div class="dump-wrapper">
                     <span class="dumped_object" title="Dumped Object">
-                    <span class="dumped_name">sample_pure_path</span>
+                    <span class="dumped_name">pure_path</span>
                 </span>:
                 <span class="type" title="PurePosixPath">PurePosixPath</span>
                 """,
@@ -1862,7 +1862,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 "<hr>",
             ],
             content_starts_after="Python pathlib examples:",
-            content_ends_before="sample_posix_path",
+            content_ends_before="posix_path",
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
@@ -1903,7 +1903,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <div class="dump-wrapper">
                     <span class="dumped_object" title="Dumped Object">
-                        <span class="dumped_name">sample_posix_path</span>
+                        <span class="dumped_name">posix_path</span>
                     </span>:
                     <span class="type" title="PosixPath">PosixPath</span>
                 """,
@@ -2046,6 +2046,6 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after="sample_pure_path",
+            content_starts_after="pure_path",
             content_ends_before="done",
         )
