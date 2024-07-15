@@ -24,6 +24,7 @@ from .views import (
     system_path_example,
     full_specialized_example,
     edge_case_example,
+    template_dump_example,
 )
 
 
@@ -51,6 +52,8 @@ urlpatterns = [
     path("full-specialized-example/", full_specialized_example, name="full-purpose-example"),
     # Edge Case example views.
     path("edge-case-example/", edge_case_example, name="edge-case-example"),
+    # Template dump views.
+    path("template-dump-example/", template_dump_example, name="template-dump-example"),
     # Index page.
     path("", index, name="index"),
 ]

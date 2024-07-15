@@ -18,4 +18,5 @@ from .example_views import (
     system_path_example,
     full_specialized_example,
     edge_case_example,
+    template_dump_example,
 )
