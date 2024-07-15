@@ -12,6 +12,7 @@ from .example_helpers import (
     FunctionTypesHelper,
     IntermediateTypesHelper,
     SimpleTypesHelper,
+    SimpleClass,
 )
 
 # region Main views showcasing functionality.
@@ -308,3 +309,18 @@ def edge_case_example(request):
 
 
 # endregion Edge case views showcasing potential edge cases.
+
+# region Template dumping.
+
+
+def template_dump_example(request):
+    """Example view, rendering dumps done from the template using the template tag."""
+
+    # Make instance of simple class for context.
+    sample_simple_class = SimpleClass()
+
+    # Show that any calls after dd() end up ignored.
+    return render(request, "django_dump_die/template_dump.html", {"sample_simple_class": sample_simple_class})
+
+
+# endregion Template dumping.
