@@ -4,22 +4,23 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+
 # -- Path setup --------------------------------------------------------------
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
 import datetime
 import os
 import sys
 
+# If extensions (or modules to document with autodoc) are in another directory,
+# add these directories to sys.path here. If the directory is relative to the
+# documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath("../.."))
 
-# Make Django happy
+# Allow reading Django files/syntax, in order to generate docs from them.
 import django
 from django.conf import settings
 from django_dump_die import __version__
+
 
 # -- Project information -----------------------------------------------------
 
@@ -62,7 +63,6 @@ exclude_patterns = []
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#
 html_theme = "sphinx_rtd_theme"
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -70,9 +70,10 @@ html_theme = "sphinx_rtd_theme"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = []
 
+
 # -- Django Configuration ----------------------------------------------------
 settings.configure(
-    SECRET_KEY="something to make Django happy",
+    SECRET_KEY="something-to-make-Django-happy",
     INSTALLED_APPS=[
         "django_dump_die",
         "django.contrib.admin",

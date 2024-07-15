@@ -9,6 +9,7 @@ from warnings import filterwarnings
 # Third-party Imports
 import django
 
+
 # region Main settings for testing
 
 DATABASES = {
@@ -58,6 +59,7 @@ DEBUG = True
 
 # endregion Main settings for testing
 
+
 # region Package settings for testing
 
 # Suppress or show testcase debug printout, based on UnitTest execution method.
@@ -73,6 +75,7 @@ else:
 
 # endregion Package settings for testing
 
+
 # region Django Version Specific Settings
 
 # Check to see if on version greater than 5 and fix / suppress warnings from changes in that version.
@@ -81,6 +84,7 @@ if django.VERSION >= (5, 0):
     FORMS_URLFIELD_ASSUME_HTTPS = True
 
 # endregion Django Version Specific Settings
+
 
 # region Warning suppressions
 

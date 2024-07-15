@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Run Django Tests"""
+"""Run Package Tests"""
 import argparse
 import os
 import subprocess

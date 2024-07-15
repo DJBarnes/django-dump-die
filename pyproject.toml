@@ -43,13 +43,26 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
 ]
-keywords = ["debug", "dd", "die", "django", "dump", "inspect", "tool"]
+keywords = [
+    "debug",
+    "dd",
+    "die",
+    "django",
+    "dump",
+    "inspect",
+    "tool",
+]
 requires-python = ">=3.6"
 dependencies = ["django >= 2.2.0"]
 dynamic = ["version"]
 
 [project.optional-dependencies]
-dev = ["black", "coverage", "pylint", "pylint-django", "pylint-plugin-utils"]
+dev = [
+    "black",
+    "coverage",
+    "pylint",
+    "pylint-django",
+]
 doc = [
     "doc8",
     "pip-tools",
