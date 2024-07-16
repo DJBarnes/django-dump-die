@@ -28,7 +28,7 @@ action="${args[0]:-"all_tests"}"
 
 if [ "${action}" = "all_tests" ]; then
     echo -e "${BLUE}Running All Tests With Coverage Report${NC}"
-    pipenv run ${location}/runtests.py --cov=. --ignore=.tox --disable-pytest-warnings --cov-report html:${location}/.django_dump_die_coverage_html_report
+    pipenv run ${location}/runtests.py -nauto --cov=. --ignore=.tox --disable-pytest-warnings --cov-report html:${location}/.django_dump_die_coverage_html_report
     echo -e "${BLUE}Report can be accessed at:"
     echo -e "${YELLOW}file://${location}/.django_dump_die_coverage_html_report/index.html${NC}"
     echo -e "${GREEN}Done!${NC}"
@@ -36,7 +36,7 @@ fi
 
 if [ "${action}" = "lt_100" ]; then
     echo -e "${BLUE}Running All Tests With Coverage Report${NC}"
-    pipenv run ${location}/runtests.py --cov=. --ignore=.tox --disable-pytest-warnings --cov-report=
+    pipenv run ${location}/runtests.py -nauto --cov=. --ignore=.tox --disable-pytest-warnings --cov-report=
     echo -e "${BLUE}Generating HTML${NC}"
     pipenv run coverage html --skip-covered -d ${location}/.django_dump_die_coverage_html_report
     echo -e "${BLUE}Report can be accessed at:"
