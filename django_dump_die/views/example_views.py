@@ -4,7 +4,11 @@
 from django.shortcuts import render
 
 # Internal Imports.
-from django_dump_die.middleware import dd, dump
+try:
+    from django_dump_die.middleware import dd, dump
+except Exception:
+    pass
+
 from .example_helpers import (
     ComplexTypesHelper,
     DjangoTypesHelper,

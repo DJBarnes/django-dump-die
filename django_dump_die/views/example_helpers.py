@@ -26,7 +26,11 @@ from django.utils import timezone
 
 # Internal Imports.
 from django_dump_die.constants import PYTZ_PRESENT, ZONEINFO_PRESENT
-from django_dump_die.middleware import dump
+
+try:
+    from django_dump_die.middleware import dump
+except Exception:
+    pass
 
 # Imports that may not be accessible, depending on local python environment setup.
 if PYTZ_PRESENT:
