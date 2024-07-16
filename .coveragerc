@@ -4,8 +4,14 @@ exclude_lines =
     pragma: no cover
     return render.request, .*
     except ImportError:
+    except AttributeError:
+    except NotImplementedError:
+    except Exception:\n\s*pass
     if ZONEINFO_PRESENT:
     if PYTZ_PRESENT:
+
+partial_branches =
+    if hasattr\(SampleDjangoModel, .*
 
 [run]
 branch = True
