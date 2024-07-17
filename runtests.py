@@ -15,10 +15,6 @@ def run_tests_with_pytest():
     Has very helpful and verbose testing output.
     """
 
-    # Set environment values.
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
-    os.environ.setdefault("PYTHONPATH", ROOT_DIR)
-
     # Run tests.
     argv = ["pytest"] + sys.argv[1:]
     proc = subprocess.run(argv, check=False)
