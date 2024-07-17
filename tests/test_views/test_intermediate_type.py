@@ -1879,7 +1879,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
             try:
                 self.assertEqual(ROOT_DIR, "django_dump_die")
             except AssertionError:
-                err_msg = 'Failed to parse project root folder name. Recieved unexpected value of "{0}"'.format(
+                err_msg = 'Failed to parse project root folder name. Received unexpected value of "{0}"'.format(
                     ROOT_DIR,
                 )
                 raise AssertionError(err_msg)
