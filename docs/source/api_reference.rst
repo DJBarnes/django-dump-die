@@ -7,4 +7,4 @@ API Reference
 
    api_reference/django_dump_die
    api_reference/django_dump_die.templatetags
-   api_reference/modules
+   api_reference/django_dump_die.views
