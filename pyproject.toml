@@ -83,5 +83,110 @@ license-files = ["LICENSE"]
 exclude = ["tests*"]
 namespaces = false
 
+[tool.pytest.ini_options]
+python_files = ["tests.py", "tests/test_*.py"]
+
+DJANGO_SETTINGS_MODULE = "tests.settings"
+pythonpath = "."
+# Constructed as
+#   {action}:{message}:{category}:{module}:{lineno}
+#
+# For more details, see:
+#   https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+#   https://docs.python.org/3/library/warnings.html#warning-filter
+#   https://stackoverflow.com/questions/57925071/how-do-i-avoid-getting-deprecationwarning-from-inside-dependencies-with-pytest
+filterwarnings = ""
+
 [tool.coverage.run]
 relative_files = true
+
+[tool.pylint.main]
+# List of plugins (as comma separated values of python module names) to load,
+# usually to register additional checkers.
+load-plugins = ["pylint_django", "pylint.extensions.no_self_use"]
+
+# Good variable names which should always be accepted, separated by a comma.
+good-names = [
+    "pk",
+    "register",
+    "f",
+    "i",
+    "x",
+    "y",
+    "db",
+    "dd",
+    "fs",
+    "by",
+    "ws",
+    "wb",
+    "urlpatterns",
+    "app_name",
+    "logger",
+    "UserModel",
+    "websocket_urlpatterns",
+]
+
+# List of valid names for the first argument in a metaclass class method.
+valid-metaclass-classmethod-first-arg = ["cls"]
+
+[tool.pylint."django foreign keys referenced by strings"]
+# A module containing Django settings to be used while linting.
+django-settings-module = "tests.settings"
+
+[tool.pylint.format]
+# Regexp for a line that is allowed to be longer than the limit.
+ignore-long-lines = "([^A-Za-z0-9_]https?:\\/\\/\\S+|(\\s|^)def test_|Model .* was already registered)"
+
+# Maximum number of characters on a single line.
+max-line-length = 120
+
+[tool.pylint."messages control"]
+# Disable the message, report, category or checker with the given id(s). You can
+# either give multiple identifiers separated by comma (,) or put this option
+# multiple times (only on the command line, not in the configuration file where
+# it should appear only once). You can also use "--disable=all" to disable
+# everything first and then re-enable specific checks. For example, if you want
+# to run only the similarities checker, you can use "--disable=all
+# --enable=similarities". If you want to run only the classes checker, but have
+# no Warning level messages displayed, use "--disable=all --enable=classes
+# --disable=W".
+disable = [
+    # Default disables
+    "raw-checker-failed",
+    "bad-inline-option",
+    "locally-disabled",
+    "file-ignored",
+    "suppressed-message",
+    "useless-suppression",
+    "deprecated-pragma",
+    "use-implicit-booleaness-not-comparison-to-string",
+    "use-implicit-booleaness-not-comparison-to-zero",
+    "use-symbolic-message-instead",
+    # Project disables
+    "arguments-differ",
+    "broad-exception-caught",
+    "duplicate-code",
+    "no-else-raise",
+    "no-else-return",
+    "signature-differs",
+    "too-few-public-methods",
+    "too-many-ancestors",
+    "too-many-arguments",
+    "too-many-branches",
+    "too-many-instance-attributes",
+    "too-many-lines",
+    "too-many-locals",
+    "too-many-nested-blocks",
+    "too-many-public-methods",
+    "too-many-statements",
+    "wrong-import-order",
+]
+
+[tool.pylint.miscellaneous]
+# List of note tags to take in consideration, separated by a comma.
+notes = ["DEBUG", "REVIEW", "HACK", "XXX", "L8R", "LOCK", "TODO", "FIXME"]
+
+[tool.pylint.variables]
+# List of additional names supposed to be defined in builtins. Remember that you
+# should avoid defining new builtins when possible.
+additional-builtins = ["dump", "dd"]
