@@ -18,6 +18,7 @@
     "words": [
         // System
         "automodule",
+        "autosummary",
         "bint",
         "bools",
         "bytesarray",
@@ -30,6 +31,7 @@
         "kwarg",
         "kwargs",
         "htmldjango",
+        "intersphinx",
         "maxdepth",
         "modindex",
         "nbytes",
