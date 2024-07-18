@@ -1,9 +1,9 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+""" Configuration file for the Sphinx documentation builder.
 
+This file only contains a selection of the most common options. For a full
+list see the documentation:
+https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""
 
 # -- Path setup --------------------------------------------------------------
 
@@ -17,16 +17,15 @@ import sys
 sys.path.insert(0, os.path.abspath("../.."))
 
 # Allow reading Django files/syntax, in order to generate docs from them.
-import django
-from django.conf import settings
-from django_dump_die import __version__
-
+import django  # pylint:disable=wrong-import-position
+from django.conf import settings  # pylint:disable=wrong-import-position
+from django_dump_die import __version__  # pylint:disable=wrong-import-position,import-error
 
 # -- Project information -----------------------------------------------------
-
-project = "Django-Dump-Die"
-copyright = f"{datetime.date.today().year}, David Barnes, Brandon Rodriguez"
-author = "David Barnes, Brandon Rodriguez"
+AUTHORS = "David Barnes, Brandon Rodriguez"
+project = "Django-Dump-Die"  # pylint:disable=invalid-name
+copyright = f"{datetime.date.today().year}, {AUTHORS}"  # pylint:disable=invalid-name,redefined-builtin
+author = "David Barnes, Brandon Rodriguez"  # pylint:disable=invalid-name
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -63,7 +62,7 @@ exclude_patterns = []
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = "sphinx_rtd_theme"
+html_theme = "sphinx_rtd_theme"  # pylint:disable=invalid-name
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
