@@ -24,8 +24,6 @@ jobs:
           - "3.12"
     name: Test
     runs-on: ${{ matrix.os }}
-    environment:
-      name: test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
