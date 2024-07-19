@@ -67,8 +67,6 @@ jobs:
           - "3.6"
     name: Test Py3.6
     runs-on: ${{ matrix.os }}
-    environment:
-      name: test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -103,8 +101,6 @@ jobs:
   coverage:
     name: Upload coverage results to Coveralls
     runs-on: ubuntu-latest
-    environment:
-      name: test
     # Need to run this after tests succeed so that coverage reflects test runs with all django and python combinations.
     needs:
       - test
