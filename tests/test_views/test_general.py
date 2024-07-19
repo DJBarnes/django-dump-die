@@ -13,6 +13,18 @@ from django_expanded_test_cases import IntegrationTestCase
 class DumpDieGeneralTestCase(IntegrationTestCase):
     """Verify handling of dumped "simple" types."""
 
+    def test_view_returns_normal_response_when_no_dumps_used(self):
+        """Verify view returns normal response when no dumps used"""
+        pass
+
+    def test_dump_without_a_dd_still_shows_dump_view(self):
+        """Verify that only using dump and no dd still shows the dump view."""
+        pass
+
+    def test_dd_without_any_dumps_still_shows_dump_view(self):
+        """Verify that only using dd and no dumps still shows the dump view."""
+        pass
+
     @override_settings(DEBUG=False)
     def test_debug_off_skips_all_dumps(self):
         """Verify no dumps occur when debug is off."""
@@ -27,9 +39,22 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
         )
 
     @override_settings(DEBUG=False)
-    @patch("django_dump_die.templatetags.dump_die._generate_unique")
-    def test_debug_off_skips_all_template_dumps(self, mocked_unique_generation):
+    def test_debug_off_skips_all_template_dumps(self):
         """Verify no template dumps occur when debug is off."""
+        url = "django_dump_die:template-dump-example"
+
+        self.assertGetResponse(
+            url,
+            expected_title="Template Dump Example",
+            expected_header="Template Dump Example",
+            expected_content=["<p>After dump content</p>"],
+            expected_not_content=['<div class="dump-wrapper">'],
+        )
+
+    @override_settings(DEBUG=True)
+    @patch("django_dump_die.templatetags.dump_die._generate_unique")
+    def test_debug_on_correctly_shows_template_dumps(self, mocked_unique_generation):
+        """Verify template dumps occur when debug is on."""
         url = "django_dump_die:template-dump-example"
 
         # Override default "unique" generation logic, for reproduce-able tests.
@@ -102,3 +127,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
             content_starts_after="<body>",
             content_ends_before="</body>",
         )
+
+    def test_view_that_raise_an_exception_is_not_caught_by_the_dump_logic(self):
+        """Test that an unrelated unhandled exception being raised is not caught by the dump logic"""
+        pass
