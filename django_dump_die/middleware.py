@@ -91,7 +91,9 @@ class DumpAndDieMiddleware:
         # Get the response
         response = self.get_response(request)
 
-        # If there are no items in the dump_objects list or there is no exception raised
+        # If there are no items in the dump_objects list
+        # or there was an unhandled exception raised, just return response
+        # NOTE: The has_exception attribute will be added in the process_exception method below.
         if not dump_objects or getattr(request, "has_exception", False):
             return response
         else:
@@ -104,18 +106,24 @@ class DumpAndDieMiddleware:
 
     def process_exception(self, request, exception):
         """
+        This a a Middleware hook provided by Django.
+
         Check if exception is of DumpAndDie type.
-        If so, return Debug Response.
+        If so, return Dump Die Debug Response.
         If not, ignore and allow standard exception handling.
         """
-        if not isinstance(exception, DumpAndDie):
-            request.has_exception = True
-            return None
+        if isinstance(exception, DumpAndDie):
+            # Create a copy of the list, and clear it.
+            objects = dump_objects[:]
+            objects.append(exception.object)
+            dump_objects.clear()
 
-        # Create a copy of the list, and clear it.
-        objects = dump_objects[:]
-        objects.append(exception.object)
-        dump_objects.clear()
+            # Return custom DumpAndDie output view.
+            return dd_view(request, objects)
 
-        # Return custom DumpAndDie output view.
-        return dd_view(request, objects)
+        # Not a DumpDie Exception, mark request as having an exception and
+        # continue with processing by returning None.
+        # NOTE: Middleware will detect that the request has an exception and
+        # handle correctly in the __call__ above.
+        request.has_exception = True
+        return None
