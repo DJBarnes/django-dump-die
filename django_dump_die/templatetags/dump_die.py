@@ -70,14 +70,20 @@ def dump(context, obj):
     """Template tag that can be used in templates to use dd"""
     object_info = get_dumped_object_info(obj)
 
+    new_context = context.flatten()
+
     render_head = context.get("django_dd_template_tag_render_head", True)
     if render_head:
-        context["django_dd_template_tag_render_head"] = False
+        new_context["django_dd_template_tag_render_head"] = False
 
-    return {
-        "objects": [object_info],
-        "render_head": render_head,
-    }
+    new_context.update(
+        {
+            "objects": [object_info],
+            "render_head": render_head,
+        }
+    )
+
+    return new_context
 
 
 @register.inclusion_tag("django_dump_die/partials/_dump_objects.html")
