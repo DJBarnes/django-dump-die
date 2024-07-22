@@ -13,9 +13,20 @@ from django_expanded_test_cases import IntegrationTestCase
 class DumpDieGeneralTestCase(IntegrationTestCase):
     """Verify handling of dumped "simple" types."""
 
+    @override_settings(DEBUG=True)
     def test_view_returns_normal_response_when_no_dumps_used(self):
         """Verify view returns normal response when no dumps used"""
-        pass
+        url = "django_dump_die:index"
+
+        self.assertGetResponse(
+            url,
+            expected_title="Django DumpDie Examples",
+            expected_header="Django DumpDie Example Index Page",
+            expected_content=[
+                "<p>The following pages provide example output when using the Django DumpDie package.</p>"
+            ],
+            expected_not_content=["<div><h1>Django DumpDie</h1></div>"],
+        )
 
     def test_dump_without_a_dd_still_shows_dump_view(self):
         """Verify that only using dump and no dd still shows the dump view."""
