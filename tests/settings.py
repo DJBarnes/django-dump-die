@@ -93,39 +93,3 @@ if django.VERSION >= (5, 0):
     FORMS_URLFIELD_ASSUME_HTTPS = True
 
 # endregion Django Version Specific Settings
-
-
-# region Warning suppressions
-
-# When running tests and converting all warnings to errors, there are errors related
-# to the following that need to be ignored. The warnings only show up when converting to errors.
-# If leaving as warnings, they are never output.
-# TODO: Figure out why when converting warnings to errors, these warnings show up.
-
-filterwarnings(
-    "ignore",
-    "Model 'django_dump_die.samplerelation' was already registered. Reloading models is not advised as it can lead to inconsistencies, most notably with related models.",
-    RuntimeWarning,
-)
-filterwarnings(
-    "ignore",
-    "Model 'django_dump_die.samplemanyrelation' was already registered. Reloading models is not advised as it can lead to inconsistencies, most notably with related models.",
-    RuntimeWarning,
-)
-filterwarnings(
-    "ignore",
-    "Model 'django_dump_die.sampleonerelation' was already registered. Reloading models is not advised as it can lead to inconsistencies, most notably with related models.",
-    RuntimeWarning,
-)
-filterwarnings(
-    "ignore",
-    "Model 'django_dump_die.sampledjangomodel_sample_many' was already registered. Reloading models is not advised as it can lead to inconsistencies, most notably with related models.",
-    RuntimeWarning,
-)
-filterwarnings(
-    "ignore",
-    "Model 'django_dump_die.sampledjangomodel' was already registered. Reloading models is not advised as it can lead to inconsistencies, most notably with related models.",
-    RuntimeWarning,
-)
-
-# endregion Warning suppressions
