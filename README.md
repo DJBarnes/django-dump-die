@@ -2,11 +2,13 @@ Django Dump & Die
 ============================
 
 [![PyPI](https://img.shields.io/pypi/v/django-dump-die?color=blue)](https://img.shields.io/pypi/v/django-dump-die?color=blue)
-[![Python Versions](https://img.shields.io/badge/python-%3E%3D3.8-brightgreen)](https://img.shields.io/badge/python-%3E%3D3.8-brightgreen)
-[![Django Versions](https://img.shields.io/badge/django-%3E%3D3.2-brightgreen)](https://img.shields.io/badge/django-%3E%3D3.2-brightgreen)
+[![Python Versions](https://img.shields.io/badge/python-%3E%3D3.6-brightgreen)](https://img.shields.io/badge/python-%3E%3D3.6-brightgreen)
+[![Django Versions](https://img.shields.io/badge/django-%3E%3D2.2-brightgreen)](https://img.shields.io/badge/django-%3E%3D2.2-brightgreen)
+[![Run Tests](https://github.com/DJBarnes/django-dump-die/actions/workflows/test.yaml/badge.svg)](https://github.com/DJBarnes/django-dump-die/actions/workflows/test.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/DJBarnes/django-dump-die/badge.svg?branch=main)](https://coveralls.io/github/DJBarnes/django-dump-die?branch=main)
 [![Documentation Status](https://readthedocs.org/projects/django-dump-die/badge/?version=latest)](https://django-dump-die.readthedocs.io/en/latest/?badge=latest)
-[![PyPI Downloads per Month](https://img.shields.io/pypi/dm/django-dump-die.svg)](https://pypi.python.org/pypi/django-dump-die)
 [![GitHub](https://img.shields.io/github/license/DJBarnes/django-dump-die)](https://img.shields.io/github/license/DJBarnes/django-dump-die)
+[![PyPI Downloads per Month](https://img.shields.io/pypi/dm/django-dump-die.svg)](https://pypi.python.org/pypi/django-dump-die)
 
 
 Django-Dump-Die is a [Django](https://www.djangoproject.com/) app that
