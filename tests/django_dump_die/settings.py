@@ -32,7 +32,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
 ]
 
-ROOT_URLCONF = "tests.urls"
+ROOT_URLCONF = "tests.django_dump_die.urls"
 
 USE_TZ = True
 

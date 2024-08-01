@@ -1688,7 +1688,9 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
         # Get project root dir.
         # Verify it is of either format "django-dump-die" or "django_dump_die".
         # Allows tests to handle regardless of how local user prefers local project naming.
-        ROOT_DIR = os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        ROOT_DIR = os.path.basename(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        )
         try:
             self.assertEqual(ROOT_DIR, "django-dump-die")
         except AssertionError:
@@ -1872,7 +1874,9 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
         # Get project root dir.
         # Verify it is of either format "django-dump-die" or "django_dump_die".
         # Allows tests to handle regardless of how local user prefers local project naming.
-        ROOT_DIR = os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        ROOT_DIR = os.path.basename(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        )
         try:
             self.assertEqual(ROOT_DIR, "django-dump-die")
         except AssertionError:

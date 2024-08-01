@@ -7,7 +7,7 @@ DjangoDumpDie testing URL Configuration.
 from django.urls import path
 
 # Internal Imports.
-from .views.test_views import (
+from tests.django_dump_die.views import (
     index,
     # Complex examples
     complex_type_example__set,
