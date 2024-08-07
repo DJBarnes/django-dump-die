@@ -97,7 +97,8 @@ exclude = ["tests*"]
 namespaces = false
 
 [tool.pytest.ini_options]
-python_files = ["tests.py", "tests/test_*.py"]
+python_files = ["tests.py", "*/test_*.py"]
+testpaths = ["tests"]
 
 DJANGO_SETTINGS_MODULE = "tests.django_dump_die.settings"
 pythonpath = "."

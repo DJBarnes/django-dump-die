@@ -27,7 +27,7 @@ def index(request):
     return render(request, "django_dump_die/index.html")
 
 
-def simple_type_example(request):
+def simple_types_example(request):
     """Example view, rendering only "simple type" object output."""
 
     # Output desired dump values.
@@ -44,7 +44,7 @@ def simple_type_example(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def intermediate_type_example(request):
+def intermediate_types_example(request):
     """Example view, rendering only "intermediate type" object output."""
 
     # Output desired dump values.
@@ -61,7 +61,7 @@ def intermediate_type_example(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example(request):
+def complex_types_example(request):
     """Example view, rendering only "complex type" object output."""
 
     # Output desired dump values.
@@ -78,7 +78,7 @@ def complex_type_example(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def iterable_type_example(request):
+def iterable_types_example(request):
     """Example view, rendering only iterable object output."""
     dump('Displaying example of "iterable" object output.')
     dump("")
@@ -93,7 +93,7 @@ def iterable_type_example(request):
     return render(request, "django_dump_die.sample.html", {})
 
 
-def class_type_example(request):
+def class_types_example(request):
     """Example view, rendering only class object output."""
 
     # Output desired dump values.
@@ -127,7 +127,7 @@ def django_types_example(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def django_model_example(request):
+def django_model_types_example(request):
     """Example view, rendering only Django model object output."""
 
     # Output desired dump values.
@@ -144,7 +144,7 @@ def django_model_example(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def django_request_response_cycle_example(request):
+def django_request_response_cycle_types_example(request):
     """Example view, rendering a request object."""
 
     # Output desired dump values.
@@ -161,7 +161,7 @@ def django_request_response_cycle_example(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def function_type_example(request):
+def function_types_example(request):
     """Example view, rendering only function object output."""
 
     # Output desired dump values.

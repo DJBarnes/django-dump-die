@@ -9,6 +9,9 @@ from django.urls import include, path
 
 
 urlpatterns = [
-    path("tests/", (include("tests.django_dump_die.tests.urls", namespace="django_dump_die_tests"))),
+    path(
+        "tests/complex/",
+        (include("tests.django_dump_die.complex_types.urls", namespace="django_dump_die__tests__complex")),
+    ),
     path("", (include("django_dump_die.urls", namespace="django_dump_die"))),
 ]

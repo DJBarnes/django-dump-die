@@ -1,17 +1,17 @@
 """views init"""
 
 from .dd_view import dd_view
-from .example_views import (
+from django_dump_die.views.example_views import (
     index,
-    simple_type_example,
-    intermediate_type_example,
-    complex_type_example,
-    iterable_type_example,
-    class_type_example,
+    simple_types_example,
+    intermediate_types_example,
+    complex_types_example,
+    iterable_types_example,
+    class_types_example,
     django_types_example,
-    django_model_example,
-    django_request_response_cycle_example,
-    function_type_example,
+    django_model_types_example,
+    django_request_response_cycle_types_example,
+    function_types_example,
     full_category_example,
     numeric_example,
     datetime_example,

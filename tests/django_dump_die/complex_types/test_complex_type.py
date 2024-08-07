@@ -14,81 +14,12 @@ from django_expanded_test_cases import IntegrationTestCase
 class DumpDieComplexTypeTestCase(IntegrationTestCase):
     """Verify handling of dumped "complex" types."""
 
-    url = "django_dump_die:complex-type-example"
-
-    def test_toolbar_display(self):
-        """Verify page properly displays toolbar."""
-        self.assertGetResponse(
-            self.url,
-            expected_title="DD",
-            expected_header="Django DumpDie",
-            expected_content=[
-                # Check toolbar header.
-                '<div class="dump-toolbar">',
-                "<div><h1>Django DumpDie</h1></div>",
-                # Check existence of buttons.
-                '<p id="expand-all" class="button">Expand All</p>',
-                '<p id="expand-1st-lvl" class="button">Expand First Level</p>',
-                '<p id="expand-2nd-lvl" class="button">Expand Second Level</p>',
-                '<p id="collapse-all" class="button">Collapse All</p>',
-                '<p id="collapse-1st-lvl" class="button">Collapse First Level</p>',
-                '<p id="collapse-2nd-lvl" class="button">Collapse Second Level</p>',
-                '<div class="static-padding"></div>',
-            ],
-            content_starts_after="<body>",
-            content_ends_before='<div class="dump-wrapper">',
-        )
-
-    def test_page_descriptor_display(self):
-        """Test initial page descriptor output."""
-        self.assertGetResponse(
-            self.url,
-            expected_title="DD",
-            expected_header="Django DumpDie",
-            expected_content=[
-                # Check page descriptor.
-                """
-                <div class="dump-wrapper">
-                    <span class="dumped_object" title="Dumped Object">
-                        <span class="string">'Displaying example of "complex type" object output.'</span>
-                    </span>:
-                    <span class="type" title="str">str</span>
-                    <code class="string">'Displaying example of "complex type" object output.'</code>
-                </div>
-                """,
-                "<hr>",
-                # Check visual-padding lines.
-                """
-                <div class="dump-wrapper">
-                    <span class="dumped_object" title="Dumped Object">
-                        <span class="string">""</span>
-                    </span>:
-                    <span class="type" title="str">str</span>
-                    <code class="string">''</code>
-                </div>
-                """,
-                "<hr>",
-                """
-                <div class="dump-wrapper">
-                    <span class="dumped_object" title="Dumped Object">
-                        <span class="string">""</span>
-                    </span>:
-                    <span class="type" title="str">str</span>
-                    <code class="string">''</code>
-                </div>
-                """,
-                "<hr>",
-            ],
-            content_starts_after='<div class="static-padding"></div>',
-            content_ends_before="Minimal object examples:",
-        )
-
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
     def test_set_display(self, mocked_unique_generation):
         """Verify dumping a "set" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__set"
+        self.url = "django_dump_die__tests__complex:complex__set"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -234,7 +165,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a "frozen set" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__frozen_set"
+        self.url = "django_dump_die__tests__complex:complex__frozen_set"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -380,7 +311,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a "tuple" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__tuple"
+        self.url = "django_dump_die__tests__complex:complex__tuple"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -479,7 +410,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a "list" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__list"
+        self.url = "django_dump_die__tests__complex:complex__list"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -578,7 +509,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a "dict" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__dict"
+        self.url = "django_dump_die__tests__complex:complex__dict"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -673,7 +604,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a "querydict" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__querydict"
+        self.url = "django_dump_die__tests__complex:complex__querydict"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -897,7 +828,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a "memory view" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__memory_view"
+        self.url = "django_dump_die__tests__complex:complex__memory_view"
 
         # NOTE: Due to nesting of child-elements, this is a very large test.
         #   I'm unsure if there is value in testing literally every sub-element. Particularly given
@@ -1275,7 +1206,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a "list" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__enum"
+        self.url = "django_dump_die__tests__complex:complex__enum"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -1459,7 +1390,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a multi-level "set" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__multi_level__set"
+        self.url = "django_dump_die__tests__complex:complex__multi_level__set"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -1716,7 +1647,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a multi-level "tuple" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__multi_level__tuple"
+        self.url = "django_dump_die__tests__complex:complex__multi_level__tuple"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -1904,7 +1835,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a multi-level "list" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__multi_level__list"
+        self.url = "django_dump_die__tests__complex:complex__multi_level__list"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -2092,7 +2023,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a multi-level "dict" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__multi_level__dict"
+        self.url = "django_dump_die__tests__complex:complex__multi_level__dict"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -2281,7 +2212,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a "list" type sub-item has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__sub_item__list"
+        self.url = "django_dump_die__tests__complex:complex__sub_item__list"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -2381,7 +2312,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a "tuple" type sub-item has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__sub_item__tuple"
+        self.url = "django_dump_die__tests__complex:complex__sub_item__tuple"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -2481,7 +2412,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a "tuple" type sub-item function has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__sub_item__tuple_func"
+        self.url = "django_dump_die__tests__complex:complex__sub_item__tuple_func"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -2533,7 +2464,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a "dict" type sub-item has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__sub_item__dict"
+        self.url = "django_dump_die__tests__complex:complex__sub_item__dict"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -2633,7 +2564,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a "enum" type sub-item has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die_tests:complex__sub_item__enum"
+        self.url = "django_dump_die__tests__complex:complex__sub_item__enum"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.

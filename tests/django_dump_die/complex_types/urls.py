@@ -7,7 +7,7 @@ DjangoDumpDie testing URL Configuration.
 from django.urls import path
 
 # Internal Imports.
-from tests.django_dump_die.views import (
+from tests.django_dump_die.complex_types.views import (
     index,
     # Complex examples
     complex_type_example__set,
@@ -32,7 +32,7 @@ from tests.django_dump_die.views import (
 )
 
 
-app_name = "django_dump_die_tests"
+app_name = "django_dump_die__tests__complex"
 urlpatterns = [
     # Various "complex type" example views.
     path("complex/set/", complex_type_example__set, name="complex__set"),
