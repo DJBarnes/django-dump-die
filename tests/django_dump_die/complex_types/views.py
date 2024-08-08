@@ -21,11 +21,11 @@ def index(request):
     return render(request, "django_dump_die/test_index.html", {})
 
 
-def complex_type_example__set(request):
-    """Example view, rendering only "complex type" Set object output."""
+def complex_type__set(request):
+    """Example view, rendering only "complex type" Set output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" Set object output.')
+    dump('Displaying example of "complex type" Set output.')
     dump("")
     ComplexTypesHelper().dump_set()
     dump("")
@@ -38,11 +38,11 @@ def complex_type_example__set(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__frozen_set(request):
-    """Example view, rendering only "complex type" FrozenSet object output."""
+def complex_type__frozen_set(request):
+    """Example view, rendering only "complex type" FrozenSet output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" FrozenSet object output.')
+    dump('Displaying example of "complex type" FrozenSet output.')
     dump("")
     ComplexTypesHelper().dump_frozen_set()
     dump("")
@@ -55,11 +55,11 @@ def complex_type_example__frozen_set(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__tuple(request):
-    """Example view, rendering only "complex type" Tuple object output."""
+def complex_type__tuple(request):
+    """Example view, rendering only "complex type" Tuple output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" Tuple object output.')
+    dump('Displaying example of "complex type" Tuple output.')
     dump("")
     ComplexTypesHelper().dump_tuple()
     dump("")
@@ -72,11 +72,11 @@ def complex_type_example__tuple(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__list(request):
-    """Example view, rendering only "complex type" List object output."""
+def complex_type__list(request):
+    """Example view, rendering only "complex type" List output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" List object output.')
+    dump('Displaying example of "complex type" List output.')
     dump("")
     ComplexTypesHelper().dump_list()
     dump("")
@@ -89,11 +89,11 @@ def complex_type_example__list(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__dict(request):
-    """Example view, rendering only "complex type" Dict object output."""
+def complex_type__dict(request):
+    """Example view, rendering only "complex type" Dict output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" Dict object output.')
+    dump('Displaying example of "complex type" Dict output.')
     dump("")
     ComplexTypesHelper().dump_dict()
     dump("")
@@ -106,11 +106,11 @@ def complex_type_example__dict(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__querydict(request):
-    """Example view, rendering only "complex type" QueryDict object output."""
+def complex_type__querydict(request):
+    """Example view, rendering only "complex type" QueryDict output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" QueryDict object output.')
+    dump('Displaying example of "complex type" QueryDict output.')
     dump("")
     ComplexTypesHelper().dump_querydict()
     dump("")
@@ -123,11 +123,11 @@ def complex_type_example__querydict(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__memory_view(request):
-    """Example view, rendering only "complex type" MemoryView object output."""
+def complex_type__memory_view(request):
+    """Example view, rendering only "complex type" MemoryView output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" MemoryView object output.')
+    dump('Displaying example of "complex type" MemoryView output.')
     dump("")
     ComplexTypesHelper().dump_memory_view()
     dump("")
@@ -140,11 +140,11 @@ def complex_type_example__memory_view(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__enum(request):
-    """Example view, rendering only "complex type" Enum object output."""
+def complex_type__enum(request):
+    """Example view, rendering only "complex type" Enum output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" Enum object output.')
+    dump('Displaying example of "complex type" Enum output.')
     dump("")
     ComplexTypesHelper().dump_enum()
     dump("")
@@ -157,11 +157,11 @@ def complex_type_example__enum(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__multilevel_set(request):
-    """Example view, rendering only "complex type" Multi-Level Set object output."""
+def complex_type__multilevel__set(request):
+    """Example view, rendering only "complex type" Multi-Level Set output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" Multi-Level Set object output.')
+    dump('Displaying example of "complex type" Multi-Level Set output.')
     dump("")
     ComplexTypesHelper().dump_multilevel_set()
     dump("")
@@ -174,11 +174,11 @@ def complex_type_example__multilevel_set(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__multilevel_tuple(request):
-    """Example view, rendering only "complex type" Multi-Level Tuple object output."""
+def complex_type__multilevel__tuple(request):
+    """Example view, rendering only "complex type" Multi-Level Tuple output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" Multi-Level Tuple object output.')
+    dump('Displaying example of "complex type" Multi-Level Tuple output.')
     dump("")
     ComplexTypesHelper().dump_multilevel_tuple()
     dump("")
@@ -191,11 +191,11 @@ def complex_type_example__multilevel_tuple(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__multilevel_list(request):
-    """Example view, rendering only "complex type" Multi-Level List object output."""
+def complex_type__multilevel__list(request):
+    """Example view, rendering only "complex type" Multi-Level List output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" Multi-Level List object output.')
+    dump('Displaying example of "complex type" Multi-Level List output.')
     dump("")
     ComplexTypesHelper().dump_multilevel_list()
     dump("")
@@ -208,11 +208,11 @@ def complex_type_example__multilevel_list(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__multilevel_dict(request):
-    """Example view, rendering only "complex type" Multi-Level Dict object output."""
+def complex_type__multilevel__dict(request):
+    """Example view, rendering only "complex type" Multi-Level Dict output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" Multi-Level Dict object output.')
+    dump('Displaying example of "complex type" Multi-Level Dict output.')
     dump("")
     ComplexTypesHelper().dump_multilevel_dict()
     dump("")
@@ -225,11 +225,11 @@ def complex_type_example__multilevel_dict(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__list_subitem(request):
-    """Example view, rendering only "complex type" List sub-item object output."""
+def complex_type__multilevel__list__element(request):
+    """Example view, rendering only "complex type" List element output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" List sub-item object output.')
+    dump('Displaying example of "complex type" List element output.')
     dump("")
     ComplexTypesHelper().dump_list_element()
     dump("")
@@ -242,11 +242,11 @@ def complex_type_example__list_subitem(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__tuple_subitem(request):
-    """Example view, rendering only "complex type" Tuple sub-item object output."""
+def complex_type__multilevel__tuple__element(request):
+    """Example view, rendering only "complex type" Tuple element output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" Tuple sub-item object output.')
+    dump('Displaying example of "complex type" Tuple element output.')
     dump("")
     ComplexTypesHelper().dump_tuple_element()
     dump("")
@@ -259,28 +259,11 @@ def complex_type_example__tuple_subitem(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__tuple_subitem_func(request):
-    """Example view, rendering only "complex type" Tuple sub-item function object output."""
+def complex_type__multilevel__dict__element(request):
+    """Example view, rendering only "complex type" Dict element output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" Tuple sub-item function object output.')
-    dump("")
-    ComplexTypesHelper().dump_tuple_element_function()
-    dump("")
-    dump("")
-
-    # Force dd to prevent further view parsing.
-    dd("done")
-
-    # Show that any calls after dd() end up ignored.
-    return render(request, "django_dump_die/sample.html", {})
-
-
-def complex_type_example__dict_subitem(request):
-    """Example view, rendering only "complex type" Dict sub-item object output."""
-
-    # Output desired dump values.
-    dump('Displaying example of "complex type" Dict sub-item object output.')
+    dump('Displaying example of "complex type" Dict element output.')
     dump("")
     ComplexTypesHelper().dump_dict_element()
     dump("")
@@ -293,13 +276,30 @@ def complex_type_example__dict_subitem(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def complex_type_example__enum_subitem(request):
-    """Example view, rendering only "complex type" Enum sub-item object output."""
+def complex_type__multilevel__enum__element(request):
+    """Example view, rendering only "complex type" Enum element output."""
 
     # Output desired dump values.
-    dump('Displaying example of "complex type" Enum sub-item object output.')
+    dump('Displaying example of "complex type" Enum element output.')
     dump("")
     ComplexTypesHelper().dump_enum_element()
+    dump("")
+    dump("")
+
+    # Force dd to prevent further view parsing.
+    dd("done")
+
+    # Show that any calls after dd() end up ignored.
+    return render(request, "django_dump_die/sample.html", {})
+
+
+def complex_type__multilevel__tuple__element__function(request):
+    """Example view, rendering only "complex type" Tuple element function output."""
+
+    # Output desired dump values.
+    dump('Displaying example of "complex type" Tuple element function output.')
+    dump("")
+    ComplexTypesHelper().dump_tuple_element_function()
     dump("")
     dump("")
 

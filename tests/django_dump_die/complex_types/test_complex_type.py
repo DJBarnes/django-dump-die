@@ -115,7 +115,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" Set object output.',
+            content_starts_after='Displaying example of "complex type" Set output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
@@ -261,7 +261,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" FrozenSet object output.',
+            content_starts_after='Displaying example of "complex type" FrozenSet output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
@@ -401,7 +401,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" Tuple object output.',
+            content_starts_after='Displaying example of "complex type" Tuple output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
@@ -500,7 +500,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" List object output.',
+            content_starts_after='Displaying example of "complex type" List output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
@@ -595,7 +595,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" Dict object output.',
+            content_starts_after='Displaying example of "complex type" Dict output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
@@ -819,7 +819,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" QueryDict object output.',
+            content_starts_after='Displaying example of "complex type" QueryDict output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
@@ -1197,7 +1197,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" MemoryView object output.',
+            content_starts_after='Displaying example of "complex type" MemoryView output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
@@ -1381,7 +1381,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" Enum object output.',
+            content_starts_after='Displaying example of "complex type" Enum output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
@@ -1390,7 +1390,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a multi-level "set" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die__tests__complex:complex__multi_level__set"
+        self.url = "django_dump_die__tests__complex:complex__multilevel__set"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -1497,7 +1497,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" Multi-Level Set object output.',
+            content_starts_after='Displaying example of "complex type" Multi-Level Set output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
@@ -1647,7 +1647,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a multi-level "tuple" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die__tests__complex:complex__multi_level__tuple"
+        self.url = "django_dump_die__tests__complex:complex__multilevel__tuple"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -1826,7 +1826,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" Multi-Level Tuple object output.',
+            content_starts_after='Displaying example of "complex type" Multi-Level Tuple output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
@@ -1835,7 +1835,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a multi-level "list" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die__tests__complex:complex__multi_level__list"
+        self.url = "django_dump_die__tests__complex:complex__multilevel__list"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -2014,7 +2014,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" Multi-Level List object output.',
+            content_starts_after='Displaying example of "complex type" Multi-Level List output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
@@ -2023,7 +2023,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
         """Verify dumping a multi-level "dict" type has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die__tests__complex:complex__multi_level__dict"
+        self.url = "django_dump_die__tests__complex:complex__multilevel__dict"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -2203,16 +2203,16 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" Multi-Level Dict object output.',
+            content_starts_after='Displaying example of "complex type" Multi-Level Dict output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
-    def test_list_subitem_display(self, mocked_unique_generation):
-        """Verify dumping a "list" type sub-item has expected output."""
+    def test_list_element_display(self, mocked_unique_generation):
+        """Verify dumping a "list" type element has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die__tests__complex:complex__sub_item__list"
+        self.url = "django_dump_die__tests__complex:complex__multilevel__list__element"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -2303,16 +2303,16 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" List sub-item object output.',
+            content_starts_after='Displaying example of "complex type" List element output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
-    def test_tuple_subitem_display(self, mocked_unique_generation):
-        """Verify dumping a "tuple" type sub-item has expected output."""
+    def test_tuple_element_display(self, mocked_unique_generation):
+        """Verify dumping a "tuple" type element has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die__tests__complex:complex__sub_item__tuple"
+        self.url = "django_dump_die__tests__complex:complex__multilevel__tuple__element"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -2403,68 +2403,16 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" Tuple sub-item object output.',
+            content_starts_after='Displaying example of "complex type" Tuple element output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
-    def test_tuple_subitem_func_display(self, mocked_unique_generation):
-        """Verify dumping a "tuple" type sub-item function has expected output."""
+    def test_dict_element_display(self, mocked_unique_generation):
+        """Verify dumping a "dict" type element has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die__tests__complex:complex__sub_item__tuple_func"
-
-        # Override default "unique" generation logic, for reproduce-able tests.
-        # This generates enough uniques to guarantee mock does not raise errors.
-        side_effects = []
-        for index in range(5000):
-            side_effects += [
-                (f"data_900{index}", ""),
-            ]
-        mocked_unique_generation.side_effect = side_effects
-
-        self.assertGetResponse(
-            self.url,
-            expected_title="DD",
-            expected_header="Django DumpDie",
-            expected_content=[
-                "<hr>",
-                # Object opening tags.
-                """
-                <div class="dump-wrapper">
-                    <span class="dumped_function" title="Dumped Function">
-                        <span class="dumped_name">self</span>
-                        <span class="dumped_name">.</span>
-                        <span class="dumped_name">sample_multilevel_tuple</span>
-                        <span class="braces">[</span>
-                        <span class="number">0</span>
-                        <span class="braces">]</span>
-                        <span class="dumped_name">.</span>
-                        <span class="function">items</span>
-                        <span class="braces">(</span>
-                        <span class="braces">)</span>
-                    </span>:
-                """,
-                # Object child elements.
-                """
-                <span class="docs">D.items() -> a set-like object providing a view on D's items</span>
-                """,
-                # Object closing tags.
-                """
-                </div>
-                """,
-                "<hr>",
-            ],
-            content_starts_after='Displaying example of "complex type" Tuple sub-item function object output.',
-            content_ends_before='<span class="string">"done"</span>',
-        )
-
-    @patch("django_dump_die.templatetags.dump_die._generate_unique")
-    def test_dict_subitem_display(self, mocked_unique_generation):
-        """Verify dumping a "dict" type sub-item has expected output."""
-
-        # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die__tests__complex:complex__sub_item__dict"
+        self.url = "django_dump_die__tests__complex:complex__multilevel__dict__element"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -2555,16 +2503,16 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" Dict sub-item object output.',
+            content_starts_after='Displaying example of "complex type" Dict element output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
-    def test_enum_subitem_display(self, mocked_unique_generation):
-        """Verify dumping a "enum" type sub-item has expected output."""
+    def test_enum_element_display(self, mocked_unique_generation):
+        """Verify dumping a "enum" type element has expected output."""
 
         # Override url, to use testing-specific view, which will only display a single object.
-        self.url = "django_dump_die__tests__complex:complex__sub_item__enum"
+        self.url = "django_dump_die__tests__complex:complex__multilevel__enum__element"
 
         # Override default "unique" generation logic, for reproduce-able tests.
         # This generates enough uniques to guarantee mock does not raise errors.
@@ -2575,7 +2523,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
             ]
         mocked_unique_generation.side_effect = side_effects
 
-        # For first enum sub-item.
+        # For first enum element.
         self.assertGetResponse(
             self.url,
             expected_title="DD",
@@ -2648,11 +2596,11 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" Enum sub-item object output.',
+            content_starts_after='Displaying example of "complex type" Enum element output.',
             content_ends_before='<span class="string">"done"</span>',
         )
 
-        # For second enum sub-item.
+        # For second enum element.
         self.assertGetResponse(
             self.url,
             expected_title="DD",
@@ -2725,6 +2673,58 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
             ],
-            content_starts_after='Displaying example of "complex type" Enum sub-item object output.',
+            content_starts_after='Displaying example of "complex type" Enum element output.',
+            content_ends_before='<span class="string">"done"</span>',
+        )
+
+    @patch("django_dump_die.templatetags.dump_die._generate_unique")
+    def test_tuple_element_function_display(self, mocked_unique_generation):
+        """Verify dumping a "tuple" type element function has expected output."""
+
+        # Override url, to use testing-specific view, which will only display a single object.
+        self.url = "django_dump_die__tests__complex:complex__multilevel__tuple__element__function"
+
+        # Override default "unique" generation logic, for reproduce-able tests.
+        # This generates enough uniques to guarantee mock does not raise errors.
+        side_effects = []
+        for index in range(5000):
+            side_effects += [
+                (f"data_900{index}", ""),
+            ]
+        mocked_unique_generation.side_effect = side_effects
+
+        self.assertGetResponse(
+            self.url,
+            expected_title="DD",
+            expected_header="Django DumpDie",
+            expected_content=[
+                "<hr>",
+                # Object opening tags.
+                """
+                <div class="dump-wrapper">
+                    <span class="dumped_function" title="Dumped Function">
+                        <span class="dumped_name">self</span>
+                        <span class="dumped_name">.</span>
+                        <span class="dumped_name">sample_multilevel_tuple</span>
+                        <span class="braces">[</span>
+                        <span class="number">0</span>
+                        <span class="braces">]</span>
+                        <span class="dumped_name">.</span>
+                        <span class="function">items</span>
+                        <span class="braces">(</span>
+                        <span class="braces">)</span>
+                    </span>:
+                """,
+                # Object child elements.
+                """
+                <span class="docs">D.items() -> a set-like object providing a view on D's items</span>
+                """,
+                # Object closing tags.
+                """
+                </div>
+                """,
+                "<hr>",
+            ],
+            content_starts_after='Displaying example of "complex type" Tuple element function output.',
             content_ends_before='<span class="string">"done"</span>',
         )
