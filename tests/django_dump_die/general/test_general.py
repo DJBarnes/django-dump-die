@@ -142,3 +142,133 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
     def test_view_that_raise_an_exception_is_not_caught_by_the_dump_logic(self):
         """Test that an unrelated unhandled exception being raised is not caught by the dump logic"""
         pass
+
+    @patch("django_dump_die.templatetags.dump_die._generate_unique")
+    @override_settings(DEBUG=True)
+    def test_dumping_of_object_that_causes_an_exception_does_not_crash_dump_functionality(
+        self,
+        mocked_unique_generation,
+    ):
+        """Test dumping of object that causes an exception does not crash dump functionality"""
+
+        # Override default "unique" generation logic, for reproduce-able tests.
+        # This generates enough uniques to guarantee mock does not raise errors.
+        # Unlike above tests, we need to give each object custom uniques, to ensure child-objects display.
+        side_effects = []
+        for index in range(5000):
+            side_effects += [
+                (f"data_900{index}", ""),
+            ]
+        mocked_unique_generation.side_effect = side_effects
+
+        url = "django_dump_die:exception-case-example"
+
+        self.assertGetResponse(
+            url,
+            expected_title="DD",
+            expected_header="Django DumpDie",
+            expected_content=[
+                # Check page descriptor.
+                """
+                <div class="dump-wrapper">
+                    <span class="dumped_object" title="Dumped Object">
+                        <span class="string">""</span>
+                    </span>:
+                    <span class="type" title="str">str</span>
+                    <code class="string">''</code>
+                </div>
+                """,
+                "<hr>",
+                # Check visual-padding lines.
+                """
+                <div class="dump-wrapper">
+                <span class="dumped_object" title="Dumped Object">
+                    <span class="dumped_name">exception_obj</span>
+                </span>:
+                <span class="type" title="ExceptionObject">ExceptionObject</span>
+                <span class="braces">{</span>
+                <a
+                    class="arrow-toggle collapsed"
+                    title="[Ctrl+click] Expand all children"
+                    data-toggle="collapse"
+                    data-target=".data_9001"
+                    data-dd-type="type"
+                    data-object-depth="1"
+                    aria-label="Close"
+                    aria-expanded="false"
+                >
+                    <span class="unique" data-highlight-unique="data_9001">data_9001</span>
+                    <span id="arrow-data_9001" class="arrow arrow-data_9001">
+                        ▶
+                    </span>
+                </a>
+                <div
+                    class="dd-wrapper collapse data_9001 "
+                    data-unique="data_9001"
+                >
+                    <ul class="attribute-list">
+                        <a
+                            class="arrow-toggle show always-show"
+                            title="[Ctrl+click] Expand all children"
+                            data-target=".data_9001-attributes"
+                            data-dd-type="attr"
+                            aria-label="Open/Close"
+                            aria-expanded=""
+                        >
+                            <span class="section_name">Attributes</span>
+                                <span id="arrow-data_9001-attributes" class="arrow">
+                            </span>
+                        </a>
+                        <div
+                            class="li-wrapper collapse data_9001-attributes show"
+                            data-unique-attributes="data_9001-attributes"
+                        >
+                            <li>
+                                <span class="empty" title="Exception Occurred
+                                    Exception Type: IndexError
+                                    Exception Value: list index out of range
+                                    Traceback (most recent call last):
+                                    File "/home/david/github/django-dump-die/django_dump_die/templatetags/dump_die.py", line 564, in get_obj_values
+                                    members = get_members(obj)
+                                    ^^^^^^^^^^^^^^^^
+                                    File "/home/david/github/django-dump-die/django_dump_die/utils.py", line 343, in get_members
+                                    members = inspect.getmembers(obj)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^
+                                    File "/home/david/.pyenv/versions/3.11.5/lib/python3.11/inspect.py", line 595, in getmembers
+                                    return _getmembers(object, predicate, getattr)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                    File "/home/david/.pyenv/versions/3.11.5/lib/python3.11/inspect.py", line 573, in _getmembers
+                                    value = getter(object, key)
+                                    ^^^^^^^^^^^^^^^^^^^
+                                    File "/home/david/github/django-dump-die/django_dump_die/views/example_helpers.py", line 1024, in trigger
+                                    return self.my_list[1]
+                                    ~~~~~~~~~~~~^^^
+                                    End of traceback"
+                                >
+                                    EXCEPTION
+                                </span>:
+                                <span class="type" title="str">str</span>
+                                <code class="string">'list index out of range'</code>
+                            </li>
+                        </div>
+                    </ul>
+                    <ul class="attribute-list">
+                    </ul>
+                </div>
+                <span class="braces">}</span>
+                """,
+                "<hr>",
+                """
+                <div class="dump-wrapper">
+                    <span class="dumped_object" title="Dumped Object">
+                        <span class="string">""</span>
+                    </span>:
+                    <span class="type" title="str">str</span>
+                    <code class="string">''</code>
+                </div>
+                """,
+                "<hr>",
+            ],
+            content_starts_after='<div class="static-padding"></div>',
+            content_ends_before="done",
+        )

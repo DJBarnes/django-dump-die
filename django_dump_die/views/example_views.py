@@ -312,6 +312,24 @@ def edge_case_example(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
+def exception_case_example(request):
+    """Example view, rendering an object that raises an exception when being dumped.
+
+    This view allows easily checking them to make sure they are still handled correctly.
+    """
+
+    # Output desired dump values.
+    dump("")
+    EdgeCasesHelper().dump_exception_causing_object()
+    dump("")
+
+    # Force dd to prevent further view parsing.
+    dd("done")
+
+    # Show that any calls after dd() end up ignored.
+    return render(request, "django_dump_die/sample.html", {})
+
+
 # endregion Edge case views showcasing potential edge cases.
 
 # region Template dumping.
