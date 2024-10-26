@@ -144,17 +144,26 @@ class SampleRelation(models.Model):
 
     relate_name = models.TextField()
 
+    class Meta:
+        app_label = "django_dump_die"
+
 
 class SampleManyRelation(models.Model):
     """Sample Class for many to many relation"""
 
     relate_name = models.TextField()
 
+    class Meta:
+        app_label = "django_dump_die"
+
 
 class SampleOneRelation(models.Model):
     """Sample Class for one to one relation"""
 
     relate_name = models.TextField()
+
+    class Meta:
+        app_label = "django_dump_die"
 
 
 class SampleDjangoModel(models.Model):
@@ -308,6 +317,9 @@ class SampleDjangoModel(models.Model):
         sample_one = models.OneToOneField(SampleOneRelation, on_delete=models.CASCADE, related_name="sample_one")
     except AttributeError:
         pass
+
+    class Meta:
+        app_label = "django_dump_die"
 
 
 class SampleModelForm(ModelForm):
@@ -997,6 +1009,22 @@ class EdgeCasesHelper:
                 extra_kwarg_3=3,
             )
         )
+
+    def dump_exception_causing_object(self):
+        """Dump an exception causing object"""
+
+        class ExceptionObject:
+            """Exception object"""
+
+            def __init__(self):
+                self.my_list = []
+
+            @property
+            def trigger(self):
+                return self.my_list[1]
+
+        exception_obj = ExceptionObject()
+        dump(exception_obj)
 
 
 # endregion DD Display Classes
