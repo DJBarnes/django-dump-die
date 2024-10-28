@@ -312,7 +312,7 @@ def edge_case_example(request):
     return render(request, "django_dump_die/sample.html", {})
 
 
-def exception_case_example(request):
+def obj_inspection_exception_case_example(request):
     """Example view, rendering an object that raises an exception when being dumped.
 
     This view allows easily checking them to make sure they are still handled correctly.
@@ -322,6 +322,29 @@ def exception_case_example(request):
     dump("")
     EdgeCasesHelper().dump_exception_causing_object()
     dump("")
+
+    # Force dd to prevent further view parsing.
+    dd("done")
+
+    # Show that any calls after dd() end up ignored.
+    return render(request, "django_dump_die/sample.html", {})
+
+
+def unhandled_exception_case_example(request):
+    """Example view, raises an exception before reaching the dd call.
+
+    This view allows easily checking them to make sure they are still handled correctly.
+    NOTE: This is different than the above method. The above one handles when the exception
+    occurs during object inspection. This is testing when an unhandled exception occurs
+    before the code can reach the dd call.
+    """
+
+    # Output desired dump values.
+    dump("")
+    EdgeCasesHelper().dump_exception_causing_object()
+    dump("")
+
+    raise TypeError("This is a test type error")
 
     # Force dd to prevent further view parsing.
     dd("done")

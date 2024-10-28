@@ -161,7 +161,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
             ]
         mocked_unique_generation.side_effect = side_effects
 
-        url = "django_dump_die:exception-case-example"
+        url = "django_dump_die:obj-inspection-exception-case-example"
 
         self.assertGetResponse(
             url,

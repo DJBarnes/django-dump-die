@@ -18,6 +18,7 @@ from django_dump_die.views.example_views import (
     system_path_example,
     full_specialized_example,
     edge_case_example,
-    exception_case_example,
+    obj_inspection_exception_case_example,
+    unhandled_exception_case_example,
     template_dump_example,
 )
