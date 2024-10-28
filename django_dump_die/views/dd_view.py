@@ -3,9 +3,10 @@
 # Third-Party Imports.
 from django.conf import settings
 from django.shortcuts import render
+from django.template.loader import render_to_string
 
 
-def dd_view(request, objects):
+def dd_view(request, objects, template_name="django_dump_die/dd.html", extra_context={}, as_string=False):
     """
     Return DumpDie view.
     :param request: Request object.
@@ -26,18 +27,21 @@ def dd_view(request, objects):
     if force_light_theme and force_dark_theme:
         raise ValueError("You can't force both light and dark themes.")
 
+    context = {
+        "objects": objects,
+        "include_util_toolbar": include_util_toolbar,
+        "attrs_enabled": attrs_enabled,
+        "funcs_enabled": funcs_enabled,
+        "force_light_theme": force_light_theme,
+        "force_dark_theme": force_dark_theme,
+        "custom_color_theme": custom_color_theme,
+        "multiline_function_docs": multiline_function_docs,
+    }
+    context.update(extra_context)
+
+    # If returning the raw string, render to string and return string.
+    if as_string:
+        return render_to_string(template_name, context, request)
+
     # Render template.
-    return render(
-        request,
-        "django_dump_die/dd.html",
-        {
-            "objects": objects,
-            "include_util_toolbar": include_util_toolbar,
-            "attrs_enabled": attrs_enabled,
-            "funcs_enabled": funcs_enabled,
-            "force_light_theme": force_light_theme,
-            "force_dark_theme": force_dark_theme,
-            "custom_color_theme": custom_color_theme,
-            "multiline_function_docs": multiline_function_docs,
-        },
-    )
+    return render(request, template_name, context)

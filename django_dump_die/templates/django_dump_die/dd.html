@@ -1,29 +1,11 @@
-{% load dump_die static %}
 <!DOCTYPE html>
-
-
 <html lang="en">
   <meta charset="utf-8">
   <head>
-
-    {# Load the neccessary css and js for dd #}
-    {% include 'django_dump_die/head_partials/_css_partial.html' %}
-    {% include 'django_dump_die/head_partials/_js_partial.html' %}
-
+    {% include "django_dump_die/partials/_head.html" %}
     <title>DD</title>
-
-    {# If user wants changes to the color them, include a partial to generate needed css. #}
-    {% if force_light_theme or force_dark_theme or custom_color_theme %}
-      {% include 'django_dump_die/partials/_custom_color_theme.html' %}
-    {% endif %}
   </head>
-
   <body>
-    {# Display static "utility toolbar" at top of page. #}
-    {% if include_util_toolbar %}
-      {% include 'django_dump_die/util_toolbar.html' %}
-    {% endif %}
-
-    {% dump_objects objects %}
+    {% include "django_dump_die/partials/_body.html" %}
   </body>
 </html>

@@ -1,0 +1,10 @@
+{% load dump_die %}
+{# Display static "utility toolbar" at top of page. #}
+{% if include_util_toolbar %}
+  {% include 'django_dump_die/util_toolbar.html' %}
+{% endif %}
+
+{% dump_objects objects %}
+
+{% block extra_content %}
+{% endblock extra_content %}

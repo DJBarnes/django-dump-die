@@ -91,18 +91,49 @@ class DumpAndDieMiddleware:
         # Get the response
         response = self.get_response(request)
 
-        # If there are no items in the dump_objects list
-        # or there was an unhandled exception raised, just return response
-        # NOTE: The has_exception attribute will be added in the process_exception method below.
-        if not dump_objects or getattr(request, "has_exception", False):
-            return response
-        else:
-            # Create a copy of the list, and clear it.
+        # Determine if view had an unhandled non-dd exception.
+        # This attribute will be set by the "process_exception" method below.
+        has_non_dd_exception = getattr(request, "has_non_dd_exception", False)
+
+        # If there are un-dumped object in the dump_objects list and a
+        # non-dd-exception was not raised, assume that the user
+        # just forgot to use DD to actually die. Return the dd_view with those
+        # collected dump_objects instead of returning the default response.
+        # TODO: Consider combining this logic with the non-dd-exception logic
+        # below to return a "combo" view that has dump info at the top and the
+        # original response below that. The downside is that it might affect the
+        # output due to a clash of CSS.
+        # TODO: Consider adding a setting to turn the combo function on or off if added.
+        # TODO: Make sure that this will not run when Debug is turned off.
+        if dump_objects and has_non_dd_exception is False:
+            objects = dump_objects[:]
+            dump_objects.clear()
+            return dd_view(request, objects)
+
+        # If the request object had an unhandled non-dd exception, attempt to
+        # create a "combo" view that shows both the dumped objects and the
+        # original response content.
+        # Attempt to collect any dumps that ran prior to the unhandled exception
+        # and inject the dump info into the standard Django 500 error page.
+        # TODO: Consider adding a setting to turn this on or off.
+        # TODO: Make sure that this will not run when Debug is turned off.
+        if has_non_dd_exception:
             objects = dump_objects[:]
             dump_objects.clear()
 
-            # Return the dd view to dump the items in the dump_objects list.
-            return dd_view(request, objects)
+            # Get the head and body content of the DD view
+            head_string = dd_view(request, objects, template_name="django_dump_die/partials/_head.html", as_string=True)
+            body_string = dd_view(request, objects, template_name="django_dump_die/partials/_body.html", as_string=True)
+            # Fetch the content of the standard Django 500 error page.
+            content = response.content.decode("utf-8")
+            # Inject the head and body parts of the DD view into the correct spots of the standard Django 500 error view.
+            content = content.replace("</head>", f"{head_string}</head>")
+            content = content.replace("<body>", f"<body>{body_string}")
+            # Set the new content on the response object
+            response.content = content.encode("utf-8")
+
+        # Regardless of whether the content was altered, return the response.
+        return response
 
     def process_exception(self, request, exception):
         """
@@ -125,5 +156,5 @@ class DumpAndDieMiddleware:
         # continue with processing by returning None.
         # NOTE: Middleware will detect that the request has an exception and
         # handle correctly in the __call__ above.
-        request.has_exception = True
+        request.has_non_dd_exception = True
         return None
