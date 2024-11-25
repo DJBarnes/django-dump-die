@@ -1,5 +1,5 @@
 """
-Tests for "simple" type DD output.
+Tests for "simple" type example view DD output.
 """
 
 # Third-Party Imports.
@@ -11,7 +11,6 @@ from django_expanded_test_cases import IntegrationTestCase
 class DumpDieSimpleTypeTestCase(IntegrationTestCase):
     """Verify handling of dumped "simple" types."""
 
-    # TODO: Update to load individual intermediate type urls / views for better isolation.
     url = "django_dump_die:simple-type-example"
 
     def test_constant_display(self):
