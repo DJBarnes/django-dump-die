@@ -603,8 +603,6 @@ class ComplexTypesHelper:
 
         self.dump_all_iterables()
 
-        self.dump_class_types()
-
     def dump_all_iterables(self):
         """Dump all iterable sample objects"""
 
@@ -784,38 +782,74 @@ class ComplexTypesHelper:
         dump(SampleEnum.RED)
         dump(SampleEnum.BLUE)
 
-    def dump_class_types(self):
-        """Dump Class Types"""
 
-        # Generate variables to dump.
-        sample_empty_class = EmptyClass()
-        sample_simple_class = SimpleClass()
-        sample_complex_class = ComplexClass()
+class ClassTypesHelper:
+    """Class containing methods to dump various Python Class types"""
+
+    def dump_all_class_types(self):
+        """Dump All Class Types"""
 
         # Call dump on all generated variables.
         dump("")
-        dump("Class object examples:")
-        dump(EmptyClass)
-        dump(SimpleClass)
-        dump(ComplexClass)
+        dump("Class definition examples:")
+        self.dump_empty_class_def()
+        self.dump_simple_class_def()
+        self.dump_complex_class_def()
 
         dump("")
         dump("Class instance examples:")
-        dump(sample_empty_class)
-        dump(sample_simple_class)
-        dump(sample_complex_class)
-        dump(sample_complex_class)
+        self.dump_empty_class_instance()
+        self.dump_simple_class_instance()
+        self.dump_complex_class_instance()
+        self.dump_complex_class_instance()
 
         dump("")
         dump("Examples of pulling nested items (classes/functions/data/etc) from above classes.")
+        self.dump_complex_class_attributes()
+        self.dump_simple_class_functions()
+
+    def dump_complex_class_attributes(self):
+        """Dump attributes of a complex class"""
+        sample_complex_class = ComplexClass()
         dump(sample_complex_class._sample_private_simple_class)  # pylint: disable=protected-access
         dump(sample_complex_class.sample_public_simple_class)
         dump(sample_complex_class.sample_public_simple_class.sample_public_dict)
         dump(sample_complex_class.sample_public_simple_class.sample_public_dict["first"])
+
+    def dump_simple_class_functions(self):
+        """Dump functions of a simple class"""
+        sample_simple_class = SimpleClass()
         dump(sample_simple_class.sample_class_func)
         dump(sample_simple_class.sample_class_param_func)
         dump(sample_simple_class.sample_class_func())
         dump(sample_simple_class.sample_class_param_func("test"))
+
+    def dump_empty_class_def(self):
+        """Dump the definition of a empty class"""
+        dump(EmptyClass)
+
+    def dump_simple_class_def(self):
+        """Dump the definition of a simple class"""
+        dump(SimpleClass)
+
+    def dump_complex_class_def(self):
+        """Dump the definition of a complex class"""
+        dump(ComplexClass)
+
+    def dump_empty_class_instance(self):
+        """Dump an instance of a empty class"""
+        sample_empty_class = EmptyClass()
+        dump(sample_empty_class)
+
+    def dump_simple_class_instance(self):
+        """Dump an instance of a simple class"""
+        sample_simple_class = SimpleClass()
+        dump(sample_simple_class)
+
+    def dump_complex_class_instance(self):
+        """Dump an instance of a complex class"""
+        sample_complex_class = ComplexClass()
+        dump(sample_complex_class)
 
 
 class DjangoTypesHelper:

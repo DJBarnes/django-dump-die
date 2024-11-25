@@ -240,7 +240,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
                                     File "/home/david/.pyenv/versions/3.11.5/lib/python3.11/inspect.py", line 573, in _getmembers
                                     value = getter(object, key)
                                     ^^^^^^^^^^^^^^^^^^^
-                                    File "/home/david/github/django-dump-die/django_dump_die/views/example_helpers.py", line 1024, in trigger
+                                    File "/home/david/github/django-dump-die/django_dump_die/views/example_helpers.py", line 1058, in trigger
                                     return self.my_list[1]
                                     ~~~~~~~~~~~~^^^
                                     End of traceback"

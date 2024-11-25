@@ -10,6 +10,7 @@ except Exception:
     pass
 
 from .example_helpers import (
+    ClassTypesHelper,
     ComplexTypesHelper,
     DjangoTypesHelper,
     EdgeCasesHelper,
@@ -99,7 +100,7 @@ def class_types_example(request):
     # Output desired dump values.
     dump("Displaying example of class object output.")
     dump("")
-    ComplexTypesHelper().dump_class_types()
+    ClassTypesHelper().dump_all_class_types()
     dump("")
     dump("")
 
