@@ -406,42 +406,86 @@ SAMPLE_CONST = "Sample Constant Content"
 class SimpleTypesHelper:
     """Class containing methods to dump simple types"""
 
-    def dump_simple_types(self):
+    def dump_all_simple_types(self):
         """Dump Simple Types"""
+
         self.dump_non_numeric_types()
         self.dump_numeric_types()
 
     def dump_non_numeric_types(self):
         """Dump Non-numeric Types"""
-        # Generate variables to dump.
-        sample_module = ModuleType("django.html")
-        sample_bytes = b"sample bytes"
-        sample_string = "Sample String Content"
-        sample_none = None
-        sample_bool = True
 
         # Call dump on all generated variables.
         dump("")
         dump("Non-Numeric examples:")
-        dump(SAMPLE_CONST)
-        dump(sample_module)
-        dump(sample_bytes)
-        dump(sample_string)
-        dump(sample_none)
-        dump(sample_bool)
+        self.dump_const()
+        self.dump_module()
+        self.dump_bytes()
+        self.dump_string()
+        self.dump_none()
+        self.dump_bool()
 
     def dump_numeric_types(self):
         """Dump Simple Numeric Types"""
-        # Generate variables to dump.
-        sample_int = 42
-        sample_float = 42.42
-        sample_decimal = Decimal(42.42)
 
         # Call dump on all generated variables.
         dump("")
         dump("Numeric examples:")
+        self.dump_int()
+        self.dump_float()
+        self.dump_decimal()
+
+    def dump_const(self):
+        """Dump a constant"""
+
+        dump(SAMPLE_CONST)
+
+    def dump_module(self):
+        """Dump a module"""
+
+        sample_module = ModuleType("django.html")
+        dump(sample_module)
+
+    def dump_bytes(self):
+        """Dump a bytes"""
+
+        sample_bytes = b"sample bytes"
+        dump(sample_bytes)
+
+    def dump_string(self):
+        """Dump a string"""
+
+        sample_string = "Sample String Content"
+        dump(sample_string)
+
+    def dump_none(self):
+        """Dump None"""
+
+        sample_none = None
+        dump(sample_none)
+
+    def dump_bool(self):
+        """Dump a bool"""
+
+        sample_bool = True
+        dump(sample_bool)
+
+    def dump_int(self):
+        """Dump a integer"""
+
+        sample_int = 42
         dump(sample_int)
+
+    def dump_float(self):
+        """Dump a float"""
+
+        sample_float = 42.42
         dump(sample_float)
+
+    def dump_decimal(self):
+        """Dump a decimal"""
+
+        sample_decimal = Decimal(42.42)
         dump(sample_decimal)
 
 

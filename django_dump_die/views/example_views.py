@@ -34,7 +34,7 @@ def simple_types_example(request):
     # Output desired dump values.
     dump('Displaying example of "simple type" object output.')
     dump("")
-    SimpleTypesHelper().dump_simple_types()
+    SimpleTypesHelper().dump_all_simple_types()
     dump("")
     dump("")
 
@@ -184,7 +184,7 @@ def full_category_example(request):
 
     # Output desired dump values.
     dump("")
-    SimpleTypesHelper().dump_simple_types()
+    SimpleTypesHelper().dump_all_simple_types()
     dump("")
     dump("")
     IntermediateTypesHelper().dump_intermediate_types()
