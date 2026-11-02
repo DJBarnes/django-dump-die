@@ -15,6 +15,24 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Changed: expanding and collapsing is fast on large dumps.** Opening one
+  section, and the toolbar's Expand and Collapse buttons, used to take longer
+  the more the page dumped: for a list of 100 nested dicts, one click took
+  almost a second, and Expand All took over two minutes. Each click now only
+  updates its own section, and the toolbar buttons update every section in one
+  pass. Single sections still slide open and closed.
+  (`#30 <https://github.com/DJBarnes/django-dump-die/issues/30>`_)
+
+* **Changed: jQuery and Bootstrap's JavaScript are no longer loaded.** The dump
+  page and the ``{% dump %}`` template tag only load Bootstrap's CSS and the
+  package's own JavaScript. A page that uses ``{% dump %}`` keeps its own
+  jQuery and Bootstrap versions, and its Bootstrap no longer also handles the
+  dump's sections, which now use ``data-dd-toggle`` instead of
+  ``data-toggle``.
+
+* **Fixed: the Attributes arrow didn't change when the section opened or
+  closed.** It now does, like the other arrows.
+
 * **Changed: more Python and Django versions are supported and tested.**
   The package supports Python 3.6 to 3.14 and Django 2.2 to 6.1, and the
   tests run on each Django LTS release and the newest releases, on every

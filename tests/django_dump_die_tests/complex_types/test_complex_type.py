@@ -52,7 +52,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -198,7 +198,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -340,7 +340,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -439,7 +439,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -538,7 +538,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -633,7 +633,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -671,7 +671,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9004"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -725,7 +725,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9008"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -771,7 +771,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_90010"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -861,7 +861,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -957,7 +957,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_90010"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -1028,7 +1028,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_90016"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -1076,7 +1076,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_90018"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -1124,7 +1124,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_90020"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -1235,7 +1235,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -1274,7 +1274,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9003"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -1327,7 +1327,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9006"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -1425,7 +1425,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -1518,7 +1518,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_90017"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -1575,7 +1575,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_90021"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -1678,7 +1678,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -1716,7 +1716,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9003"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -1770,7 +1770,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9007"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -1866,7 +1866,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -1904,7 +1904,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9003"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -1958,7 +1958,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9007"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -2054,7 +2054,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -2092,7 +2092,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9003"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -2145,7 +2145,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9007"
                         data-dd-type="type"
                         data-object-depth="2"
@@ -2246,7 +2246,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -2346,7 +2346,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -2446,7 +2446,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -2544,7 +2544,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9002"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -2621,7 +2621,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_90016"
                         data-dd-type="type"
                         data-object-depth="1"

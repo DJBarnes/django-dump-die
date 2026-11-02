@@ -151,8 +151,8 @@ However, the use of this tag comes with a lot of caveats.
 
 .. warning::
 
-    Additionally, the template tag needs to pull in some JS & CSS for both
-    Bootstrap and jQuery. These lines are loaded in as part of the processing
+    Additionally, the template tag needs to pull in Bootstrap's CSS and the
+    package's own JS and CSS. These lines are loaded in as part of the processing
     that the dump tag does. As a result, these loads are done immediately
     before rendering out the dumped data and thus may occur in the middle of
     the HTML document. Due to this, it is possible that
