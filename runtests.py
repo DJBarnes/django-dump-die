@@ -9,7 +9,7 @@ import argparse
 import os
 import subprocess
 import sys
-from shutil import which
+from importlib.util import find_spec
 
 # Terminal color constants.
 RED = "\033[0;31m"
@@ -19,10 +19,10 @@ BLUE = "\033[0;34m"
 CYAN = "\033[0;36m"
 NC = "\033[0m"
 # Path constants.
-VIRTUAL_ENV_PATH = os.environ["VIRTUAL_ENV"]
 SCRIPT_DIR = os.path.dirname(os.path.abspath(sys.argv[0]))
 # Pytest command args.
-PYTEST_ARGS = ["pytest"]
+# Run with this script's interpreter, so that tests use its installed packages (such as tox's Django version).
+PYTEST_ARGS = [sys.executable, "-m", "pytest"]
 PYTEST_COVERAGE_ARGS = PYTEST_ARGS + [
     "-n",
     "auto",
@@ -31,20 +31,22 @@ PYTEST_COVERAGE_ARGS = PYTEST_ARGS + [
     "--cov-report=",
 ]
 # Manage command args.
-MANAGE_ARGS = [
-    f"{VIRTUAL_ENV_PATH}/bin/django-admin",
+DJANGO_TEST_ARGS = [
+    "-m",
+    "django",
     "test",
     "--pythonpath",
     f"{SCRIPT_DIR}",
 ]
-MANAGE_COVERAGE_ARGS = ["coverage", "run"] + MANAGE_ARGS
+MANAGE_ARGS = [sys.executable] + DJANGO_TEST_ARGS
+MANAGE_COVERAGE_ARGS = [sys.executable, "-m", "coverage", "run"] + DJANGO_TEST_ARGS
 
 
 def main():
     """Main entry point method."""
 
     # Determine if pytest installed.
-    has_pytest = which("pytest") is not None
+    has_pytest = find_spec("pytest") is not None
 
     # Parse command line args.
     parser = argparse.ArgumentParser()
@@ -145,10 +147,10 @@ def create_html_coverage_report(lt_100=False):
     # Print info message and set up run_args for command.
     if lt_100:
         print_info("Creating coverage report for files with less than 100 percent coverage.")
-        run_args = ["coverage", "html", "--skip-covered", "-d", f"{path}"]
+        run_args = [sys.executable, "-m", "coverage", "html", "--skip-covered", "-d", f"{path}"]
     else:
         print_info("Creating coverage report for all files.")
-        run_args = ["coverage", "html", "-d", f"{path}"]
+        run_args = [sys.executable, "-m", "coverage", "html", "-d", f"{path}"]
     # Execute command and get return code.
     return_code = run_command(run_args)
     # If return_code is non-zero, exit with return code.
