@@ -1,0 +1,35 @@
+"""Views for the browser tests of the DumpDie page's JavaScript."""
+
+# Third-Party Imports.
+from django.shortcuts import render
+
+# Internal Imports.
+from django_dump_die.middleware import dd
+
+
+class BrowserTestClass:
+    """Class with attributes and functions, for checking the Attributes and Functions sections."""
+
+    def __init__(self):
+        self.number = 42
+        self.items = ["first", "second"]
+
+    def do_work(self):
+        """Do some work."""
+        return True
+
+
+def nested_example(request):
+    """Dumps nested objects, with one object referenced twice, so its unique appears twice."""
+    shared = {"shared": True}
+    nested_example = [
+        {"name": "first", "inner": {"value": 1, "shared": shared}},
+        {"name": "second", "inner": {"value": 2, "shared": shared}},
+        BrowserTestClass(),
+    ]
+    dd(nested_example)
+
+
+def template_dump_example(request):
+    """Dumps from a template, into a normal page without the DumpDie toolbar."""
+    return render(request, "django_dump_die/template_dump.html", {"sample_simple_class": BrowserTestClass()})

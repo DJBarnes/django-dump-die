@@ -68,6 +68,9 @@ dependencies = ["django >= 2.2.0"]
 dynamic = ["version"]
 
 [project.optional-dependencies]
+browser = [
+    "selenium",
+]
 dev = [
     "black",
     "coverage",

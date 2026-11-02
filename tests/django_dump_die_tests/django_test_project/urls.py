@@ -14,5 +14,6 @@ urlpatterns = [
     path("tests/", index, name="tests-index"),
     path("tests/", include("django_dump_die_tests.complex_types.urls")),
     path("tests/", include("django_dump_die_tests.simple_types.urls")),
+    path("tests/", include("django_dump_die_tests.browser.urls")),
     path("", include("django_dump_die.urls")),
 ]

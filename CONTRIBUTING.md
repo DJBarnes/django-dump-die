@@ -55,6 +55,16 @@ pipenv run pytest "tests/django_dump_die_tests/general/test_general.py::DumpDieG
 
 `python runtests.py --force-django-manage-test` runs the same tests with `manage.py test` instead of pytest. To run the full matrix of Python and Django versions, run `tox`.
 
+### Browser tests
+
+`browser/` holds Selenium tests of the dump page's JavaScript (expanding, collapsing, the toolbar, and duplicate highlighting). They run with the rest of the tests when `selenium` is installed (it is in the Pipfile's dev packages), and need a browser. Choose it with environment variables:
+
+- `DJANGO_DD_SELENIUM_BROWSER`: `firefox` (the default), `chrome`, or `none` to skip the browser tests.
+- `DJANGO_DD_SELENIUM_HEADLESS=true`: run the browser without a window.
+- `DJANGO_DD_SELENIUM_BROWSER_BINARY`: the browser's executable, if Selenium doesn't find it. Firefox installed as a snap (as on Ubuntu) is found without it.
+
+`tox -e browser` runs only the browser tests, in headless Firefox.
+
 ## Resources
 
 - [How to Contribute to Open Source](https://opensource.guide/how-to-contribute/)
