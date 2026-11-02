@@ -11,6 +11,13 @@ import subprocess
 import sys
 from importlib.util import find_spec
 
+# Third-Party Imports.
+try:
+    from colorama import just_fix_windows_console
+except ImportError:
+    # Colorama (0.4.6 or later) is optional. It is only needed for colors in older Windows consoles.
+    just_fix_windows_console = None
+
 # Terminal color constants.
 RED = "\033[0;31m"
 GREEN = "\033[0;32m"
@@ -18,6 +25,9 @@ YELLOW = "\033[0;33m"
 BLUE = "\033[0;34m"
 CYAN = "\033[0;36m"
 NC = "\033[0m"
+# Make older Windows consoles show the colors. Does nothing on other systems.
+if just_fix_windows_console is not None:
+    just_fix_windows_console()
 # Path constants.
 SCRIPT_DIR = os.path.dirname(os.path.abspath(sys.argv[0]))
 # Pytest command args.
