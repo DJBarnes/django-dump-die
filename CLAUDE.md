@@ -16,7 +16,7 @@ pipenv run python runtests.py --with-coverage    # plus an HTML report in .djang
 pipenv run python runtests.py --force-django-manage-test   # same tests with manage.py test
 pipenv run pytest tests/django_dump_die_tests/simple_types/test_simple_types.py
 pipenv run pytest "tests/django_dump_die_tests/general/test_general.py::DumpDieGeneralTestCase::test_debug_off_skips_all_dumps"
-tox                                              # Python 3.6–3.14 × Django 2.2–6.1 matrix, docs, warnings
+tox                                              # Python 3.6–3.14 × Django 2.2–6.1 matrix, browser, docs, warnings
 pipenv run black .                               # line length 120
 pipenv run pylint django_dump_die
 pipenv run sphinx-build -WE docs/source docs/build   # CI builds docs with warnings as errors
@@ -49,6 +49,8 @@ pipenv run sphinx-build -WE docs/source docs/build   # CI builds docs with warni
 
 The tag tracks each object's "unique" (based on its `id`) in a `skip_set` and module-level maps (`repeat_iteration_tracker`, `deepcopy_unique_map`). This avoids infinite loops and renders objects it has already seen as back-references. The template `{% dump %}` tag checks `settings.DEBUG` itself, and loads the CSS/JS only for the first dump on a page.
 
+**Front-end** (`static/django_dump_die/js/dd.js`): plain JavaScript; the page loads Bootstrap 4's CSS but no jQuery or Bootstrap JS. Each `.arrow-toggle` (`data-dd-toggle="collapse"` when collapsible; without it the section is "always show") is directly followed by its `.dd-wrapper`/`.li-wrapper` section and contains its `.arrow`, and `dd.js` relies on that structure. One delegated click handler opens/closes a section with Bootstrap's `.collapsing` height transition; CTRL+click and the toolbar buttons set many sections at once without animation. Keep it linear in page size: no per-element handlers or document-wide queries per element (see #30).
+
 **Settings**: every `DJANGO_DD_*` option is read with `getattr(settings, ...)` when `constants.py` is imported (listed in `docs/source/configuration.rst`). As a result, `override_settings` in tests doesn't change most of them. The exceptions are the toolbar, theme, and attribute/function toggles that `dd_view` reads on each request.
 
 **Example views**: `views/example_views.py` and `views/example_helpers.py` (sample classes, Django models, and a form) power the browsable example pages in `django_dump_die/urls.py`, which ship with the package. The sample models live in that shipped module.
@@ -58,4 +60,5 @@ The tag tracks each object's "unique" (based on its `id`) in a `skip_set` and mo
 - `tests/` is **not** a Python package; it is on the path (`pythonpath = [".", "tests"]`), and the test code is the uniquely named package `django_dump_die_tests`. This lets another Django project (for example `~/github/package_tester`) install this test project next to `django-adminlte2-pdq`'s `django_adminlte2_pdq_tests`. Don't add `tests/__init__.py`, and don't import anything as `tests.…`.
 - `tests/django_dump_die_tests/django_test_project/` holds the settings (`DJANGO_SETTINGS_MODULE = django_dump_die_tests.django_test_project.settings`), the root urls (no `app_name`, so other projects can include it), the test views index page at `/tests/`, and `apps.py` (label `django_dump_die_tests`).
 - Test folders: `simple_types/` and `complex_types/` have their own one-object-per-view test views and urls (namespaces `django_dump_die__tests__simple` / `__complex`); `function_types/`, `django_types/` and `example_views/` test the shipped example pages; `general/` covers middleware, the template tag and DEBUG behavior.
+- `browser/` holds Selenium tests of `dd.js` (`django_expanded_test_cases.LiveServerTestCase`). They skip without `selenium`; the browser is chosen with `DJANGO_DD_SELENIUM_BROWSER` (`firefox` default, `chrome`, `none`), `DJANGO_DD_SELENIUM_HEADLESS=true`, and `DJANGO_DD_SELENIUM_BROWSER_BINARY` (snap Firefox is found automatically). `tox -e browser` runs them headless. From a VS Code shell on Ubuntu, snap Firefox needs a clean environment (`env -i ...`) or crashes at startup; set `DJANGO_DD_SELENIUM_BROWSER=none` to skip them in a normal run.
 - Tests use `django_expanded_test_cases.IntegrationTestCase.assertGetResponse` to assert exact rendered HTML fragments, and patch `django_dump_die.templatetags.dump_die._generate_unique` for stable uniques. Any change to a template or to the markup the templatetag emits usually requires updating these expected strings. Expected output must not depend on the machine or Python version (paths, tracebacks, builtin docstrings).
