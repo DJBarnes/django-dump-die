@@ -14,17 +14,19 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python-version:
-          - "3.8"
-          - "3.9"
           - "3.10"
           - "3.11"
           - "3.12"
           - "3.13"
           - "3.14"
         include:
-          # Python 3.7 is not available on newer runner images.
+          # Python 3.7 to 3.9 are not available on newer runner images.
           - os: ubuntu-22.04
             python-version: "3.7"
+          - os: ubuntu-22.04
+            python-version: "3.8"
+          - os: ubuntu-22.04
+            python-version: "3.9"
     name: Test Py${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
     steps:
