@@ -3,6 +3,7 @@ Tests for "complex" type DD output.
 """
 
 # System Imports.
+import inspect
 from unittest.mock import patch
 
 # Third-Party Imports.
@@ -2716,9 +2717,12 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                     </span>:
                 """,
                 # Object child elements.
+                # The docstring of dict.items differs between Python versions.
                 """
-                <span class="docs">D.items() -> a set-like object providing a view on D's items</span>
-                """,
+                <span class="docs">{0}</span>
+                """.format(
+                    inspect.getdoc(dict.items)
+                ),
                 # Object closing tags.
                 """
                 </div>
