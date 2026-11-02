@@ -16,11 +16,6 @@ from django_dump_die.middleware import dd, dump
 from django_dump_die.views.example_helpers import ComplexTypesHelper
 
 
-def index(request):
-    """Exclusively used for easy access to visual examine test views while debugging tests."""
-    return render(request, "django_dump_die/test_index.html", {})
-
-
 def complex_type__set(request):
     """Example view, rendering only "complex type" Set output."""
 

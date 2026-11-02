@@ -5,7 +5,6 @@ from django.urls import path
 
 # Internal Imports.
 from django_dump_die_tests.complex_types.views import (
-    index,
     # Complex examples
     complex_type__set,
     complex_type__frozen_set,
@@ -73,5 +72,4 @@ urlpatterns = [
         complex_type__multilevel__tuple__element__function,
         name="complex__multilevel__tuple__element__function",
     ),
-    path("", index, name="index"),
 ]
