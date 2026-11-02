@@ -228,21 +228,19 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
                                     Exception Type: IndexError
                                     Exception Value: list index out of range
                                     Traceback (most recent call last):
-                                    File "/home/david/github/django-dump-die/django_dump_die/templatetags/dump_die.py", line 564, in get_obj_values
-                                    members = get_members(obj)
-                                    ^^^^^^^^^^^^^^^^
-                                    File "/home/david/github/django-dump-die/django_dump_die/utils.py", line 343, in get_members
-                                    members = inspect.getmembers(obj)
-                                    ^^^^^^^^^^^^^^^^^^^^^^^
-                                    File "/home/david/.pyenv/versions/3.11.5/lib/python3.11/inspect.py", line 595, in getmembers
-                                    return _getmembers(object, predicate, getattr)
-                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                                    File "/home/david/.pyenv/versions/3.11.5/lib/python3.11/inspect.py", line 573, in _getmembers
-                                    value = getter(object, key)
-                                    ^^^^^^^^^^^^^^^^^^^
-                                    File "/home/david/github/django-dump-die/django_dump_die/views/example_helpers.py", line 1102, in trigger
-                                    return self.my_list[1]
-                                    ~~~~~~~~~~~~^^^
+                """,
+                # File paths, line numbers and code markers in the traceback depend on the machine and on the Python
+                # version. So only check that the frames from this package are there.
+                'dump_die.py", line',
+                "in get_obj_values",
+                "members = get_members(obj)",
+                'utils.py", line',
+                "in get_members",
+                "members = inspect.getmembers(obj)",
+                'example_helpers.py", line',
+                "in trigger",
+                "return self.my_list[1]",
+                """
                                     End of traceback"
                                 >
                                     EXCEPTION
