@@ -2720,9 +2720,7 @@ class DumpDieComplexTypeTestCase(IntegrationTestCase):
                 # The docstring of dict.items differs between Python versions.
                 """
                 <span class="docs">{0}</span>
-                """.format(
-                    inspect.getdoc(dict.items)
-                ),
+                """.format(inspect.getdoc(dict.items)),
                 # Object closing tags.
                 """
                 </div>
