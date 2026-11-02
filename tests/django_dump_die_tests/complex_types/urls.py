@@ -28,7 +28,6 @@ from django_dump_die_tests.complex_types.views import (
     complex_type__multilevel__tuple__element__function,
 )
 
-
 app_name = "django_dump_die__tests__complex"
 urlpatterns = [
     # Complex examples

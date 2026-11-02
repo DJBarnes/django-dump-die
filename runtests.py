@@ -4,6 +4,7 @@
 Current expected testing methods are 'manage.py' and 'pytest',
 with 'pytest' being the preferred method.
 """
+
 import argparse
 import os
 import subprocess

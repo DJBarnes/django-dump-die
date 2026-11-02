@@ -9,7 +9,6 @@ from warnings import filterwarnings
 # Third-party Imports
 import django
 
-
 # region Main settings for testing
 
 DATABASES = {
@@ -94,4 +93,3 @@ if django.VERSION >= (5, 0):
     FORMS_URLFIELD_ASSUME_HTTPS = True
 
 # endregion Django Version Specific Settings
-

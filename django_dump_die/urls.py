@@ -29,7 +29,6 @@ from .views import (
     template_dump_example,
 )
 
-
 app_name = "django_dump_die"
 urlpatterns = [
     # Various example views.
