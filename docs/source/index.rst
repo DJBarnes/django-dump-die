@@ -29,6 +29,7 @@ and `Symfony <https://symfony.com/>`_ frameworks.
    built_in_examples
    configuration
    api_reference
+   version_history
 
 
 Indices and tables
