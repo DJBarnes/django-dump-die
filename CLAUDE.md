@@ -1,0 +1,61 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project
+
+`django-dump-die` is a reusable Django app (not a project) that adds Laravel/Symfony-style `dump()` and `dd()` debugging helpers. Dumped objects replace the page response with an expandable HTML tree. Nothing happens unless `settings.DEBUG` is `True`. User-facing docs live in `docs/source/` (Sphinx, published to ReadTheDocs). Built with flit; the version is `__version__` in `django_dump_die/__init__.py`.
+
+## Commands
+
+Dependencies come from Pipenv: `pipenv install --dev` (`Pipfile.lock` is gitignored, so there is nothing to `sync`).
+
+```bash
+pipenv run python runtests.py                    # pytest (settings and pythonpath come from pyproject.toml)
+pipenv run python runtests.py --with-coverage    # plus an HTML report in .django_dump_die_coverage_html_report/
+pipenv run python runtests.py --force-django-manage-test   # same tests with manage.py test
+pipenv run pytest tests/django_dump_die_tests/simple_types/test_simple_types.py
+pipenv run pytest "tests/django_dump_die_tests/general/test_general.py::DumpDieGeneralTestCase::test_debug_off_skips_all_dumps"
+tox                                              # Python 3.6–3.14 × Django 2.2–6.1 matrix, docs, warnings
+pipenv run black .                               # line length 120
+pipenv run pylint django_dump_die
+pipenv run sphinx-build -WE docs/source docs/build   # CI builds docs with warnings as errors
+./docs/generate_docs.sh                          # regenerates docs/source/api_reference with sphinx-apidoc
+```
+
+`runtests.py` runs pytest, Django and coverage with its own interpreter (`sys.executable`), so inside tox the tests use that environment's Django.
+
+## Conventions
+
+- Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/): `type(scope): summary`. Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `build`, `ci`, `chore`. Commits are GPG-signed (`commit.gpgsign` is set in this repo's local git config).
+- Each user-facing change adds an entry to the "Unreleased" section of `docs/source/version_history.rst` in the same commit.
+- Supported versions are kept wide on purpose (Python ≥3.6, Django ≥2.2) until a complete release; don't drop old versions without asking.
+
+## Architecture
+
+**Request flow** (`django_dump_die/middleware.py`):
+- On init, `DumpAndDieMiddleware` injects `dd` and `dump` into `__builtins__`, so calling code doesn't import them. That is why editors flag `dd(...)` as undefined, which is intentional.
+- `dump(obj)` adds the object's info to a module-level `dump_objects` list. This list is shared across the whole server and isn't thread safe. After the response, `__call__` replaces it with `dd_view` if anything was dumped.
+- `dd(obj)` raises the `DumpAndDie` exception. `process_exception` catches it, adds the object to the dumped list, and returns `dd_view`.
+- Any other unhandled exception marks the request (`has_non_dd_exception`). If something was dumped and `DEBUG` is on, `__call__` injects the dump page's head and body (`partials/_head.html`, `_body.html`) into Django's error page.
+- `views/dd_view.py` reads the toolbar and theme settings and renders `templates/django_dump_die/dd.html` (or a partial, as a string).
+
+**Object capture** (`utils.get_dumped_object_info`): it inspects the call stack and tokenizes the source line of the `dd`/`dump` call to recover the variable's name and location. It returns a tuple `(filename, linenumber, obj_name, obj, function_doc, start_index, end_index, original_obj)` that the templates unpack. Enums are converted to a fake `utils.Enum` class, and `deepcopy=True` keeps the original object so that uniques can still be computed.
+
+**Rendering** (`templatetags/dump_die.py`): rendering recurses through templates. `dump_object` is an inclusion tag, and its template (`partials/_dump_object.html` → `output_types/*.html` → `partials/_attributes.html` / `_functions.html`) calls `dump_object` again for each child. Each object is classified as one of:
+- **simple**: `constants.SIMPLE_TYPES`. Prints the value only.
+- **intermediate**: `constants.INTERMEDIATE_TYPES`, such as datetimes and paths. Expands one level; its children are rendered as simple.
+- **complex**: everything else. Fully recursive, limited by `MAX_RECURSION_DEPTH` and `MAX_ITERABLE_LENGTH`, plus optional `index_range` slicing of the root iterable.
+
+The tag tracks each object's "unique" (based on its `id`) in a `skip_set` and module-level maps (`repeat_iteration_tracker`, `deepcopy_unique_map`). This avoids infinite loops and renders objects it has already seen as back-references. The template `{% dump %}` tag checks `settings.DEBUG` itself, and loads the CSS/JS only for the first dump on a page.
+
+**Settings**: every `DJANGO_DD_*` option is read with `getattr(settings, ...)` when `constants.py` is imported (listed in `docs/source/configuration.rst`). As a result, `override_settings` in tests doesn't change most of them. The exceptions are the toolbar, theme, and attribute/function toggles that `dd_view` reads on each request.
+
+**Example views**: `views/example_views.py` and `views/example_helpers.py` (sample classes, Django models, and a form) power the browsable example pages in `django_dump_die/urls.py`, which ship with the package. The sample models live in that shipped module.
+
+## Tests
+
+- `tests/` is **not** a Python package; it is on the path (`pythonpath = [".", "tests"]`), and the test code is the uniquely named package `django_dump_die_tests`. This lets another Django project (for example `~/github/package_tester`) install this test project next to `django-adminlte2-pdq`'s `django_adminlte2_pdq_tests`. Don't add `tests/__init__.py`, and don't import anything as `tests.…`.
+- `tests/django_dump_die_tests/django_test_project/` holds the settings (`DJANGO_SETTINGS_MODULE = django_dump_die_tests.django_test_project.settings`), the root urls (no `app_name`, so other projects can include it), the test views index page at `/tests/`, and `apps.py` (label `django_dump_die_tests`).
+- Test folders: `simple_types/` and `complex_types/` have their own one-object-per-view test views and urls (namespaces `django_dump_die__tests__simple` / `__complex`); `function_types/`, `django_types/` and `example_views/` test the shipped example pages; `general/` covers middleware, the template tag and DEBUG behavior.
+- Tests use `django_expanded_test_cases.IntegrationTestCase.assertGetResponse` to assert exact rendered HTML fragments, and patch `django_dump_die.templatetags.dump_die._generate_unique` for stable uniques. Any change to a template or to the markup the templatetag emits usually requires updating these expected strings. Expected output must not depend on the machine or Python version (paths, tracebacks, builtin docstrings).
