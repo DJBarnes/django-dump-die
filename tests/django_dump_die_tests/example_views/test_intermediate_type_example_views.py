@@ -17,7 +17,6 @@ from django_expanded_test_cases import IntegrationTestCase
 # Internal Imports.
 from django_dump_die.constants import PYTZ_PRESENT, ZONEINFO_PRESENT
 
-
 # Set datetime for freezegun and template render comparison.
 # Ensures that seconds, etc match exactly for what is rendered vs what we check.
 # Note that we replace microseconds to ensure these values are NOT identical.
@@ -308,9 +307,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="int">int</span>
                     <code class="number">{0}</code>
                 </li>
-                """.format(
-                    now_dt_time.day
-                ),
+                """.format(now_dt_time.day),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -334,9 +331,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="int">int</span>
                     <code class="number">{0}</code>
                 </li>
-                """.format(
-                    now_dt_time.month
-                ),
+                """.format(now_dt_time.month),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -352,9 +347,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="int">int</span>
                     <code class="number">{0}</code>
                 </li>
-                """.format(
-                    now_dt_time.year
-                ),
+                """.format(now_dt_time.year),
                 # Object closing tags.
                 """
                                     </div>
@@ -444,9 +437,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="int">int</span>
                     <code class="number">{0}</code>
                 </li>
-                """.format(
-                    now_dt_time.day
-                ),
+                """.format(now_dt_time.day),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -470,9 +461,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="int">int</span>
                     <code class="number">{0}</code>
                 </li>
-                """.format(
-                    now_dt_time.month
-                ),
+                """.format(now_dt_time.month),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -488,9 +477,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="int">int</span>
                     <code class="number">{0}</code>
                 </li>
-                """.format(
-                    now_dt_time.year
-                ),
+                """.format(now_dt_time.year),
                 # Object closing tags.
                 """
                                     </div>
@@ -897,9 +884,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """,
                 """
                 <code class="intermediate">{0}</code>
-                """.format(
-                    now_dt_time.time()
-                ),
+                """.format(now_dt_time.time()),
                 """
                 <span class="braces">{</span>
                 <a
@@ -950,9 +935,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="int">int</span>
                     <code class="number">{0}</code>
                 </li>
-                """.format(
-                    now_dt_time.hour
-                ),
+                """.format(now_dt_time.hour),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -968,9 +951,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="int">int</span>
                     <code class="number">{0}</code>
                 </li>
-                """.format(
-                    now_dt_time.microsecond
-                ),
+                """.format(now_dt_time.microsecond),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -978,9 +959,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="time">time</span>
                     <code class="intermediate">{0}</code>
                 </li>
-                """.format(
-                    now_dt_time.time().min
-                ),
+                """.format(now_dt_time.time().min),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -988,9 +967,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="int">int</span>
                     <code class="number">{0}</code>
                 </li>
-                """.format(
-                    now_dt_time.minute
-                ),
+                """.format(now_dt_time.minute),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1006,9 +983,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="int">int</span>
                     <code class="number">{0}</code>
                 </li>
-                """.format(
-                    now_dt_time.second
-                ),
+                """.format(now_dt_time.second),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1062,9 +1037,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """,
                 """
                 <code class="intermediate">{0}</code>
-                """.format(
-                    now_tz_time.time()
-                ),
+                """.format(now_tz_time.time()),
                 """
                 <span class="braces">{</span>
                 <a
@@ -1115,9 +1088,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="int">int</span>
                     <code class="number">{0}</code>
                 </li>
-                """.format(
-                    now_tz_time.hour
-                ),
+                """.format(now_tz_time.hour),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1133,9 +1104,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="int">int</span>
                     <code class="number">{0}</code>
                 </li>
-                """.format(
-                    now_tz_time.microsecond
-                ),
+                """.format(now_tz_time.microsecond),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1143,9 +1112,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="time">time</span>
                     <code class="intermediate">{0}</code>
                 </li>
-                """.format(
-                    now_tz_time.time().min
-                ),
+                """.format(now_tz_time.time().min),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1153,9 +1120,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="int">int</span>
                     <code class="number">{0}</code>
                 </li>
-                """.format(
-                    now_tz_time.minute
-                ),
+                """.format(now_tz_time.minute),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1171,9 +1136,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="int">int</span>
                     <code class="number">{0}</code>
                 </li>
-                """.format(
-                    now_tz_time.second
-                ),
+                """.format(now_tz_time.second),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1647,9 +1610,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """,
                 """
                 <code class="intermediate">{0}</code>
-                """.format(
-                    project_path
-                ),
+                """.format(project_path),
                 """
                 <span class="braces">{</span>
                 <a
@@ -1707,9 +1668,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="str">str</span>
                     <code class="string">'{0}'</code>
                 </li>
-                """.format(
-                    ROOT_DIR
-                ),
+                """.format(ROOT_DIR),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1717,9 +1676,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="PurePosixPath">PurePosixPath</span>
                     <code class="intermediate">{0}</code>
                 </li>
-                """.format(
-                    os.path.dirname(project_path)
-                ),
+                """.format(os.path.dirname(project_path)),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1735,9 +1692,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="tuple">tuple</span>
                     <code class="default">{0}</code>
                 </li>
-                """.format(
-                    tuple(["/"] + project_path.split("/")[1:])
-                ),
+                """.format(tuple(["/"] + project_path.split("/")[1:])),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1753,9 +1708,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="str">str</span>
                     <code class="string">'{0}'</code>
                 </li>
-                """.format(
-                    ROOT_DIR
-                ),
+                """.format(ROOT_DIR),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1819,9 +1772,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """,
                 """
                     <code class="intermediate">{0}</code>
-                """.format(
-                    project_path
-                ),
+                """.format(project_path),
                 """
                     <span class="braces">{</span>
                     <a
@@ -1880,9 +1831,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="str">str</span>
                     <code class="string">'{0}'</code>
                 </li>
-                """.format(
-                    ROOT_DIR
-                ),
+                """.format(ROOT_DIR),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1890,9 +1839,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="PosixPath">PosixPath</span>
                     <code class="intermediate">{0}</code>
                 </li>
-                """.format(
-                    os.path.dirname(project_path)
-                ),
+                """.format(os.path.dirname(project_path)),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1908,9 +1855,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="tuple">tuple</span>
                     <code class="default">{0}</code>
                 </li>
-                """.format(
-                    tuple(["/"] + project_path.split("/")[1:])
-                ),
+                """.format(tuple(["/"] + project_path.split("/")[1:])),
                 """
                 <li>
                     <span class="access-modifier">+</span>
@@ -1926,9 +1871,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <span class="type" title="str">str</span>
                     <code class="string">'{0}'</code>
                 </li>
-                """.format(
-                    ROOT_DIR
-                ),
+                """.format(ROOT_DIR),
                 """
                 <li>
                     <span class="access-modifier">+</span>

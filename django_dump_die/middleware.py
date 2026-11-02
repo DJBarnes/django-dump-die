@@ -12,7 +12,6 @@ from django.conf import settings
 from .views import dd_view
 from django_dump_die.utils import get_dumped_object_info
 
-
 logger = logging.getLogger("django_dump_die")
 dump_objects = []
 
