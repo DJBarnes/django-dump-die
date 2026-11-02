@@ -15,6 +15,12 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Changed: more Python and Django versions are supported and tested.**
+  The package supports Python 3.6 to 3.14 and Django 2.2 to 6.1, and the
+  tests run on each Django LTS release and the newest releases, on every
+  Python version that release supports. 0.1.7 listed Python 3.8 and Django
+  3.2 as the minimums.
+
 * **Added: dumped objects show on error pages.** When a view calls ``dump()``
   and then raises an exception that doesn't come from ``dd()``, the dumped
   objects are shown at the top of Django's error page. This only happens when
