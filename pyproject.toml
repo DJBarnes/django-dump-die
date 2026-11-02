@@ -118,6 +118,8 @@ filterwarnings = ""
 
 [tool.coverage.run]
 branch = true
+# Record relative paths, so that results from runners and containers with different checkout paths combine.
+relative_files = true
 omit = [
     # Omit the virtual environment
     "./.venv/*",
