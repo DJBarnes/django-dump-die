@@ -151,3 +151,7 @@ Pipfile.lock
 
 # Ignore apps.py as it is only needed for the restructured text extension
 /apps.py
+
+# Claude Code local files.
+.claude/scratchpads/
+.claude/settings.local.json
