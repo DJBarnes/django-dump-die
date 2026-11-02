@@ -9,13 +9,13 @@ django\_dump\_die.templatetags.dump\_die module
 
 .. automodule:: django_dump_die.templatetags.dump_die
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: django_dump_die.templatetags
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
