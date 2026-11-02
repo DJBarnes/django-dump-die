@@ -87,6 +87,10 @@ Documentation = "https://django-dump-die.readthedocs.io/en/main/"
 "Bug Tracker" = "https://github.com/djbarnes/django-dump-die/issues"
 "Source Code" = "https://github.com/djbarnes/django-dump-die"
 
+# "Black" formatter settings.
+[tool.black]
+line-length = 120
+
 [tool.setuptools]
 zip-safe = false
 include-package-data = true
