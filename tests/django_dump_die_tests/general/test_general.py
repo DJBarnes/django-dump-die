@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 # Third-Party Imports.
 from django.test import override_settings
+from django.urls import reverse
 from django_expanded_test_cases import IntegrationTestCase
 
 
@@ -139,9 +140,31 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
             content_ends_before="</body>",
         )
 
-    def test_view_that_raise_an_exception_is_not_caught_by_the_dump_logic(self):
-        """Test that an unrelated unhandled exception being raised is not caught by the dump logic"""
-        pass
+    @override_settings(DEBUG=True)
+    def test_unhandled_exception_shows_dumps_on_the_error_page(self):
+        """Verify an unrelated unhandled exception is not caught, and earlier dumps are added to its error page."""
+        self.client.raise_request_exception = False
+
+        response = self.client.get(reverse("django_dump_die:unhandled-exception-case-example"))
+        content = response.content.decode("utf-8")
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("This is a test type error", content)
+        self.assertIn('<div class="dump-toolbar">', content)
+        self.assertIn('<span class="dumped_name">exception_obj</span>', content)
+
+    @override_settings(DEBUG=False)
+    def test_debug_off_leaves_unhandled_exception_error_page_unchanged(self):
+        """Verify the error page of an unhandled exception gets no dump output when debug is off."""
+        self.client.raise_request_exception = False
+
+        response = self.client.get(reverse("django_dump_die:unhandled-exception-case-example"))
+        content = response.content.decode("utf-8")
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("<h1>Server Error (500)</h1>", content)
+        self.assertNotIn("dump-toolbar", content)
+        self.assertNotIn("django_dump_die", content)
 
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
     @override_settings(DEBUG=True)
