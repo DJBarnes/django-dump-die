@@ -62,10 +62,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # a tool used for development and debugging, it must be True.
 DEBUG = True
 
-# Used to ensure that there is a "debug" context variable,
-# which is used to know whether to allow the use of the dump template tag.
-INTERNAL_IPS = ("127.0.0.1",)
-
 # endregion Main settings for testing
 
 
