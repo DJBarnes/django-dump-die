@@ -9,6 +9,7 @@ from decimal import Decimal
 
 # Third-Party Imports.
 from django import template
+from django.conf import settings
 from django.forms.boundfield import BoundField
 
 # Internal Imports.
@@ -68,18 +69,25 @@ deepcopy_unique_map = {}
 @register.inclusion_tag("django_dump_die/partials/_dump.html", takes_context=True)
 def dump(context, obj):
     """Template tag that can be used in templates to use dd"""
+    # Like dump() and dd() in Python code, does nothing unless DEBUG is on.
+    if not settings.DEBUG:
+        return {"dump_enabled": False}
+
     object_info = get_dumped_object_info(obj)
 
     new_context = context.flatten()
 
+    # Only the first dump tag on a page loads the css and js.
+    # The flag is set on the page's context, so that later dump tags see it.
     render_head = context.get("django_dd_template_tag_render_head", True)
     if render_head:
-        new_context["django_dd_template_tag_render_head"] = False
+        context["django_dd_template_tag_render_head"] = False
 
     new_context.update(
         {
             "objects": [object_info],
             "render_head": render_head,
+            "dump_enabled": True,
         }
     )
 

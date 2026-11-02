@@ -6,6 +6,7 @@ Tests for general DD functionality.
 from unittest.mock import patch
 
 # Third-Party Imports.
+from django.template import Context, Template
 from django.test import override_settings
 from django.urls import reverse
 from django_expanded_test_cases import IntegrationTestCase
@@ -62,6 +63,16 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
             expected_content=["<p>After dump content</p>"],
             expected_not_content=['<div class="dump-wrapper">'],
         )
+
+    @override_settings(DEBUG=True)
+    def test_template_dumps_load_css_and_js_once_per_page(self):
+        """Verify several template dumps on one page only include the dump css and js once."""
+        template = Template("{% load dump_die %}{% dump first %}{% dump second %}")
+
+        content = template.render(Context({"first": 1, "second": 2}))
+
+        self.assertEqual(content.count('class="dump-wrapper"'), 2)
+        self.assertEqual(content.count("django_dump_die/css/dd.css"), 1)
 
     @override_settings(DEBUG=True)
     @patch("django_dump_die.templatetags.dump_die._generate_unique")
