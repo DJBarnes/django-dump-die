@@ -107,13 +107,19 @@ def run_tests_with_manage(args, extra_args):
     """Run tests with manage.py."""
 
     # Set environment values.
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_dump_die_tests.django_test_project.settings")
+    # The tests folder is not a package, so it must be on the path to import the test packages in it.
+    os.environ["PYTHONPATH"] = os.pathsep.join(filter(None, [f"{SCRIPT_DIR}/tests", os.environ.get("PYTHONPATH")]))
+
+    # Discover tests from the tests folder, unless specific test labels were provided.
+    if all(arg.startswith("-") for arg in extra_args):
+        extra_args = extra_args + [f"{SCRIPT_DIR}/tests"]
 
     # Set up run_args based on whether creating coverage or not.
     if args.with_coverage:
         print_info("Running tests with manage.py test and creating coverage data.")
         # Run command and get return code.
-        return_code = run_command(MANAGE_COVERAGE_ARGS)
+        return_code = run_command(MANAGE_COVERAGE_ARGS + extra_args)
         # If return_code is non-zero, exit with return code.
         if return_code != 0:
             exit_with_code(return_code)

@@ -4,7 +4,7 @@
 from django.urls import path
 
 # Internal Imports.
-from tests.django_dump_die.complex_types.views import (
+from django_dump_die_tests.complex_types.views import (
     index,
     # Complex examples
     complex_type__set,
