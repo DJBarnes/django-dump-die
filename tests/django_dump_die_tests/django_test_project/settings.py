@@ -25,6 +25,7 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "django.contrib.auth",
     "django_dump_die",
+    "django_dump_die_tests.django_test_project",
 )
 
 MIDDLEWARE = [
@@ -32,7 +33,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
 ]
 
-ROOT_URLCONF = "tests.django_dump_die.urls"
+ROOT_URLCONF = "django_dump_die_tests.django_test_project.urls"
 
 USE_TZ = True
 

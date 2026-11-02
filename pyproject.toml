@@ -100,8 +100,8 @@ namespaces = false
 python_files = ["tests.py", "*/test_*.py"]
 testpaths = ["tests"]
 
-DJANGO_SETTINGS_MODULE = "tests.django_dump_die.settings"
-pythonpath = "."
+DJANGO_SETTINGS_MODULE = "django_dump_die_tests.django_test_project.settings"
+pythonpath = [".", "tests"]
 # Constructed as
 #   {action}:{message}:{category}:{module}:{lineno}
 #
@@ -182,7 +182,7 @@ valid-metaclass-classmethod-first-arg = ["cls"]
 
 [tool.pylint."django foreign keys referenced by strings"]
 # A module containing Django settings to be used while linting.
-django-settings-module = "tests.settings"
+django-settings-module = "django_dump_die_tests.django_test_project.settings"
 
 [tool.pylint.format]
 # Regexp for a line that is allowed to be longer than the limit.

@@ -4,7 +4,7 @@
 from django.urls import path
 
 # Internal Imports.
-from tests.django_dump_die.simple_types.views import (
+from django_dump_die_tests.simple_types.views import (
     simple_type_bool,
     simple_type_bytes,
     simple_type_const,
