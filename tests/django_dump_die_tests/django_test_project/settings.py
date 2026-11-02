@@ -3,6 +3,7 @@ Project testing settings, so that tests can run project as if it was a proper Dj
 """
 
 # System Imports.
+import os
 import sys
 from warnings import filterwarnings
 
@@ -77,6 +78,28 @@ else:
     # manage.py shows all console output always, even on success.
     # So we want it off to avoid information overload and spam.
     DJANGO_EXPANDED_TESTCASES_DEBUG_PRINT = False
+
+
+# Browser for the browser (Selenium) tests, chosen per developer with the DJANGO_DD_SELENIUM_BROWSER
+# environment variable: "firefox" (the default), "chrome", or "none" to skip the browser tests.
+# Set DJANGO_DD_SELENIUM_HEADLESS=true to run the browser without a window.
+DJANGO_DD_SELENIUM_BROWSER = os.environ.get("DJANGO_DD_SELENIUM_BROWSER", "firefox").lower()
+DJANGO_EXPANDED_TESTCASES_SELENIUM_BROWSER = DJANGO_DD_SELENIUM_BROWSER
+# Set DJANGO_DD_SELENIUM_BROWSER_BINARY to the browser's executable if it isn't found. Firefox installed as a
+# snap (as on Ubuntu) is found by default: its /snap/bin/firefox is a launcher script, not the browser itself.
+DJANGO_DD_SELENIUM_BROWSER_BINARY = os.environ.get("DJANGO_DD_SELENIUM_BROWSER_BINARY", "")
+SNAP_FIREFOX_BINARY = "/snap/firefox/current/usr/lib/firefox/firefox"
+if (
+    not DJANGO_DD_SELENIUM_BROWSER_BINARY
+    and DJANGO_DD_SELENIUM_BROWSER == "firefox"
+    and os.path.exists(SNAP_FIREFOX_BINARY)
+):
+    DJANGO_DD_SELENIUM_BROWSER_BINARY = SNAP_FIREFOX_BINARY
+if os.environ.get("DJANGO_DD_SELENIUM_HEADLESS", "").lower() in ("1", "true", "yes"):
+    # Passed as browser options, because each browser spells its headless option differently.
+    DJANGO_EXPANDED_TESTCASES_SELENIUM_EXTRA_BROWSER_OPTIONS = (
+        ["-headless"] if DJANGO_DD_SELENIUM_BROWSER == "firefox" else ["--headless=new"]
+    )
 
 # endregion Package settings for testing
 

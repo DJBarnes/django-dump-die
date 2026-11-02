@@ -33,6 +33,7 @@ pytest = "*"                      # Base Pytest package. Current preferred testi
 pytest-cov = "*"                  # Additional Pytest logic for coverage support.
 pytest-django = "*"               # Additional Pytest logic for Django support.
 pytest-xdist = "*"                # Additional Pytest features, such as multithreading and looping.
+selenium = "*"                    # Browser tests of the dump page's JavaScript.
 
 # Docs build dependencies.
 sphinx = "*"                      # Core package to build project docs.
