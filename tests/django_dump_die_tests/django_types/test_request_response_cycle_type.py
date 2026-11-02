@@ -140,7 +140,7 @@ class DumpDieDjangoRequestResponseCycleTestCase(IntegrationTestCase):
     #                 <a
     #                     class="arrow-toggle collapsed"
     #                     title="[Ctrl+click] Expand all children"
-    #                     data-toggle="collapse"
+    #                     data-dd-toggle="collapse"
     #                     data-target=".data_9008"
     #                     data-dd-type="type"
     #                     data-object-depth="1"
@@ -179,7 +179,7 @@ class DumpDieDjangoRequestResponseCycleTestCase(IntegrationTestCase):
     #                 <a
     #                     class="arrow-toggle collapsed"
     #                     title="[Ctrl+click] Expand all children"
-    #                     data-toggle="collapse"
+    #                     data-dd-toggle="collapse"
     #                     data-target=".data_90010"
     #                     data-dd-type="type"
     #                     data-object-depth="2"
@@ -225,7 +225,7 @@ class DumpDieDjangoRequestResponseCycleTestCase(IntegrationTestCase):
     #                 <a
     #                     class="arrow-toggle collapsed"
     #                     title="[Ctrl+click] Expand all children"
-    #                     data-toggle="collapse"
+    #                     data-dd-toggle="collapse"
     #                     data-target=".data_90012"
     #                     data-dd-type="type"
     #                     data-object-depth="2"
@@ -275,7 +275,7 @@ class DumpDieDjangoRequestResponseCycleTestCase(IntegrationTestCase):
     #                 <a
     #                     class="arrow-toggle collapsed"
     #                     title="[Ctrl+click] Expand all children"
-    #                     data-toggle="collapse"
+    #                     data-dd-toggle="collapse"
     #                     data-target=".data_90015"
     #                     data-dd-type="type"
     #                     data-object-depth="2"
@@ -329,7 +329,7 @@ class DumpDieDjangoRequestResponseCycleTestCase(IntegrationTestCase):
     #                 <a
     #                     class="arrow-toggle collapsed"
     #                     title="[Ctrl+click] Expand all children"
-    #                     data-toggle="collapse"
+    #                     data-dd-toggle="collapse"
     #                     data-target=".data_90019"
     #                     data-dd-type="type"
     #                     data-object-depth="2"

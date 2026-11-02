@@ -68,7 +68,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9001"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -172,7 +172,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9001"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -270,7 +270,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 <a
                     class="arrow-toggle collapsed"
                     title="[Ctrl+click] Expand all children"
-                    data-toggle="collapse"
+                    data-dd-toggle="collapse"
                     data-target=".data_9001"
                     data-dd-type="type"
                     data-object-depth="1"
@@ -400,7 +400,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 <a
                     class="arrow-toggle collapsed"
                     title="[Ctrl+click] Expand all children"
-                    data-toggle="collapse"
+                    data-dd-toggle="collapse"
                     data-target=".data_9001"
                     data-dd-type="type"
                     data-object-depth="1"
@@ -530,7 +530,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
     #             <a
     #                 class="arrow-toggle collapsed"
     #                 title="[Ctrl+click] Expand all children"
-    #                 data-toggle="collapse"
+    #                 data-dd-toggle="collapse"
     #                 data-target=".data_9001"
     #                 data-dd-type="type"
     #                 data-object-depth="1"
@@ -711,7 +711,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
     #             <a
     #                 class="arrow-toggle collapsed"
     #                 title="[Ctrl+click] Expand all children"
-    #                 data-toggle="collapse"
+    #                 data-dd-toggle="collapse"
     #                 data-target=".data_9001"
     #                 data-dd-type="type"
     #                 data-object-depth="1"
@@ -890,7 +890,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 <a
                     class="arrow-toggle collapsed"
                     title="[Ctrl+click] Expand all children"
-                    data-toggle="collapse"
+                    data-dd-toggle="collapse"
                     data-target=".data_9001"
                     data-dd-type="type"
                     data-object-depth="1"
@@ -1043,7 +1043,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 <a
                     class="arrow-toggle collapsed"
                     title="[Ctrl+click] Expand all children"
-                    data-toggle="collapse"
+                    data-dd-toggle="collapse"
                     data-target=".data_9001"
                     data-dd-type="type"
                     data-object-depth="1"
@@ -1191,7 +1191,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9001"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -1315,7 +1315,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9001"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -1440,7 +1440,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9001"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -1525,7 +1525,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9001"
                         data-dd-type="type"
                         data-object-depth="1"
@@ -1616,7 +1616,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 <a
                     class="arrow-toggle collapsed"
                     title="[Ctrl+click] Expand all children"
-                    data-toggle="collapse"
+                    data-dd-toggle="collapse"
                     data-target=".data_9001"
                     data-dd-type="type"
                     data-object-depth="1"
@@ -1778,7 +1778,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                     <a
                         class="arrow-toggle collapsed"
                         title="[Ctrl+click] Expand all children"
-                        data-toggle="collapse"
+                        data-dd-toggle="collapse"
                         data-target=".data_9001"
                         data-dd-type="type"
                         data-object-depth="1"
