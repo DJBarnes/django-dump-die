@@ -79,6 +79,7 @@ test = [
     "pytest-cov",
     "pytest-django",
     "pytest-xdist",
+    "pytz",
 ]
 
 [project.urls]
