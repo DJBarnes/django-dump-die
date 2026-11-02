@@ -114,9 +114,10 @@ class DumpAndDieMiddleware:
         # original response content.
         # Attempt to collect any dumps that ran prior to the unhandled exception
         # and inject the dump info into the standard Django 500 error page.
+        # Only when there is something to show and DEBUG is on, so that production
+        # error pages are never altered.
         # TODO: Consider adding a setting to turn this on or off.
-        # TODO: Make sure that this will not run when Debug is turned off.
-        if has_non_dd_exception:
+        if has_non_dd_exception and dump_objects and settings.DEBUG:
             objects = dump_objects[:]
             dump_objects.clear()
 
