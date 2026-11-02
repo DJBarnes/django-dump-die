@@ -70,13 +70,15 @@ jobs:
         uses: actions/checkout@v4
 
       # Each tox environment installs its own Django and the package's test extras.
+      # tox-gh-actions isn't used here: it registers a problem matcher by a path inside the container,
+      # which the runner can't read, and that fails the step.
       - name: Install tox
         run: |
           python -m pip install --upgrade pip
-          python -m pip install tox tox-gh-actions
+          python -m pip install tox
 
       - name: Test with tox
-        run: tox
+        run: tox -e py36-django22,py36-django32
 
       - name: Rename coverage results
         run: mv .coverage .coverage.3.6
