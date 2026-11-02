@@ -3,9 +3,11 @@ Tests for general DD functionality.
 """
 
 # System Imports.
+from unittest import skipIf
 from unittest.mock import patch
 
 # Third-Party Imports.
+import django
 from django.template import Context, Template
 from django.test import override_settings
 from django.urls import reverse
@@ -151,6 +153,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
             content_ends_before="</body>",
         )
 
+    @skipIf(django.VERSION < (3, 0), "The test client can only return error pages since Django 3.0.")
     @override_settings(DEBUG=True)
     def test_unhandled_exception_shows_dumps_on_the_error_page(self):
         """Verify an unrelated unhandled exception is not caught, and earlier dumps are added to its error page."""
@@ -164,6 +167,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
         self.assertIn('<div class="dump-toolbar">', content)
         self.assertIn('<span class="dumped_name">exception_obj</span>', content)
 
+    @skipIf(django.VERSION < (3, 0), "The test client can only return error pages since Django 3.0.")
     @override_settings(DEBUG=False)
     def test_debug_off_leaves_unhandled_exception_error_page_unchanged(self):
         """Verify the error page of an unhandled exception gets no dump output when debug is off."""
