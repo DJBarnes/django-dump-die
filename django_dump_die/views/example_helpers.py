@@ -439,12 +439,13 @@ class SimpleTypesHelper:
         """Dump Non-numeric Types"""
 
         # Call dump on all generated variables.
-        dump("")
+        dump.br()
         dump("Non-Numeric examples:")
         self.dump_const()
         self.dump_module()
         self.dump_bytes()
         self.dump_string()
+        self.dump_empty_string()
         self.dump_none()
         self.dump_bool()
 
@@ -452,7 +453,7 @@ class SimpleTypesHelper:
         """Dump Simple Numeric Types"""
 
         # Call dump on all generated variables.
-        dump("")
+        dump.br()
         dump("Numeric examples:")
         self.dump_int()
         self.dump_float()
@@ -480,6 +481,12 @@ class SimpleTypesHelper:
 
         sample_string = "Sample String Content"
         dump(sample_string)
+
+    def dump_empty_string(self):
+        """Dump an empty string"""
+
+        sample_empty_string = ""
+        dump(sample_empty_string)
 
     def dump_none(self):
         """Dump None"""
@@ -532,7 +539,7 @@ class IntermediateTypesHelper:
         sample_bytes_array = bytearray([8, 9, 10, 11])
 
         # Call dump on all generated variables.
-        dump("")
+        dump.br()
         dump("Python bytes array examples:")
         dump(sample_bytes_array)
 
@@ -543,7 +550,7 @@ class IntermediateTypesHelper:
         sample_complex = 3 - 1j
 
         # Call dump on all generated variables.
-        dump("")
+        dump.br()
         dump("Python complex number examples:")
         dump(sample_complex)
 
@@ -564,7 +571,7 @@ class IntermediateTypesHelper:
             sample_zoneinfo_timezone = ZoneInfo("UTC")
 
         # Call dump on all generated variables.
-        dump("")
+        dump.br()
         dump("Date/Time examples:")
         dump(sample_dt_date)
         dump(sample_tz_date)
@@ -594,12 +601,12 @@ class IntermediateTypesHelper:
             windows_path = None
 
         # Call dump on all generated variables.
-        dump("")
+        dump.br()
         dump("Python os.path examples:")
         dump(os.path)
         dump(os_path)
 
-        dump("")
+        dump.br()
         dump("Python pathlib examples:")
         dump(pure_path)
         # Each of these only exists on its own platform, so the tests can't run both branches.
@@ -682,7 +689,7 @@ class ComplexTypesHelper:
 
     def dump_single_level_iterables(self):
         """Dump Single Level Iterables"""
-        dump("")
+        dump.br()
         dump("Minimal object examples:")
         self.dump_set()
         self.dump_frozen_set()
@@ -695,7 +702,7 @@ class ComplexTypesHelper:
 
     def dump_multi_level_iterables(self):
         """Dump Multi Level Iterables"""
-        dump("")
+        dump.br()
         dump("Nested object examples:")
         self.dump_multilevel_set()
         self.dump_multilevel_tuple()
@@ -704,7 +711,7 @@ class ComplexTypesHelper:
 
     def dump_multi_level_iterable_elements(self):
         """Dump Multi Level Iterable Elements"""
-        dump("")
+        dump.br()
         dump("Examples of pulling items/indexes/subsets from above objects:")
         self.dump_list_element()
         self.dump_tuple_element()
@@ -858,20 +865,20 @@ class ClassTypesHelper:
         """Dump All Class Types"""
 
         # Call dump on all generated variables.
-        dump("")
+        dump.br()
         dump("Class definition examples:")
         self.dump_empty_class_def()
         self.dump_simple_class_def()
         self.dump_complex_class_def()
 
-        dump("")
+        dump.br()
         dump("Class instance examples:")
         self.dump_empty_class_instance()
         self.dump_simple_class_instance()
         self.dump_complex_class_instance()
         self.dump_complex_class_instance()
 
-        dump("")
+        dump.br()
         dump("Examples of pulling nested items (classes/functions/data/etc) from above classes.")
         self.dump_complex_class_attributes()
         self.dump_simple_class_functions()
@@ -942,19 +949,19 @@ class DjangoTypesHelper:
         sample_model_form = SampleModelForm()
 
         # Call dump on all generated variables.
-        dump("")
+        dump.br()
         dump("Model and ModelForm class examples:")
         dump(SampleDjangoModel)
 
         dump(SampleModelForm)
 
-        dump("")
+        dump.br()
         dump("Model and ModelForm instance examples:")
         dump(sample_django_model_empty)
         dump(sample_model_form)
 
         # Populate model with values and re-check.
-        dump("")
+        dump.br()
         dump("Example of model with all values populated/updated from above.")
         # In-memory files, since the package doesn't ship files to read from disk.
         sample_file = ContentFile(b"Sample file content.", name="sample_file.txt")
@@ -1013,19 +1020,19 @@ class DjangoTypesHelper:
         sample_template_response.render()
 
         # Call dump on generated variables.
-        dump("")
+        dump.br()
         dump("QueryDict object (GET and POST are instances of this):")
         dump(sample_query_dict)
 
-        dump("")
+        dump.br()
         dump("Request object:")
         dump(sample_request)
 
-        dump("")
+        dump.br()
         dump("HttpResponse object:")
         dump(sample_http_response)
 
-        dump("")
+        dump.br()
         dump("TemplateResponse object:")
         dump(sample_template_response)
 
@@ -1040,14 +1047,14 @@ class FunctionTypesHelper:
         # None for this view.
 
         # Call dump on all generated variables.
-        dump("")
+        dump.br()
         dump("Function examples:")
         # Minimal function with no args.
         dump(sample_func)
         # Function with args & kwargs.
         dump(sample_func_param)
 
-        dump("")
+        dump.br()
         dump("Function call examples:")
         # Calling above "minimal function with no args".
         dump(sample_func())
@@ -1066,9 +1073,9 @@ class EdgeCasesHelper:
         """Dump Edge Case Types"""
         # Call dump on problem children.
         dump("Displaying example of various edge-case output.")
-        dump("")
+        dump.br()
 
-        dump("")
+        dump.br()
         dump("Output of parens as string within dd parameters:")
         dump(")")
         dump("(")
@@ -1077,7 +1084,7 @@ class EdgeCasesHelper:
         dump(sample_func_param("("))
         dump(sample_func_param(")"))
 
-        dump("")
+        dump.br()
         dump(
             "Function call examples (when also passing DumpDie-specific kwargs. Those should be excluded from output):"
         )
@@ -1086,9 +1093,9 @@ class EdgeCasesHelper:
         dump(sample_func_param(32), deepcopy=True, index_range=(0, 1))
         dump(sample_func_param(32, foo=12), deepcopy=True)
 
-        dump("")
+        dump.br()
         dump("Function call examples (spanning multiple lines, in code):")
-        dump("")
+        dump.br()
         dump(
             sample_func_param(
                 "test_param",

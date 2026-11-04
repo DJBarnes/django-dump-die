@@ -33,10 +33,10 @@ def simple_types_example(request):
 
     # Output desired dump values.
     dump('Displaying example of "simple type" object output.')
-    dump("")
+    dump.br()
     SimpleTypesHelper().dump_all_simple_types()
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
@@ -50,10 +50,10 @@ def intermediate_types_example(request):
 
     # Output desired dump values.
     dump('Displaying example of "intermediate type" object output.')
-    dump("")
+    dump.br()
     IntermediateTypesHelper().dump_intermediate_types()
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
@@ -67,10 +67,10 @@ def complex_types_example(request):
 
     # Output desired dump values.
     dump('Displaying example of "complex type" object output.')
-    dump("")
+    dump.br()
     ComplexTypesHelper().dump_all_complex_types()
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
@@ -82,10 +82,10 @@ def complex_types_example(request):
 def iterable_types_example(request):
     """Example view, rendering only iterable object output."""
     dump('Displaying example of "iterable" object output.')
-    dump("")
+    dump.br()
     ComplexTypesHelper().dump_all_iterables()
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
 
     # Force dd to prevent further view parsing
     dd("done")
@@ -99,10 +99,10 @@ def class_types_example(request):
 
     # Output desired dump values.
     dump("Displaying example of class object output.")
-    dump("")
+    dump.br()
     ClassTypesHelper().dump_all_class_types()
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
@@ -116,10 +116,10 @@ def django_types_example(request):
 
     # Output desired dump values.
     dump("Displaying example of Django specific object output.")
-    dump("")
+    dump.br()
     DjangoTypesHelper().dump_all_django_types(request)
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
@@ -133,10 +133,10 @@ def django_model_types_example(request):
 
     # Output desired dump values.
     dump("Displaying example of Django model object output.")
-    dump("")
+    dump.br()
     DjangoTypesHelper().dump_model_types()
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
@@ -150,10 +150,10 @@ def django_request_response_cycle_types_example(request):
 
     # Output desired dump values.
     dump('Displaying Django "request-response-cycle" example output.')
-    dump("")
+    dump.br()
     DjangoTypesHelper().dump_django_request_response_cycle_types(request)
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
@@ -167,10 +167,10 @@ def function_types_example(request):
 
     # Output desired dump values.
     dump('Displaying example of "function" object output.')
-    dump("")
+    dump.br()
     FunctionTypesHelper().dump_function_types()
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
@@ -211,11 +211,11 @@ def numeric_example(request):
 
     # Output desired dump values.
     dump('Displaying example of "numeric type" object output.')
-    dump("")
+    dump.br()
     SimpleTypesHelper().dump_numeric_types()
     IntermediateTypesHelper().dump_complex_number_type()
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
@@ -229,10 +229,10 @@ def datetime_example(request):
 
     # Output desired dump values.
     dump('Displaying example of "datetime" object output.')
-    dump("")
+    dump.br()
     IntermediateTypesHelper().dump_datetime_types()
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
@@ -246,10 +246,10 @@ def system_path_example(request):
 
     # Output desired dump values.
     dump('Displaying example of "syspath" object output.')
-    dump("")
+    dump.br()
     IntermediateTypesHelper().dump_syspath_types()
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
@@ -262,18 +262,18 @@ def full_specialized_example(request):
     """Example view, rendering all examples shown in all other specialized views, all in one page."""
 
     # Output desired dump values.
-    dump("")
+    dump.br()
     SimpleTypesHelper().dump_numeric_types()
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
     IntermediateTypesHelper().dump_datetime_types()
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
     IntermediateTypesHelper().dump_syspath_types()
-    dump("")
-    dump("")
+    dump.br()
+    dump.br()
     ComplexTypesHelper().dump_all_iterables()
-    dump("")
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
@@ -297,9 +297,9 @@ def edge_case_example(request):
     """
 
     # Output desired dump values.
-    dump("")
+    dump.br()
     EdgeCasesHelper().dump_edgecase_types()
-    dump("")
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
@@ -315,9 +315,9 @@ def obj_inspection_exception_case_example(request):
     """
 
     # Output desired dump values.
-    dump("")
+    dump.br()
     EdgeCasesHelper().dump_exception_causing_object()
-    dump("")
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
@@ -336,9 +336,9 @@ def unhandled_exception_case_example(request):
     """
 
     # Output desired dump values.
-    dump("")
+    dump.br()
     EdgeCasesHelper().dump_exception_causing_object()
-    dump("")
+    dump.br()
 
     raise TypeError("This is a test type error")
 

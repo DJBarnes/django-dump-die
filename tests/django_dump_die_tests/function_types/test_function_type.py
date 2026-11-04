@@ -56,23 +56,11 @@ class DumpDieViewFunctionTestCase(IntegrationTestCase):
                 "<hr>",
                 # Check visual-padding lines.
                 """
-                <div class="dump-wrapper">
-                    <span class="dumped_object" title="Dumped Object">
-                        <span class="string">""</span>
-                    </span>:
-                    <span class="type" title="str">str</span>
-                    <code class="string">''</code>
-                </div>
+                <div class="dump-wrapper dump-break dump-break-dashed" title="Break"></div>
                 """,
                 "<hr>",
                 """
-                <div class="dump-wrapper">
-                    <span class="dumped_object" title="Dumped Object">
-                        <span class="string">""</span>
-                    </span>:
-                    <span class="type" title="str">str</span>
-                    <code class="string">''</code>
-                </div>
+                <div class="dump-wrapper dump-break dump-break-dashed" title="Break"></div>
                 """,
                 "<hr>",
             ],

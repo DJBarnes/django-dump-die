@@ -395,13 +395,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
             expected_content=[
                 # Check page descriptor.
                 """
-                <div class="dump-wrapper">
-                    <span class="dumped_object" title="Dumped Object">
-                        <span class="string">""</span>
-                    </span>:
-                    <span class="type" title="str">str</span>
-                    <code class="string">''</code>
-                </div>
+                <div class="dump-wrapper dump-break dump-break-dashed" title="Break"></div>
                 """,
                 "<hr>",
                 # Check visual-padding lines.
@@ -416,37 +410,37 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
                     class="arrow-toggle collapsed"
                     title="[Ctrl+click] Expand all children"
                     data-dd-toggle="collapse"
-                    data-target=".data_9001"
+                    data-target=".data_9000"
                     data-dd-type="type"
                     data-object-depth="1"
                     aria-label="Close"
                     aria-expanded="false"
                 >
-                    <span class="unique" data-highlight-unique="data_9001">data_9001</span>
-                    <span id="arrow-data_9001" class="arrow arrow-data_9001">
+                    <span class="unique" data-highlight-unique="data_9000">data_9000</span>
+                    <span id="arrow-data_9000" class="arrow arrow-data_9000">
                         ▶
                     </span>
                 </a>
                 <div
-                    class="dd-wrapper collapse data_9001 "
-                    data-unique="data_9001"
+                    class="dd-wrapper collapse data_9000 "
+                    data-unique="data_9000"
                 >
                     <ul class="attribute-list">
                         <a
                             class="arrow-toggle show always-show"
                             title="[Ctrl+click] Expand all children"
-                            data-target=".data_9001-attributes"
+                            data-target=".data_9000-attributes"
                             data-dd-type="attr"
                             aria-label="Open/Close"
                             aria-expanded=""
                         >
                             <span class="section_name">Attributes</span>
-                                <span id="arrow-data_9001-attributes" class="arrow">
+                                <span id="arrow-data_9000-attributes" class="arrow">
                             </span>
                         </a>
                         <div
-                            class="li-wrapper collapse data_9001-attributes show"
-                            data-unique-attributes="data_9001-attributes"
+                            class="li-wrapper collapse data_9000-attributes show"
+                            data-unique-attributes="data_9000-attributes"
                         >
                             <li>
                                 <span class="empty" title="Exception Occurred
@@ -482,13 +476,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
                 """,
                 "<hr>",
                 """
-                <div class="dump-wrapper">
-                    <span class="dumped_object" title="Dumped Object">
-                        <span class="string">""</span>
-                    </span>:
-                    <span class="type" title="str">str</span>
-                    <code class="string">''</code>
-                </div>
+                <div class="dump-wrapper dump-break dump-break-dashed" title="Break"></div>
                 """,
                 "<hr>",
             ],
