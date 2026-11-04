@@ -100,6 +100,10 @@ if os.environ.get("DJANGO_DD_SELENIUM_HEADLESS", "").lower() in ("1", "true", "y
     DJANGO_EXPANDED_TESTCASES_SELENIUM_EXTRA_BROWSER_OPTIONS = (
         ["-headless"] if DJANGO_DD_SELENIUM_BROWSER == "firefox" else ["--headless=new"]
     )
+# Each browser driver gets the next port from this start value. Give each pytest-xdist worker ("gw0", "gw1", ...)
+# its own range, so that drivers in parallel workers don't try to use the same port.
+_XDIST_WORKER = os.environ.get("PYTEST_XDIST_WORKER", "gw0")
+DJANGO_EXPANDED_TESTCASES_SELENIUM_DEBUG_PORT_START_VALUE = 9221 + 100 * int(_XDIST_WORKER.lstrip("gw") or 0)
 
 # endregion Package settings for testing
 
