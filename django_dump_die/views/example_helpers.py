@@ -6,6 +6,7 @@ to general package usage.
 """
 
 # System Imports.
+import base64
 import copy
 import os
 from datetime import datetime, timedelta
@@ -16,7 +17,7 @@ from pathlib import Path, PosixPath, PurePath, WindowsPath
 from types import ModuleType
 
 # Third-Party Imports.
-from django.core.files import File
+from django.core.files.base import ContentFile
 from django.db import models
 from django.forms import ModelForm
 from django.http import QueryDict
@@ -39,7 +40,10 @@ if ZONEINFO_PRESENT:
     from zoneinfo import ZoneInfo
 
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# A 1x1 transparent PNG, for the sample image field.
+SAMPLE_PNG = base64.b64decode(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4nGNgAAIAAAUAAXpeqz8AAAAASUVORK5CYII="
+)
 
 
 # region Helper Functions/Classes
@@ -243,7 +247,7 @@ class SampleDjangoModel(models.Model):
         pass
 
     try:
-        if find_spec("pillow"):
+        if find_spec("PIL"):
             sample_image = models.ImageField(upload_to="uploads")
     except AttributeError:
         pass
@@ -393,6 +397,14 @@ class SampleModelForm(ModelForm):
             fields += ["sample_many"]
         if hasattr(SampleDjangoModel, "sample_one"):
             fields += ["sample_one"]
+
+
+# The sample models have no database tables, so offer no choices for the form's relation fields.
+# Dumping the form, or its class, otherwise counts and lists each field's choices from the database.
+# Instances copy these class-level fields, so this covers both.
+for _field in SampleModelForm.base_fields.values():  # pylint: disable=no-member
+    if hasattr(_field, "queryset"):
+        _field.queryset = _field.queryset.none()
 
 
 # endregion Helper Functions/Classes
@@ -916,15 +928,7 @@ class DjangoTypesHelper:
         # Call dump on all generated variables.
         dump("")
         dump("Model and ModelForm class examples:")
-        # TODO: See if there is a better way to "fix" this.
-        # Need to remove the Many-To-Many relationship when dumping the class
-        # definition (non-instance) because python's get_members can't handle a
-        # m2m when the "object" does not have an id. Which it can't due to it being
-        # a class definition and not an instance. Problem is solved when an instance
-        # is created. See below dump of instance.
-        SampleDjangoModelNoManyRelation = copy.deepcopy(SampleDjangoModel)  # pylint: disable=invalid-name
-        delattr(SampleDjangoModelNoManyRelation, "sample_many")
-        dump(SampleDjangoModelNoManyRelation)
+        dump(SampleDjangoModel)
 
         dump(SampleModelForm)
 
@@ -936,40 +940,42 @@ class DjangoTypesHelper:
         # Populate model with values and re-check.
         dump("")
         dump("Example of model with all values populated/updated from above.")
-        path = os.path.join(BASE_DIR, "../../media/uploads/test_img.png")
-        with open(path, "rb") as local_file:
-            django_file = File(local_file, name=os.path.basename(local_file.name))
+        # In-memory files, since the package doesn't ship files to read from disk.
+        sample_file = ContentFile(b"Sample file content.", name="sample_file.txt")
+        sample_image = ContentFile(SAMPLE_PNG, name="sample_image.png")
+        # The image field only exists when Pillow is installed.
+        image_kwargs = {"sample_image": sample_image} if hasattr(SampleDjangoModel, "sample_image") else {}
 
-            sample_django_model_populated = SampleDjangoModel(
-                pk=1,
-                sample_big_int=1,
-                sample_binary=b"",
-                sample_bool=True,
-                sample_char="A",
-                sample_date=datetime.now().date(),
-                sample_datetime=datetime.now(),
-                sample_decimal=Decimal(42.42),
-                sample_duration=None,
-                sample_email="someone@example.com",
-                sample_file=django_file,
-                sample_file_path="../media",
-                sample_float=42.42,
-                sample_image=django_file,
-                sample_int=5,
-                sample_ip="127.0.0.1",
-                # sample_json='{"key": "my_val"}',
-                # sample_pos_bint=345,
-                sample_pos_int=34,
-                sample_pos_sint=3,
-                sample_sint=3,
-                sample_slug="foobar",
-                sample_text="All my text",
-                sample_time=datetime.now().time(),
-                sample_url="https://github.com",
-                sample_uuid="asdfasdf",
-            )
+        sample_django_model_populated = SampleDjangoModel(
+            pk=1,
+            sample_big_int=1,
+            sample_binary=b"",
+            sample_bool=True,
+            sample_char="A",
+            sample_date=datetime.now().date(),
+            sample_datetime=datetime.now(),
+            sample_decimal=Decimal(42.42),
+            sample_duration=None,
+            sample_email="someone@example.com",
+            sample_file=sample_file,
+            sample_file_path="../media",
+            sample_float=42.42,
+            sample_int=5,
+            sample_ip="127.0.0.1",
+            # sample_json='{"key": "my_val"}',
+            # sample_pos_bint=345,
+            sample_pos_int=34,
+            sample_pos_sint=3,
+            sample_sint=3,
+            sample_slug="foobar",
+            sample_text="All my text",
+            sample_time=datetime.now().time(),
+            sample_url="https://github.com",
+            sample_uuid="asdfasdf",
+            **image_kwargs,
+        )
 
-            dump(sample_django_model_populated)
+        dump(sample_django_model_populated)
 
     def dump_django_request_response_cycle_types(self, request):
         """Dump Django request-response cycle Types."""

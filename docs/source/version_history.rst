@@ -15,6 +15,12 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Fixed: the Django example pages crashed.** The Django model, Django types,
+  and "full category" example pages raised an error: they queried tables that
+  the sample models don't have, read an image file that the package doesn't
+  ship, and removed a field from the sample model on the first visit. They now
+  render on every visit, without a database table or files on disk.
+
 * **Changed: expanding and collapsing is fast on large dumps.** Opening one
   section, and the toolbar's Expand and Collapse buttons, used to take longer
   the more the page dumped: for a list of 100 nested dicts, one click took
