@@ -10,6 +10,7 @@ from decimal import Decimal
 # Third-Party Imports.
 from django import template
 from django.conf import settings
+from django.db import DatabaseError
 from django.forms.boundfield import BoundField
 
 # Internal Imports.
@@ -508,8 +509,13 @@ def _handle_complex_type(
 
     # If the object is a query, evaluate it.
     # This prevents a crash because a lazy queryset has too many members.
+    query_exception = None
     if is_query(obj):
-        obj = list(obj)
+        try:
+            obj = list(obj)
+        except DatabaseError as exception:
+            # The query failed, such as when its table doesn't exist. Show the error instead of the results.
+            query_exception = exception
 
     # Determine which type of braces should be used.
     if isinstance(obj, list):
@@ -520,7 +526,10 @@ def _handle_complex_type(
         braces = "{}"
 
     # Attempt to get corresponding attribute/function values of object.
-    attributes, functions = get_obj_values(obj)
+    if query_exception is not None:
+        attributes, functions = [_get_exception_attribute(query_exception)], []
+    else:
+        attributes, functions = get_obj_values(obj)
 
     is_iterable_obj = is_iterable(obj) and not is_dict(obj) and not isinstance(obj, memoryview)
     is_dict_obj = is_dict(obj)
@@ -560,6 +569,20 @@ def _handle_complex_type(
 # region Object Property Functions
 
 
+def _get_exception_attribute(exception):
+    """Attribute entry that shows an exception raised while inspecting an object, with its traceback."""
+    tb = exception.__traceback__
+    title = "Exception Occurred\n\n"
+    title += f"Exception Type: {type(exception).__name__}\n"
+    title += f"Exception Value: {str(exception)}\n\n"
+    title += "Traceback (most recent call last):\n\n"
+    for entry in traceback.format_tb(tb):
+        title += f"{entry}\n"
+    title += "End of traceback"
+
+    return ["EXCEPTION", str(exception), None, "empty", title]
+
+
 def get_obj_values(obj):
     """Determines full corresponding member values (attributes/functions) of object."""
 
@@ -573,19 +596,7 @@ def get_obj_values(obj):
 
     except Exception as exception:
         # On exception, add exception to attributes and return the attributes.
-
-        # First get exception data.
-        tb = exception.__traceback__
-        title = "Exception Occurred\n\n"
-        title += f"Exception Type: {type(exception).__name__}\n"
-        title += f"Exception Value: {str(exception)}\n\n"
-        title += "Traceback (most recent call last):\n\n"
-        for entry in traceback.format_tb(tb):
-            title += f"{entry}\n"
-        title += "End of traceback"
-
-        # Add exception data to attributes and return.
-        attributes.append(["EXCEPTION", str(exception), None, "empty", title])
+        attributes.append(_get_exception_attribute(exception))
         return (attributes, functions)
 
     # Once all members have been collected, attempt to figure out what type, access modifier, css class, and title

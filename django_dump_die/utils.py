@@ -22,6 +22,7 @@ from tokenize import (
 
 # Third-Party Imports.
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import DatabaseError
 from django.http import QueryDict
 
 # Internal Imports.
@@ -451,6 +452,9 @@ def is_iterable(obj):
     """Return True if object can be iterated."""
     try:
         iter(obj) and len(obj)
+    except DatabaseError:
+        # Such as a QuerySet whose query fails. Dump it as an object instead of failing the whole dump.
+        return False
     except NotImplementedError:
         return False
     except TypeError:

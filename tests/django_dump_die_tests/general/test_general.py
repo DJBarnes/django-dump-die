@@ -153,6 +153,19 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
             content_ends_before="</body>",
         )
 
+    @override_settings(DEBUG=True)
+    def test_dumping_a_queryset_whose_query_fails_shows_the_error(self):
+        """Verify a QuerySet whose query raises a database error is dumped with the error, not a crash."""
+        # Uses the test client directly: assertGetResponse's debug output prints the response context, which would
+        # run the failing query itself.
+        response = self.client.get(reverse("django_dump_die__tests__general:database_error"))
+        content = response.content.decode("utf-8")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('<span class="type" title="QuerySet">QuerySet</span>', content)
+        self.assertIn("Exception Type: OperationalError", content)
+        self.assertIn("no such table: django_dump_die_samplerelation", content)
+
     @skipIf(django.VERSION < (3, 0), "The test client can only return error pages since Django 3.0.")
     @override_settings(DEBUG=True)
     def test_unhandled_exception_shows_dumps_on_the_error_page(self):

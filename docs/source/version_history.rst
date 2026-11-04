@@ -15,6 +15,11 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Fixed: dumping a QuerySet whose query fails crashed the dump page.** If a
+  dumped QuerySet raises a database error, such as when its table doesn't
+  exist, the dump shows the error with its traceback, like other objects that
+  raise while being inspected.
+
 * **Fixed: the Django example pages crashed.** The Django model, Django types,
   and "full category" example pages raised an error: they queried tables that
   the sample models don't have, read an image file that the package doesn't
