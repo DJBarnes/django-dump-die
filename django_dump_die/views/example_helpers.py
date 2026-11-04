@@ -126,6 +126,16 @@ class SimpleClass:
         """Sample class param func doc string"""
         return arg1
 
+    @staticmethod
+    def sample_static_func(arg1):
+        """Sample static func doc string"""
+        return arg1
+
+    @classmethod
+    def sample_classmethod_func(cls):
+        """Sample classmethod func doc string"""
+        return cls.sample_class_var
+
 
 class ComplexClass:
     """Complex class with nested instances"""
@@ -881,6 +891,10 @@ class ClassTypesHelper:
         dump(sample_simple_class.sample_class_param_func)
         dump(sample_simple_class.sample_class_func())
         dump(sample_simple_class.sample_class_param_func("test"))
+        dump(SimpleClass.sample_static_func)
+        dump(SimpleClass.sample_classmethod_func)
+        dump(SimpleClass.sample_static_func("test"))
+        dump(SimpleClass.sample_classmethod_func())
 
     def dump_empty_class_def(self):
         """Dump the definition of a empty class"""

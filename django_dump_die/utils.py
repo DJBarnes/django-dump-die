@@ -408,6 +408,21 @@ def get_callable_params(obj):
     return signature_minus_parentheses
 
 
+def get_method_type(obj, attr):
+    """Return "staticmethod" or "classmethod" if an object's member is one, otherwise None."""
+    try:
+        # The raw class attribute still shows the decorator, which getattr() resolves away.
+        raw_value = inspect.getattr_static(obj, attr)
+    except (AttributeError, TypeError):
+        # Not a named attribute, such as a dict key that isn't a string.
+        return None
+    if isinstance(raw_value, staticmethod):
+        return "staticmethod"
+    if isinstance(raw_value, classmethod):
+        return "classmethod"
+    return None
+
+
 def get_obj_type(obj):
     """Determines the string representation of object's type."""
 

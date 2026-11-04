@@ -37,6 +37,7 @@ from django_dump_die.utils import (
     get_members,
     get_class_name,
     get_callable_params,
+    get_method_type,
     get_obj_type,
     safe_repr,
     safe_str,
@@ -582,7 +583,7 @@ def get_obj_values(obj):
 
     # Initialize attribute/function lists. This is what we ultimately return.
     attributes = []  # (attr, value, access_modifier, css_class, title)
-    functions = []  # (attr, doc, access_modifier)
+    functions = []  # (attr, params, doc, access_modifier, method_type)
 
     try:
         # Attempt to get member values of object. Falls back to empty list on failure.
@@ -622,8 +623,11 @@ def get_obj_values(obj):
                 # Get the access modifier for the method.
                 access_modifier = _get_access_modifier(attr)
 
+                # Get whether the method is a static or class method.
+                method_type = get_method_type(obj, attr)
+
                 # Append function to list of functions
-                functions.append([attr, params, value, access_modifier])
+                functions.append([attr, params, value, access_modifier, method_type])
 
             else:  # Handle member attributes.
 

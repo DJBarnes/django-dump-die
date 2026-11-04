@@ -210,6 +210,11 @@
             color: {{ custom_color_theme.identifiers.key }};
         }
       {% endif %}
+      {% if custom_color_theme.identifiers.decorator %}
+        .method-type {
+            color: {{ custom_color_theme.identifiers.decorator }};
+        }
+      {% endif %}
       {% if custom_color_theme.identifiers.params %}
         .params {
             color: {{ custom_color_theme.identifiers.params }};

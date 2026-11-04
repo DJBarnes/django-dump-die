@@ -15,6 +15,12 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Added: static and class methods are marked.** In the Functions section,
+  static methods show ``@staticmethod`` and class methods show
+  ``@classmethod`` before their name. Their color can be set with
+  ``identifiers.decorator`` in ``DJANGO_DD_COLOR_SCHEME``.
+  (`#15 <https://github.com/DJBarnes/django-dump-die/issues/15>`_)
+
 * **Fixed: the dump template tag restyled the whole page.** ``{% dump %}``
   loaded Bootstrap 4's CSS and the dump page's styles for ``body`` and ``hr``,
   which changed the fonts, colors, and layout of the page around the dump, and

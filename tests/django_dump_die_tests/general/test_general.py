@@ -3,6 +3,7 @@ Tests for general DD functionality.
 """
 
 # System Imports.
+import re
 from unittest import skipIf
 from unittest.mock import patch
 
@@ -31,6 +32,22 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
             ],
             expected_not_content=["<div><h1>Django DumpDie</h1></div>"],
         )
+
+    @override_settings(DEBUG=True)
+    def test_custom_color_theme_sets_the_decorator_color(self):
+        """Verify the static and class method markers use the theme's decorator color, and only that color."""
+        url = reverse("django_dump_die__tests__general:dd_only")
+        decorator_rule = re.compile(r"\.method-type \{\s*color: #123456;")
+
+        with override_settings(DJANGO_DD_COLOR_SCHEME={"identifiers": {"decorator": "#123456"}}):
+            content = self.client.get(url).content.decode("utf-8")
+        self.assertRegex(content, decorator_rule)
+
+        # A custom type color doesn't change the decorators, which keep their default color.
+        with override_settings(DJANGO_DD_COLOR_SCHEME={"meta": {"type": "#123456"}}):
+            content = self.client.get(url).content.decode("utf-8")
+        self.assertNotRegex(content, decorator_rule)
+        self.assertNotIn(".method-type", content)
 
     @override_settings(DEBUG=True)
     def test_dump_page_and_template_dumps_do_not_load_bootstrap(self):

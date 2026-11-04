@@ -181,6 +181,11 @@ a.arrow-toggle {
     color: #657b83;
 }
 
+/* Static and class method markers use the type color. */
+.method-type {
+    color: #859900;
+}
+
 .braces {
     color: #839496;
 }

@@ -13,7 +13,7 @@ from django.test import SimpleTestCase, override_settings
 # Internal Imports.
 from django_dump_die import middleware
 from django_dump_die.middleware import dump
-from django_dump_die.utils import is_dict, is_query, safe_repr, safe_str, sanitize_index_range
+from django_dump_die.utils import get_method_type, is_dict, is_query, safe_repr, safe_str, sanitize_index_range
 
 
 def get_dumped_info():
@@ -24,6 +24,21 @@ def get_dumped_info():
 def get_dumped_name(info):
     """Return the dumped object name from collected dump information, as plain text."""
     return "".join(part["value"] for part in info[2])
+
+
+class HasMethodTypes:
+    """Class with a static method, a class method, and a normal method."""
+
+    @staticmethod
+    def static_work():
+        """Static work."""
+
+    @classmethod
+    def class_work(cls):
+        """Class work."""
+
+    def normal_work(self):
+        """Normal work."""
 
 
 class RaisesDoesNotExistOnRepr:
@@ -139,3 +154,21 @@ class DumpDieSafeStringTestCase(SimpleTestCase):
         """Verify the query and dict checks treat None as neither."""
         self.assertFalse(is_query(None))
         self.assertFalse(is_dict(None))
+
+
+class DumpDieMethodTypeTestCase(SimpleTestCase):
+    """Verify detecting static and class methods."""
+
+    def test_get_method_type(self):
+        """Verify static and class methods are detected on a class and on an instance, and nothing else is."""
+        for obj in (HasMethodTypes, HasMethodTypes()):
+            cases = [
+                ("static_work", "staticmethod"),
+                ("class_work", "classmethod"),
+                ("normal_work", None),
+                ("missing", None),
+                (42, None),
+            ]
+            for attr, expected in cases:
+                with self.subTest(obj=obj, attr=attr):
+                    self.assertEqual(get_method_type(obj, attr), expected)

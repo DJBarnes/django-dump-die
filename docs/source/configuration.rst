@@ -398,6 +398,7 @@ Example::
             'index': <value>,               #  Index values for indexable types
             'key': <value>,                 #  Key values for dict
             'params': <value>,              #  Function parameters
+            'decorator': <value>,           #  @staticmethod and @classmethod before a function's name
         },
         'types': {
             'bool': <value>,                #  Booleans

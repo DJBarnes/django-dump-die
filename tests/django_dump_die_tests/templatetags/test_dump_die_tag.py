@@ -37,6 +37,21 @@ class Branch:
         return True
 
 
+class HasMethodTypes:
+    """Class with a static method, a class method, and a normal method."""
+
+    @staticmethod
+    def static_work():
+        """Static work."""
+
+    @classmethod
+    def class_work(cls):
+        """Class work."""
+
+    def normal_work(self):
+        """Normal work."""
+
+
 class RaisesOnRepr:
     """Object whose repr raises an error that isn't ObjectDoesNotExist."""
 
@@ -107,6 +122,18 @@ class DumpDieTagSettingsTestCase(SimpleTestCase):
                 self.assertIn(function_name, content)
                 # Magic methods stay out unless they are turned on too.
                 self.assertNotIn("__init__", content)
+
+    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTIONS", True)
+    def test_static_and_class_methods_are_marked(self):
+        """Verify static and class methods are marked in the Functions section, and normal methods aren't."""
+        for obj in (HasMethodTypes, HasMethodTypes()):
+            with self.subTest(obj=obj):
+                content = render_dump(obj)
+
+                self.assertIn('<span class="method-type" title="Static Method">@staticmethod</span>', content)
+                self.assertIn('<span class="method-type" title="Class Method">@classmethod</span>', content)
+                self.assertEqual(content.count('class="method-type"'), 2)
+                self.assertIn("normal_work", content)
 
     @patch("django_dump_die.templatetags.dump_die.INCLUDE_PRIVATE_METHODS", True)
     def test_private_members_included(self):

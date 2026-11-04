@@ -22,10 +22,14 @@
   class="li-wrapper collapse {{ unique }}{{ root_count }}-functions {{ collapsable.function.show }}"
   data-unique-functions="{{ unique }}{{ root_count }}-functions"
 >
-  {% for attr, params, doc, access_modifier in functions %}
+  {% for attr, params, doc, access_modifier, method_type in functions %}
     <li class="function-li">
       {% if access_modifier %}
         <span class="access-modifier">{{ access_modifier }}</span>
+      {% endif %}
+
+      {% if method_type %}
+        <span class="method-type" title="{% if method_type == 'staticmethod' %}Static{% else %}Class{% endif %} Method">@{{ method_type }}</span>
       {% endif %}
 
       <span class="function" title="Function">
