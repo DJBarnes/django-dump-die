@@ -180,7 +180,8 @@ exclude_lines = [
     "if PYTZ_PRESENT:",
 ]
 
-partial_branches = ["if hasattr\\(SampleDjangoModel, .*"]
+# Setting this replaces coverage's default list, so it includes the default "pragma: no branch" too.
+partial_branches = ["pragma: no branch", "if hasattr\\(SampleDjangoModel, .*"]
 
 # endregion Testing Settings
 

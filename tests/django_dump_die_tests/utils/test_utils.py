@@ -108,6 +108,7 @@ class DumpDieIndexRangeTestCase(SimpleTestCase):
         """Verify each kind of index_range value gives the expected start and end index."""
         cases = [
             (None, (None, None)),
+            ((), (None, None)),
             (3, (3, None)),
             ((2,), (2, None)),
             ((1, 4), (1, 4)),
