@@ -173,7 +173,7 @@ def dump_object(
         )
 
     # Handle if element is iterable and we are at the root's element direct children (depth of 1),
-    elif is_iterable(root_obj) and current_depth == 0:
+    elif is_iterable(root_obj) and current_depth == 1:
 
         # Handle unique indexing logic for root element.
         root_index_start, root_index_end = _process_root_indices(

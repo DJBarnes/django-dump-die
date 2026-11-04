@@ -15,6 +15,12 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Fixed: index_range didn't select the items of the dumped object.** It was
+  checked against the dumped object itself instead of its direct children, so
+  a range starting at 0 expanded every item, and any other range expanded
+  nothing, not even the dumped object. It now selects the direct children, as
+  documented.
+
 * **Fixed: a start index that isn't a number crashed index_range.** A start
   index such as ``index_range=("a", 2)`` raised ``ValueError``. It's now ignored,
   like an end index that isn't a number.
