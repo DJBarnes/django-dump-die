@@ -247,7 +247,8 @@ class SampleDjangoModel(models.Model):
         pass
 
     try:
-        if find_spec("PIL"):
+        # The image field needs Pillow, which not every test environment installs.
+        if find_spec("PIL"):  # pragma: no branch
             sample_image = models.ImageField(upload_to="uploads")
     except AttributeError:
         pass
@@ -591,10 +592,11 @@ class IntermediateTypesHelper:
         dump("")
         dump("Python pathlib examples:")
         dump(pure_path)
-        if posix_path:
+        # Each of these only exists on its own platform, so the tests can't run both branches.
+        if posix_path:  # pragma: no branch
             dump(posix_path)
         if windows_path:
-            dump(windows_path)
+            dump(windows_path)  # pragma: no cover
 
 
 class ComplexTypesHelper:
