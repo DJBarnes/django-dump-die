@@ -34,6 +34,65 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
         )
 
     @override_settings(DEBUG=True)
+    def test_custom_color_theme_keys_each_set_their_own_color(self):
+        """Verify each documented color theme key, set on its own, colors its own element and nothing is left empty."""
+        url = reverse("django_dump_die__tests__general:dd_only")
+        theme_keys = {
+            "meta": {
+                "arrow": ".arrow",
+                "access_modifier": ".access-modifier",
+                "braces": ".braces",
+                "empty": ".empty",
+                "location": ".location",
+                "type": ".type",
+                "unique": ".unique",
+            },
+            "identifiers": {
+                "section_name": ".section_name",
+                "attribute": ".attribute",
+                "constant": ".constant",
+                "dumped_name": ".dumped_name",
+                "function": ".function",
+                "index": ".index",
+                "key": ".key",
+                "params": ".params",
+                "decorator": ".method-type",
+            },
+            "types": {
+                "bool": ".bool",
+                "bound": ".bound",
+                "default": ".default",
+                "docs": ".docs",
+                "intermediate": ".intermediate",
+                "module": ".module",
+                "none": ".none",
+                "number": ".number",
+                "string": ".string",
+            },
+        }
+        for group, keys in theme_keys.items():
+            for key, selector in keys.items():
+                with self.subTest(key=f"{group}.{key}"):
+                    with override_settings(DJANGO_DD_COLOR_SCHEME={group: {key: "#123456"}}):
+                        content = self.client.get(url).content.decode("utf-8")
+
+                    self.assertRegex(content, re.escape(selector) + r" \{\s*color: #123456;")
+                    self.assertNotRegex(content, r"color: ;")
+
+    @override_settings(DEBUG=True)
+    def test_forced_themes_use_the_custom_params_color(self):
+        """Verify the forced light and dark themes use the color theme's params color."""
+        url = reverse("django_dump_die__tests__general:dd_only")
+        for forced_setting in ("DJANGO_DD_FORCE_LIGHT_THEME", "DJANGO_DD_FORCE_DARK_THEME"):
+            with self.subTest(setting=forced_setting):
+                settings = {forced_setting: True, "DJANGO_DD_COLOR_SCHEME": {"identifiers": {"params": "#123456"}}}
+                with override_settings(**settings):
+                    content = self.client.get(url).content.decode("utf-8")
+
+                forced_part = content[content.index("/* Forcing color themes */") :]
+                self.assertRegex(forced_part, r"\.params \{\s*color: #123456")
+
+    @override_settings(DEBUG=True)
     def test_custom_color_theme_sets_the_decorator_color(self):
         """Verify the static and class method markers use the theme's decorator color, and only that color."""
         url = reverse("django_dump_die__tests__general:dd_only")

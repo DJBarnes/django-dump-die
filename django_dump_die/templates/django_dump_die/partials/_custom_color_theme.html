@@ -146,7 +146,7 @@
             color: {{ custom_color_theme.meta.access_modifier }};
         }
       {% endif %}
-      {% if custom_color_theme.meta.access_modifier %}
+      {% if custom_color_theme.meta.braces %}
         .braces {
             color: {{ custom_color_theme.meta.braces }};
         }
@@ -190,7 +190,7 @@
             color: {{ custom_color_theme.identifiers.constant }};
         }
       {% endif %}
-      {% if custom_color_theme.identifiers.constant %}
+      {% if custom_color_theme.identifiers.dumped_name %}
         .dumped_name {
             color: {{ custom_color_theme.identifiers.dumped_name }};
         }
@@ -239,7 +239,7 @@
           color: {{ custom_color_theme.types.intermediate }};
         }
       {% endif %}
-      {% if custom_color_theme.types.empty %}
+      {% if custom_color_theme.types.default %}
         .default {
           color: {{ custom_color_theme.types.default }};
         }
@@ -388,8 +388,8 @@
       {% endif %}
     }
     .params {
-      {% if custom_color_theme.type.params %}
-        color: {{ custom_color_theme.type.params }}
+      {% if custom_color_theme.identifiers.params %}
+        color: {{ custom_color_theme.identifiers.params }}
       {% else %}
         color: #586e75;
       {% endif %}
@@ -510,8 +510,8 @@
       {% endif %}
     }
     .params {
-      {% if custom_color_theme.type.params %}
-        color: {{ custom_color_theme.type.params }}
+      {% if custom_color_theme.identifiers.params %}
+        color: {{ custom_color_theme.identifiers.params }}
       {% else %}
         color: #93a1a1;
       {% endif %}

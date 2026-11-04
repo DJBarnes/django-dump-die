@@ -15,6 +15,14 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Fixed: some custom color theme keys were ignored.** In
+  ``DJANGO_DD_COLOR_SCHEME``, ``meta.braces``, ``identifiers.dumped_name``, and
+  ``types.default`` had no effect, ``identifiers.params`` was ignored when a
+  theme was forced with ``DJANGO_DD_FORCE_LIGHT_THEME`` or
+  ``DJANGO_DD_FORCE_DARK_THEME``, and setting ``meta.access_modifier`` or
+  ``identifiers.constant`` without ``braces`` or ``dumped_name`` wrote an empty
+  color. Each key now sets its own color.
+
 * **Added: static and class methods are marked.** In the Functions section,
   static methods show ``@staticmethod`` and class methods show
   ``@classmethod`` before their name. Their color can be set with
