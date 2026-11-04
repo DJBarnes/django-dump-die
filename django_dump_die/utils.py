@@ -307,7 +307,7 @@ def sanitize_index_range(index_range):
     if start_index:
         try:
             start_index = int(start_index)
-        except TypeError:
+        except (TypeError, ValueError):
             start_index = None
 
     # Sanitize if end_index set.
