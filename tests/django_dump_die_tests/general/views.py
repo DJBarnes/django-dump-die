@@ -25,3 +25,19 @@ def dump_only_example(request):
 def dd_only_example(request):
     """Calls dd without any dump before it."""
     dd("Only dd, without dumps.")
+
+
+def break_example(request):
+    """Dumps one line, a break, then one more line."""
+    dump("Before the break.")
+    dump.br()
+    dd("After the break.")
+
+
+def break_sizes_example(request):
+    """Dumps breaks of 1, 2, and 5 lines between two lines."""
+    dump("Before the breaks.")
+    dump.br()
+    dump.br(size=2)
+    dump.br(size=5)
+    dd("After the breaks.")

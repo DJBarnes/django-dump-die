@@ -79,6 +79,11 @@ INCLUDE_ATTRIBUTES = getattr(settings, "DJANGO_DD_INCLUDE_ATTRIBUTES", True)
 INCLUDE_FUNCTIONS = getattr(settings, "DJANGO_DD_INCLUDE_FUNCTIONS", False)
 # Whether function doc output should try to fit on one line, or output with original newlines.
 MULTILINE_FUNCTION_DOCS = getattr(settings, "DJANGO_DD_MULTILINE_FUNCTION_DOCS", False)
+# Line shown across a break added with dump.br(): "dashed", "solid", "dotted", or "blank" for no line.
+BREAK_STYLE = getattr(settings, "DJANGO_DD_BREAK_STYLE", "dashed")
+BREAK_STYLES = ("dashed", "solid", "dotted", "blank")
+# Default height of a break added with dump.br(), as a whole number of lines.
+BREAK_SIZE = getattr(settings, "DJANGO_DD_BREAK_SIZE", 1)
 # Whether or not to colorize the name of the dumped object
 COLORIZE_DUMPED_OBJECT_NAME = getattr(settings, "DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME", True)
 # Whether objects overarching item content (Attribute, Function) should start expanded for viewing.

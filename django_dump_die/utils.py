@@ -33,6 +33,19 @@ if PYTZ_PRESENT:
     import pytz
 
 
+class DumpBreak:
+    """Marker for a break between dumped objects, added with dump.br()."""
+
+    def __init__(self, size=None):
+        # Height of the break in lines, or None for the DJANGO_DD_BREAK_SIZE default.
+        self.size = size
+
+
+def is_valid_break_size(size):
+    """Return True if size is a whole number of lines, 1 or more. True and False don't count."""
+    return isinstance(size, int) and not isinstance(size, bool) and size >= 1
+
+
 class Enum:
     """Enum faker class so an entire Enum can be dumped correctly."""
 

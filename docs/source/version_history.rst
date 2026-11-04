@@ -15,6 +15,14 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Added: breaks between dumps.** ``dump.br()`` shows a break between the
+  objects dumped before and after it: a blank row, as tall as a one-line dump,
+  with a dashed line across it. ``DJANGO_DD_BREAK_STYLE`` sets the line to
+  ``"dashed"``, ``"solid"``, ``"dotted"``, or ``"blank"``. A break can also be
+  several lines tall, with ``dump.br(size=3)`` for one break or
+  ``DJANGO_DD_BREAK_SIZE`` for the default (``1``).
+  (`#26 <https://github.com/DJBarnes/django-dump-die/issues/26>`_)
+
 * **Fixed: some custom color theme keys were ignored.** In
   ``DJANGO_DD_COLOR_SCHEME``, ``meta.braces``, ``identifiers.dumped_name``, and
   ``types.default`` had no effect, ``identifiers.params`` was ignored when a

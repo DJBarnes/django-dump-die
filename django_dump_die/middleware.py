@@ -10,7 +10,7 @@ from django.conf import settings
 
 # Internal Imports.
 from .views import dd_view
-from django_dump_die.utils import get_dumped_object_info
+from django_dump_die.utils import DumpBreak, get_dumped_object_info, is_valid_break_size
 
 logger = logging.getLogger("django_dump_die")
 dump_objects = []
@@ -62,6 +62,28 @@ def dump(obj, index_range=None, deepcopy=False):
 
         # Run dd core logic.
         dump_objects.append(object_info)
+
+
+def dump_break(size=None):
+    """
+    Show a break between the objects dumped before and after it.
+    Used as dump.br(), so that it doesn't need its own built-in name.
+
+    :param size: Height of the break, as a whole number of lines. Defaults to DJANGO_DD_BREAK_SIZE.
+
+    Does nothing if DEBUG != True
+    """
+
+    # Check the size even when DEBUG is off, so that a typo shows up at the call.
+    if size is not None and not is_valid_break_size(size):
+        raise ValueError("dump.br() size must be a whole number of lines, 1 or more, not {0!r}.".format(size))
+
+    if settings.DEBUG:
+        dump_objects.append((None, None, None, DumpBreak(size), None, None, None, None))
+
+
+# Make dump_break available as dump.br().
+dump.br = dump_break
 
 
 class DumpAndDieMiddleware:

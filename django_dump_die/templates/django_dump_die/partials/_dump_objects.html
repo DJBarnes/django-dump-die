@@ -7,6 +7,12 @@
   {# If it is not the first object, add a horizontal line to separate #}
   {% if not forloop.first %}<hr>{% endif %}
 
+  {% if obj|is_dump_break %}
+  {# A break added with dump.br(): a blank row, one or more lines tall, with a line across it. #}
+  {% with size=obj.size|default:break_size %}
+  <div class="dump-wrapper dump-break dump-break-{{ break_style }}"{% if size != 1 %} style="--dump-break-size: {{ size }}"{% endif %} title="Break"></div>
+  {% endwith %}
+  {% else %}
   <div class="dump-wrapper">
     {% if filename and linenumber %}
       <span title="Dumped From Location" class="location">File: {{ filename }}, Line: {{ linenumber }}</span><br>
@@ -46,4 +52,5 @@
 
     {% endif %}
   </div>
+  {% endif %}
 {% endfor %}

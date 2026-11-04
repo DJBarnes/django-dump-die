@@ -36,6 +36,7 @@ pipenv run sphinx-build -WE docs/source docs/build   # CI builds docs with warni
 **Request flow** (`django_dump_die/middleware.py`):
 - On init, `DumpAndDieMiddleware` injects `dd` and `dump` into `__builtins__`, so calling code doesn't import them. That is why editors flag `dd(...)` as undefined, which is intentional.
 - `dump(obj)` adds the object's info to a module-level `dump_objects` list. This list is shared across the whole server and isn't thread safe. After the response, `__call__` replaces it with `dd_view` if anything was dumped.
+- `dump.br()` (`dump_break`, attached as an attribute of `dump` so it needs no built-in name of its own) adds a `utils.DumpBreak` marker entry, with an optional `size`; `_dump_objects.html` renders it as a break, using the `is_dump_break` filter.
 - `dd(obj)` raises the `DumpAndDie` exception. `process_exception` catches it, adds the object to the dumped list, and returns `dd_view`.
 - Any other unhandled exception marks the request (`has_non_dd_exception`). If something was dumped and `DEBUG` is on, `__call__` injects the dump page's head and body (`partials/_head.html`, `_body.html`) into Django's error page.
 - `views/dd_view.py` reads the toolbar and theme settings and renders `templates/django_dump_die/dd.html` (or a partial, as a string).

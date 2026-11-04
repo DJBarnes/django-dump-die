@@ -138,6 +138,33 @@ html.dump-die-page hr {
     border-left: 1px dashed #d0c095;
 }
 
+/* A break added with dump.br(): a blank row, as tall as one line of dumped output, with a line across the middle.
+   DJANGO_DD_BREAK_STYLE picks the line's style. DJANGO_DD_BREAK_SIZE, or dump.br(size=...), multiplies its height
+   through --dump-break-size. */
+.dump-break {
+    display: flex;
+    align-items: center;
+    height: calc(1.5em * var(--dump-break-size, 1));
+}
+
+.dump-break::before {
+    content: "";
+    flex: 1;
+    border-top: 2px dashed #d0c095;
+}
+
+.dump-break-solid::before {
+    border-top-style: solid;
+}
+
+.dump-break-dotted::before {
+    border-top-style: dotted;
+}
+
+.dump-break-blank::before {
+    border-top-style: none;
+}
+
 /* Opening and closing sections. dd.js sets these classes, which Bootstrap's collapse also used. */
 .dd-wrapper.collapse:not(.show),
 .li-wrapper.collapse:not(.show) {
@@ -318,6 +345,10 @@ a.arrow-toggle {
         color: #d0c095;
     }
 
+    .dump-break::before {
+        border-top-color: #d0c095;
+    }
+
     .arrow {
         color: #657b83;
     }
@@ -390,6 +421,10 @@ a.arrow-toggle {
 
     html.dump-die-page hr {
         color: #054757;
+    }
+
+    .dump-break::before {
+        border-top-color: #054757;
     }
 
     .arrow {

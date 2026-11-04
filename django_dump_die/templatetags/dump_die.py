@@ -15,6 +15,9 @@ from django.forms.boundfield import BoundField
 
 # Internal Imports.
 from django_dump_die.constants import (
+    BREAK_SIZE,
+    BREAK_STYLE,
+    BREAK_STYLES,
     SIMPLE_TYPES,
     INTERMEDIATE_TYPES,
     ADDITIONAL_SIMPLE_TYPES,
@@ -32,7 +35,9 @@ from django_dump_die.constants import (
     PYTZ_PRESENT,
 )
 from django_dump_die.utils import (
+    DumpBreak,
     get_dumped_object_info,
+    is_valid_break_size,
     generate_unique_from_obj,
     get_members,
     get_class_name,
@@ -99,7 +104,21 @@ def dump(context, obj):
 @register.inclusion_tag("django_dump_die/partials/_dump_objects.html")
 def dump_objects(objects):
     """Template tag that can be used to dump a list of objects"""
-    return {"objects": objects}
+    if BREAK_STYLE not in BREAK_STYLES:
+        raise ValueError(
+            'DJANGO_DD_BREAK_STYLE must be one of {0}, not "{1}".'.format(", ".join(BREAK_STYLES), BREAK_STYLE)
+        )
+    if not is_valid_break_size(BREAK_SIZE):
+        raise ValueError(
+            "DJANGO_DD_BREAK_SIZE must be a whole number of lines, 1 or more, not {0!r}.".format(BREAK_SIZE)
+        )
+    return {"objects": objects, "break_style": BREAK_STYLE, "break_size": BREAK_SIZE}
+
+
+@register.filter
+def is_dump_break(obj):
+    """Return True if the dumped object is a break added with dump.br()."""
+    return isinstance(obj, DumpBreak)
 
 
 @register.inclusion_tag("django_dump_die/partials/_dump_object.html")

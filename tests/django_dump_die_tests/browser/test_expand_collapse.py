@@ -257,3 +257,32 @@ class DumpDieBrowserTestCase(LiveServerTestCase):
         # The dump has its own font and background.
         self.assertIn("monospace", styles["dump"]["font"])
         self.assertNotEqual(styles["dump"]["background"], "rgba(0, 0, 0, 0)")
+
+    def test_break_is_as_tall_as_a_one_line_dump(self):
+        """Verify a break from dump.br() takes the same height as a one-line dump, with a visible line across it."""
+        self.open_page("django_dump_die__tests__general:break")
+        sizes = self.driver.execute_script("""
+            const dumpBreak = document.querySelector('.dump-break');
+            const oneLine = dumpBreak.previousElementSibling.previousElementSibling;
+            return {
+                breakHeight: dumpBreak.getBoundingClientRect().height,
+                lineHeight: oneLine.getBoundingClientRect().height,
+                oneLineIsDump: oneLine.classList.contains('dump-wrapper'),
+                lineStyle: getComputedStyle(dumpBreak, '::before').borderTopStyle,
+            };
+            """)
+
+        self.assertTrue(sizes["oneLineIsDump"])
+        self.assertAlmostEqual(sizes["breakHeight"], sizes["lineHeight"], delta=1)
+        self.assertEqual(sizes["lineStyle"], "dashed")
+
+    def test_break_size_multiplies_the_height(self):
+        """Verify a break's size multiplies its height: sizes 2 and 5 are two and five times a size 1 break."""
+        self.open_page("django_dump_die__tests__general:break_sizes")
+        heights = self.driver.execute_script(
+            "return Array.from(document.querySelectorAll('.dump-break')).map((b) => b.getBoundingClientRect().height);"
+        )
+
+        self.assertEqual(len(heights), 3)
+        self.assertAlmostEqual(heights[1], 2 * heights[0], delta=1)
+        self.assertAlmostEqual(heights[2], 5 * heights[0], delta=1)

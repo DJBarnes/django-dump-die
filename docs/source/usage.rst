@@ -137,6 +137,31 @@ Example::
     # Dump updated state
     dd(my_list)
 
+Breaks Between Dumps
+====================
+
+To make a visual break between groups of dumped objects, call ``dump.br()``
+between them. The break is a blank row, as tall as a one-line dump, with a line
+across the middle. The ``DJANGO_DD_BREAK_STYLE`` setting picks the line's
+style.
+
+A break can also be taller. ``dump.br(size=3)`` makes one break three lines
+tall, and the ``DJANGO_DD_BREAK_SIZE`` setting sets the height of breaks without
+a size. The size must be a whole number of lines, 1 or more; anything else
+raises a ``ValueError`` at the call.
+
+``br()`` is a function of ``dump`` itself, so it doesn't need its own built-in
+name, and like ``dump()`` it does nothing unless ``DEBUG`` is ``True``.
+
+Example::
+
+    dump(user)
+    dump(user.profile)
+    dump.br(size=2)
+    dump(order)
+    dump.br()
+    dd(order.items)
+
 Inside A Template
 =================
 

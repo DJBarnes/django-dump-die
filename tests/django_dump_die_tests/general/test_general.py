@@ -14,6 +14,10 @@ from django.test import override_settings
 from django.urls import reverse
 from django_expanded_test_cases import IntegrationTestCase
 
+# Internal Imports.
+from django_dump_die import middleware
+from django_dump_die.middleware import dump
+
 
 class DumpDieGeneralTestCase(IntegrationTestCase):
     """Verify handling of dumped "simple" types."""
@@ -32,6 +36,70 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
             ],
             expected_not_content=["<div><h1>Django DumpDie</h1></div>"],
         )
+
+    @override_settings(DEBUG=True)
+    def test_break_is_shown_between_dumps(self):
+        """Verify dump.br() shows a break between the objects dumped before and after it."""
+        content = self.client.get(reverse("django_dump_die__tests__general:break")).content.decode("utf-8")
+
+        before = content.index("Before the break.")
+        dump_break = content.index('<div class="dump-wrapper dump-break dump-break-dashed" title="Break"></div>')
+        after = content.index("After the break.")
+        self.assertLess(before, dump_break)
+        self.assertLess(dump_break, after)
+
+    @override_settings(DEBUG=False)
+    def test_break_does_nothing_when_debug_is_off(self):
+        """Verify dump.br() adds nothing to the dumped objects when debug is off."""
+        middleware.dump_objects.clear()
+
+        dump.br()
+
+        self.assertEqual(middleware.dump_objects, [])
+
+    @override_settings(DEBUG=True)
+    def test_break_style_setting(self):
+        """Verify each break style gives its class, and an unknown style raises an error."""
+        url = reverse("django_dump_die__tests__general:break")
+        for style in ("dashed", "solid", "dotted", "blank"):
+            with self.subTest(style=style):
+                with patch("django_dump_die.templatetags.dump_die.BREAK_STYLE", style):
+                    content = self.client.get(url).content.decode("utf-8")
+
+                self.assertIn('class="dump-wrapper dump-break dump-break-{0}"'.format(style), content)
+
+        with patch("django_dump_die.templatetags.dump_die.BREAK_STYLE", "wavy"):
+            with self.assertRaisesMessage(ValueError, "DJANGO_DD_BREAK_STYLE must be one of"):
+                self.client.get(url)
+
+    @override_settings(DEBUG=True)
+    def test_break_size_sets_the_height(self):
+        """Verify dump.br(size=...) sets each break's height in lines, and DJANGO_DD_BREAK_SIZE the default."""
+        content = self.client.get(reverse("django_dump_die__tests__general:break_sizes")).content.decode("utf-8")
+        breaks = re.findall(
+            r'<div class="dump-wrapper dump-break dump-break-dashed"([^>]*) title="Break"></div>', content
+        )
+        # A size 1 break needs no height of its own.
+        self.assertEqual(breaks, ["", ' style="--dump-break-size: 2"', ' style="--dump-break-size: 5"'])
+
+        with patch("django_dump_die.templatetags.dump_die.BREAK_SIZE", 3):
+            content = self.client.get(reverse("django_dump_die__tests__general:break")).content.decode("utf-8")
+        self.assertIn('class="dump-wrapper dump-break dump-break-dashed" style="--dump-break-size: 3"', content)
+
+        for size in (0, "2", True):
+            with self.subTest(setting=size):
+                with patch("django_dump_die.templatetags.dump_die.BREAK_SIZE", size):
+                    with self.assertRaisesMessage(ValueError, "DJANGO_DD_BREAK_SIZE must be a whole number of lines"):
+                        self.client.get(reverse("django_dump_die__tests__general:break"))
+
+    def test_break_with_an_invalid_size_raises_an_error(self):
+        """Verify dump.br() refuses a size that isn't a whole number of lines, whether debug is on or off."""
+        for debug in (True, False):
+            for size in (0, -1, 2.5, "2", True):
+                with self.subTest(debug=debug, size=size), override_settings(DEBUG=debug):
+                    with self.assertRaisesMessage(ValueError, "dump.br() size must be a whole number of lines"):
+                        dump.br(size=size)
+        middleware.dump_objects.clear()
 
     @override_settings(DEBUG=True)
     def test_custom_color_theme_keys_each_set_their_own_color(self):

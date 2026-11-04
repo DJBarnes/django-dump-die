@@ -182,22 +182,17 @@ def function_types_example(request):
 def full_category_example(request):
     """Example view, rendering all examples shown in all other views, all in one page."""
 
-    # Output desired dump values.
-    dump("")
+    # Output desired dump values, with a break between each category.
     SimpleTypesHelper().dump_all_simple_types()
-    dump("")
-    dump("")
+    dump.br()
     IntermediateTypesHelper().dump_intermediate_types()
-    dump("")
-    dump("")
+    dump.br()
     ComplexTypesHelper().dump_all_complex_types()
-    dump("")
-    dump("")
+    dump.br()
     DjangoTypesHelper().dump_all_django_types(request)
-    dump("")
-    dump("")
+    dump.br()
     FunctionTypesHelper().dump_function_types()
-    dump("")
+    dump.br()
 
     # Force dd to prevent further view parsing.
     dd("done")
