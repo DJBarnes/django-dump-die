@@ -15,6 +15,11 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Fixed: DJANGO_DD_INCLUDE_MAGIC_METHODS didn't show magic methods.** Magic
+  names also start with an underscore, so they were left out unless
+  ``DJANGO_DD_INCLUDE_PRIVATE_MEMBERS`` was on too. They now only follow
+  ``DJANGO_DD_INCLUDE_MAGIC_METHODS``.
+
 * **Fixed: index_range didn't select the items of the dumped object.** It was
   checked against the dumped object itself instead of its direct children, so
   a range starting at 0 expanded every item, and any other range expanded

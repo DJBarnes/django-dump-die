@@ -606,7 +606,8 @@ def get_obj_values(obj):
         try:
 
             # Skip private members if not including them.
-            if is_private(attr) and not INCLUDE_PRIVATE_METHODS:
+            # Magic members also start with an underscore, but follow their own setting below.
+            if is_private(attr) and not is_magic(attr) and not INCLUDE_PRIVATE_METHODS:
                 continue
 
             # Determine if the value is callable (function).
