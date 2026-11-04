@@ -326,8 +326,9 @@ def _add_unique_map_entry(obj, original_obj, root_unique):
     # We do this because the state of an object might change over time, so child values (and mappings) might be
     # different. Parent might also be of complex type with children that are also complex types.
     for attr, value in members:
-        # Skip simple types and children of intermediate types.
-        if _is_simple_type(value) or _is_intermediate_type(obj):
+        # Skip simple types and children of intermediate types, in the copy or in the original, which may have
+        # changed since it was copied.
+        if _is_simple_type(value) or _is_intermediate_type(obj) or _is_intermediate_type(original_obj):
             continue
         # Skip private members if not including them and functions.
         if (is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
@@ -335,13 +336,6 @@ def _add_unique_map_entry(obj, original_obj, root_unique):
 
         # Loop through orig members looking for a match.
         for orig_attr, orig_value in original_members:
-            # Skip simple types and children of intermediate types.
-            if _is_simple_type(value) or _is_intermediate_type(original_obj):
-                continue
-            # Skip private members if not including them and functions.
-            if (is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
-                continue
-
             # If the attrs match, make recursive call to add more entries to the unique map.
             if orig_attr == attr:
                 _add_unique_map_entry(value, orig_value, root_unique)
