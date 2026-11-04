@@ -1,6 +1,8 @@
 """Views for the general DumpDie tests."""
 
 # Third-Party Imports.
+from django.contrib.auth.models import User
+from django.http import HttpResponse
 from django.shortcuts import render
 
 # Internal Imports.
@@ -41,3 +43,20 @@ def break_sizes_example(request):
     dump.br(size=2)
     dump.br(size=5)
     dd("After the breaks.")
+
+
+async def async_dump_example(request):
+    """Async view that dumps, then returns a normal response."""
+    dump("Dumped from an async view.")
+    return HttpResponse("Async page content.")
+
+
+async def async_dd_example(request):
+    """Async view that calls dd."""
+    dd("Dd from an async view.")
+
+
+async def async_queryset_example(request):
+    """Async view that dumps a QuerySet, which is only evaluated when the dump page is rendered."""
+    dump(User.objects.all())
+    return HttpResponse("Async page content.")

@@ -32,6 +32,16 @@ far.
     ``views.py`` file, but could also be utils called from a view.
     Attempting to ``dump`` or ``dd`` from a console command will not work.
 
+ASGI and Async Views
+--------------------
+
+On Django 3.1 or later, the middleware supports both sync and async requests.
+Under ASGI it runs async, so it doesn't make Django switch between the event
+loop and a thread around your views on every request. Only when something was
+dumped does it render the dump page in a thread, since rendering can query the
+database, such as for a dumped QuerySet. ``dump()`` and ``dd()`` work the same
+in sync and async views.
+
 
 
 Example

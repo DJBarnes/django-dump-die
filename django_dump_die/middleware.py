@@ -3,10 +3,24 @@ Middleware for DumpAndDie.
 """
 
 # System Imports.
+import asyncio
 import logging
 
 # Third-Party Imports.
 from django.conf import settings
+
+# Imports that may not be accessible, depending on the Django version.
+try:
+    from asgiref.sync import sync_to_async
+except ImportError:
+    # Django 2.2 doesn't install asgiref, and doesn't support async middleware.
+    sync_to_async = None
+try:
+    from asgiref.sync import iscoroutinefunction, markcoroutinefunction
+except ImportError:
+    # asgiref before 3.6, which Django 3.1 to 4.0 allow.
+    iscoroutinefunction = asyncio.iscoroutinefunction
+    markcoroutinefunction = None
 
 # Internal Imports.
 from .views import dd_view
@@ -91,13 +105,29 @@ class DumpAndDieMiddleware:
     DumpAndDie Middleware.
 
     Allows access to php/laravel-like function dd().
+
+    Supports both sync and async requests (Django 3.1+), so that under ASGI it doesn't make Django switch between
+    the event loop and a thread around the view on every request.
     """
+
+    sync_capable = True
+    async_capable = True
 
     def __init__(self, get_response):
         """
         Add our dd() and dump() commands to be universally accessible.
         """
         self.get_response = get_response
+
+        # Under ASGI, Django passes an async get_response. Mark this middleware as async too, so that Django awaits it.
+        self.is_async = iscoroutinefunction(get_response)
+        if self.is_async:
+            if markcoroutinefunction is not None:
+                markcoroutinefunction(self)
+            else:  # pragma: no cover
+                # asgiref before 3.6, as installed on Python 3.6, which CI tests. How Django before 4.1 detects async
+                # middleware.
+                self._is_coroutine = asyncio.coroutines._is_coroutine  # pylint: disable=protected-access
 
         # Add global dd() function.
         __builtins__["dd"] = dd
@@ -109,9 +139,33 @@ class DumpAndDieMiddleware:
         Return standard response if nothing dumped.
         Otherwise return dump view.
         """
+        if self.is_async:
+            return self.__acall__(request)
+
         # Get the response
         response = self.get_response(request)
+        return self._process_response(request, response)
 
+    async def __acall__(self, request):
+        """
+        Async version of __call__, used under ASGI.
+        Awaits the rest of the middleware chain directly, and only switches to a thread when something was dumped.
+        """
+        response = await self.get_response(request)
+
+        # Nothing was dumped, so the response is returned unchanged, without leaving the event loop.
+        if not dump_objects:
+            return response
+
+        # Rendering the dump page can query the database, such as for a dumped QuerySet, which Django only allows
+        # in sync code. So render it in a thread.
+        return await sync_to_async(self._process_response, thread_sensitive=True)(request, response)
+
+    def _process_response(self, request, response):
+        """
+        Return the dump page instead of the response if anything was dumped.
+        After an unhandled exception, add the dumps to the error page instead.
+        """
         # Determine if view had an unhandled non-dd exception.
         # This attribute will be set by the "process_exception" method below.
         has_non_dd_exception = getattr(request, "has_non_dd_exception", False)

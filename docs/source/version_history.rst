@@ -15,6 +15,14 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Changed: the middleware is async-capable.** On Django 3.1 or later, under
+  ASGI, ``DumpAndDieMiddleware`` runs async, so Django no longer wraps the rest
+  of the middleware chain in ``async_to_sync`` around it, and normal requests
+  don't switch threads for it. ``dump()`` and ``dd()`` work in async views, and
+  the dump page is rendered in a thread so that dumped QuerySets can be
+  evaluated. Under WSGI nothing changes.
+  (`#33 <https://github.com/DJBarnes/django-dump-die/issues/33>`_)
+
 * **Added: breaks between dumps.** ``dump.br()`` shows a break between the
   objects dumped before and after it: a blank row, as tall as a one-line dump,
   with a dashed line across it. ``DJANGO_DD_BREAK_STYLE`` sets the line to
