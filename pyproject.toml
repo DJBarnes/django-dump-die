@@ -89,6 +89,7 @@ test = [
     "coverage",
     "django-expanded-test-cases",
     "freezegun",
+    "pillow",
     "pytest",
     "pytest-cov",
     "pytest-django",
