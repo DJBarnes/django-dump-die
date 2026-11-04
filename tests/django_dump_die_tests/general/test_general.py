@@ -33,6 +33,17 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
         )
 
     @override_settings(DEBUG=True)
+    def test_dump_page_and_template_dumps_do_not_load_bootstrap(self):
+        """Verify neither the dump page nor the dump template tag loads Bootstrap or jQuery."""
+        for url_name in ("django_dump_die__tests__general:dd_only", "django_dump_die:template-dump-example"):
+            with self.subTest(url=url_name):
+                content = self.client.get(reverse(url_name)).content.decode("utf-8").lower()
+
+                self.assertNotIn("bootstrap", content)
+                self.assertNotIn("jquery", content)
+                self.assertIn("django_dump_die/css/dd.css", content)
+
+    @override_settings(DEBUG=True)
     def test_dump_without_a_dd_still_shows_dump_view(self):
         """Verify that only using dump and no dd still shows the dump view."""
         self.assertGetResponse(

@@ -15,6 +15,14 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Fixed: the dump template tag restyled the whole page.** ``{% dump %}``
+  loaded Bootstrap 4's CSS and the dump page's styles for ``body`` and ``hr``,
+  which changed the fonts, colors, and layout of the page around the dump, and
+  clashed with a page's own Bootstrap, such as AdminLTE's Bootstrap 3. The
+  package no longer loads Bootstrap's CSS, and its CSS now only styles the
+  dumped output. The dump page itself looks the same as before.
+  (`#19 <https://github.com/DJBarnes/django-dump-die/issues/19>`_)
+
 * **Fixed: DJANGO_DD_INCLUDE_MAGIC_METHODS didn't show magic methods.** Magic
   names also start with an underscore, so they were left out unless
   ``DJANGO_DD_INCLUDE_PRIVATE_MEMBERS`` was on too. They now only follow

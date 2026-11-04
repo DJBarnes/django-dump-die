@@ -1,15 +1,105 @@
 @import "./_toolbar_properties.css";
 
-body {
-    position: relative;
-    font-family: monospace;
-    color: #839496;
-    background-color: #002b36;
+/* Base element styles, from the Bootstrap 4 styles the dump page used to load. Scoped to the dump page and to dumped
+   output, so that they don't change a page that uses the dump template tag. :where() gives them no more specificity
+   than Bootstrap's element selectors had, so the rules below still override them. */
+:where(html.dump-die-page),
+:where(html.dump-die-page) *,
+:where(html.dump-die-page) *::before,
+:where(html.dump-die-page) *::after,
+:where(.dump-wrapper),
+:where(.dump-wrapper) *,
+:where(.dump-wrapper) *::before,
+:where(.dump-wrapper) *::after {
+    box-sizing: border-box;
+}
 
+:where(html.dump-die-page) {
+    font-family: sans-serif;
+    line-height: 1.15;
+    -webkit-text-size-adjust: 100%;
+}
+
+:where(html.dump-die-page) body {
+    margin: 0;
+}
+
+:where(html.dump-die-page body, .dump-wrapper) {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: left;
+}
+
+:where(html.dump-die-page) :is(h1, h2) {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.2;
+    color: inherit;
+}
+
+:where(html.dump-die-page) h1 {
+    font-size: 2.5rem;
+}
+
+:where(html.dump-die-page) h2 {
+    font-size: 2rem;
+}
+
+:where(html.dump-die-page, .dump-wrapper) :is(p, ul) {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+:where(html.dump-die-page, .dump-wrapper) ul ul {
+    margin-bottom: 0;
+}
+
+:where(html.dump-die-page, .dump-wrapper) a {
+    color: #007bff;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+:where(html.dump-die-page, .dump-wrapper) a:not([href]):not([tabindex]) {
+    color: inherit;
+    text-decoration: none;
+}
+
+:where(html.dump-die-page, .dump-wrapper) code {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 87.5%;
+    color: #e83e8c;
+    word-break: break-word;
+}
+
+:where(html.dump-die-page) hr {
+    box-sizing: content-box;
+    height: 0;
+    overflow: visible;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* The dump page itself. Not applied to a page that uses the dump template tag. */
+html.dump-die-page body {
+    position: relative;
     margin-bottom: 15px;
 }
 
-hr {
+/* Dumped output gets its font and colors from its wrapper, so it looks the same in any page. */
+html.dump-die-page body,
+.dump-wrapper {
+    font-family: monospace;
+    color: #839496;
+    background-color: #002b36;
+}
+
+html.dump-die-page hr {
     border: 1px solid;
     color: #d0c095;
 }
@@ -46,6 +136,20 @@ hr {
 
 .dd-wrapper {
     border-left: 1px dashed #d0c095;
+}
+
+/* Opening and closing sections. dd.js sets these classes, which Bootstrap's collapse also used. */
+.dd-wrapper.collapse:not(.show),
+.li-wrapper.collapse:not(.show) {
+    display: none;
+}
+
+.dd-wrapper.collapsing,
+.li-wrapper.collapsing {
+    position: relative;
+    height: 0;
+    overflow: hidden;
+    transition: height 0.35s ease;
 }
 
 a.arrow-toggle {
@@ -173,7 +277,8 @@ a.arrow-toggle {
 }
 
 @media (prefers-color-scheme: light) {
-    body {
+    html.dump-die-page body,
+    .dump-wrapper {
         color: #657b83;
         background-color: #fdf6e3;
     }
@@ -204,7 +309,7 @@ a.arrow-toggle {
         border-color: #d0c095;
     }
 
-    hr {
+    html.dump-die-page hr {
         color: #d0c095;
     }
 
@@ -246,7 +351,8 @@ a.arrow-toggle {
 }
 
 @media (prefers-color-scheme: dark) {
-    body {
+    html.dump-die-page body,
+    .dump-wrapper {
         color: #839496;
         background-color: #002b36;
     }
@@ -277,7 +383,7 @@ a.arrow-toggle {
         border-color: #054757;
     }
 
-    hr {
+    html.dump-die-page hr {
         color: #054757;
     }
 

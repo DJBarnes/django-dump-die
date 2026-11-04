@@ -8,7 +8,8 @@
     {% if custom_color_theme.light %}
       @media (prefers-color-scheme: light)
       {
-        body {
+        html.dump-die-page body,
+        .dump-wrapper {
           {% if custom_color_theme.light.color %}
             color: {{ custom_color_theme.light.color }};
           {% endif %}
@@ -58,7 +59,7 @@
             color: #d0c095;
           {% endif %}
         }
-        hr {
+        html.dump-die-page hr {
           {% if custom_color_theme.light.border %}
             color: {{ custom_color_theme.light.border }};
           {% else %}
@@ -72,7 +73,8 @@
     {% if custom_color_theme.dark %}
       @media (prefers-color-scheme: dark)
       {
-        body {
+        html.dump-die-page body,
+        .dump-wrapper {
           {% if custom_color_theme.dark.color %}
             color: {{ custom_color_theme.dark.color }};
           {% endif %}
@@ -122,7 +124,7 @@
             color: #054757;
           {% endif %}
         }
-        hr {
+        html.dump-die-page hr {
           {% if custom_color_theme.dark.border %}
             color: {{ custom_color_theme.dark.border }};
           {% else %}
@@ -269,7 +271,8 @@
   /************************/
   /* Forcing Light */
   {% if force_light_theme %}
-    body {
+    html.dump-die-page body,
+    .dump-wrapper {
       {% if custom_color_theme.light.color %}
         color: {{ custom_color_theme.light.color }};
       {% else %}
@@ -323,7 +326,7 @@
         color: #d0c095;
       {% endif %}
     }
-    hr {
+    html.dump-die-page hr {
       {% if custom_color_theme.light.border %}
         color: {{ custom_color_theme.light.border }};
       {% else %}
@@ -390,7 +393,8 @@
 
   /* Forcing Dark */
   {% if force_dark_theme %}
-    body {
+    html.dump-die-page body,
+    .dump-wrapper {
       {% if custom_color_theme.dark.color %}
         color: {{ custom_color_theme.dark.color }};
       {% else %}
@@ -444,7 +448,7 @@
         color: #054757;
       {% endif %}
     }
-    hr {
+    html.dump-die-page hr {
       {% if custom_color_theme.dark.border %}
         color: {{ custom_color_theme.dark.border }};
       {% else %}

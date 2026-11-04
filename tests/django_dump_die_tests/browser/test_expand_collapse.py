@@ -238,3 +238,22 @@ class DumpDieBrowserTestCase(LiveServerTestCase):
         self.assertToggleState(self.get_states()[0], True)
         toggle.click()
         self.assertToggleState(self.get_states()[0], False)
+
+    def test_template_dump_leaves_the_page_styles_alone(self):
+        """Verify the dump template tag doesn't restyle the page around it, while the dump keeps its own look."""
+        self.open_page("django_dump_die__tests__browser:template_dump")
+        styles = self.driver.execute_script("""
+            const style = (selector) => {
+                const computed = getComputedStyle(document.querySelector(selector));
+                return {font: computed.fontFamily, background: computed.backgroundColor};
+            };
+            return {body: style('body'), heading: style('h1'), dump: style('.dump-wrapper')};
+            """)
+
+        # The page keeps the browser's default font and background.
+        self.assertNotIn("monospace", styles["body"]["font"])
+        self.assertNotIn("monospace", styles["heading"]["font"])
+        self.assertEqual(styles["body"]["background"], "rgba(0, 0, 0, 0)")
+        # The dump has its own font and background.
+        self.assertIn("monospace", styles["dump"]["font"])
+        self.assertNotEqual(styles["dump"]["background"], "rgba(0, 0, 0, 0)")

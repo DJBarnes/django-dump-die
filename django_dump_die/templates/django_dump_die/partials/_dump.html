@@ -2,7 +2,7 @@
 {% if dump_enabled %}
   {% if render_head %}
     {# Load required css and js for dump to be styled correctly #}
-    {# NOTE: This may alter the look of the page as it could override site css and js. #}
+    {# The CSS only styles the dumped output, so it doesn't change the rest of the page. #}
     {% include "django_dump_die/partials/_head.html" %}
   {% endif %}
 
