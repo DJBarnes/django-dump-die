@@ -32,13 +32,32 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
             expected_not_content=["<div><h1>Django DumpDie</h1></div>"],
         )
 
+    @override_settings(DEBUG=True)
     def test_dump_without_a_dd_still_shows_dump_view(self):
         """Verify that only using dump and no dd still shows the dump view."""
-        pass
+        self.assertGetResponse(
+            "django_dump_die__tests__general:dump_only",
+            expected_title="DD",
+            expected_header="Django DumpDie",
+            expected_content=["Dumped without dd."],
+            expected_not_content=["<p>Sample page body content</p>"],
+        )
 
+    @override_settings(DEBUG=True)
     def test_dd_without_any_dumps_still_shows_dump_view(self):
         """Verify that only using dd and no dumps still shows the dump view."""
-        pass
+        self.assertGetResponse(
+            "django_dump_die__tests__general:dd_only",
+            expected_title="DD",
+            expected_header="Django DumpDie",
+            expected_content=["Only dd, without dumps."],
+        )
+
+    @override_settings(DEBUG=True, DJANGO_DD_FORCE_LIGHT_THEME=True, DJANGO_DD_FORCE_DARK_THEME=True)
+    def test_forcing_both_light_and_dark_themes_raises_an_error(self):
+        """Verify the dump page refuses settings that force both the light and the dark theme."""
+        with self.assertRaisesMessage(ValueError, "You can't force both light and dark themes."):
+            self.client.get(reverse("django_dump_die__tests__general:dd_only"))
 
     @override_settings(DEBUG=False)
     def test_debug_off_skips_all_dumps(self):
