@@ -212,6 +212,18 @@ dump tag.
 
     {% dump object_to_dump %}
 
+.. warning::
+
+    The template tag can't dump a callable, such as a function, a class, or a
+    method. Django templates call a callable variable before the tag gets it,
+    so the tag dumps what the call returns, and the call runs. If the callable
+    needs arguments, the tag dumps an empty string instead. For example,
+    ``{% dump user.get_full_name %}`` dumps the user's full name, not the
+    method.
+
+    To dump a callable itself, use ``dump()`` or ``dd()`` from Python code,
+    which show it without calling it.
+
 .. note::
 
     There are no extra parameters that can be sent to the tag like there are

@@ -73,9 +73,79 @@ deepcopy_unique_map = {}
 # endregion Module Variables
 
 
+# region Callable Handling
+
+
+class NotCalledInTemplates:
+    """Holds a dumped callable, such as a function or a class, so that the templates pass it on without calling it.
+
+    Why this is needed:
+    When a Django template looks up a variable whose value is callable, it calls it with no arguments and uses the
+    return value. That is what lets templates write {{ user.get_full_name }} without parentheses. The only way to
+    stop it is a do_not_call_in_templates = True attribute on the value. If the call raises a TypeError because
+    arguments are needed, the template uses an empty string instead.
+
+    The dumped object has to pass through template variables: _dump_objects.html gives it to the dump_object tag,
+    and the templates that dump_object renders give the root object and the deepcopy original on to the dump_object
+    calls for its children. Without this holder, every one of those lookups would call a dumped callable. A dumped
+    function would run, possibly several times, and its return value would be dumped instead of the function.
+    A dumped class would be dumped as a new instance of itself, or as an empty string if its constructor needs
+    arguments.
+
+    The do_not_call_in_templates attribute can't be set on the dumped object itself: it is the user's own object,
+    and functions, classes, and builtins may not accept new attributes, or would keep them after the dump.
+
+    How it is used:
+
+    * Python code wraps a callable with _hold_if_callable() right before handing it to a template: the dump_objects
+      tag for the dumped objects, and the type handlers for the context that the dump_object tag renders.
+    * The dump_object tag unwraps it with _release() as soon as it receives it, so all other Python code works with
+      the real object.
+    * So templates only ever see the holder. They must not use the dumped object's own value, such as with
+      {{ object|length }}, since they would get the holder's. Anything a template shows about the object is worked
+      out in Python and put in the context instead, such as the iterable length.
+
+    Only callables are wrapped, so that templates can still use other objects directly, such as a DumpBreak's size.
+
+    Nested values don't need this: a callable member is listed in the Functions section, as text, and is never
+    passed to dump_object.
+
+    This can't help the {% dump %} template tag: the template that uses it resolves (and so calls) the variable
+    before the tag receives it.
+    """
+
+    do_not_call_in_templates = True
+
+    def __init__(self, obj):
+        self.obj = obj
+
+
+def _hold_if_callable(obj):
+    """Wrap a callable in NotCalledInTemplates before a template gets it, so that the template doesn't call it.
+
+    See NotCalledInTemplates for why.
+    """
+    return NotCalledInTemplates(obj) if callable(obj) else obj
+
+
+def _release(obj):
+    """Return the object held in NotCalledInTemplates, or the object itself if it wasn't wrapped.
+
+    See NotCalledInTemplates for why.
+    """
+    return obj.obj if isinstance(obj, NotCalledInTemplates) else obj
+
+
+# endregion Callable Handling
+
+
 @register.inclusion_tag("django_dump_die/partials/_dump.html", takes_context=True)
 def dump(context, obj):
-    """Template tag that can be used in templates to use dd"""
+    """Template tag that can be used in templates to use dd
+
+    Note: if obj is callable, the calling template has already called it, and obj is its return value.
+    Django resolves the tag's argument before the tag runs, so this tag can't prevent that. See NotCalledInTemplates.
+    """
     # Like dump() and dd() in Python code, does nothing unless DEBUG is on.
     if not settings.DEBUG:
         return {"dump_enabled": False}
@@ -112,6 +182,13 @@ def dump_objects(objects):
         raise ValueError(
             "DJANGO_DD_BREAK_SIZE must be a whole number of lines, 1 or more, not {0!r}.".format(BREAK_SIZE)
         )
+    # _dump_objects.html passes each dumped object, and its deepcopy original, to the dump_object tag through
+    # template variables, which would call them if they are callable. So hold callables until dump_object gets them.
+    # See NotCalledInTemplates.
+    objects = [
+        (filename, linenumber, obj_name, _hold_if_callable(obj), function_doc, start, end, _hold_if_callable(original))
+        for filename, linenumber, obj_name, obj, function_doc, start, end, original in objects
+    ]
     return {"objects": objects, "break_style": BREAK_STYLE, "break_size": BREAK_SIZE}
 
 
@@ -156,6 +233,11 @@ def dump_object(
     :param original_obj: Original object, for handling uniques if dealing with deepcopy.
     :param parent_is_intermediate: Boolean indicating that parent is intermediate type. Do not recurse further.
     """
+    # A callable object, root object, or original object reaches this tag wrapped, so that the template passing it
+    # here didn't call it. Unwrap them, so that the rest of the code works with the real objects.
+    # See NotCalledInTemplates.
+    obj, root_obj, original_obj = _release(obj), _release(root_obj), _release(original_obj)
+
     # Set up set to store uniques to skip if not passed in.
     # Will be used to skip objects already done to prevent infinite loops.
     skip_set = skip_set or set()
@@ -463,12 +545,14 @@ def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, 
     attributes, functions = get_obj_values(obj)
 
     # Return information required to render object.
+    # The object, root object, and original object go through template variables again, to the dump_object calls
+    # for the children, so callables stay wrapped. See NotCalledInTemplates.
     context = {
         "include_attributes": INCLUDE_ATTRIBUTES,
         "include_functions": INCLUDE_FUNCTIONS,
         "collapsable": _get_collapsable_values(),
         "braces": "{}",
-        "object": obj,
+        "object": _hold_if_callable(obj),
         "intermediate": safe_str(obj),
         "unique": unique,
         "root_count": root_count,
@@ -477,12 +561,12 @@ def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, 
         "depth": 0,
         "root_index_start": None,
         "root_index_end": None,
-        "original_obj": original_obj,
+        "original_obj": _hold_if_callable(original_obj),
     }
     if INCLUDE_ATTRIBUTES:
         context["attributes"] = attributes
         context["index"] = 0
-        context["root_obj"] = root_obj
+        context["root_obj"] = _hold_if_callable(root_obj)
         context["skip"] = set()
     if INCLUDE_FUNCTIONS:
         context["functions"] = functions
@@ -549,12 +633,16 @@ def _handle_complex_type(
     is_dict_obj = is_dict(obj)
 
     # Return information required to render object.
+    # The object, root object, and original object go through template variables again, to the dump_object calls
+    # for the children, so callables stay wrapped. See NotCalledInTemplates.
     context = {
         "include_attributes": INCLUDE_ATTRIBUTES,
         "include_functions": INCLUDE_FUNCTIONS,
         "collapsable": _get_collapsable_values(),
         "braces": braces,
-        "object": obj,
+        "object": _hold_if_callable(obj),
+        # Worked out here, since the template can't use the length filter on an object that may be wrapped.
+        "length": _get_length(obj) if is_iterable_obj or is_dict_obj else None,
         "unique": unique,
         "root_count": root_count,
         "type": get_obj_type(obj),
@@ -563,12 +651,12 @@ def _handle_complex_type(
         "depth": current_depth,
         "root_index_start": root_index_start,
         "root_index_end": root_index_end,
-        "original_obj": original_obj,
+        "original_obj": _hold_if_callable(original_obj),
     }
     if INCLUDE_ATTRIBUTES:
         context["attributes"] = attributes
         context["index"] = current_iteration
-        context["root_obj"] = root_obj
+        context["root_obj"] = _hold_if_callable(root_obj)
         context["skip"] = skip_set
     if INCLUDE_FUNCTIONS:
         context["functions"] = functions
@@ -711,6 +799,18 @@ def get_obj_values(obj):
         pass  # Ignore sort errors.
 
     return (attributes, functions)
+
+
+def _get_length(obj):
+    """Return the length shown after an iterable's type. 0 if it has none, like Django's length filter.
+
+    Used instead of the template's length filter, which would measure the NotCalledInTemplates holder of a callable.
+    """
+    try:
+        return len(obj)
+    except (TypeError, ValueError):
+        # Such as a Django SessionStore, which is dict-like without a length.
+        return 0
 
 
 def _get_access_modifier(obj):

@@ -2,6 +2,8 @@
 
 
 {# for each object to output #}
+{# A callable obj or original_obj is wrapped in NotCalledInTemplates, so that looking it up here doesn't call it. #}
+{# Pass them on to dump_object, which unwraps them, but don't use their values here. See dump_die.py. #}
 {% for filename, linenumber, obj_name, obj, function_doc, root_index_start, root_index_end, original_obj in objects %}
 
   {# If it is not the first object, add a horizontal line to separate #}

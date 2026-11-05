@@ -15,6 +15,16 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Fixed: dumping a callable called it.** When a dumped object could be
+  called, the dump page's templates called it while rendering it, as Django
+  templates do. A dumped function was run once, or three times if it had no
+  docstring, in which case its return value was dumped instead of the
+  function. A class was dumped as a new instance of it, or as an empty string
+  if its constructor needed arguments. Dumped functions, classes, and other
+  callables are now shown without being called. The ``{% dump %}`` template
+  tag still can't dump a callable, since Django calls it before the tag gets
+  it.
+
 * **Changed: the middleware is async-capable.** On Django 3.1 or later, under
   ASGI, ``DumpAndDieMiddleware`` runs async, so Django no longer wraps the rest
   of the middleware chain in ``async_to_sync`` around it, and normal requests

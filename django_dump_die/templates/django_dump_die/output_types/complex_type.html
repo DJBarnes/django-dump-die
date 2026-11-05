@@ -1,5 +1,6 @@
+{# object may be wrapped in NotCalledInTemplates (see dump_die.py), so use the values worked out in Python, like length. #}
 
-<span class="type" title="{{ type }}">{{ type }}{% if is_iterable or is_dict %}:{{ object|length }}{% endif %}</span>
+<span class="type" title="{{ type }}">{{ type }}{% if is_iterable or is_dict %}:{{ length }}{% endif %}</span>
 
 {% if intermediate %}
   <code class="intermediate">{{ intermediate }}</code>

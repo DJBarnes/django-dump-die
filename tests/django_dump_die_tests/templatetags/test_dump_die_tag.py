@@ -135,6 +135,37 @@ class DumpDieTagSettingsTestCase(SimpleTestCase):
                 self.assertEqual(content.count('class="method-type"'), 2)
                 self.assertIn("normal_work", content)
 
+    def test_dumped_callables_are_not_called(self):
+        """Verify dumping a function, a callable object, or a class shows it without calling it."""
+        calls = []
+
+        def no_docstring():  # pylint: disable=missing-function-docstring
+            calls.append("function")
+
+        class CallableObject:
+            """Object that can be called."""
+
+            def __call__(self):
+                calls.append("object")
+
+        class NeedsArguments:
+            """Class that can't be created without an argument."""
+
+            def __init__(self, value):
+                calls.append("class")
+                self.value = value
+
+        for obj in (no_docstring, CallableObject(), NeedsArguments):
+            with self.subTest(obj=obj):
+                dump(obj)
+                render_dumped_objects()
+
+                self.assertEqual(calls, [])
+
+        # The class is dumped as the class itself, not an instance or an empty string.
+        dump(NeedsArguments)
+        self.assertIn('<span class="type" title="type">type</span>', render_dumped_objects())
+
     @patch("django_dump_die.templatetags.dump_die.INCLUDE_PRIVATE_METHODS", True)
     def test_private_members_included(self):
         """Verify private attributes are shown, with the private access modifier, when they are on."""
