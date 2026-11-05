@@ -212,6 +212,31 @@ class DumpDieBrowserTestCase(LiveServerTestCase):
                     if state["collapsible"] and state["type"] == section_type:
                         self.assertToggleState(state, False)
 
+    # The settings show the toolbar's buttons, and the patched constants add the sections.
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTIONS=True, DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
+    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTIONS", True)
+    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTION_RESULTS", True)
+    def test_toolbar_expands_and_collapses_function_results(self):
+        """Verify the toolbar's Function Results buttons only open and close those sections."""
+        self.open_page()
+        types = {state["type"] for state in self.get_states() if state["collapsible"]}
+        self.assertEqual(types, {"type", "attr", "result", "func"})
+
+        # Function Results start open, so collapse them first.
+        self.click_toolbar("collapse-results")
+        for state in self.get_states():
+            if state["collapsible"] and state["type"] == "result":
+                self.assertToggleState(state, False)
+            elif state["collapsible"] and state["type"] == "attr":
+                self.assertToggleState(state, True)
+
+        self.click_toolbar("expand-results")
+        for state in self.get_states():
+            if state["collapsible"] and state["type"] == "result":
+                self.assertToggleState(state, True)
+            elif state["collapsible"] and state["type"] == "func":
+                self.assertToggleState(state, False)
+
     def test_duplicate_uniques_highlight_together(self):
         """Verify hovering over a unique that appears more than once highlights all of its copies."""
         self.open_page()

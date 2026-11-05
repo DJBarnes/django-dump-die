@@ -16,6 +16,7 @@ def dd_view(request, objects, template_name="django_dump_die/dd.html", extra_con
     include_util_toolbar = getattr(settings, "DJANGO_DD_INCLUDE_UTILITY_TOOLBAR", True)
     attrs_enabled = getattr(settings, "DJANGO_DD_INCLUDE_ATTRIBUTES", True)
     funcs_enabled = getattr(settings, "DJANGO_DD_INCLUDE_FUNCTIONS", False)
+    results_enabled = getattr(settings, "DJANGO_DD_INCLUDE_FUNCTION_RESULTS", False)
 
     # Get user theme choices.
     force_light_theme = getattr(settings, "DJANGO_DD_FORCE_LIGHT_THEME", False)
@@ -32,6 +33,9 @@ def dd_view(request, objects, template_name="django_dump_die/dd.html", extra_con
         "include_util_toolbar": include_util_toolbar,
         "attrs_enabled": attrs_enabled,
         "funcs_enabled": funcs_enabled,
+        "results_enabled": results_enabled,
+        # With more than one section, each section has its own arrow, and the toolbar has buttons for each.
+        "sections_collapsible": sum(bool(enabled) for enabled in (attrs_enabled, results_enabled, funcs_enabled)) > 1,
         "force_light_theme": force_light_theme,
         "force_dark_theme": force_dark_theme,
         "custom_color_theme": custom_color_theme,

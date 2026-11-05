@@ -284,7 +284,7 @@ const djangoDumpDie = {
     },
 
     /**
-     * Open or close all toggles of one type ("type", "attr", or "func"), or all toggles.
+     * Open or close all toggles of one type ("type", "attr", "result", or "func"), or all toggles.
      */
     setTypeOpen(type, open) {
         const filter = type ? (toggle) => toggle.dataset.ddType === type : null;
@@ -302,6 +302,9 @@ const djangoDumpDie = {
     },
     expandAllAttributes() {
         djangoDumpDie.setTypeOpen('attr', true);
+    },
+    expandAllFunctionResults() {
+        djangoDumpDie.setTypeOpen('result', true);
     },
     expandAllFunctions() {
         djangoDumpDie.setTypeOpen('func', true);
@@ -325,6 +328,9 @@ const djangoDumpDie = {
     collapseAllAttributes() {
         djangoDumpDie.setTypeOpen('attr', false);
     },
+    collapseAllFunctionResults() {
+        djangoDumpDie.setTypeOpen('result', false);
+    },
     collapseAllFunctions() {
         djangoDumpDie.setTypeOpen('func', false);
     },
@@ -343,12 +349,14 @@ const djangoDumpDie = {
             'expand-all': djangoDumpDie.expandAllElements,
             'expand-types': djangoDumpDie.expandAllTypes,
             'expand-attrs': djangoDumpDie.expandAllAttributes,
+            'expand-results': djangoDumpDie.expandAllFunctionResults,
             'expand-funcs': djangoDumpDie.expandAllFunctions,
             'expand-1st-lvl': djangoDumpDie.expandFirstLevel,
             'expand-2nd-lvl': djangoDumpDie.expandSecondLevel,
             'collapse-all': djangoDumpDie.collapseAllElements,
             'collapse-types': djangoDumpDie.collapseAllTypes,
             'collapse-attrs': djangoDumpDie.collapseAllAttributes,
+            'collapse-results': djangoDumpDie.collapseAllFunctionResults,
             'collapse-funcs': djangoDumpDie.collapseAllFunctions,
             'collapse-1st-lvl': djangoDumpDie.collapseFirstLevel,
             'collapse-2nd-lvl': djangoDumpDie.collapseSecondLevel,

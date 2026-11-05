@@ -15,12 +15,17 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
-* **Fixed: the Functions section could be closed when it was the only
-  section.** With ``DJANGO_DD_INCLUDE_ATTRIBUTES`` off and
-  ``DJANGO_DD_INCLUDE_FUNCTIONS`` on, the Functions section is always shown,
-  without an arrow, but clicking its name still hid it, and there was no
-  arrow to show that it could be opened again. It now stays shown, like the
-  Attributes section does when it's the only one.
+* **Added: function results.** With ``DJANGO_DD_INCLUDE_FUNCTION_RESULTS`` on,
+  a new Function Results section shows what some functions of a dumped object
+  return: a few built-in ones for dates and times, the methods listed in a
+  class's ``dd_function_results`` attribute, and the functions set by class
+  name in ``DJANGO_DD_FUNCTION_RESULTS``. Only functions that need no
+  arguments are run, and an error is shown in place of a result. It's off by
+  default, since it runs code on every dump page.
+  ``DJANGO_DD_FUNCTION_RESULTS_START_EXPANDED`` sets whether the section
+  starts open.
+  (`#11 <https://github.com/DJBarnes/django-dump-die/issues/11>`_,
+  `#12 <https://github.com/DJBarnes/django-dump-die/issues/12>`_)
 
 * **Added: properties and class attributes are marked.** In the Attributes
   section, properties show ``@property`` before their name, and cached
@@ -31,6 +36,13 @@ Other Changes
   tooltip. Their color can be set with ``identifiers.class_attribute`` in
   ``DJANGO_DD_COLOR_SCHEME``.
   (`#40 <https://github.com/DJBarnes/django-dump-die/issues/40>`_)
+
+* **Fixed: the Functions section could be closed when it was the only
+  section.** With ``DJANGO_DD_INCLUDE_ATTRIBUTES`` off and
+  ``DJANGO_DD_INCLUDE_FUNCTIONS`` on, the Functions section is always shown,
+  without an arrow, but clicking its name still hid it, and there was no
+  arrow to show that it could be opened again. It now stays shown, like the
+  Attributes section does when it's the only one.
 
 * **Fixed: dumping a callable called it.** When a dumped object could be
   called, the dump page's templates called it while rendering it, as Django

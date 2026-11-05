@@ -75,6 +75,10 @@ class SimpleClass:
 
     sample_class_var = 23
 
+    # Functions whose results are shown when DJANGO_DD_INCLUDE_FUNCTION_RESULTS is on.
+    # sample_class_param_func needs an argument, so it shows that it can't be run.
+    dd_function_results = ("sample_class_func", "sample_classmethod_func", "sample_class_param_func")
+
     def __init__(self):
         self._sample_private_module = ModuleType("django.html")
         self._sample_private_bytes = b"sample bytes"

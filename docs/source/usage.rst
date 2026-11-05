@@ -172,6 +172,73 @@ Example::
     dump.br()
     dd(order.items)
 
+.. _function-results:
+
+Function Results
+================
+
+The dump can also run some functions of a dumped object, and show what they
+return, in a **Function Results** section between the Attributes and the
+Functions. This is off by default. Turn it on with
+``DJANGO_DD_INCLUDE_FUNCTION_RESULTS``::
+
+    DJANGO_DD_INCLUDE_FUNCTION_RESULTS = True
+
+.. warning::
+
+    Function results are found by **running the functions**, every time a dump
+    page is shown. Before listing a function, consider that it could:
+
+    * change something, such as saving to the database or sending an email;
+    * be slow, or query the database, which adds to every dump page;
+    * touch the filesystem or the network;
+    * raise an error.
+
+    Only list functions that are quick and change nothing. For your own code, a
+    ``@property`` is often a better choice: properties are always shown in the
+    Attributes section, marked ``@property``, and readers of your code can see
+    that they are meant to be cheap.
+
+The functions to run come from three places. All three only apply while
+``DJANGO_DD_INCLUDE_FUNCTION_RESULTS`` is on.
+
+* **A built-in list** for a few standard types:
+
+  * ``date``: ``weekday()``
+  * ``datetime``: ``weekday()``, ``timestamp()``, ``utcoffset()``, ``tzname()``
+  * ``time``: ``utcoffset()``, ``tzname()``
+  * ``timedelta``: ``total_seconds()``
+
+* **A dd_function_results class attribute** on your own classes, listing the
+  names of their methods to run. It is a plain tuple, so your code doesn't need
+  to import anything from this package::
+
+    class Invoice(models.Model):
+        # django-dump-die: show these methods' results when an Invoice is dumped.
+        dd_function_results = ("total", "is_paid")
+
+* **The DJANGO_DD_FUNCTION_RESULTS setting**, for classes you can't change,
+  by class name. A class's entry replaces the built-in list for that class, so
+  an empty list turns it off. See :doc:`configuration`.
+
+Only objects that have functions listed get a Function Results section, so
+other objects look the same as with the setting off. The results are shown by
+name, followed by ``()``. Some functions can't be run,
+and show why in their row instead of a result:
+
+* **Needs Arguments:** only functions that can be called without arguments are
+  run.
+* **An error:** if the function raises an error, it is shown in place of the
+  result, and the rest of the dump is still shown. Hover over it for the
+  traceback.
+* **Not Found** or **Not A Function:** the listed name isn't a function of the
+  object, such as after a typo.
+
+Nothing is run for a dumped class, as opposed to an instance of one, since its
+methods aren't bound to an object. Like attribute values, results are worked out
+when the dump page is shown, after the view has finished, not when ``dump()``
+is called.
+
 Inside A Template
 =================
 

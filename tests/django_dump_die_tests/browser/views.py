@@ -8,7 +8,9 @@ from django_dump_die.middleware import dd
 
 
 class BrowserTestClass:
-    """Class with attributes and functions, for checking the Attributes and Functions sections."""
+    """Class with attributes and functions, for checking the Attributes, Function Results, and Functions sections."""
+
+    dd_function_results = ("do_work",)
 
     def __init__(self):
         self.number = 42

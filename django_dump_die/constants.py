@@ -77,6 +77,20 @@ INCLUDE_FILENAME_LINENUMBER = getattr(settings, "DJANGO_DD_INCLUDE_FILENAME_LINE
 INCLUDE_ATTRIBUTES = getattr(settings, "DJANGO_DD_INCLUDE_ATTRIBUTES", True)
 # Whether functions should be included in the output.
 INCLUDE_FUNCTIONS = getattr(settings, "DJANGO_DD_INCLUDE_FUNCTIONS", False)
+# Whether the results of some functions should be included in the output. Off by default, since it runs code.
+INCLUDE_FUNCTION_RESULTS = getattr(settings, "DJANGO_DD_INCLUDE_FUNCTION_RESULTS", False)
+# Functions whose results are shown, by class name. A class's entry replaces its entry in DEFAULT_FUNCTION_RESULTS.
+FUNCTION_RESULTS = getattr(settings, "DJANGO_DD_FUNCTION_RESULTS", {})
+# Functions whose results are shown by default, by class name. Only functions that are cheap, have no side effects,
+# and don't touch the filesystem or network.
+DEFAULT_FUNCTION_RESULTS = {
+    "date": ("weekday",),
+    "datetime": ("weekday", "timestamp", "utcoffset", "tzname"),
+    "time": ("utcoffset", "tzname"),
+    "timedelta": ("total_seconds",),
+}
+# Name of the class attribute that lists the methods whose results are shown for that class's objects.
+FUNCTION_RESULTS_ATTRIBUTE = "dd_function_results"
 # Whether function doc output should try to fit on one line, or output with original newlines.
 MULTILINE_FUNCTION_DOCS = getattr(settings, "DJANGO_DD_MULTILINE_FUNCTION_DOCS", False)
 # Line shown across a break added with dump.br(): "dashed", "solid", "dotted", or "blank" for no line.
@@ -90,6 +104,8 @@ COLORIZE_DUMPED_OBJECT_NAME = getattr(settings, "DJANGO_DD_COLORIZE_DUMPED_OBJEC
 CONTENT_STARTS_EXPANDED = getattr(settings, "DJANGO_DD_CONTENT_STARTS_EXPANDED", False)
 # Whether the attributes for an object should start expanded for viewing.
 ATTRIBUTES_START_EXPANDED = getattr(settings, "DJANGO_DD_ATTRIBUTES_START_EXPANDED", True)
+# Whether the function results for an object should start expanded for viewing.
+FUNCTION_RESULTS_START_EXPANDED = getattr(settings, "DJANGO_DD_FUNCTION_RESULTS_START_EXPANDED", True)
 # Whether the functions for an object should start expanded for viewing.
 FUNCTIONS_START_EXPANDED = getattr(settings, "DJANGO_DD_FUNCTIONS_START_EXPANDED", False)
 # Whether the output should include private attributes and functions.

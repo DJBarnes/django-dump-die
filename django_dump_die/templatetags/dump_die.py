@@ -18,6 +18,11 @@ from django_dump_die.constants import (
     BREAK_SIZE,
     BREAK_STYLE,
     BREAK_STYLES,
+    DEFAULT_FUNCTION_RESULTS,
+    FUNCTION_RESULTS,
+    FUNCTION_RESULTS_ATTRIBUTE,
+    FUNCTION_RESULTS_START_EXPANDED,
+    INCLUDE_FUNCTION_RESULTS,
     SIMPLE_TYPES,
     INTERMEDIATE_TYPES,
     ADDITIONAL_SIMPLE_TYPES,
@@ -108,8 +113,8 @@ class NotCalledInTemplates:
 
     Only callables are wrapped, so that templates can still use other objects directly, such as a DumpBreak's size.
 
-    Nested values don't need this: a callable member is listed in the Functions section, as text, and is never
-    passed to dump_object.
+    Attribute values don't need this: a callable member is listed in the Functions section, as text, and is never
+    passed to dump_object. Function results can be callable, so they are wrapped too.
 
     This can't help the {% dump %} template tag: the template that uses it resolves (and so calls) the variable
     before the tag receives it.
@@ -183,6 +188,9 @@ def dump_objects(objects):
         raise ValueError(
             "DJANGO_DD_BREAK_SIZE must be a whole number of lines, 1 or more, not {0!r}.".format(BREAK_SIZE)
         )
+    if INCLUDE_FUNCTION_RESULTS:
+        _check_function_results_setting()
+
     # _dump_objects.html passes each dumped object, and its deepcopy original, to the dump_object tag through
     # template variables, which would call them if they are callable. So hold callables until dump_object gets them.
     # See NotCalledInTemplates.
@@ -544,14 +552,18 @@ def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, 
 
     # Attempt to get corresponding attribute/function values of object.
     attributes, functions = get_obj_values(obj)
+    function_results = get_function_results(obj) if INCLUDE_FUNCTION_RESULTS else []
 
     # Return information required to render object.
     # The object, root object, and original object go through template variables again, to the dump_object calls
     # for the children, so callables stay wrapped. See NotCalledInTemplates.
     context = {
         "include_attributes": INCLUDE_ATTRIBUTES,
+        # Only objects with functions listed have a Function Results section. Most objects have none, and an
+        # empty section on each of them would only be noise.
+        "include_function_results": bool(function_results),
         "include_functions": INCLUDE_FUNCTIONS,
-        "collapsable": _get_collapsable_values(),
+        "collapsable": _get_collapsable_values(has_function_results=bool(function_results)),
         "braces": "{}",
         "object": _hold_if_callable(obj),
         "intermediate": safe_str(obj),
@@ -564,11 +576,15 @@ def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, 
         "root_index_end": None,
         "original_obj": _hold_if_callable(original_obj),
     }
-    if INCLUDE_ATTRIBUTES:
-        context["attributes"] = attributes
+    if INCLUDE_ATTRIBUTES or function_results:
+        # Used by both sections to dump their values.
         context["index"] = 0
         context["root_obj"] = _hold_if_callable(root_obj)
         context["skip"] = set()
+    if INCLUDE_ATTRIBUTES:
+        context["attributes"] = attributes
+    if function_results:
+        context["function_results"] = function_results
     if INCLUDE_FUNCTIONS:
         context["functions"] = functions
         context["multiline_function_docs"] = MULTILINE_FUNCTION_DOCS
@@ -630,6 +646,11 @@ def _handle_complex_type(
     else:
         attributes, functions = get_obj_values(obj)
 
+    # A query that failed has no results to show, only its error.
+    function_results = []
+    if INCLUDE_FUNCTION_RESULTS and query_exception is None:
+        function_results = get_function_results(obj)
+
     is_iterable_obj = is_iterable(obj) and not is_dict(obj) and not isinstance(obj, memoryview)
     is_dict_obj = is_dict(obj)
 
@@ -638,8 +659,11 @@ def _handle_complex_type(
     # for the children, so callables stay wrapped. See NotCalledInTemplates.
     context = {
         "include_attributes": INCLUDE_ATTRIBUTES,
+        # Only objects with functions listed have a Function Results section. Most objects have none, and an
+        # empty section on each of them would only be noise.
+        "include_function_results": bool(function_results),
         "include_functions": INCLUDE_FUNCTIONS,
-        "collapsable": _get_collapsable_values(),
+        "collapsable": _get_collapsable_values(has_function_results=bool(function_results)),
         "braces": braces,
         "object": _hold_if_callable(obj),
         # Worked out here, since the template can't use the length filter on an object that may be wrapped.
@@ -654,11 +678,15 @@ def _handle_complex_type(
         "root_index_end": root_index_end,
         "original_obj": _hold_if_callable(original_obj),
     }
-    if INCLUDE_ATTRIBUTES:
-        context["attributes"] = attributes
+    if INCLUDE_ATTRIBUTES or function_results:
+        # Used by both sections to dump their values.
         context["index"] = current_iteration
         context["root_obj"] = _hold_if_callable(root_obj)
         context["skip"] = skip_set
+    if INCLUDE_ATTRIBUTES:
+        context["attributes"] = attributes
+    if function_results:
+        context["function_results"] = function_results
     if INCLUDE_FUNCTIONS:
         context["functions"] = functions
         context["multiline_function_docs"] = MULTILINE_FUNCTION_DOCS
@@ -811,6 +839,136 @@ def get_obj_values(obj):
     return (attributes, functions)
 
 
+# region Function Results
+
+
+def _is_list_of_names(names):
+    """Return True if names is a list, tuple, or set of strings. A single string is not, so that it isn't split up."""
+    return isinstance(names, (list, tuple, set, frozenset)) and all(isinstance(name, str) for name in names)
+
+
+def _check_function_results_setting():
+    """Raise a ValueError if DJANGO_DD_FUNCTION_RESULTS isn't a dict of class names to lists of function names."""
+    if not isinstance(FUNCTION_RESULTS, dict):
+        raise ValueError(
+            "DJANGO_DD_FUNCTION_RESULTS must be a dict of class names to lists of function names, not {0!r}.".format(
+                FUNCTION_RESULTS
+            )
+        )
+    for class_name, names in FUNCTION_RESULTS.items():
+        if not _is_list_of_names(names):
+            raise ValueError(
+                "DJANGO_DD_FUNCTION_RESULTS[{0!r}] must be a list of function names, not {1!r}.".format(
+                    class_name, names
+                )
+            )
+
+
+def _get_function_result_row(name, value=None, error=None, error_title=None):
+    """Return one row of the Function Results section. A row with an error shows the error instead of a value."""
+    return {
+        "name": name,
+        # The value goes through a template variable to dump_object, which would call it. See NotCalledInTemplates.
+        "value": _hold_if_callable(value),
+        "access_modifier": _get_access_modifier(name),
+        "error": error,
+        "error_title": error_title,
+    }
+
+
+def _get_function_result_error_row(name, exception):
+    """Return the row of a function result that raised an error, with the error in place of the result."""
+    _, message, _, _, title, _ = _get_exception_attribute(exception)
+    return _get_function_result_row(name, error="{0}: {1}".format(type(exception).__name__, message), error_title=title)
+
+
+def _get_function_result(obj, name):
+    """Run one listed function of the object, and return its row, with the result or the reason it has none."""
+    try:
+        function = getattr(obj, name)
+    except AttributeError:
+        return _get_function_result_row(
+            name,
+            error="Not Found",
+            error_title="Listed in {0} or DJANGO_DD_FUNCTION_RESULTS, but the object has no such function.".format(
+                FUNCTION_RESULTS_ATTRIBUTE
+            ),
+        )
+    except Exception as exception:  # pylint: disable=broad-exception-caught
+        # Such as a listed property that raises an error.
+        return _get_function_result_error_row(name, exception)
+    if not callable(function):
+        return _get_function_result_row(
+            name,
+            error="Not A Function",
+            error_title="Listed in {0} or DJANGO_DD_FUNCTION_RESULTS, but it isn't a function.".format(
+                FUNCTION_RESULTS_ATTRIBUTE
+            ),
+        )
+
+    # Only run functions that need no arguments. Some built-in functions, such as datetime's, have no signature to
+    # check. They are run anyway, and if they need arguments, the TypeError is shown below like any other error.
+    try:
+        signature = inspect.signature(function)
+    except (TypeError, ValueError):
+        signature = None
+    if signature is not None:
+        try:
+            signature.bind()
+        except TypeError:
+            return _get_function_result_row(
+                name,
+                error="Needs Arguments",
+                error_title="Only functions that can be called without arguments are run.",
+            )
+
+    try:
+        value = function()
+    except Exception as exception:  # pylint: disable=broad-exception-caught
+        # Show the error in place of the result, so that the rest of the dump still shows.
+        return _get_function_result_error_row(name, exception)
+
+    return _get_function_result_row(name, value=value)
+
+
+def get_function_results(obj):
+    """Run the functions listed for the object, and return a row for each, sorted by name.
+
+    Only called when DJANGO_DD_INCLUDE_FUNCTION_RESULTS is on. The functions come from:
+      * DJANGO_DD_FUNCTION_RESULTS, for the object's class name. If the class isn't in it, DEFAULT_FUNCTION_RESULTS.
+      * The dd_function_results attribute of the object's class.
+    """
+    # A dumped class's methods aren't bound to an object, so nothing is run.
+    if inspect.isclass(obj):
+        return []
+
+    class_name = get_class_name(obj)
+    names = set(FUNCTION_RESULTS.get(class_name, DEFAULT_FUNCTION_RESULTS.get(class_name, ())))
+    rows = []
+
+    # Read the class attribute without running anything. getattr() would also call a __getattr__ method, which can
+    # return something for any name, such as on a mock object.
+    attribute_names = inspect.getattr_static(obj, FUNCTION_RESULTS_ATTRIBUTE, ())
+    if _is_list_of_names(attribute_names):
+        names.update(attribute_names)
+    else:
+        rows.append(
+            _get_function_result_row(
+                FUNCTION_RESULTS_ATTRIBUTE,
+                error="Not A List Of Function Names",
+                error_title="{0} must be a list or tuple of function names, not {1!r}.".format(
+                    FUNCTION_RESULTS_ATTRIBUTE, attribute_names
+                ),
+            )
+        )
+
+    rows.extend(_get_function_result(obj, name) for name in sorted(names))
+    return rows
+
+
+# endregion Function Results
+
+
 def _get_length(obj):
     """Return the length shown after an iterable's type. 0 if it has none, like Django's length filter.
 
@@ -884,8 +1042,11 @@ def _process_root_indices(start, end, parent_length):
     return start, end
 
 
-def _get_collapsable_values():
-    """Get the arrow and collapsable values"""
+def _get_collapsable_values(has_function_results=False):
+    """Get the arrow and collapsable values
+
+    :param has_function_results: Whether the object has a Function Results section.
+    """
 
     # Determine default sets.
     content_set = {
@@ -902,6 +1063,13 @@ def _get_collapsable_values():
         "class": "" if ATTRIBUTES_START_EXPANDED else "collapsed",
         "aria": "true" if ATTRIBUTES_START_EXPANDED else "false",
     }
+    result_set = {
+        "arrow": "▼" if FUNCTION_RESULTS_START_EXPANDED else "▶",
+        "show": "show" if FUNCTION_RESULTS_START_EXPANDED else "",
+        "always_show": "false",
+        "class": "" if FUNCTION_RESULTS_START_EXPANDED else "collapsed",
+        "aria": "true" if FUNCTION_RESULTS_START_EXPANDED else "false",
+    }
     func_set = {
         "arrow": "▼" if FUNCTIONS_START_EXPANDED else "▶",
         "show": "show" if FUNCTIONS_START_EXPANDED else "",
@@ -910,24 +1078,28 @@ def _get_collapsable_values():
         "aria": "true" if FUNCTIONS_START_EXPANDED else "false",
     }
 
-    # Extra handling if either attr or func output is disabled.
-    # In such a case, it doesn't make sense to have expandable arrows for the remaining one.
-    if INCLUDE_FUNCTIONS is False:
-        attr_set["arrow"] = ""
-        attr_set["show"] = "show"
-        attr_set["always_show"] = "true"
-        attr_set["class"] = "show always-show"
-        attr_set["aria"] = ""
-    if INCLUDE_ATTRIBUTES is False:
-        func_set["arrow"] = ""
-        func_set["show"] = "show"
-        func_set["always_show"] = "true"
-        func_set["class"] = "show always-show"
-        func_set["aria"] = ""
+    # If only one section is shown, it doesn't make sense for it to have an expandable arrow, so it's always shown.
+    sections = [
+        (INCLUDE_ATTRIBUTES, attr_set),
+        (has_function_results, result_set),
+        (INCLUDE_FUNCTIONS, func_set),
+    ]
+    shown_sets = [section_set for included, section_set in sections if included]
+    if len(shown_sets) == 1:
+        shown_sets[0].update(
+            {
+                "arrow": "",
+                "show": "show",
+                "always_show": "true",
+                "class": "show always-show",
+                "aria": "",
+            }
+        )
 
     return {
         "content": content_set,
         "attribute": attr_set,
+        "function_result": result_set,
         "function": func_set,
     }
 

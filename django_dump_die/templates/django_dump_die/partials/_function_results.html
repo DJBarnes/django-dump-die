@@ -1,0 +1,41 @@
+{% load dump_die %}
+{# Only rendered for objects that have functions listed, so it is never empty. #}
+
+
+<a
+  class="arrow-toggle {{ collapsable.function_result.class }}"
+  title="[Ctrl+click] Expand all children"
+  {% if collapsable.function_result.always_show == 'false' %}
+    data-dd-toggle="collapse"
+  {% endif %}
+  data-target=".{{ unique }}{{ root_count }}-function-results"
+  data-dd-type="result"
+  aria-label="Open/Close"
+  aria-expanded="{{ collapsable.function_result.aria }}"
+>
+  <span class="section_name">Function Results</span>
+  <span id="arrow-{{ unique }}{{ root_count }}-function-results" class="arrow">
+    {{ collapsable.function_result.arrow }}
+  </span>
+</a>
+
+<div
+  class="li-wrapper collapse {{ unique }}{{ root_count }}-function-results {{ collapsable.function_result.show }}"
+  data-unique-function-results="{{ unique }}{{ root_count }}-function-results"
+>
+  {% for result in function_results %}
+    <li>
+      {% with depth|add:'1' as new_depth %}
+        <span class="access-modifier">{{ result.access_modifier }}</span>
+        <span class="function" title="Function Result">{{ result.name }}<span class="braces">()</span></span>:
+        {% if result.error %}
+          <span class="empty" title="{{ result.error_title }}">{{ result.error }}</span>
+        {% elif intermediate %}
+          {% dump_object result.value root_obj skip 0 new_depth root_index_start root_index_end original_obj True %}
+        {% else %}
+          {% dump_object result.value root_obj skip 0 new_depth root_index_start root_index_end original_obj False %}
+        {% endif %}
+      {% endwith %}
+    </li>
+  {% endfor %}
+</div>

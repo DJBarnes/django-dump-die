@@ -191,6 +191,66 @@ Example::
     DJANGO_DD_INCLUDE_FUNCTIONS = True
 
 
+DJANGO_DD_INCLUDE_FUNCTION_RESULTS
+==================================
+
+By default, no functions are run while dumping. Set this to ``True`` to run the
+functions listed for each dumped object, and show their results in a
+**Function Results** section. See :ref:`function-results` for which
+functions are run.
+
+.. warning::
+
+    This runs code every time a dump page is shown. A listed function that
+    changes something, is slow, or touches the filesystem, network, or database
+    does so on each dump page. Only list functions that are quick and change
+    nothing.
+
+:Type: ``bool``
+:Default: ``False``
+
+Example::
+
+    DJANGO_DD_INCLUDE_FUNCTION_RESULTS = True
+
+
+DJANGO_DD_FUNCTION_RESULTS
+==========================
+
+The functions whose results are shown, for objects of a class, by class name.
+A class's entry replaces the built-in list for that class, and an empty list
+turns it off. The functions in a class's ``dd_function_results`` attribute are
+also shown. Only applies when ``DJANGO_DD_INCLUDE_FUNCTION_RESULTS`` is on.
+
+Like ``DJANGO_DD_ADDITIONAL_SIMPLE_TYPES``, the class name must match exactly,
+so an entry doesn't apply to subclasses. Anything other than a dict of class
+names to lists of function names raises a ``ValueError`` when a dump page is
+shown.
+
+:Type: ``dict``
+:Default: ``{}``
+
+Example::
+
+    DJANGO_DD_FUNCTION_RESULTS = {
+        # Adds a third-party class.
+        "Money": ["is_zero"],
+        # Replaces the built-in list for datetime objects.
+        "datetime": ["isoformat", "weekday"],
+        # Turns off the built-in list for timedelta objects.
+        "timedelta": [],
+    }
+
+For example, paths could show whether they exist. These aren't in the built-in
+list because they read the filesystem on every dump page, which can be slow,
+such as on a network drive::
+
+    DJANGO_DD_FUNCTION_RESULTS = {
+        "PosixPath": ["exists", "is_file", "is_dir"],
+        "WindowsPath": ["exists", "is_file", "is_dir"],
+    }
+
+
 DJANGO_DD_MULTILINE_FUNCTION_DOCS
 =================================
 By default, all function documentation output is collapsed into one line (aka
@@ -259,12 +319,10 @@ Controls if Attribute sections are expanded on page load or not.
 
 .. note::
 
-    Only applies when ``DJANGO_DD_INCLUDE_ATTRIBUTES`` and
-    ``DJANGO_DD_INCLUDE_FUNCTIONS`` are both set to ``True``.
-    If **Attributes** are not turned on, they can't be expanded.
-    If **Functions** are not also turned on, **Attributes** will automatically
-    be expanded as they will be the only content available for the dumped
-    object.
+    Only applies when **Attributes** and at least one other section, the
+    **Function Results** or the **Functions**, are turned on. If
+    **Attributes** are the only section, they are always expanded, as they are
+    the only content available for the dumped object.
 
 If set to ``True``, then opening an item will instantly show the fully
 expanded Attribute section.
@@ -280,6 +338,27 @@ Example::
     DJANGO_DD_ATTRIBUTES_START_EXPANDED = False
 
 
+DJANGO_DD_FUNCTION_RESULTS_START_EXPANDED
+=========================================
+
+Controls if Function Results sections are expanded on page load or not. On by
+default, since turning on ``DJANGO_DD_INCLUDE_FUNCTION_RESULTS`` means you want
+to see them.
+
+.. note::
+
+    Only applies when **Function Results** and at least one other section, the
+    **Attributes** or the **Functions**, are turned on. If **Function
+    Results** are the only section, they are always expanded.
+
+:Type: ``bool``
+:Default: ``True``
+
+Example::
+
+    DJANGO_DD_FUNCTION_RESULTS_START_EXPANDED = False
+
+
 DJANGO_DD_FUNCTIONS_START_EXPANDED
 ==================================
 
@@ -287,12 +366,10 @@ Controls if Function sections are expanded on page load or not.
 
 .. note::
 
-    Only applies when ``DJANGO_DD_INCLUDE_ATTRIBUTES`` and
-    ``DJANGO_DD_INCLUDE_FUNCTIONS`` are both set to ``True``.
-    If **Functions** are not turned on, they can't be expanded.
-    If **Attributes** are not also turned on, **Functions** will automatically
-    be expanded as they will be the only content available for the dumped
-    object.
+    Only applies when **Functions** and at least one other section, the
+    **Attributes** or the **Function Results**, are turned on. If
+    **Functions** are the only section, they are always expanded, as they are
+    the only content available for the dumped object.
 
 If set to ``True``, then opening an item will instantly show the fully
 expanded Function section.

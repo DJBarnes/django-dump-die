@@ -7,10 +7,12 @@
       <div class="dropdown-group">
         <p id="expand-1st-lvl" class="button">Expand <br>First Level</p>
         <p id="expand-2nd-lvl" class="button">Expand <br>Second Level</p>
-        {% if attrs_enabled and funcs_enabled %}
+        {# Per-section buttons, when objects have more than one section, each with its own arrow. #}
+        {% if sections_collapsible %}
           <p id="expand-types" class="button">Expand <br>Content</p>
-          <p id="expand-attrs" class="button">Expand <br>Attributes</p>
-          <p id="expand-funcs" class="button">Expand <br>Functions</p>
+          {% if attrs_enabled %}<p id="expand-attrs" class="button">Expand <br>Attributes</p>{% endif %}
+          {% if results_enabled %}<p id="expand-results" class="button">Expand <br>Function Results</p>{% endif %}
+          {% if funcs_enabled %}<p id="expand-funcs" class="button">Expand <br>Functions</p>{% endif %}
         {% endif %}
       </div>
     </div>
@@ -19,10 +21,12 @@
       <div class="dropdown-group">
         <p id="collapse-1st-lvl" class="button">Collapse <br>First Level</p>
         <p id="collapse-2nd-lvl" class="button">Collapse <br>Second Level</p>
-        {% if attrs_enabled and funcs_enabled %}
+        {# Per-section buttons, when objects have more than one section, each with its own arrow. #}
+        {% if sections_collapsible %}
           <p id="collapse-types" class="button">Collapse <br>Content</p>
-          <p id="collapse-attrs" class="button">Collapse <br>Attributes</p>
-          <p id="collapse-funcs" class="button">Collapse <br>Functions</p>
+          {% if attrs_enabled %}<p id="collapse-attrs" class="button">Collapse <br>Attributes</p>{% endif %}
+          {% if results_enabled %}<p id="collapse-results" class="button">Collapse <br>Function Results</p>{% endif %}
+          {% if funcs_enabled %}<p id="collapse-funcs" class="button">Collapse <br>Functions</p>{% endif %}
         {% endif %}
       </div>
     </div>
