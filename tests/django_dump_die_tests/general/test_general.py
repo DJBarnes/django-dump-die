@@ -124,7 +124,8 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
                 "index": ".index",
                 "key": ".key",
                 "params": ".params",
-                "decorator": ".method-type",
+                "decorator": ".decorator",
+                "class_attribute": ".class_attribute",
             },
             "types": {
                 "bool": ".bool",
@@ -148,6 +149,26 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
                     self.assertNotRegex(content, r"color: ;")
 
     @override_settings(DEBUG=True)
+    def test_forced_themes_use_the_custom_class_attribute_color(self):
+        """Verify the forced light and dark themes use the color theme's class attribute color, or their default."""
+        url = reverse("django_dump_die__tests__general:dd_only")
+        for forced_setting, default_color in (
+            ("DJANGO_DD_FORCE_LIGHT_THEME", "#93a1a1"),
+            ("DJANGO_DD_FORCE_DARK_THEME", "#586e75"),
+        ):
+            with self.subTest(setting=forced_setting):
+                with override_settings(**{forced_setting: True}):
+                    content = self.client.get(url).content.decode("utf-8")
+                forced_part = content[content.index("/* Forcing color themes */") :]
+                self.assertRegex(forced_part, r"\.class_attribute \{\s*color: " + default_color)
+
+                theme = {"identifiers": {"class_attribute": "#123456"}}
+                with override_settings(**{forced_setting: True, "DJANGO_DD_COLOR_SCHEME": theme}):
+                    content = self.client.get(url).content.decode("utf-8")
+                forced_part = content[content.index("/* Forcing color themes */") :]
+                self.assertRegex(forced_part, r"\.class_attribute \{\s*color: #123456")
+
+    @override_settings(DEBUG=True)
     def test_forced_themes_use_the_custom_params_color(self):
         """Verify the forced light and dark themes use the color theme's params color."""
         url = reverse("django_dump_die__tests__general:dd_only")
@@ -162,9 +183,9 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
 
     @override_settings(DEBUG=True)
     def test_custom_color_theme_sets_the_decorator_color(self):
-        """Verify the static and class method markers use the theme's decorator color, and only that color."""
+        """Verify the method and property markers use the theme's decorator color, and only that color."""
         url = reverse("django_dump_die__tests__general:dd_only")
-        decorator_rule = re.compile(r"\.method-type \{\s*color: #123456;")
+        decorator_rule = re.compile(r"\.decorator \{\s*color: #123456;")
 
         with override_settings(DJANGO_DD_COLOR_SCHEME={"identifiers": {"decorator": "#123456"}}):
             content = self.client.get(url).content.decode("utf-8")
@@ -174,7 +195,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
         with override_settings(DJANGO_DD_COLOR_SCHEME={"meta": {"type": "#123456"}}):
             content = self.client.get(url).content.decode("utf-8")
         self.assertNotRegex(content, decorator_rule)
-        self.assertNotIn(".method-type", content)
+        self.assertNotIn(".decorator", content)
 
     @override_settings(DEBUG=True)
     def test_dump_page_and_template_dumps_do_not_load_bootstrap(self):

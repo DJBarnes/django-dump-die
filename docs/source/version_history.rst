@@ -15,6 +15,16 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Added: properties and class attributes are marked.** In the Attributes
+  section, properties show ``@property`` before their name, and cached
+  properties, from Django or ``functools``, show ``@cached_property``, in the
+  same ``identifiers.decorator`` color as the static and class method markers.
+  Attributes whose value comes from the object's class, instead of the object
+  itself, are shown in a slightly different grey, with a "Class Attribute"
+  tooltip. Their color can be set with ``identifiers.class_attribute`` in
+  ``DJANGO_DD_COLOR_SCHEME``.
+  (`#40 <https://github.com/DJBarnes/django-dump-die/issues/40>`_)
+
 * **Fixed: dumping a callable called it.** When a dumped object could be
   called, the dump page's templates called it while rendering it, as Django
   templates do. A dumped function was run once, or three times if it had no

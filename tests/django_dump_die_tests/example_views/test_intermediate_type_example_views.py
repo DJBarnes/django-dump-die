@@ -311,7 +311,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">max</span>:
+                    <span class="class_attribute" title="Class Attribute">max</span>:
                     <span class="type" title="date">date</span>
                     <code class="intermediate">9999-12-31</code>
                 </li>
@@ -319,7 +319,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">min</span>:
+                    <span class="class_attribute" title="Class Attribute">min</span>:
                     <span class="type" title="date">date</span>
                     <code class="intermediate">0001-01-01</code>
                 </li>
@@ -335,7 +335,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">resolution</span>:
+                    <span class="class_attribute" title="Class Attribute">resolution</span>:
                     <span class="type" title="timedelta">timedelta</span>
                     <code class="intermediate">1 day, 0:00:00</code>
                 </li>
@@ -441,7 +441,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">max</span>:
+                    <span class="class_attribute" title="Class Attribute">max</span>:
                     <span class="type" title="date">date</span>
                     <code class="intermediate">9999-12-31</code>
                 </li>
@@ -449,7 +449,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">min</span>:
+                    <span class="class_attribute" title="Class Attribute">min</span>:
                     <span class="type" title="date">date</span>
                     <code class="intermediate">0001-01-01</code>
                 </li>
@@ -465,7 +465,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">resolution</span>:
+                    <span class="class_attribute" title="Class Attribute">resolution</span>:
                     <span class="type" title="timedelta">timedelta</span>
                     <code class="intermediate">1 day, 0:00:00</code>
                 </li>
@@ -588,7 +588,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
     #             # """
     #             # <li>
     #             #     <span class="access-modifier">+</span>
-    #             #     <span class="attribute" title="Attribute">max</span>:
+    #             #     <span class="class_attribute" title="Class Attribute">max</span>:
     #             #     <span class="type" title="datetime">datetime</span>
     #             #     <code class="intermediate">9999-12-31 23:59:59.999999</code>
     #             # </li>
@@ -604,7 +604,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
     #             # """
     #             # <li>
     #             #     <span class="access-modifier">+</span>
-    #             #     <span class="attribute" title="Attribute">min</span>:
+    #             #     <span class="class_attribute" title="Class Attribute">min</span>:
     #             #     <span class="type" title="datetime">datetime</span>
     #             #     <code class="intermediate">0001-01-01 00:00:00</code>
     #             # </li>
@@ -628,7 +628,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
     #             """
     #             <li>
     #                 <span class="access-modifier">+</span>
-    #                 <span class="attribute" title="Attribute">resolution</span>:
+    #                 <span class="class_attribute" title="Class Attribute">resolution</span>:
     #                 <span class="type" title="timedelta">timedelta</span>
     #                 <code class="intermediate">0:00:00.000001</code>
     #             </li>
@@ -769,7 +769,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
     #             # """
     #             # <li>
     #             #     <span class="access-modifier">+</span>
-    #             #     <span class="attribute" title="Attribute">max</span>:
+    #             #     <span class="class_attribute" title="Class Attribute">max</span>:
     #             #     <span class="type" title="datetime">datetime</span>
     #             #     <code class="intermediate">9999-12-31 23:59:59.999999</code>
     #             # </li>
@@ -785,7 +785,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
     #             # """
     #             # <li>
     #             #     <span class="access-modifier">+</span>
-    #             #     <span class="attribute" title="Attribute">min</span>:
+    #             #     <span class="class_attribute" title="Class Attribute">min</span>:
     #             #     <span class="type" title="datetime">datetime</span>
     #             #     <code class="intermediate">0001-01-01 00:00:00</code>
     #             # </li>
@@ -809,7 +809,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
     #             """
     #             <li>
     #                 <span class="access-modifier">+</span>
-    #                 <span class="attribute" title="Attribute">resolution</span>:
+    #                 <span class="class_attribute" title="Class Attribute">resolution</span>:
     #                 <span class="type" title="timedelta">timedelta</span>
     #                 <code class="intermediate">0:00:00.000001</code>
     #             </li>
@@ -939,7 +939,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">max</span>:
+                    <span class="class_attribute" title="Class Attribute">max</span>:
                     <span class="type" title="time">time</span>
                     <code class="intermediate">23:59:59.999999</code>
                 </li>
@@ -955,7 +955,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">min</span>:
+                    <span class="class_attribute" title="Class Attribute">min</span>:
                     <span class="type" title="time">time</span>
                     <code class="intermediate">{0}</code>
                 </li>
@@ -971,7 +971,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">resolution</span>:
+                    <span class="class_attribute" title="Class Attribute">resolution</span>:
                     <span class="type" title="timedelta">timedelta</span>
                     <code class="intermediate">0:00:00.000001</code>
                 </li>
@@ -1092,7 +1092,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">max</span>:
+                    <span class="class_attribute" title="Class Attribute">max</span>:
                     <span class="type" title="time">time</span>
                     <code class="intermediate">23:59:59.999999</code>
                 </li>
@@ -1108,7 +1108,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">min</span>:
+                    <span class="class_attribute" title="Class Attribute">min</span>:
                     <span class="type" title="time">time</span>
                     <code class="intermediate">{0}</code>
                 </li>
@@ -1124,7 +1124,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">resolution</span>:
+                    <span class="class_attribute" title="Class Attribute">resolution</span>:
                     <span class="type" title="timedelta">timedelta</span>
                     <code class="intermediate">0:00:00.000001</code>
                 </li>
@@ -1232,7 +1232,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">max</span>:
+                    <span class="class_attribute" title="Class Attribute">max</span>:
                     <span class="type" title="timedelta">timedelta</span>
                     <code class="intermediate">999999999 days, 23:59:59.999999</code>
                 </li>
@@ -1248,7 +1248,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">min</span>:
+                    <span class="class_attribute" title="Class Attribute">min</span>:
                     <span class="type" title="timedelta">timedelta</span>
                     <code class="intermediate">-999999999 days, 0:00:00</code>
                 </li>
@@ -1256,7 +1256,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">resolution</span>:
+                    <span class="class_attribute" title="Class Attribute">resolution</span>:
                     <span class="type" title="timedelta">timedelta</span>
                     <code class="intermediate">0:00:00.000001</code>
                 </li>
@@ -1356,7 +1356,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">max</span>:
+                    <span class="class_attribute" title="Class Attribute">max</span>:
                     <span class="type" title="timedelta">timedelta</span>
                     <code class="intermediate">999999999 days, 23:59:59.999999</code>
                 </li>
@@ -1372,7 +1372,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">min</span>:
+                    <span class="class_attribute" title="Class Attribute">min</span>:
                     <span class="type" title="timedelta">timedelta</span>
                     <code class="intermediate">-999999999 days, 0:00:00</code>
                 </li>
@@ -1380,7 +1380,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">resolution</span>:
+                    <span class="class_attribute" title="Class Attribute">resolution</span>:
                     <span class="type" title="timedelta">timedelta</span>
                     <code class="intermediate">0:00:00.000001</code>
                 </li>
@@ -1473,7 +1473,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
-                    <span class="attribute" title="Attribute">zone</span>:
+                    <span class="class_attribute" title="Class Attribute">zone</span>:
                     <span class="type" title="str">str</span>
                     <code class="string">'UTC'</code>
                 </li>
@@ -1648,6 +1648,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">anchor</span>:
                     <span class="type" title="str">str</span>
                     <code class="string">'/'</code>
@@ -1656,6 +1657,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">drive</span>:
                     <span class="type" title="str">str</span>
                     <code class="string">''</code>
@@ -1664,6 +1666,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">name</span>:
                     <span class="type" title="str">str</span>
                     <code class="string">'{0}'</code>
@@ -1672,6 +1675,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">parent</span>:
                     <span class="type" title="PurePosixPath">PurePosixPath</span>
                     <code class="intermediate">{0}</code>
@@ -1680,6 +1684,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">parents</span>:
                     <span class="type" title="_PathParents">_PathParents</span>
                     <code class="default"><PurePosixPath.parents></code>
@@ -1688,6 +1693,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">parts</span>:
                     <span class="type" title="tuple">tuple</span>
                     <code class="default">{0}</code>
@@ -1696,6 +1702,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">root</span>:
                     <span class="type" title="str">str</span>
                     <code class="string">'/'</code>
@@ -1704,6 +1711,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">stem</span>:
                     <span class="type" title="str">str</span>
                     <code class="string">'{0}'</code>
@@ -1712,6 +1720,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">suffix</span>:
                     <span class="type" title="str">str</span>
                     <code class="string">''</code>
@@ -1720,6 +1729,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">suffixes</span>:
                     <span class="type" title="list">list</span>
                     <code class="default">[]</code>
@@ -1811,6 +1821,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">anchor</span>:
                     <span class="type" title="str">str</span>
                     <code class="string">'/'</code>
@@ -1819,6 +1830,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">drive</span>:
                     <span class="type" title="str">str</span>
                     <code class="string">''</code>
@@ -1827,6 +1839,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">name</span>:
                     <span class="type" title="str">str</span>
                     <code class="string">'{0}'</code>
@@ -1835,6 +1848,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">parent</span>:
                     <span class="type" title="PosixPath">PosixPath</span>
                     <code class="intermediate">{0}</code>
@@ -1843,6 +1857,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">parents</span>:
                     <span class="type" title="_PathParents">_PathParents</span>
                     <code class="default"><PosixPath.parents></code>
@@ -1851,6 +1866,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">parts</span>:
                     <span class="type" title="tuple">tuple</span>
                     <code class="default">{0}</code>
@@ -1859,6 +1875,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">root</span>:
                     <span class="type" title="str">str</span>
                     <code class="string">'/'</code>
@@ -1867,6 +1884,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">stem</span>:
                     <span class="type" title="str">str</span>
                     <code class="string">'{0}'</code>
@@ -1875,6 +1893,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">suffix</span>:
                     <span class="type" title="str">str</span>
                     <code class="string">''</code>
@@ -1883,6 +1902,7 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
                 """
                 <li>
                     <span class="access-modifier">+</span>
+                    <span class="decorator" title="Property">@property</span>
                     <span class="attribute" title="Attribute">suffixes</span>:
                     <span class="type" title="list">list</span>
                     <code class="default">[]</code>

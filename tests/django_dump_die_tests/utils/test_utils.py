@@ -3,17 +3,27 @@ Tests for the DumpDie utils that collect and prepare dumped object information.
 """
 
 # System Imports.
+import functools
 import inspect
 from unittest.mock import patch
 
 # Third-Party Imports.
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import SimpleTestCase, override_settings
+from django.utils.functional import cached_property
 
 # Internal Imports.
 from django_dump_die import middleware
 from django_dump_die.middleware import dump
-from django_dump_die.utils import get_method_type, is_dict, is_query, safe_repr, safe_str, sanitize_index_range
+from django_dump_die.utils import (
+    get_attribute_type,
+    get_method_type,
+    is_dict,
+    is_query,
+    safe_repr,
+    safe_str,
+    sanitize_index_range,
+)
 
 
 def get_dumped_info():
@@ -39,6 +49,43 @@ class HasMethodTypes:
 
     def normal_work(self):
         """Normal work."""
+
+
+class BaseWithClassAttribute:
+    """Parent class with a class attribute, which its subclasses inherit."""
+
+    inherited = "inherited"
+
+
+class HasAttributeTypes(BaseWithClassAttribute):
+    """Class with each kind of attribute: properties, class attributes, and instance attributes."""
+
+    shared = "shared"
+    hidden = "class value"
+
+    def __init__(self):
+        self.own = "own"
+        self.hidden = "instance value"
+
+    @property
+    def computed(self):
+        """A property."""
+        return "computed"
+
+    @cached_property
+    def django_cached(self):
+        """A Django cached property."""
+        return "django cached"
+
+
+class HasSlots:
+    """Class whose instances store their attributes in __slots__, without a __dict__."""
+
+    __slots__ = ("slot",)
+    shared = "shared"
+
+    def __init__(self):
+        self.slot = "slot"
 
 
 class RaisesDoesNotExistOnRepr:
@@ -172,3 +219,69 @@ class DumpDieMethodTypeTestCase(SimpleTestCase):
             for attr, expected in cases:
                 with self.subTest(obj=obj, attr=attr):
                     self.assertEqual(get_method_type(obj, attr), expected)
+
+
+class DumpDieAttributeTypeTestCase(SimpleTestCase):
+    """Verify detecting properties and class attributes."""
+
+    def test_get_attribute_type_of_an_instance(self):
+        """Verify each kind of instance member is detected, and that nothing is run to detect it."""
+        obj = HasAttributeTypes()
+        cases = [
+            ("computed", "property"),
+            ("django_cached", "cached_property"),
+            ("shared", "class_attribute"),
+            ("inherited", "class_attribute"),
+            ("own", None),
+            ("hidden", None),
+            ("missing", None),
+            (42, None),
+        ]
+        for attr, expected in cases:
+            with self.subTest(attr=attr):
+                self.assertEqual(get_attribute_type(obj, attr), expected)
+        # The cached property wasn't computed while detecting it.
+        self.assertNotIn("django_cached", vars(obj))
+
+    def test_get_attribute_type_of_a_computed_cached_property(self):
+        """Verify a cached property is still detected once its value is stored on the instance."""
+        obj = HasAttributeTypes()
+        self.assertEqual(obj.django_cached, "django cached")
+        self.assertIn("django_cached", vars(obj))
+        self.assertEqual(get_attribute_type(obj, "django_cached"), "cached_property")
+
+    def test_get_attribute_type_of_a_functools_cached_property(self):
+        """Verify functools.cached_property is detected, before and after it is computed."""
+        if not hasattr(functools, "cached_property"):
+            self.skipTest("functools.cached_property was added in Python 3.8.")
+
+        class HasFunctoolsCachedProperty:
+            """Class with a functools cached property."""
+
+            @functools.cached_property
+            def cached(self):
+                """A functools cached property."""
+                return "cached"
+
+        obj = HasFunctoolsCachedProperty()
+        self.assertEqual(get_attribute_type(obj, "cached"), "cached_property")
+        self.assertEqual(obj.cached, "cached")
+        self.assertEqual(get_attribute_type(obj, "cached"), "cached_property")
+
+    def test_get_attribute_type_of_slots(self):
+        """Verify __slots__ members are the instance's own, while other class attributes are still detected."""
+        obj = HasSlots()
+        self.assertIsNone(get_attribute_type(obj, "slot"))
+        self.assertEqual(get_attribute_type(obj, "shared"), "class_attribute")
+
+    def test_get_attribute_type_of_a_class(self):
+        """Verify a dumped class marks its properties, but doesn't mark its attributes as class attributes."""
+        cases = [
+            ("computed", "property"),
+            ("django_cached", "cached_property"),
+            ("shared", None),
+            ("inherited", None),
+        ]
+        for attr, expected in cases:
+            with self.subTest(attr=attr):
+                self.assertEqual(get_attribute_type(HasAttributeTypes, attr), expected)

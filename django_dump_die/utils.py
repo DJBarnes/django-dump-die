@@ -2,6 +2,7 @@
 
 # System Imports.
 import copy
+import functools
 import inspect
 import io
 import linecache
@@ -24,6 +25,7 @@ from tokenize import (
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DatabaseError
 from django.http import QueryDict
+from django.utils.functional import cached_property as django_cached_property
 
 # Internal Imports.
 from django_dump_die.constants import COLORIZE_DUMPED_OBJECT_NAME, INCLUDE_FILENAME_LINENUMBER, PYTZ_PRESENT
@@ -31,6 +33,12 @@ from django_dump_die.constants import COLORIZE_DUMPED_OBJECT_NAME, INCLUDE_FILEN
 # Imports that may not be accessible, depending on local python environment setup.
 if PYTZ_PRESENT:
     import pytz
+
+
+# Types of cached properties. functools.cached_property was added in Python 3.8.
+CACHED_PROPERTY_TYPES = (django_cached_property,) + (
+    (functools.cached_property,) if hasattr(functools, "cached_property") else ()
+)
 
 
 class DumpBreak:
@@ -434,6 +442,50 @@ def get_method_type(obj, attr):
     if isinstance(raw_value, classmethod):
         return "classmethod"
     return None
+
+
+def get_attribute_type(obj, attr):
+    """Return how an object's attribute is defined, without running anything.
+
+    :return: "property" or "cached_property" if the attribute is one, "class_attribute" if the value comes from the
+        object's class instead of the object itself, otherwise None, such as for an instance attribute.
+    """
+    if not isinstance(attr, str):
+        # Not a named attribute, such as a list index.
+        return None
+
+    # Find the attribute where its class defines it, if it does. A computed cached_property is stored on the
+    # instance, so the class shows that it is one, while inspect.getattr_static() would find the stored value.
+    is_class = inspect.isclass(obj)
+    class_value = None
+    is_on_class = False
+    for klass in inspect.getmro(obj if is_class else type(obj)):
+        if attr in klass.__dict__:
+            class_value = klass.__dict__[attr]
+            is_on_class = True
+            break
+
+    if isinstance(class_value, property):
+        return "property"
+    if isinstance(class_value, CACHED_PROPERTY_TYPES):
+        return "cached_property"
+
+    # When a class itself is dumped, all of its attributes are class attributes, so none are marked.
+    # Descriptors, such as __slots__ members and Django's model field and related object descriptors, give each
+    # instance its own value.
+    if is_class or not is_on_class or hasattr(type(class_value), "__get__"):
+        return None
+
+    # An instance attribute that hides a class attribute is the instance's own.
+    try:
+        instance_dict = object.__getattribute__(obj, "__dict__")
+    except AttributeError:
+        # Objects with __slots__ and no __dict__.
+        instance_dict = {}
+    if attr in instance_dict:
+        return None
+
+    return "class_attribute"
 
 
 def get_obj_type(obj):

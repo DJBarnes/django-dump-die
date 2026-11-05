@@ -41,6 +41,7 @@ from django_dump_die.utils import (
     generate_unique_from_obj,
     get_members,
     get_class_name,
+    get_attribute_type,
     get_callable_params,
     get_method_type,
     get_obj_type,
@@ -682,14 +683,14 @@ def _get_exception_attribute(exception):
         title += f"{entry}\n"
     title += "End of traceback"
 
-    return ["EXCEPTION", str(exception), None, "empty", title]
+    return ["EXCEPTION", str(exception), None, "empty", title, None]
 
 
 def get_obj_values(obj):
     """Determines full corresponding member values (attributes/functions) of object."""
 
     # Initialize attribute/function lists. This is what we ultimately return.
-    attributes = []  # (attr, value, access_modifier, css_class, title)
+    attributes = []  # (attr, value, access_modifier, css_class, title, decorator)
     functions = []  # (attr, params, doc, access_modifier, method_type)
 
     try:
@@ -742,6 +743,10 @@ def get_obj_values(obj):
                 if is_magic(attr):
                     continue
 
+                # Get whether the attribute is a property, or comes from the object's class.
+                attribute_type = get_attribute_type(obj, attr)
+                decorator = attribute_type if attribute_type in ("property", "cached_property") else None
+
                 # If attr is not None (anything but set) change to safe_repr.
                 if attr is not None:
                     attr = safe_repr(attr)
@@ -766,17 +771,22 @@ def get_obj_values(obj):
                     access_modifier = None
                     css_class = "key"
                     title = "Key"
+                    decorator = None
                 elif attr is None:  # Set.
                     access_modifier = None
                     css_class = ""
                     title = ""
-                else:  # Class Attribute.
+                elif attribute_type == "class_attribute":  # Attribute from the object's class.
+                    access_modifier = _get_access_modifier(attr)
+                    css_class = "class_attribute"
+                    title = "Class Attribute"
+                else:  # Instance Attribute.
                     access_modifier = _get_access_modifier(attr)
                     css_class = "attribute"
                     title = "Attribute"
 
                 # Append the attribute information to the list of attributes.
-                attributes.append([attr, value, access_modifier, css_class, title])
+                attributes.append([attr, value, access_modifier, css_class, title, decorator])
 
         except Exception as inner_exception:
             # First get exception data.
@@ -790,7 +800,7 @@ def get_obj_values(obj):
                 title += f"\n[ {line_num} : {name} ] {filename}\n"
 
             # Add exception data to attributes and return.
-            attributes.append(["EXCEPTION", str(inner_exception), None, "empty", title])
+            attributes.append(["EXCEPTION", str(inner_exception), None, "empty", title, None])
 
     # Attempt to sort the functions and just ignore any errors.
     try:

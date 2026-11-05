@@ -22,11 +22,14 @@
   class="li-wrapper collapse {{ unique }}{{ root_count }}-attributes {{ collapsable.attribute.show }}"
   data-unique-attributes="{{ unique }}{{ root_count }}-attributes"
 >
-  {% for attr, value, access_modifier, css_class, title in attributes %}
+  {% for attr, value, access_modifier, css_class, title, decorator in attributes %}
     <li>
       {% with depth|add:'1' as new_depth %}
         {% if access_modifier %}
           <span class="access-modifier">{{ access_modifier }}</span>
+        {% endif %}
+        {% if decorator %}
+          <span class="decorator" title="{% if decorator == 'property' %}Property{% else %}Cached Property{% endif %}">@{{ decorator }}</span>
         {% endif %}
         {% if attr %}
           <span class="{{ css_class }}" title="{{ title }}">{{ attr }}</span>:

@@ -136,6 +136,11 @@ class SimpleClass:
         """Sample classmethod func doc string"""
         return cls.sample_class_var
 
+    @property
+    def sample_property(self):
+        """Sample property doc string"""
+        return "Sample Property Content"
+
 
 class ComplexClass:
     """Complex class with nested instances"""

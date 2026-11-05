@@ -419,14 +419,15 @@ Example::
         },
         'identifiers': {
             'section_name': <value>,        #  The words "Attribute" or "Function", denoting each section
-            'attribute': <value>,           #  Class attribute
+            'attribute': <value>,           #  Attribute
+            'class_attribute': <value>,     #  Attribute whose value comes from the object's class
             'constant': <value>,            #  Class constants
             'dumped_name': <value>,         #  Dumped object name
             'function': <value>,            #  Class functions
             'index': <value>,               #  Index values for indexable types
             'key': <value>,                 #  Key values for dict
             'params': <value>,              #  Function parameters
-            'decorator': <value>,           #  @staticmethod and @classmethod before a function's name
+            'decorator': <value>,           #  @staticmethod, @classmethod, @property, and @cached_property
         },
         'types': {
             'bool': <value>,                #  Booleans

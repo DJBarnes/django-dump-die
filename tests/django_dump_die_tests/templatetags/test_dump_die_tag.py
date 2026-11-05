@@ -10,6 +10,7 @@ from unittest.mock import patch
 from django import forms
 from django.template import Context, Template
 from django.test import SimpleTestCase, override_settings
+from django.utils.functional import cached_property
 
 # Internal Imports.
 from django_dump_die import middleware
@@ -50,6 +51,25 @@ class HasMethodTypes:
 
     def normal_work(self):
         """Normal work."""
+
+
+class HasAttributeTypes:
+    """Class with a property, a cached property, a class attribute, and an instance attribute."""
+
+    shared = "shared value"
+
+    def __init__(self):
+        self.own = "own value"
+
+    @property
+    def computed(self):
+        """A property."""
+        return "computed value"
+
+    @cached_property
+    def cached(self):
+        """A cached property."""
+        return "cached value"
 
 
 class RaisesOnRepr:
@@ -130,10 +150,40 @@ class DumpDieTagSettingsTestCase(SimpleTestCase):
             with self.subTest(obj=obj):
                 content = render_dump(obj)
 
-                self.assertIn('<span class="method-type" title="Static Method">@staticmethod</span>', content)
-                self.assertIn('<span class="method-type" title="Class Method">@classmethod</span>', content)
-                self.assertEqual(content.count('class="method-type"'), 2)
+                self.assertIn('<span class="decorator" title="Static Method">@staticmethod</span>', content)
+                self.assertIn('<span class="decorator" title="Class Method">@classmethod</span>', content)
+                self.assertEqual(content.count('class="decorator"'), 2)
                 self.assertIn("normal_work", content)
+
+    def test_properties_and_class_attributes_are_marked(self):
+        """Verify properties are marked, class attributes have their own color and title, and other attributes don't."""
+        content = render_dump(HasAttributeTypes())
+
+        self.assertRegex(
+            content,
+            r'<span class="decorator" title="Property">@property</span>\s*'
+            r'<span class="attribute" title="Attribute">computed</span>:',
+        )
+        self.assertRegex(
+            content,
+            r'<span class="decorator" title="Cached Property">@cached_property</span>\s*'
+            r'<span class="attribute" title="Attribute">cached</span>:',
+        )
+        self.assertIn('<span class="class_attribute" title="Class Attribute">shared</span>:', content)
+        self.assertIn('<span class="attribute" title="Attribute">own</span>:', content)
+        self.assertEqual(content.count('class="decorator"'), 2)
+        self.assertEqual(content.count('class="class_attribute"'), 1)
+
+    def test_dumped_class_does_not_mark_class_attributes(self):
+        """Verify a dumped class shows its attributes as plain attributes, and still marks its properties."""
+        # Dumped with dump(), since a template would call the class and dump an instance.
+        dump(HasAttributeTypes)
+        content = render_dumped_objects()
+
+        self.assertIn('<span class="attribute" title="Attribute">shared</span>:', content)
+        self.assertNotIn('class="class_attribute"', content)
+        self.assertIn('<span class="decorator" title="Property">@property</span>', content)
+        self.assertIn('<span class="decorator" title="Cached Property">@cached_property</span>', content)
 
     def test_dumped_callables_are_not_called(self):
         """Verify dumping a function, a callable object, or a class shows it without calling it."""

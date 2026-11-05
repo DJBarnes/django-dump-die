@@ -208,8 +208,8 @@ a.arrow-toggle {
     color: #657b83;
 }
 
-/* Static and class method markers use the type color. */
-.method-type {
+/* The @staticmethod, @classmethod, @property, and @cached_property markers use the type color. */
+.decorator {
     color: #859900;
 }
 
@@ -245,6 +245,11 @@ a.arrow-toggle {
 
 .attribute {
     color: #93a1a1;
+}
+
+/* Attributes whose value comes from the object's class: Solarized's other content grey, next to the attributes. */
+.class_attribute {
+    color: #586e75;
 }
 
 .constant {
@@ -373,6 +378,10 @@ a.arrow-toggle {
         color: #586e75;
     }
 
+    .class_attribute {
+        color: #93a1a1;
+    }
+
     .dumped_name {
         color: #586e75;
     }
@@ -449,6 +458,10 @@ a.arrow-toggle {
 
     .attribute {
         color: #93a1a1;
+    }
+
+    .class_attribute {
+        color: #586e75;
     }
 
     .dumped_name {
