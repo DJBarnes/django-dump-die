@@ -4,7 +4,7 @@
 <a
   class="arrow-toggle {{ collapsable.function.class }}"
   title="[Ctrl+click] Expand all children"
-  {% if collapsable.attribute.always_show == 'false' %}
+  {% if collapsable.function.always_show == 'false' %}
     data-dd-toggle="collapse"
   {% endif %}
   data-target=".{{ unique }}{{ root_count }}-functions"

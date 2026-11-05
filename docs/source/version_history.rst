@@ -15,6 +15,13 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Fixed: the Functions section could be closed when it was the only
+  section.** With ``DJANGO_DD_INCLUDE_ATTRIBUTES`` off and
+  ``DJANGO_DD_INCLUDE_FUNCTIONS`` on, the Functions section is always shown,
+  without an arrow, but clicking its name still hid it, and there was no
+  arrow to show that it could be opened again. It now stays shown, like the
+  Attributes section does when it's the only one.
+
 * **Added: properties and class attributes are marked.** In the Attributes
   section, properties show ``@property`` before their name, and cached
   properties, from Django or ``functools``, show ``@cached_property``, in the

@@ -3,6 +3,7 @@ Tests for the DumpDie template tag's handling of settings, index ranges, deep co
 """
 
 # System Imports.
+import re
 from datetime import datetime
 from unittest.mock import patch
 
@@ -215,6 +216,16 @@ class DumpDieTagSettingsTestCase(SimpleTestCase):
         # The class is dumped as the class itself, not an instance or an empty string.
         dump(NeedsArguments)
         self.assertIn('<span class="type" title="type">type</span>', render_dumped_objects())
+
+    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTIONS", True)
+    @patch("django_dump_die.templatetags.dump_die.INCLUDE_ATTRIBUTES", False)
+    def test_only_functions_section_is_not_collapsible(self):
+        """Verify the Functions section, when it is the only section, is always shown and can't be collapsed."""
+        content = render_dump(Branch())
+
+        functions_toggle = re.search(r'<a\s+class="arrow-toggle[^>]*data-dd-type="func"', content).group(0)
+        self.assertIn("always-show", functions_toggle)
+        self.assertNotIn("data-dd-toggle", functions_toggle)
 
     @patch("django_dump_die.templatetags.dump_die.INCLUDE_PRIVATE_METHODS", True)
     def test_private_members_included(self):
