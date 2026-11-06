@@ -15,6 +15,17 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Fixed: some dumped objects got the wrong name.** The name shown for a
+  dumped object comes from the line that called ``dump()`` or ``dd()``. It was
+  wrong when one line had two calls, such as ``dump(user); dump(order)``,
+  which named both ``order``. It was also wrong after a comment that mentions
+  ``dump(...)``, and for an argument containing a string with a comma and an
+  equals sign. On Python 3.6 and 3.7, a call over several lines had no name.
+  Names also lost the spaces between their parts, so ``a if b else c`` was
+  shown as ``aifbelsec``. The call is now found from the running code, and its
+  first argument is read with Python's tokenizer.
+  (`#46 <https://github.com/DJBarnes/django-dump-die/issues/46>`_)
+
 * **Added: function results.** With ``DJANGO_DD_INCLUDE_FUNCTION_RESULTS`` on,
   a new Function Results section shows what some functions of a dumped object
   return: a few built-in ones for dates and times, the methods listed in a

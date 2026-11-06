@@ -2,20 +2,24 @@
 
 # System Imports.
 import copy
+import dis
 import functools
 import inspect
 import io
 import linecache
-import re
 import tokenize
 from collections.abc import Sequence
 from decimal import Decimal
 from enum import EnumMeta, Enum as OrigEnum
 from tokenize import (
     generate_tokens,
+    COMMENT,
+    DEDENT,
     ENDMARKER,
+    INDENT,
     NAME,
     NEWLINE,
+    NL,
     NUMBER,
     OP,
     STRING,
@@ -114,31 +118,8 @@ def get_dumped_object_name_and_location(object_needing_name):
         # Get filename
         filename = frame_info.filename
 
-    # Parse line that called, for full "name" to output.
-    # Accounts for things like functions that span multiple lines.
-    code_context = get_fully_qualified_dumped_line(base_frame, frame_info)
-
-    # These regular expressions get some names wrong, such as with two dumps on one line. See #46.
-    # Establish a couple of regular expressions to fetch out what was passed to dump or dd.
-    dump_pattern = r".*dump\((.*)[\)]"
-    dd_pattern = r".*dd\((.*)[\)]"
-    options_pattern = r"(.*)(?=,.*=.*)"
-    # Find the results for both dump and dd.
-    dumped_text_matches = re.findall(dump_pattern, code_context)
-    dd_text_matches = re.findall(dd_pattern, code_context)
-    # Determine if dumped or dd'd and put result in dumped_text
-    dumped_text = "Unknown_Object_Name"
-    if dumped_text_matches:
-        dumped_text = dumped_text_matches[0]
-    elif dd_text_matches:
-        dumped_text = dd_text_matches[0]
-
-    while "deepcopy" in dumped_text or "index_range" in dumped_text:
-        dumped_text_matches = re.findall(options_pattern, dumped_text)
-        if dumped_text_matches:
-            dumped_text = dumped_text_matches[0]
-        else:
-            break
+    # Get the source of the first argument of the dump() or dd() call, as the dumped object's name.
+    dumped_text = get_dumped_argument_source(base_frame) or "Unknown_Object_Name"
 
     # If function get the callable name for each function name.
     if callable(object_needing_name) and not inspect.isclass(object_needing_name):
@@ -147,52 +128,158 @@ def get_dumped_object_name_and_location(object_needing_name):
     return filename, linenumber, dumped_text
 
 
-def get_fully_qualified_dumped_line(base_frame, frame_info):
-    """Loop through frame info until we get full object name.
+# region Dumped Name Functions
 
-    Required for definitions of things that span multiple lines, within a given dump/dd statement.
+# Names that dump() and dd() are called by, as built-ins or imported.
+DUMP_FUNCTION_NAMES = ("dump", "dd")
+# Bytecode instructions that look up a name, other than as an attribute, such as json.dump.
+_NAME_LOAD_OPNAMES = {
+    "LOAD_CLASSDEREF",
+    "LOAD_DEREF",
+    "LOAD_FAST",
+    "LOAD_FAST_AND_CLEAR",
+    "LOAD_FAST_BORROW",
+    "LOAD_FAST_CHECK",
+    "LOAD_FROM_DICT_OR_GLOBALS",
+    "LOAD_GLOBAL",
+    "LOAD_NAME",
+}
+# Token types that don't affect the dumped name.
+_SKIPPED_TOKEN_TYPES = (COMMENT, NL, NEWLINE, INDENT, DEDENT, ENDMARKER)
+
+
+def get_dumped_argument_source(frame):
+    """Return the source of the first argument of the dump() or dd() call that the frame is running.
+
+    The bytecode shows the line where the running call's dump or dd name is, and how many calls to them come before
+    it on that line. The source is then tokenized from that line, so that strings and comments can't be mistaken for
+    code, and the call's brackets are followed to find its first argument.
+
+    :return: The argument's source, with its whitespace between tokens collapsed to one space, or None if it can't be
+        found, such as when the source isn't available, or dump() was called by another name.
     """
+    location = _get_running_call_location(frame)
+    if location is None:
+        return None
+    line_number, call_index = location
 
-    line_num = base_frame.f_lineno - 1
-    code_context = ""
-    counter = None
-    total_loops = 0
-    # Loop through lines until counter goes back to 0, to account for newlines.
-    # Counter increments for every proper ( token found, and decrements for every proper ) token found.
-    # Additional checks are present so that the page does not hang forever, in event of input we did not account for.
-    while counter is None or (0 < counter < 100 and total_loops < 1000):
-        total_loops += 1
+    # Read lines until the call's brackets are closed. A call can span several lines, and is always closed before
+    # the end of its file, since the code is running.
+    source = ""
+    while True:
+        line = linecache.getline(frame.f_code.co_filename, line_number, frame.f_globals)
+        if not line:
+            # The source isn't available, such as for code run with exec().
+            return None
+        source += line
+        argument = _get_first_argument(_tokenize(source), call_index)
+        if argument is not None:
+            return argument
+        line_number += 1
 
-        # Initialize counter for first loop.
-        if counter is None:
-            counter = 0
 
-        # Check line for parsing actual name info.
-        line_num += 1
-        line = linecache.getline(frame_info.filename, line_num, base_frame.f_globals)
-        code_context += line
+def _get_running_call_location(frame):
+    """Return the line of the running dump() or dd() call, and how many calls to them come before it on that line.
 
-        # Get the tokens out of the string.
-        # NOTE: generate_tokens returns an iterator and not a data structure.
-        tokens = generate_tokens(io.StringIO(line).readline)
+    :return: (line number, index of the call on its line), or None if the frame isn't running a call to dump or dd.
+    """
+    code = frame.f_code
+    line_starts = [(offset, line) for offset, line in dis.findlinestarts(code) if line is not None]
 
-        # Iterate through all tokens from line, and adjust counter if paren tokens are found.
-        try:
-            for token in tokens:
-                if token.exact_type == 7:
-                    counter += 1
-                elif token.exact_type == 8:
-                    counter -= 1
+    def line_of(offset):
+        """Line of the instruction at a bytecode offset."""
+        line = None
+        for start_offset, start_line in line_starts:
+            if start_offset > offset:
+                break
+            line = start_line
+        return line
 
-        except tokenize.TokenError:
-            # Seems to only come up for end of line. We can safely ignore, probably?
-            pass
+    # Every lookup of dump or dd up to the running instruction. The last one is the running call's.
+    loads = [
+        instruction
+        for instruction in dis.get_instructions(code)
+        if instruction.offset <= frame.f_lasti
+        and instruction.opname in _NAME_LOAD_OPNAMES
+        and instruction.argval in DUMP_FUNCTION_NAMES
+    ]
+    if not loads:
+        return None
 
-    # Strip out extra whitespace, if present.
-    code_context = re.sub(r"\s+", " ", code_context)
+    line = line_of(loads[-1].offset)
+    call_index = sum(1 for instruction in loads[:-1] if line_of(instruction.offset) == line)
+    return line, call_index
 
-    # Return final result.
-    return code_context
+
+def _tokenize(source):
+    """Return the source's tokens, without comments and line structure. An unfinished statement is fine."""
+    tokens = []
+    try:
+        for token in generate_tokens(io.StringIO(source).readline):
+            if token.type not in _SKIPPED_TOKEN_TYPES:
+                tokens.append(token)
+    except (tokenize.TokenError, IndentationError):
+        # The source ends inside the call's brackets, or a string, because the rest of it isn't read yet.
+        pass
+    return tokens
+
+
+def _get_first_argument(tokens, call_index):
+    """Return the source of the first argument of a dump() or dd() call that starts on the first line.
+
+    :param tokens: The tokens of the source, starting with the line of the call.
+    :param call_index: Which of the calls that start on the first line, counting from 0.
+    :return: The argument's source, or None if the call's brackets aren't closed yet.
+    """
+    # Every use of the dump or dd name on the first line, in the order the bytecode looks them up. That includes uses
+    # that aren't calls, such as dump.br(), but not attributes with the same name, such as json.dump().
+    names = [
+        index
+        for index, token in enumerate(tokens[:-1])
+        if token.type == NAME
+        and token.string in DUMP_FUNCTION_NAMES
+        and token.start[0] == 1
+        and (index == 0 or tokens[index - 1].string != ".")
+    ]
+    if call_index >= len(names) or tokens[names[call_index] + 1].string != "(":
+        return None
+
+    # Collect the tokens of the first argument: up to the first comma, or the call's closing bracket.
+    argument = []
+    depth = 0
+    for token in tokens[names[call_index] + 2 :]:
+        if token.string in "([{" and token.type == OP:
+            depth += 1
+        elif token.string in ")]}" and token.type == OP:
+            if depth == 0:
+                return _join_tokens(_without_keyword(argument))
+            depth -= 1
+        elif token.string == "," and depth == 0:
+            return _join_tokens(_without_keyword(argument))
+        argument.append(token)
+    return None
+
+
+def _without_keyword(tokens):
+    """Leave out the "obj=" of an argument given by keyword, as in dump(obj=user)."""
+    if len(tokens) > 2 and tokens[0].string == "obj" and tokens[1].string == "=":
+        return tokens[2:]
+    return tokens
+
+
+def _join_tokens(tokens):
+    """Join tokens back into source, with one space where the source had any whitespace between them."""
+    text = ""
+    previous_end = None
+    for token in tokens:
+        if previous_end is not None and token.start != previous_end:
+            text += " "
+        text += token.string
+        previous_end = token.end
+    return text
+
+
+# endregion Dumped Name Functions
 
 
 def process_object_name(object_name):
@@ -248,11 +335,17 @@ def process_object_name(object_name):
             previous_token = token_value
 
         # Iterate over tokens classifying them with a CSS class.
-        for token_number, token_value, _, _, _ in all_tokens:
+        previous_end = None
+        for token_number, token_value, start, end, _ in all_tokens:
 
             # Ignore newlines and endmarkers
             if token_number == NEWLINE or token_number == ENDMARKER:
                 continue
+
+            # Keep a space where the name had whitespace, such as in "a if b else c", since each part is shown in its
+            # own element.
+            space_before = previous_end is not None and start != previous_end
+            previous_end = end
 
             if token_number == NAME and token_value == "Unknown_Object_Name":
                 # Use empty color as object name can't be determined
@@ -284,6 +377,7 @@ def process_object_name(object_name):
                 {
                     "css_class": css_class,
                     "value": token_value,
+                    "space_before": space_before,
                 }
             )
 

@@ -5,6 +5,7 @@ Tests for the DumpDie utils that collect and prepare dumped object information.
 # System Imports.
 import functools
 import inspect
+import json
 from unittest.mock import patch
 
 # Third-Party Imports.
@@ -14,7 +15,7 @@ from django.utils.functional import cached_property
 
 # Internal Imports.
 from django_dump_die import middleware
-from django_dump_die.middleware import dump
+from django_dump_die.middleware import dd, dump
 from django_dump_die.utils import (
     get_attribute_type,
     get_method_type,
@@ -33,7 +34,7 @@ def get_dumped_info():
 
 def get_dumped_name(info):
     """Return the dumped object name from collected dump information, as plain text."""
-    return "".join(part["value"] for part in info[2])
+    return "".join((" " if part.get("space_before") else "") + part["value"] for part in info[2])
 
 
 class HasMethodTypes:
@@ -153,6 +154,84 @@ class DumpDieDumpedObjectInfoTestCase(SimpleTestCase):
         dump(my_deepcopy_value)
 
         self.assertEqual(get_dumped_name(get_dumped_info()), "my_deepcopy_value")
+
+    def test_names_of_two_dumps_on_one_line(self):
+        """Verify two dumps on one line each get their own name."""
+        first, second = 1, 2
+        # fmt: off
+        dump(first); dump(second)  # noqa: E702
+        # fmt: on
+
+        self.assertEqual(get_dumped_name(middleware.dump_objects[0]), "first")
+        self.assertEqual(get_dumped_name(middleware.dump_objects[1]), "second")
+
+    def test_name_after_another_use_of_dump_on_the_line(self):
+        """Verify a dump after dump.br(), or after an attribute named dump, on the same line gets its own name."""
+        value = 42
+        # fmt: off
+        dump.br(); json.dumps(value); dump(value)  # noqa: E702
+        # fmt: on
+
+        self.assertEqual(get_dumped_name(get_dumped_info()), "value")
+
+    def test_name_ignores_a_comment(self):
+        """Verify a comment after the dump, even one that mentions a dump, isn't part of the name."""
+        value = 42
+        dump(value)  # Not dump(other).
+
+        self.assertEqual(get_dumped_name(get_dumped_info()), "value")
+
+    def test_name_with_a_string_containing_a_comma_and_an_equals_sign(self):
+        """Verify an expression with a string that looks like options is kept whole, with its spaces."""
+        value = 42
+        dump(value if value else "x, y=1")
+
+        self.assertEqual(get_dumped_name(get_dumped_info()), 'value if value else "x, y=1"')
+
+    def test_name_of_a_call_over_several_lines(self):
+        """Verify a dump call over several lines gets its argument as the name, without the line breaks."""
+        values = [1, 2]
+        # fmt: off
+        dump(
+            values[0]
+            + values[1],
+            deepcopy=True,
+        )
+        # fmt: on
+
+        self.assertEqual(get_dumped_name(get_dumped_info()), "values[0] + values[1]")
+
+    def test_name_of_an_argument_given_by_keyword(self):
+        """Verify an object given as dump(obj=...) is named without the keyword."""
+        value = 42
+        dump(obj=value)
+
+        self.assertEqual(get_dumped_name(get_dumped_info()), "value")
+
+    def test_name_of_a_dd_after_a_dump_on_the_same_line(self):
+        """Verify dd() gets its own name after a dump() on the same line."""
+        first, second = 1, 2
+        with self.assertRaises(middleware.DumpAndDie) as raised:
+            # fmt: off
+            dump(first); dd(second)  # noqa: E702
+            # fmt: on
+
+        self.assertEqual(get_dumped_name(raised.exception.object), "second")
+        self.assertEqual(get_dumped_name(get_dumped_info()), "first")
+
+    def test_name_is_unknown_without_the_source(self):
+        """Verify a dump in code that has no source file, such as code run with exec(), has an unknown name."""
+        exec("dump(42)", {"dump": dump})  # pylint: disable=exec-used
+
+        self.assertEqual(get_dumped_name(get_dumped_info()), "Unknown_Object_Name")
+
+    def test_name_is_unknown_when_dump_has_another_name(self):
+        """Verify a dump called by another name has an unknown name, rather than another call's argument."""
+        show = dump
+        value = 42
+        show(value)
+
+        self.assertEqual(get_dumped_name(get_dumped_info()), "Unknown_Object_Name")
 
     @patch("django_dump_die.utils.COLORIZE_DUMPED_OBJECT_NAME", False)
     def test_name_is_one_uncolored_part_when_colorizing_is_off(self):
