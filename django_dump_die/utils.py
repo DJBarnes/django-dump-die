@@ -29,7 +29,7 @@ from tokenize import (
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DatabaseError
 from django.http import QueryDict
-from django.utils.functional import cached_property as django_cached_property
+from django.utils.functional import Promise, cached_property as django_cached_property
 
 # Internal Imports.
 from django_dump_die.constants import COLORIZE_DUMPED_OBJECT_NAME, INCLUDE_FILENAME_LINENUMBER, PYTZ_PRESENT
@@ -593,6 +593,9 @@ def get_obj_type(obj):
         obj_type = "null"
     elif PYTZ_PRESENT and isinstance(obj, pytz.BaseTzInfo):  # pylint: disable=E0606
         obj_type = "pytz_timezone"
+    elif isinstance(obj, Promise):
+        # A lazy string, such as from gettext_lazy(), whose class is a "__proxy__".
+        obj_type = "lazy str"
 
     return obj_type
 

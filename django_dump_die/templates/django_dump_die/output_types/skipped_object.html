@@ -2,7 +2,8 @@
 <span class="type" title="{{ type }}">{{ type }}</span>
 
 {% if intermediate %}
-  <code class="datetime">{{ intermediate }}</code>
+  {# force_escape, since the value can be marked safe, such as a bound form field's rendered widget. #}
+  <code class="{{ intermediate_css_class }}">{{ intermediate|force_escape }}</code>
 {% endif %}
 
 <span class="braces">{{ braces.0 }}</span>

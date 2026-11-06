@@ -12,6 +12,7 @@ from django import template
 from django.conf import settings
 from django.db import DatabaseError
 from django.forms.boundfield import BoundField
+from django.utils.functional import Promise
 
 # Internal Imports.
 from django_dump_die.constants import (
@@ -56,6 +57,7 @@ from django_dump_die.utils import (
     is_query,
     is_dict,
     is_const,
+    is_enum_member,
     is_key,
     is_number,
     is_private,
@@ -261,11 +263,13 @@ def dump_object(
     is_pytz_timezone = PYTZ_PRESENT and isinstance(obj, pytz.BaseTzInfo)  # pylint: disable=E0606
 
     # Handle if object is in skip set, aka already processed.
+    intermediate_css_class = None
     if unique in skip_set:
         # Complex object found in skip set. Skip further handling of if clauses and go to end of function.
         # Intermediates get slightly extra handling for "simple" value output.
         if _is_intermediate_type(obj):
             intermediate_value = safe_str(obj)
+            intermediate_css_class = _get_intermediate_css_class(obj)
 
     # Handle if obj is a simple type (Null/None, int, str, bool, and basic number types)
     # OR if direct parent is an intermediate (excluding pytz timezone objects).
@@ -335,6 +339,7 @@ def dump_object(
         "unique": unique,
         "root_count": root_count,
         "intermediate": intermediate_value,
+        "intermediate_css_class": intermediate_css_class,
     }
 
 
@@ -460,7 +465,14 @@ def _add_unique_map_entry(obj, original_obj, root_unique):
 
 def _is_simple_type(obj):
     """Return if the obj is a simple type."""
-    return obj is None or type(obj) in SIMPLE_TYPES or get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
+    return (
+        obj is None
+        or type(obj) in SIMPLE_TYPES
+        or get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
+        # Subclasses of str, such as Django's SafeString, and lazy strings, such as from gettext_lazy(), are shown as
+        # their text, like a str. Enum members that are also strings stay enums.
+        or (isinstance(obj, (str, Promise)) and not is_enum_member(obj))
+    )
 
 
 def _is_intermediate_type(obj):
@@ -499,23 +511,24 @@ def _handle_simple_type(obj):
     css_class = ""
     if obj is None:
         css_class = "none"
-    elif isinstance(obj, str):
+    elif isinstance(obj, (str, Promise)):
         css_class = "string"
     elif isinstance(obj, bool):
         css_class = "bool"
     elif isinstance(obj, (int, Decimal, float, bytes)):
         css_class = "number"
     elif _is_intermediate_type(obj):
-        css_class = "intermediate"
+        css_class = _get_intermediate_css_class(obj)
     elif isinstance(obj, types.ModuleType):
         css_class = "module"
-    elif isinstance(obj, BoundField):
-        css_class = "bound"
     else:
         css_class = "default"
 
     # Determine which output to use.
-    if _is_intermediate_type(obj) or isinstance(obj, Decimal):
+    if isinstance(obj, Promise):
+        # A lazy string's text, quoted like a str.
+        output_value = safe_repr(safe_str(obj))
+    elif _is_intermediate_type(obj) or isinstance(obj, Decimal):
         output_value = safe_str(obj)
     else:
         output_value = safe_repr(obj)
@@ -527,6 +540,11 @@ def _handle_simple_type(obj):
         "type": get_obj_type(obj),
         "css_class": css_class,
     }
+
+
+def _get_intermediate_css_class(obj):
+    """Return the CSS class of an intermediate object's value. Bound form fields have a color of their own."""
+    return "bound" if isinstance(obj, BoundField) else "intermediate"
 
 
 def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, original_obj=None):
@@ -567,6 +585,7 @@ def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, 
         "braces": "{}",
         "object": _hold_if_callable(obj),
         "intermediate": safe_str(obj),
+        "intermediate_css_class": _get_intermediate_css_class(obj),
         "unique": unique,
         "root_count": root_count,
         "type": get_obj_type(obj),

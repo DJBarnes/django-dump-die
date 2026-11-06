@@ -5,6 +5,8 @@ from django import forms
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template.response import TemplateResponse
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy
 
 # Internal Imports.
 from django_dump_die.middleware import dd, dump
@@ -47,6 +49,20 @@ def django_type_bound_field(request):
     """Test view dumping one field of a form with submitted data."""
     sample_form = ContactForm(data={"name": "Ada"})
     dump(sample_form["name"])
+    return _done(request)
+
+
+def django_type_safe_string(request):
+    """Test view dumping a string marked as safe for HTML, which is a subclass of str."""
+    sample_safe_string = mark_safe("<b>Bold</b> text")
+    dump(sample_safe_string)
+    return _done(request)
+
+
+def django_type_lazy_string(request):
+    """Test view dumping a lazy translation string, which isn't a str until it's used."""
+    sample_lazy_string = gettext_lazy("Sample lazy text")
+    dump(sample_lazy_string)
     return _done(request)
 
 
