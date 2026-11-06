@@ -174,12 +174,8 @@ class DumpAndDieMiddleware:
         # non-dd-exception was not raised, assume that the user
         # just forgot to use DD to actually die. Return the dd_view with those
         # collected dump_objects instead of returning the default response.
-        # TODO: Consider combining this logic with the non-dd-exception logic
-        # below to return a "combo" view that has dump info at the top and the
-        # original response below that. The downside is that it might affect the
-        # output due to a clash of CSS.
-        # TODO: Consider adding a setting to turn the combo function on or off if added.
-        # TODO: Make sure that this will not run when Debug is turned off.
+        # Nothing is collected while DEBUG is off, since dump() and dump.br() do nothing then.
+        # A "combo" view that shows the dumps above the original response is an idea for #45.
         if dump_objects and has_non_dd_exception is False:
             objects = dump_objects[:]
             dump_objects.clear()
@@ -192,7 +188,7 @@ class DumpAndDieMiddleware:
         # and inject the dump info into the standard Django 500 error page.
         # Only when there is something to show and DEBUG is on, so that production
         # error pages are never altered.
-        # TODO: Consider adding a setting to turn this on or off.
+        # A setting to turn this on or off is an idea for #45.
         if has_non_dd_exception and dump_objects and settings.DEBUG:
             objects = dump_objects[:]
             dump_objects.clear()
