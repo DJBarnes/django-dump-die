@@ -5,6 +5,10 @@ on:
       - main
   pull_request:
 
+# The tests only need to read the repository.
+permissions:
+  contents: read
+
 jobs:
   test:
     # Only run tests when NOT pushing tags. Assumes tests already passed from pushed commit that tag is based on.

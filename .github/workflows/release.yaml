@@ -4,6 +4,10 @@ on:
     tags:
       - "*"
 
+# Jobs only read the repository. The publish job also asks for an ID token, for trusted publishing on PyPI.
+permissions:
+  contents: read
+
 jobs:
   release-build:
     runs-on: ubuntu-latest
