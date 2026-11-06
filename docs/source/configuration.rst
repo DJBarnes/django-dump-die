@@ -409,6 +409,49 @@ Example::
     DJANGO_DD_FUNCTIONS_START_EXPANDED = True
 
 
+.. _show-dumps-above-page:
+
+DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE
+===============================
+
+By default, when ``dump()`` is used without ``dd()``, the page the view
+returns is replaced by the dumps. To keep the page, and show the dumps above
+its own content, set this setting to ``True``. The page gets the dumps' CSS
+and JavaScript in its head, and the dumps at the start of its body. The
+toolbar scrolls away with the dumps, instead of covering the page.
+
+Dumps are only shown above an HTML page with a ``<body>`` tag. Other
+responses are still replaced by the dumps, so that they aren't lost: JSON and
+other content that isn't HTML, HTML fragments without a ``<body>``, files and
+other streaming responses, redirects, and responses compressed by
+``GZipMiddleware``. ``dd()`` always shows only the dumps, since it stops the
+view before it returns a page.
+
+:Type: ``bool``
+:Default: ``False``
+
+Example::
+
+    DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE = True
+
+
+.. _show-dumps-on-error-page:
+
+DJANGO_DD_SHOW_DUMPS_ON_ERROR_PAGE
+==================================
+
+By default, if the request raises an unhandled exception, the dumps from
+before the exception are shown above Django's error page. To leave the error
+page as it is, set this setting to ``False``. The dumps are then not shown.
+
+:Type: ``bool``
+:Default: ``True``
+
+Example::
+
+    DJANGO_DD_SHOW_DUMPS_ON_ERROR_PAGE = False
+
+
 DJANGO_DD_INCLUDE_UTILITY_TOOLBAR
 =================================
 

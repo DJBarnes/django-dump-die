@@ -1,4 +1,4 @@
-.static-padding {
+.dump-toolbar + .static-padding {
     margin-top: 55px;
     height: 1px;
 }

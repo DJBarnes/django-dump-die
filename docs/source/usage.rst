@@ -23,6 +23,16 @@ it is time to return the response. At this point, Django-Dump-Die will
 intercept and replace the response with the data that has been dumped thus
 far.
 
+To keep the page and show the dumps above its own content instead, set
+:ref:`DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE <show-dumps-above-page>` to ``True``.
+This only works for HTML pages. Other responses, such as JSON, files, and
+redirects, are still replaced by the dumps.
+
+If the request raises an unhandled exception, the dumps from before the
+exception are shown above Django's error page, so that you see both. See
+:ref:`DJANGO_DD_SHOW_DUMPS_ON_ERROR_PAGE <show-dumps-on-error-page>` to turn
+this off.
+
 .. note::
 
     Because dump die uses middleware to internally handle keeping track of

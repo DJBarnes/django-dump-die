@@ -32,9 +32,9 @@ if SELENIUM_PRESENT:
     from selenium.webdriver.support.ui import WebDriverWait
 
 
-# State of every toggle on the page, for checking what is open.
+# State of every toggle in dumped output, for checking what is open.
 TOGGLE_STATES = """
-return Array.from(document.querySelectorAll('.arrow-toggle')).map((toggle) => {
+return Array.from(document.querySelectorAll('.dump-wrapper .arrow-toggle')).map((toggle) => {
     const section = toggle.nextElementSibling;
     return {
         type: toggle.dataset.ddType,
@@ -311,3 +311,72 @@ class DumpDieBrowserTestCase(LiveServerTestCase):
         self.assertEqual(len(heights), 3)
         self.assertAlmostEqual(heights[1], 2 * heights[0], delta=1)
         self.assertAlmostEqual(heights[2], 5 * heights[0], delta=1)
+
+    @override_settings(DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE=True)
+    def test_script_loaded_twice_is_set_up_once(self):
+        """Verify the script, loaded by both the dumps above the page and a template dump, works without errors."""
+        self.open_page("django_dump_die__tests__browser:above_page")
+        scripts = self.driver.execute_script(
+            "return document.querySelectorAll('script[src*=\"django_dump_die/js/dd.js\"]').length;"
+        )
+        self.assertEqual(scripts, 2)
+        self.assertEqual(self.driver.execute_script("return window.pageErrors;"), [])
+
+        # Each click opens and closes the section once, not once per copy of the script.
+        toggle = self.driver.find_elements(By.CSS_SELECTOR, '.dump-wrapper .arrow-toggle[data-object-depth="1"]')[0]
+        toggle.click()
+        self.assertToggleState(self.get_states()[0], True)
+        toggle.click()
+        self.assertToggleState(self.get_states()[0], False)
+
+    @override_settings(DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE=True)
+    def test_page_elements_with_dump_class_names_are_left_alone(self):
+        """Verify the page's own elements with dump class names get no dump styles or handling."""
+        self.open_page("django_dump_die__tests__browser:above_page")
+        styles = self.driver.execute_script("""
+            const color = (selector) => getComputedStyle(document.querySelector(selector)).color;
+            return {
+                heading: color('#page-heading'),
+                key: color('#page-key'),
+                dumpedType: color('.dump-wrapper .type'),
+                pageSectionDisplayed: document.querySelector('#page-section').offsetParent !== null,
+            };
+            """)
+        # The page's text keeps the default black, while the dump's type has the dump's color.
+        self.assertEqual(styles["heading"], "rgb(0, 0, 0)")
+        self.assertEqual(styles["key"], "rgb(0, 0, 0)")
+        self.assertNotEqual(styles["dumpedType"], "rgb(0, 0, 0)")
+        # The dumps' CSS doesn't hide the page's own "collapse" element.
+        self.assertTrue(styles["pageSectionDisplayed"])
+
+        # Clicking the page's own toggle doesn't open or close anything.
+        self.driver.find_element(By.ID, "page-toggle").click()
+        self.assertFalse(
+            self.driver.execute_script("return document.querySelector('#page-section').classList.contains('show');")
+        )
+        # The page's own "unique" elements aren't highlighted as duplicates. The dumps' own are.
+        self.assertEqual(
+            self.driver.execute_script(
+                "return Array.from(djangoDumpDie.duplicateGroups.values()).flat()"
+                ".filter((element) => element.id.startsWith('page-')).length;"
+            ),
+            0,
+        )
+        self.assertEqual(self.driver.execute_script("return djangoDumpDie.duplicateGroups.size;"), 1)
+
+    @override_settings(DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE=True)
+    def test_toolbar_scrolls_away_with_the_dumps(self):
+        """Verify the toolbar stays on top while the dumps are in view, and doesn't cover the page after them."""
+        self.open_page("django_dump_die__tests__browser:above_page")
+        position = self.driver.execute_script("""
+            const toolbar = document.querySelector('.dump-toolbar');
+            window.scrollTo(0, document.querySelector('#page-end').offsetTop + 500);
+            return {
+                position: getComputedStyle(toolbar).position,
+                after: toolbar.getBoundingClientRect().bottom,
+            };
+            """)
+
+        self.assertEqual(position["position"], "sticky")
+        # Scrolled past the dumps, the toolbar has left the top of the window.
+        self.assertLessEqual(position["after"], 0)

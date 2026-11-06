@@ -23,6 +23,23 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Added: dumps above the page.** With the new
+  ``DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE`` setting on, ``dump()`` without ``dd()``
+  shows the dumps above the page's own content, instead of replacing the page.
+  Responses that aren't HTML pages are still replaced. Dumps on Django's
+  error page, after an unhandled exception, can now be turned off with
+  ``DJANGO_DD_SHOW_DUMPS_ON_ERROR_PAGE``, and their toolbar no longer covers
+  the top of the error page.
+  (`#45 <https://github.com/DJBarnes/django-dump-die/issues/45>`_)
+
+* **Fixed: dumps in a page changed the page's own elements.** With the
+  ``{% dump %}`` template tag, the dumps' styles also applied to the page's
+  own elements with the same class names, such as ``type``, ``key``, or
+  ``number``, and their script opened and closed the page's own elements with
+  the ``arrow-toggle`` class. The dumps also replaced the page's favicon.
+  Styles and scripts now only apply to dumped output, and the script can be
+  loaded more than once on a page.
+
 * **Fixed: some values were added to the dump page as HTML.** A dict key
   whose ``repr()`` was marked safe, such as one built with ``format_html()``,
   was added to the page as HTML instead of shown as text. Every value is now
