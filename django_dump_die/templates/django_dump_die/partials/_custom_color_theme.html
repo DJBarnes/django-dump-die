@@ -9,7 +9,8 @@
       @media (prefers-color-scheme: light)
       {
         html.dump-die-page body,
-        .dump-wrapper {
+        .dump-wrapper,
+        .dump-die-above-page {
           {% if custom_color_theme.light.color %}
             color: {{ custom_color_theme.light.color }};
           {% endif %}
@@ -52,7 +53,7 @@
             background-color: #827b66;
           {% endif %}
         }
-        .dd-wrapper {
+        :where(.dump-wrapper) .dd-wrapper {
           {% if custom_color_theme.light.border %}
             color: {{ custom_color_theme.light.border }};
           {% else %}
@@ -81,7 +82,8 @@
       @media (prefers-color-scheme: dark)
       {
         html.dump-die-page body,
-        .dump-wrapper {
+        .dump-wrapper,
+        .dump-die-above-page {
           {% if custom_color_theme.dark.color %}
             color: {{ custom_color_theme.dark.color }};
           {% endif %}
@@ -124,7 +126,7 @@
             background-color: #839496;
           {% endif %}
         }
-        .dd-wrapper {
+        :where(.dump-wrapper) .dd-wrapper {
           {% if custom_color_theme.dark.border %}
             color: {{ custom_color_theme.dark.border }};
           {% else %}
@@ -151,37 +153,37 @@
     /* Meta section */
     {% if custom_color_theme.meta %}
       {% if custom_color_theme.meta.arrow %}
-        .arrow {
+        :where(.dump-wrapper) .arrow {
           color: {{ custom_color_theme.meta.arrow }};
         }
       {% endif %}
       {% if custom_color_theme.meta.access_modifier %}
-        .access-modifier {
+        :where(.dump-wrapper) .access-modifier {
             color: {{ custom_color_theme.meta.access_modifier }};
         }
       {% endif %}
       {% if custom_color_theme.meta.braces %}
-        .braces {
+        :where(.dump-wrapper) .braces {
             color: {{ custom_color_theme.meta.braces }};
         }
       {% endif %}
       {% if custom_color_theme.meta.empty %}
-        .empty {
+        :where(.dump-wrapper) .empty {
             color: {{ custom_color_theme.meta.empty }};
         }
       {% endif %}
       {% if custom_color_theme.meta.location %}
-        .location {
+        :where(.dump-wrapper) .location {
           color: {{ custom_color_theme.meta.location }};
         }
       {% endif %}
       {% if custom_color_theme.meta.type %}
-        .type {
+        :where(.dump-wrapper) .type {
             color: {{ custom_color_theme.meta.type }};
         }
       {% endif %}
       {% if custom_color_theme.meta.unique %}
-        .unique {
+        :where(.dump-wrapper) .unique {
             color: {{ custom_color_theme.meta.unique }};
         }
       {% endif %}
@@ -190,52 +192,52 @@
     /* Identifier section */
     {% if custom_color_theme.identifiers %}
       {% if custom_color_theme.identifiers.section_name %}
-      .section_name {
+      :where(.dump-wrapper) .section_name {
         color: {{ custom_color_theme.identifiers.section_name }};
       }
       {% endif %}
       {% if custom_color_theme.identifiers.attribute %}
-        .attribute {
+        :where(.dump-wrapper) .attribute {
             color: {{ custom_color_theme.identifiers.attribute }};
         }
       {% endif %}
       {% if custom_color_theme.identifiers.constant %}
-        .constant {
+        :where(.dump-wrapper) .constant {
             color: {{ custom_color_theme.identifiers.constant }};
         }
       {% endif %}
       {% if custom_color_theme.identifiers.dumped_name %}
-        .dumped_name {
+        :where(.dump-wrapper) .dumped_name {
             color: {{ custom_color_theme.identifiers.dumped_name }};
         }
       {% endif %}
       {% if custom_color_theme.identifiers.function %}
-        .function {
+        :where(.dump-wrapper) .function {
             color: {{ custom_color_theme.identifiers.function }};
         }
       {% endif %}
       {% if custom_color_theme.identifiers.index %}
-        .index {
+        :where(.dump-wrapper) .index {
             color: {{ custom_color_theme.identifiers.index }};
         }
       {% endif %}
       {% if custom_color_theme.identifiers.key %}
-        .key {
+        :where(.dump-wrapper) .key {
             color: {{ custom_color_theme.identifiers.key }};
         }
       {% endif %}
       {% if custom_color_theme.identifiers.decorator %}
-        .decorator {
+        :where(.dump-wrapper) .decorator {
             color: {{ custom_color_theme.identifiers.decorator }};
         }
       {% endif %}
       {% if custom_color_theme.identifiers.class_attribute %}
-        .class_attribute {
+        :where(.dump-wrapper) .class_attribute {
             color: {{ custom_color_theme.identifiers.class_attribute }};
         }
       {% endif %}
       {% if custom_color_theme.identifiers.params %}
-        .params {
+        :where(.dump-wrapper) .params {
             color: {{ custom_color_theme.identifiers.params }};
         }
       {% endif %}
@@ -244,47 +246,47 @@
     /* Types section */
     {% if custom_color_theme.types %}
       {% if custom_color_theme.types.bool %}
-        .bool {
+        :where(.dump-wrapper) .bool {
             color: {{ custom_color_theme.types.bool }};
         }
       {% endif %}
       {% if custom_color_theme.types.bound %}
-        .bound {
+        :where(.dump-wrapper) .bound {
             color: {{ custom_color_theme.types.bound }};
         }
       {% endif %}
       {% if custom_color_theme.types.intermediate %}
-        .intermediate {
+        :where(.dump-wrapper) .intermediate {
           color: {{ custom_color_theme.types.intermediate }};
         }
       {% endif %}
       {% if custom_color_theme.types.default %}
-        .default {
+        :where(.dump-wrapper) .default {
           color: {{ custom_color_theme.types.default }};
         }
       {% endif %}
       {% if custom_color_theme.types.docs %}
-        .docs {
+        :where(.dump-wrapper) .docs {
           color: {{ custom_color_theme.types.docs }};
         }
       {% endif %}
       {% if custom_color_theme.types.module %}
-        .module {
+        :where(.dump-wrapper) .module {
             color: {{ custom_color_theme.types.module }};
         }
       {% endif %}
       {% if custom_color_theme.types.none %}
-        .none {
+        :where(.dump-wrapper) .none {
           color: {{ custom_color_theme.types.none }};
         }
       {% endif %}
       {% if custom_color_theme.types.number %}
-        .number {
+        :where(.dump-wrapper) .number {
           color: {{ custom_color_theme.types.number }};
         }
       {% endif %}
       {% if custom_color_theme.types.string %}
-        .string {
+        :where(.dump-wrapper) .string {
             color: {{ custom_color_theme.types.string }};
         }
       {% endif %}
@@ -296,7 +298,8 @@
   /* Forcing Light */
   {% if force_light_theme %}
     html.dump-die-page body,
-    .dump-wrapper {
+    .dump-wrapper,
+    .dump-die-above-page {
       {% if custom_color_theme.light.color %}
         color: {{ custom_color_theme.light.color }};
       {% else %}
@@ -343,7 +346,7 @@
         background-color: #827b66;
       {% endif %}
     }
-    .dd-wrapper {
+    :where(.dump-wrapper) .dd-wrapper {
       {% if custom_color_theme.light.border %}
         color: {{ custom_color_theme.light.border }};
       {% else %}
@@ -364,63 +367,63 @@
         border-top-color: #d0c095;
       {% endif %}
     }
-    .arrow {
+    :where(.dump-wrapper) .arrow {
       {% if custom_color_theme.meta.arrow %}
         color: {{ custom_color_theme.meta.arrow  }}
       {% else %}
         color: #657b83;
       {% endif %}
     }
-    .access-modifier {
+    :where(.dump-wrapper) .access-modifier {
       {% if custom_color_theme.meta.access_modifier %}
         color: {{ custom_color_theme.meta.access_modifier }}
       {% else %}
         color: #657b83;
       {% endif %}
     }
-    .braces {
+    :where(.dump-wrapper) .braces {
       {% if custom_color_theme.meta.braces %}
         color: {{ custom_color_theme.meta.braces }}
       {% else %}
         color: #657b83;
       {% endif %}
     }
-    .location {
+    :where(.dump-wrapper) .location {
       {% if custom_color_theme.meta.location %}
         color: {{ custom_color_theme.meta.location }}
       {% else %}
         color: #93a1a1;
       {% endif %}
     }
-    .attribute {
+    :where(.dump-wrapper) .attribute {
       {% if custom_color_theme.identifiers.attribute %}
         color: {{ custom_color_theme.identifiers.attribute }}
       {% else %}
         color: #586e75;
       {% endif %}
     }
-    .class_attribute {
+    :where(.dump-wrapper) .class_attribute {
       {% if custom_color_theme.identifiers.class_attribute %}
         color: {{ custom_color_theme.identifiers.class_attribute }}
       {% else %}
         color: #93a1a1;
       {% endif %}
     }
-    .dumped_name {
+    :where(.dump-wrapper) .dumped_name {
       {% if custom_color_theme.identifiers.dumped_name %}
         color: {{ custom_color_theme.identifiers.dumped_name }}
       {% else %}
         color: #586e75;
       {% endif %}
     }
-    .docs {
+    :where(.dump-wrapper) .docs {
       {% if custom_color_theme.types.docs %}
         color: {{ custom_color_theme.types.docs }}
       {% else %}
         color: #93a1a1;
       {% endif %}
     }
-    .params {
+    :where(.dump-wrapper) .params {
       {% if custom_color_theme.identifiers.params %}
         color: {{ custom_color_theme.identifiers.params }}
       {% else %}
@@ -432,7 +435,8 @@
   /* Forcing Dark */
   {% if force_dark_theme %}
     html.dump-die-page body,
-    .dump-wrapper {
+    .dump-wrapper,
+    .dump-die-above-page {
       {% if custom_color_theme.dark.color %}
         color: {{ custom_color_theme.dark.color }};
       {% else %}
@@ -479,7 +483,7 @@
         background-color: #839496;
       {% endif %}
     }
-    .dd-wrapper {
+    :where(.dump-wrapper) .dd-wrapper {
       {% if custom_color_theme.dark.border %}
         color: {{ custom_color_theme.dark.border }};
       {% else %}
@@ -500,63 +504,63 @@
         border-top-color: #054757;
       {% endif %}
     }
-    .arrow {
+    :where(.dump-wrapper) .arrow {
       {% if custom_color_theme.meta.arrow %}
         color: {{ custom_color_theme.meta.arrow  }}
       {% else %}
         color: #839496;
       {% endif %}
     }
-    .access-modifier {
+    :where(.dump-wrapper) .access-modifier {
       {% if custom_color_theme.meta.access_modifier %}
         color: {{ custom_color_theme.meta.access_modifier }}
       {% else %}
         color: #839496;
       {% endif %}
     }
-    .braces {
+    :where(.dump-wrapper) .braces {
       {% if custom_color_theme.meta.braces %}
         color: {{ custom_color_theme.meta.braces }}
       {% else %}
         color: #839496;
       {% endif %}
     }
-    .location {
+    :where(.dump-wrapper) .location {
       {% if custom_color_theme.meta.location %}
         color: {{ custom_color_theme.meta.location }}
       {% else %}
         color: #586e75;
       {% endif %}
     }
-    .attribute {
+    :where(.dump-wrapper) .attribute {
       {% if custom_color_theme.identifiers.attribute %}
         color: {{ custom_color_theme.identifiers.attribute }}
       {% else %}
         color: #93a1a1;
       {% endif %}
     }
-    .class_attribute {
+    :where(.dump-wrapper) .class_attribute {
       {% if custom_color_theme.identifiers.class_attribute %}
         color: {{ custom_color_theme.identifiers.class_attribute }}
       {% else %}
         color: #586e75;
       {% endif %}
     }
-    .dumped_name {
+    :where(.dump-wrapper) .dumped_name {
       {% if custom_color_theme.identifiers.dumped_name %}
         color: {{ custom_color_theme.identifiers.dumped_name }}
       {% else %}
         color: #93a1a1;
       {% endif %}
     }
-    .docs {
+    :where(.dump-wrapper) .docs {
       {% if custom_color_theme.types.docs %}
         color: {{ custom_color_theme.types.docs }}
       {% else %}
         color: #586e75;
       {% endif %}
     }
-    .params {
+    :where(.dump-wrapper) .params {
       {% if custom_color_theme.identifiers.params %}
         color: {{ custom_color_theme.identifiers.params }}
       {% else %}

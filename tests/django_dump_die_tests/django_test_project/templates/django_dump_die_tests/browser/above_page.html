@@ -1,0 +1,28 @@
+{% load dump_die %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    {# Record script errors, such as from loading the DumpDie script twice, for the tests to check. #}
+    <script>
+      window.pageErrors = [];
+      window.addEventListener('error', (event) => window.pageErrors.push(event.message));
+    </script>
+    <title>Page Below Dumps</title>
+  </head>
+  <body>
+    {# Elements of the page with the same class names as dumped output, which the dumps must leave alone. #}
+    <h1 id="page-heading" class="type">Page Below Dumps</h1>
+    <p id="page-key" class="key">Not a dumped key.</p>
+    <a id="page-toggle" class="arrow-toggle" data-dd-toggle="collapse">Not a dump toggle.</a>
+    <div id="page-section" class="dd-wrapper collapse">Not a dump section.</div>
+    <span id="page-unique-1" class="unique" data-highlight-unique="1">Not a unique.</span>
+    <span id="page-unique-2" class="unique" data-highlight-unique="1">Not a unique either.</span>
+
+    {# A template dump, which loads the DumpDie script a second time. #}
+    {% dump sample %}
+
+    {# Enough content to scroll past the dumps. #}
+    <div id="page-end" style="height: 3000px;">End of the page.</div>
+  </body>
+</html>

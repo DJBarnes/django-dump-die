@@ -4,7 +4,7 @@
 from django.shortcuts import render
 
 # Internal Imports.
-from django_dump_die.middleware import dd
+from django_dump_die.middleware import dd, dump
 
 
 class BrowserTestClass:
@@ -35,3 +35,10 @@ def nested_example(request):
 def template_dump_example(request):
     """Dumps from a template, into a normal page without the DumpDie toolbar."""
     return render(request, "django_dump_die/template_dump.html", {"sample_simple_class": BrowserTestClass()})
+
+
+def above_page_example(request):
+    """Dumps nested objects without dd(), then returns a page that has its own template dump."""
+    shared = {"shared": True}
+    dump([{"inner": shared}, {"inner": shared}])
+    return render(request, "django_dump_die_tests/browser/above_page.html", {"sample": BrowserTestClass()})

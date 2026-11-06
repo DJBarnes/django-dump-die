@@ -1,0 +1,5 @@
+{# Dumps shown at the top of another page: Django's error page, or any page with DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE. #}
+{# The wrapper gives them the dump page's background, and keeps the toolbar from covering the page below. #}
+<div class="dump-die-above-page">
+  {% include "django_dump_die/partials/_body.html" %}
+</div>

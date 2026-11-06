@@ -9,8 +9,18 @@
  * (".dd-wrapper" or ".li-wrapper"), and contains that section's arrow (".arrow").
  * All handlers are delegated from the document, so the cost of a click does not grow
  * with the size of the dump.
+ *
+ * Dumped output can be part of another page, such as with the dump template tag or when dumps are shown above the
+ * page. So every lookup is limited to dumped output (SCOPE), and the page's own elements with the same class names
+ * are left alone.
+ *
+ * The script can be included more than once on a page, such as by the dump template tag and by dumps shown above the
+ * page. "var" can be declared again, unlike "const", and a second copy reuses the object of the first.
  */
-const djangoDumpDie = {
+var djangoDumpDie = window.djangoDumpDie || {
+
+    // Selector of dumped output. Each dumped object, and each break, is in its own wrapper.
+    SCOPE: '.dump-wrapper',
 
     // Arrow text for each state.
     ARROW_OPEN: '▼',
@@ -176,8 +186,8 @@ const djangoDumpDie = {
      * Handle clicks on toggles. CTRL+click also opens or closes everything inside.
      */
     onToggleClick(event) {
-        const toggle = event.target.closest('.arrow-toggle');
-        if (!toggle) {
+        const toggle = event.target instanceof Element ? event.target.closest('.arrow-toggle') : null;
+        if (!toggle || !toggle.closest(djangoDumpDie.SCOPE)) {
             return;
         }
         const section = djangoDumpDie.getSection(toggle);
@@ -211,7 +221,7 @@ const djangoDumpDie = {
     setUpUniqueDupHighlighting() {
         // Group the unique elements by their value, in one pass.
         const groups = new Map();
-        document.querySelectorAll('.unique').forEach((element) => {
+        document.querySelectorAll(djangoDumpDie.SCOPE + ' .unique').forEach((element) => {
             const key = element.dataset.highlightUnique;
             if (!groups.has(key)) {
                 groups.set(key, []);
@@ -230,7 +240,7 @@ const djangoDumpDie = {
         }
 
         const getGroup = (target) => {
-            const unique = target instanceof Element ? target.closest('.unique') : null;
+            const unique = target instanceof Element ? target.closest(djangoDumpDie.SCOPE + ' .unique') : null;
             return unique ? groups.get(unique.dataset.highlightUnique) : undefined;
         };
 
@@ -239,9 +249,10 @@ const djangoDumpDie = {
             if (!group || group === getGroup(event.relatedTarget)) {
                 return;
             }
-            // Swap colors, as computed before highlighting.
+            // Swap colors, as computed before highlighting. The background is the dumped output's, which can differ
+            // from the page's.
             const foreground = getComputedStyle(group[0]).color;
-            const background = getComputedStyle(document.body).backgroundColor;
+            const background = getComputedStyle(group[0].closest(djangoDumpDie.SCOPE)).backgroundColor;
             group.forEach((element) => {
                 element.style.color = background;
                 element.style.backgroundColor = foreground;
@@ -264,7 +275,7 @@ const djangoDumpDie = {
      * Toggles that a toolbar button applies to.
      */
     getToggles(filter) {
-        return Array.from(document.querySelectorAll('.arrow-toggle')).filter(filter || (() => true));
+        return Array.from(document.querySelectorAll(djangoDumpDie.SCOPE + ' .arrow-toggle')).filter(filter || (() => true));
     },
 
     /**
@@ -382,7 +393,7 @@ const djangoDumpDie = {
     },
 };
 
-// Make the object available as window.djangoDumpDie, since a top-level const is not a window property.
+// Make the object available as window.djangoDumpDie, for a second copy of the script to find.
 window.djangoDumpDie = djangoDumpDie;
 
 /**

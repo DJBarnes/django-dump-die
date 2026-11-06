@@ -234,6 +234,34 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
             expected_not_content=["<p>Sample page body content</p>"],
         )
 
+    @override_settings(DEBUG=True, DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE=True)
+    def test_dump_shows_above_the_page_when_turned_on(self):
+        """Verify dumps are shown above the page's own content, and the page is kept, when the setting is on."""
+        response = self.assertGetResponse(
+            "django_dump_die__tests__general:dump_only",
+            expected_title="Sample page",
+            expected_content=[
+                '<div class="dump-die-above-page">',
+                "Django DumpDie",
+                "Dumped without dd.",
+                "<h1>Sample page</h1>",
+                "<p>Sample page body content</p>",
+            ],
+        )
+        content = response.content.decode("utf-8")
+        self.assertIn("django_dump_die/css/dd.css", content[: content.index("</head>")])
+
+    @override_settings(DEBUG=True, DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE=True)
+    def test_dd_still_replaces_the_page_when_dumps_are_shown_above_it(self):
+        """Verify dd() still shows the dump page, since it stops the view before there is a page."""
+        self.assertGetResponse(
+            "django_dump_die__tests__general:dd_only",
+            expected_title="DD",
+            expected_header="Django DumpDie",
+            expected_content=["Only dd, without dumps."],
+            expected_not_content=['<div class="dump-die-above-page">'],
+        )
+
     @override_settings(DEBUG=True)
     def test_dd_without_any_dumps_still_shows_dump_view(self):
         """Verify that only using dd and no dumps still shows the dump view."""

@@ -93,7 +93,8 @@ html.dump-die-page body {
 
 /* Dumped output gets its font and colors from its wrapper, so it looks the same in any page. */
 html.dump-die-page body,
-.dump-wrapper {
+.dump-wrapper,
+.dump-die-above-page {
     font-family: monospace;
     color: #839496;
     background-color: #002b36;
@@ -102,6 +103,23 @@ html.dump-die-page body,
 html.dump-die-page hr {
     border: 1px solid;
     color: #d0c095;
+}
+
+/* Dumps shown at the top of another page: Django's error page, or any page with DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE. */
+.dump-die-above-page {
+    padding-bottom: 15px;
+}
+
+/* The toolbar stays at the top while the dumps are in view, then scrolls away with them, instead of covering the
+   page below. */
+.dump-die-above-page .dump-toolbar {
+    position: sticky;
+    z-index: 1;
+    box-sizing: border-box;
+}
+
+.dump-die-above-page .dump-toolbar + .static-padding {
+    display: none;
 }
 
 /* Utility Toolbar Coloring */
@@ -134,7 +152,7 @@ html.dump-die-page hr {
     margin-right: 10px;
 }
 
-.dd-wrapper {
+:where(.dump-wrapper) .dd-wrapper {
     border-left: 1px dashed #d0c095;
 }
 
@@ -166,156 +184,157 @@ html.dump-die-page hr {
 }
 
 /* Opening and closing sections. dd.js sets these classes, which Bootstrap's collapse also used. */
-.dd-wrapper.collapse:not(.show),
-.li-wrapper.collapse:not(.show) {
+:where(.dump-wrapper) .dd-wrapper.collapse:not(.show),
+:where(.dump-wrapper) .li-wrapper.collapse:not(.show) {
     display: none;
 }
 
-.dd-wrapper.collapsing,
-.li-wrapper.collapsing {
+:where(.dump-wrapper) .dd-wrapper.collapsing,
+:where(.dump-wrapper) .li-wrapper.collapsing {
     position: relative;
     height: 0;
     overflow: hidden;
     transition: height 0.35s ease;
 }
 
-a.arrow-toggle {
+:where(.dump-wrapper) a.arrow-toggle {
     cursor: pointer;
 }
 
-.attribute-list {
+:where(.dump-wrapper) .attribute-list {
     list-style-type: none;
     margin-bottom: 0;
 }
 
-.function-li {
+:where(.dump-wrapper) .function-li {
     text-indent: -2ch;
     margin-left: 2ch;
 }
 
-.indent-docs p {
+:where(.dump-wrapper) .indent-docs p {
     margin-left: 20px;
     margin-bottom: 0;
     text-indent: 0;
 }
 
 /* Meta */
-.arrow {
+:where(.dump-wrapper) .arrow {
     color: #839496;
 }
 
-.access-modifier {
+:where(.dump-wrapper) .access-modifier {
     color: #657b83;
 }
 
 /* The @staticmethod, @classmethod, @property, and @cached_property markers use the type color. */
-.decorator {
+:where(.dump-wrapper) .decorator {
     color: #859900;
 }
 
-.braces {
+:where(.dump-wrapper) .braces {
     color: #839496;
 }
 
-.empty {
+:where(.dump-wrapper) .empty {
     color: #dc322f;
 }
 
-.location {
+:where(.dump-wrapper) .location {
     color: #586e75;
     font-style: italic;
     font-size: 75%;
 }
 
-.type {
+:where(.dump-wrapper) .type {
     color: #859900;
     font-size: 75%;
 }
 
-.unique {
+:where(.dump-wrapper) .unique {
     color: #6c71c4;
 }
 
 /* Identifiers */
-.section_name {
+:where(.dump-wrapper) .section_name {
     color: #586e75;
     font-style: italic;
     font-size: 75%;
 }
 
-.attribute {
+:where(.dump-wrapper) .attribute {
     color: #93a1a1;
 }
 
 /* Attributes whose value comes from the object's class: Solarized's other content grey, next to the attributes. */
-.class_attribute {
+:where(.dump-wrapper) .class_attribute {
     color: #586e75;
 }
 
-.constant {
+:where(.dump-wrapper) .constant {
     color: #cb4b16;
 }
 
-.dumped_name {
+:where(.dump-wrapper) .dumped_name {
     color: #93a1a1;
 }
 
-.function {
+:where(.dump-wrapper) .function {
     color: #268bd2;
 }
 
-.index {
+:where(.dump-wrapper) .index {
     color: #d33682;
 }
 
-.key {
+:where(.dump-wrapper) .key {
     color: #2aa198;
 }
 
-.params {
+:where(.dump-wrapper) .params {
     color: #93a1a1;
 }
 
 /* Types */
-.bool {
+:where(.dump-wrapper) .bool {
     color: #b58900;
 }
 
-.bound {
+:where(.dump-wrapper) .bound {
     color: #268bd2;
 }
 
-.intermediate {
+:where(.dump-wrapper) .intermediate {
     color: #d33682;
 }
 
-.default {
+:where(.dump-wrapper) .default {
     color: #586e75;
 }
 
-.docs {
+:where(.dump-wrapper) .docs {
     color: #586e75;
 }
 
-.module {
+:where(.dump-wrapper) .module {
     color: #268bd2;
 }
 
-.none {
+:where(.dump-wrapper) .none {
     color: #b58900;
 }
 
-.number {
+:where(.dump-wrapper) .number {
     color: #d33682;
 }
 
-.string {
+:where(.dump-wrapper) .string {
     color: #2aa198;
 }
 
 @media (prefers-color-scheme: light) {
     html.dump-die-page body,
-    .dump-wrapper {
+    .dump-wrapper,
+    .dump-die-above-page {
         color: #657b83;
         background-color: #fdf6e3;
     }
@@ -342,7 +361,7 @@ a.arrow-toggle {
         background: #827b66;
     }
 
-    .dd-wrapper {
+    :where(.dump-wrapper) .dd-wrapper {
         border-color: #d0c095;
     }
 
@@ -354,50 +373,51 @@ a.arrow-toggle {
         border-top-color: #d0c095;
     }
 
-    .arrow {
+    :where(.dump-wrapper) .arrow {
         color: #657b83;
     }
 
-    .access-modifier {
+    :where(.dump-wrapper) .access-modifier {
         color: #657b83;
     }
 
-    .braces {
+    :where(.dump-wrapper) .braces {
         color: #657b83;
     }
 
-    .location {
+    :where(.dump-wrapper) .location {
         color: #93a1a1;
     }
 
-    .section_name {
+    :where(.dump-wrapper) .section_name {
         color: #93a1a1;
     }
 
-    .attribute {
+    :where(.dump-wrapper) .attribute {
         color: #586e75;
     }
 
-    .class_attribute {
+    :where(.dump-wrapper) .class_attribute {
         color: #93a1a1;
     }
 
-    .dumped_name {
+    :where(.dump-wrapper) .dumped_name {
         color: #586e75;
     }
 
-    .docs {
+    :where(.dump-wrapper) .docs {
         color: #93a1a1;
     }
 
-    .params {
+    :where(.dump-wrapper) .params {
         color: #586e75;
     }
 }
 
 @media (prefers-color-scheme: dark) {
     html.dump-die-page body,
-    .dump-wrapper {
+    .dump-wrapper,
+    .dump-die-above-page {
         color: #839496;
         background-color: #002b36;
     }
@@ -424,7 +444,7 @@ a.arrow-toggle {
         background: #839496;
     }
 
-    .dd-wrapper {
+    :where(.dump-wrapper) .dd-wrapper {
         border-color: #054757;
     }
 
@@ -436,43 +456,43 @@ a.arrow-toggle {
         border-top-color: #054757;
     }
 
-    .arrow {
+    :where(.dump-wrapper) .arrow {
         color: #839496;
     }
 
-    .access-modifier {
+    :where(.dump-wrapper) .access-modifier {
         color: #839496;
     }
 
-    .braces {
+    :where(.dump-wrapper) .braces {
         color: #839496;
     }
 
-    .location {
+    :where(.dump-wrapper) .location {
         color: #586e75;
     }
 
-    .section_name {
+    :where(.dump-wrapper) .section_name {
         color: #586e75;
     }
 
-    .attribute {
+    :where(.dump-wrapper) .attribute {
         color: #93a1a1;
     }
 
-    .class_attribute {
+    :where(.dump-wrapper) .class_attribute {
         color: #586e75;
     }
 
-    .dumped_name {
+    :where(.dump-wrapper) .dumped_name {
         color: #93a1a1;
     }
 
-    .docs {
+    :where(.dump-wrapper) .docs {
         color: #586e75;
     }
 
-    .params {
+    :where(.dump-wrapper) .params {
         color: #93a1a1;
     }
 }

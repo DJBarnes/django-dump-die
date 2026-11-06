@@ -2,6 +2,9 @@
 <html lang="en" class="dump-die-page">
   <meta charset="utf-8">
   <head>
+    {# Prevent Chrome from requesting the page again for a favicon. Only on the dump page, since the head partial is #}
+    {# also added to other pages, which have their own favicon. #}
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
     {% include "django_dump_die/partials/_head.html" %}
     <title>DD</title>
   </head>

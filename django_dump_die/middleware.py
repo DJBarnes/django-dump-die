@@ -5,6 +5,7 @@ Middleware for DumpAndDie.
 # System Imports.
 import asyncio
 import logging
+import re
 
 # Third-Party Imports.
 from django.conf import settings
@@ -112,6 +113,59 @@ def _set_content(response, content):
         response["Content-Length"] = str(len(response.content))
 
 
+# Tags of an HTML page that dumps are added around. Matched without regard to case, and <body> with any attributes.
+_HEAD_END_TAG = re.compile(r"</head\s*>", flags=re.IGNORECASE)
+_BODY_START_TAG = re.compile(r"<body\b[^>]*>", flags=re.IGNORECASE)
+
+
+def _add_dumps_above_page(request, response, objects):
+    """
+    Add the dumps to the top of an HTML page's body, with the dump page's CSS and JS in its head.
+    Used for Django's error page after an unhandled exception, and for any page when DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE
+    is on.
+
+    Returns False, and leaves the response unchanged, if it isn't an HTML page that the dumps can be added to: a
+    streaming or file response, a redirect, a compressed response, or a response that isn't HTML or has no <body>.
+    """
+    if response.streaming or 300 <= response.status_code < 400:
+        return False
+    # Such as a response compressed by GZipMiddleware, whose content can't be changed as text.
+    if response.get("Content-Encoding", "identity") != "identity":
+        return False
+    if not response.get("Content-Type", "").startswith("text/html"):
+        return False
+
+    try:
+        content = response.content.decode(response.charset)
+    except (UnicodeDecodeError, LookupError):
+        return False
+    body_tag = _BODY_START_TAG.search(content)
+    if body_tag is None:
+        return False
+
+    head_string = dd_view(request, objects, template_name="django_dump_die/partials/_head.html", as_string=True)
+    body_string = dd_view(request, objects, template_name="django_dump_die/partials/_above_page.html", as_string=True)
+
+    # The CSS and JS go at the end of the head, before the body. A page without a head gets them at the start of the
+    # body, where browsers load them too.
+    head_end_tag = _HEAD_END_TAG.search(content, 0, body_tag.start())
+    if head_end_tag is not None:
+        content = "".join(
+            (
+                content[: head_end_tag.start()],
+                head_string,
+                content[head_end_tag.start() : body_tag.end()],
+                body_string,
+                content[body_tag.end() :],
+            )
+        )
+    else:
+        content = "".join((content[: body_tag.end()], head_string, body_string, content[body_tag.end() :]))
+
+    _set_content(response, content.encode(response.charset))
+    return True
+
+
 class DumpAndDieMiddleware:
     """
     DumpAndDie Middleware.
@@ -196,27 +250,23 @@ class DumpAndDieMiddleware:
         # This attribute will be set by the "process_exception" method below.
         has_non_dd_exception = getattr(request, "has_non_dd_exception", False)
 
-        # Without an unhandled exception, assume that the user just forgot to use dd() to actually die. Return the
-        # dump page with the collected objects instead of the response.
-        # A "combo" view that shows the dumps above the original response is an idea for #45.
-        if not has_non_dd_exception:
-            return dd_view(request, objects)
-
         # After an unhandled exception, add the dumps from before the exception to Django's error page, so that both
-        # are shown.
-        # A setting to turn this on or off is an idea for #45.
+        # are shown. Without an HTML error page to add them to, such as for a request that doesn't accept HTML, the
+        # error is returned as it is, since it matters more than the dumps.
+        if has_non_dd_exception:
+            if getattr(settings, "DJANGO_DD_SHOW_DUMPS_ON_ERROR_PAGE", True):
+                _add_dumps_above_page(request, response, objects)
+            return response
 
-        # Get the head and body content of the DD view
-        head_string = dd_view(request, objects, template_name="django_dump_die/partials/_head.html", as_string=True)
-        body_string = dd_view(request, objects, template_name="django_dump_die/partials/_body.html", as_string=True)
-        # Fetch the content of the standard Django 500 error page.
-        content = response.content.decode("utf-8")
-        # Inject the head and body parts of the DD view into the correct spots of the standard Django 500 error view.
-        content = content.replace("</head>", f"{head_string}</head>", 1)
-        content = content.replace("<body>", f"<body>{body_string}", 1)
-        _set_content(response, content.encode("utf-8"))
+        # Without an exception, dump() was used without dd(). Show the dumps above the page's own content if that's
+        # turned on and the response is an HTML page.
+        if getattr(settings, "DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE", False) and _add_dumps_above_page(
+            request, response, objects
+        ):
+            return response
 
-        return response
+        # Otherwise, return the dump page instead of the response.
+        return dd_view(request, objects)
 
     def process_exception(self, request, exception):
         """
