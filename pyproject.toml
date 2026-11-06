@@ -79,7 +79,6 @@ dev = [
 ]
 doc = [
     "doc8",
-    "pip-tools",
     "rstcheck",
     "sphinx",
     "sphinx-autobuild",
@@ -123,6 +122,12 @@ license-files = ["LICENSE"]
 [tool.setuptools.packages.find]
 exclude = ["tests*"]
 namespaces = false
+
+[tool.rstcheck]
+# Sphinx directives, which rstcheck doesn't know. The docs build checks them instead.
+ignore_directives = ["automodule"]
+# Only report problems. Info messages include labels that other files reference, which rstcheck can't see.
+report_level = "WARNING"
 
 # endregion Third-Party Package Settings
 

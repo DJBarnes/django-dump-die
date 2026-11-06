@@ -34,7 +34,8 @@ The following describes how to access them from a given Django project.
             ...
         ]
 
-3. Launch your project with the standard ``python manage.py runserver`` command.
+3. Launch your project with the standard ``python manage.py runserver``
+   command.
 
 4. Open a new web browser to ``http://127.0.0.1:8000/dd/``. You should see
    some page output similar to below.

@@ -104,8 +104,8 @@ Other Changes
   documented.
 
 * **Fixed: a start index that isn't a number crashed index_range.** A start
-  index such as ``index_range=("a", 2)`` raised ``ValueError``. It's now ignored,
-  like an end index that isn't a number.
+  index such as ``index_range=("a", 2)`` raised ``ValueError``. It's now
+  ignored, like an end index that isn't a number.
 
 * **Fixed: dumping a QuerySet whose query fails crashed the dump page.** If a
   dumped QuerySet raises a database error, such as when its table doesn't

@@ -43,7 +43,7 @@ sphinx-rtd-theme = "*"            # Additional Sphinx logic for building with st
 
 # Docs syntax-checking dependencies.
 doc8="*"                          # Checks reStructuredText (aka Sphinx) syntax.
-rstcheck = "~=3.5.0"              # Checks reStructuredText (aka Sphinx) syntax.
+rstcheck = "*"                    # Checks reStructuredText (aka Sphinx) syntax.
 
 # Project pypi dependencies.
 flit = "*"                        # Simple way to build and put Python packages on PyPI.
