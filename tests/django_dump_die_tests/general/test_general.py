@@ -59,7 +59,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
 
     @override_settings(DEBUG=True)
     def test_break_style_setting(self):
-        """Verify each break style gives its class, and an unknown style raises an error."""
+        """Verify each break style gives its class."""
         url = reverse("django_dump_die__tests__general:break")
         for style in ("dashed", "solid", "dotted", "blank"):
             with self.subTest(style=style):
@@ -68,13 +68,16 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
 
                 self.assertIn('class="dump-wrapper dump-break dump-break-{0}"'.format(style), content)
 
+    @override_settings(DEBUG=True)
+    def test_unknown_break_style_setting_raises_an_error(self):
+        """Verify a break style that isn't one of the documented styles raises an error."""
         with patch("django_dump_die.templatetags.dump_die.BREAK_STYLE", "wavy"):
             with self.assertRaisesMessage(ValueError, "DJANGO_DD_BREAK_STYLE must be one of"):
-                self.client.get(url)
+                self.client.get(reverse("django_dump_die__tests__general:break"))
 
     @override_settings(DEBUG=True)
     def test_break_size_sets_the_height(self):
-        """Verify dump.br(size=...) sets each break's height in lines, and DJANGO_DD_BREAK_SIZE the default."""
+        """Verify dump.br(size=...) sets each break's height in lines."""
         content = self.client.get(reverse("django_dump_die__tests__general:break_sizes")).content.decode("utf-8")
         breaks = re.findall(
             r'<div class="dump-wrapper dump-break dump-break-dashed"([^>]*) title="Break"></div>', content
@@ -82,10 +85,16 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
         # A size 1 break needs no height of its own.
         self.assertEqual(breaks, ["", ' style="--dump-break-size: 2"', ' style="--dump-break-size: 5"'])
 
+    @override_settings(DEBUG=True)
+    def test_break_size_setting_sets_the_default_height(self):
+        """Verify DJANGO_DD_BREAK_SIZE sets the height of breaks that have no size of their own."""
         with patch("django_dump_die.templatetags.dump_die.BREAK_SIZE", 3):
             content = self.client.get(reverse("django_dump_die__tests__general:break")).content.decode("utf-8")
         self.assertIn('class="dump-wrapper dump-break dump-break-dashed" style="--dump-break-size: 3"', content)
 
+    @override_settings(DEBUG=True)
+    def test_invalid_break_size_setting_raises_an_error(self):
+        """Verify a DJANGO_DD_BREAK_SIZE that isn't a whole number of lines raises an error."""
         for size in (0, "2", True):
             with self.subTest(setting=size):
                 with patch("django_dump_die.templatetags.dump_die.BREAK_SIZE", size):
@@ -149,8 +158,8 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
                     self.assertNotRegex(content, r"color: ;")
 
     @override_settings(DEBUG=True)
-    def test_forced_themes_use_the_custom_class_attribute_color(self):
-        """Verify the forced light and dark themes use the color theme's class attribute color, or their default."""
+    def test_forced_themes_use_their_default_class_attribute_color(self):
+        """Verify the forced light and dark themes each have their own default class attribute color."""
         url = reverse("django_dump_die__tests__general:dd_only")
         for forced_setting, default_color in (
             ("DJANGO_DD_FORCE_LIGHT_THEME", "#93a1a1"),
@@ -162,7 +171,13 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
                 forced_part = content[content.index("/* Forcing color themes */") :]
                 self.assertRegex(forced_part, r"\.class_attribute \{\s*color: " + default_color)
 
-                theme = {"identifiers": {"class_attribute": "#123456"}}
+    @override_settings(DEBUG=True)
+    def test_forced_themes_use_the_custom_class_attribute_color(self):
+        """Verify the forced light and dark themes use the color theme's class attribute color."""
+        url = reverse("django_dump_die__tests__general:dd_only")
+        theme = {"identifiers": {"class_attribute": "#123456"}}
+        for forced_setting in ("DJANGO_DD_FORCE_LIGHT_THEME", "DJANGO_DD_FORCE_DARK_THEME"):
+            with self.subTest(setting=forced_setting):
                 with override_settings(**{forced_setting: True, "DJANGO_DD_COLOR_SCHEME": theme}):
                     content = self.client.get(url).content.decode("utf-8")
                 forced_part = content[content.index("/* Forcing color themes */") :]

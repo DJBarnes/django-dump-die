@@ -147,10 +147,13 @@ class DumpDieTagSettingsTestCase(SimpleTestCase):
     @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTIONS", True)
     def test_static_and_class_methods_are_marked(self):
         """Verify static and class methods are marked in the Functions section, and normal methods aren't."""
-        for obj in (HasMethodTypes, HasMethodTypes()):
-            with self.subTest(obj=obj):
-                content = render_dump(obj)
+        for label, obj in (("class", HasMethodTypes), ("instance", HasMethodTypes())):
+            with self.subTest(dumped=label):
+                # Dumped with dump(), since a template would call the class and dump an instance.
+                dump(obj)
+                content = render_dumped_objects()
 
+                self.assertIn('<span class="type" title="{0}">'.format(type(obj).__name__), content)
                 self.assertIn('<span class="decorator" title="Static Method">@staticmethod</span>', content)
                 self.assertIn('<span class="decorator" title="Class Method">@classmethod</span>', content)
                 self.assertEqual(content.count('class="decorator"'), 2)
@@ -206,8 +209,12 @@ class DumpDieTagSettingsTestCase(SimpleTestCase):
                 calls.append("class")
                 self.value = value
 
-        for obj in (no_docstring, CallableObject(), NeedsArguments):
-            with self.subTest(obj=obj):
+        for label, obj in (
+            ("function", no_docstring),
+            ("callable object", CallableObject()),
+            ("class", NeedsArguments),
+        ):
+            with self.subTest(dumped=label):
                 dump(obj)
                 render_dumped_objects()
 

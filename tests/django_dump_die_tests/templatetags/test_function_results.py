@@ -297,15 +297,15 @@ class DumpDieFunctionResultsPageTestCase(TestCase):
             ),
         ]
         for settings, buttons in cases:
-            with self.subTest(settings=settings), override_settings(**settings):
-                content = self.client.get(url).content.decode("utf-8")
-            for name in ("types", "attrs", "results", "funcs"):
-                for verb in ("expand", "collapse"):
-                    with self.subTest(settings=settings, button=f"{verb}-{name}"):
-                        if name in buttons:
-                            self.assertIn(f'id="{verb}-{name}"', content)
-                        else:
-                            self.assertNotIn(f'id="{verb}-{name}"', content)
+            with self.subTest(settings=settings):
+                with override_settings(**settings):
+                    content = self.client.get(url).content.decode("utf-8")
+
+                shown = sorted(set(re.findall(r'id="(?:expand|collapse)-(types|attrs|results|funcs)"', content)))
+                self.assertEqual(shown, sorted(buttons))
+                for name in buttons:
+                    self.assertIn(f'id="expand-{name}"', content)
+                    self.assertIn(f'id="collapse-{name}"', content)
 
     @patch(RESULTS_ON, True)
     def test_queryset_whose_query_fails_has_no_results(self):

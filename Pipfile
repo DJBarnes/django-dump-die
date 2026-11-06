@@ -32,6 +32,7 @@ freezegun = "*"                   # Allows "freezing" tests to specific datetime
 pytest = "*"                      # Base Pytest package. Current preferred testing method.
 pytest-cov = "*"                  # Additional Pytest logic for coverage support.
 pytest-django = "*"               # Additional Pytest logic for Django support.
+pytest-subtests = {version = "*", markers = "python_version < '3.10'"}  # SubTest results before pytest 9.
 pytest-xdist = "*"                # Additional Pytest features, such as multithreading and looping.
 selenium = "*"                    # Browser tests of the dump page's JavaScript.
 

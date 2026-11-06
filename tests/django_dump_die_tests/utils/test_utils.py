@@ -208,7 +208,7 @@ class DumpDieMethodTypeTestCase(SimpleTestCase):
 
     def test_get_method_type(self):
         """Verify static and class methods are detected on a class and on an instance, and nothing else is."""
-        for obj in (HasMethodTypes, HasMethodTypes()):
+        for label, obj in (("class", HasMethodTypes), ("instance", HasMethodTypes())):
             cases = [
                 ("static_work", "staticmethod"),
                 ("class_work", "classmethod"),
@@ -217,7 +217,7 @@ class DumpDieMethodTypeTestCase(SimpleTestCase):
                 (42, None),
             ]
             for attr, expected in cases:
-                with self.subTest(obj=obj, attr=attr):
+                with self.subTest(obj=label, attr=attr):
                     self.assertEqual(get_method_type(obj, attr), expected)
 
 

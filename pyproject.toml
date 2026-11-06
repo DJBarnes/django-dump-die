@@ -90,9 +90,12 @@ test = [
     "django-expanded-test-cases",
     "freezegun",
     "pillow",
-    "pytest",
+    # pytest 9 (Python 3.10+) reports subTest results itself; older versions need the pytest-subtests plugin.
+    "pytest>=9; python_version >= '3.10'",
+    "pytest; python_version < '3.10'",
     "pytest-cov",
     "pytest-django",
+    "pytest-subtests; python_version < '3.10'",
     "pytest-xdist",
     "pytz",
 ]
