@@ -118,7 +118,7 @@ def get_dumped_object_name_and_location(object_needing_name):
     # Accounts for things like functions that span multiple lines.
     code_context = get_fully_qualified_dumped_line(base_frame, frame_info)
 
-    # TODO: This work of using RegEx to get down to the dumped object name can probably be improved.
+    # These regular expressions get some names wrong, such as with two dumps on one line. See #46.
     # Establish a couple of regular expressions to fetch out what was passed to dump or dd.
     dump_pattern = r".*dump\((.*)[\)]"
     dd_pattern = r".*dd\((.*)[\)]"

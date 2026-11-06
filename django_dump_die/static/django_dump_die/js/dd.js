@@ -205,9 +205,8 @@ const djangoDumpDie = {
      * If two or more variables point to the same memory instance of a value/object,
      * then they are listed as a single "Unique".
      * Hovering over one swaps the text and background colors of all of them.
-     * TODO: Consider making the highlight scoped per dump call.
-     * Right now looks through for whole page, so if a var is dumped twice,
-     * or even appears twice via another dumped object it will highlight.
+     * The highlight is page-wide on purpose: if a variable is dumped twice, or
+     * appears in another dumped object too, all of them are highlighted. See #5.
      */
     setUpUniqueDupHighlighting() {
         // Group the unique elements by their value, in one pass.
