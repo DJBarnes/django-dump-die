@@ -268,8 +268,8 @@ Example::
 DJANGO_DD_BREAK_STYLE
 =====================
 The line shown across a break added with ``dump.br()``. One of ``"dashed"``,
-``"solid"``, ``"dotted"``, or ``"blank"`` for no line, which leaves a blank row.
-Any other value raises a ``ValueError`` when a dump page is shown.
+``"solid"``, ``"dotted"``, or ``"blank"`` for no line, which leaves a blank
+row. Any other value raises a ``ValueError`` when a dump page is shown.
 
 :Type: ``str``
 :Default: ``"dashed"``
@@ -282,8 +282,9 @@ Example::
 DJANGO_DD_BREAK_SIZE
 ====================
 The height of a break added with ``dump.br()``, as a whole number of lines, 1
-or more. A break given its own size, such as ``dump.br(size=3)``, uses that size
-instead. Any other value raises a ``ValueError`` when a dump page is shown.
+or more. A break given its own size, such as ``dump.br(size=3)``, uses that
+size instead. Any other value raises a ``ValueError`` when a dump page is
+shown.
 
 :Type: ``int``
 :Default: ``1``
