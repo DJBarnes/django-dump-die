@@ -15,6 +15,17 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Fixed: some strings and form fields were dumped badly.** Subclasses of
+  ``str``, such as Django's ``SafeString`` from ``mark_safe()`` or a rendered
+  page, were dumped one character at a time, and lazy translation strings from
+  ``gettext_lazy()`` were dumped as ``__proxy__`` objects. Both are now shown
+  as their text, like a ``str``, with their own type, or ``lazy str``. A form's
+  bound field showed only ``<BoundField object at 0x...>``. It now shows its
+  rendered widget, as text, and its attributes, such as ``name``, ``label``,
+  and ``errors``, one level deep. An intermediate object shown again, as
+  already output, also kept its color.
+  (`#50 <https://github.com/DJBarnes/django-dump-die/issues/50>`_)
+
 * **Fixed: some dumped objects got the wrong name.** The name shown for a
   dumped object comes from the line that called ``dump()`` or ``dd()``. It was
   wrong when one line had two calls, such as ``dump(user); dump(order)``,

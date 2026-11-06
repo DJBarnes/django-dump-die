@@ -4,7 +4,8 @@ Tests for the DumpDie template tag's handling of settings, index ranges, deep co
 
 # System Imports.
 import re
-from datetime import datetime
+from datetime import date, datetime
+from enum import Enum
 from unittest.mock import patch
 
 # Third-Party Imports.
@@ -233,6 +234,28 @@ class DumpDieTagSettingsTestCase(SimpleTestCase):
         functions_toggle = re.search(r'<a\s+class="arrow-toggle[^>]*data-dd-type="func"', content).group(0)
         self.assertIn("always-show", functions_toggle)
         self.assertNotIn("data-dd-toggle", functions_toggle)
+
+    def test_string_enum_member_stays_an_enum(self):
+        """Verify an enum member that is also a str is dumped as an enum, with its name and value."""
+
+        class Color(str, Enum):
+            """Enum whose members are strings."""
+
+            RED = "red"
+
+        dump(Color.RED)
+        content = render_dumped_objects()
+
+        self.assertIn('<span class="type" title="Color">Color', content)
+        self.assertIn('<span class="attribute" title="Attribute">value</span>', content)
+
+    def test_repeated_intermediate_value_keeps_its_color(self):
+        """Verify an intermediate object shown again, as already output, keeps the intermediate color."""
+        sample_date = date(2026, 1, 2)
+        content = render_dump([sample_date, sample_date])
+
+        self.assertEqual(content.count('<code class="intermediate">2026-01-02</code>'), 2)
+        self.assertNotIn('class="datetime"', content)
 
     @patch("django_dump_die.templatetags.dump_die.INCLUDE_PRIVATE_METHODS", True)
     def test_private_members_included(self):

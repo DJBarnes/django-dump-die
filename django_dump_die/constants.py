@@ -29,7 +29,6 @@ except ImportError:
 # Simple types that do not need to be recursively inspected.
 SIMPLE_TYPES = [
     bool,
-    BoundField,
     bytes,
     Decimal,
     float,
@@ -41,6 +40,8 @@ SIMPLE_TYPES = [
 
 # Intermediate types, that need some level of recursion and some level of "simple type" handling.
 INTERMEDIATE_TYPES = [
+    # Shown as its rendered widget, what it outputs in a template.
+    BoundField,
     bytearray,
     complex,
     datetime.datetime,

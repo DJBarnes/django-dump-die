@@ -14,6 +14,8 @@ from django.urls import reverse
 
 # An escaped single quote. Django before 3.0 escapes it as &#39;, later versions as &#x27;.
 QUOTE = r"&#(?:x27|39);"
+# The class of a string marked safe. Django before 3.0 calls it SafeText.
+SAFE_STRING = r"Safe(?:String|Text)"
 
 
 def row_pattern(name, type_name, value, kind="attribute", decorator=None):
@@ -82,13 +84,38 @@ class DumpDieDjangoTypeTestCase(SimpleTestCase):
         self.assertRegex(content, row_pattern("'name'", "str", "'Ada'", kind="key"))
 
     def test_bound_field_display(self):
-        """Verify a form's bound field is shown as a simple value, with its own color."""
+        """Verify a form's bound field shows its rendered widget as text, in its own color, and its attributes."""
         content = self.get_dump("django__bound_field")
 
+        # The widget is shown escaped, as text, rather than as an input on the dump page.
         self.assertRegex(
             content,
             r'<span class="type" title="BoundField">BoundField</span>\s*'
-            r'<code class="bound">&lt;django\.forms\.boundfield\.BoundField object at 0x[0-9a-fA-F]+&gt;</code>',
+            r'<code class="bound">&lt;input type=&quot;text&quot; name=&quot;name&quot; value=&quot;Ada&quot;',
+        )
+        self.assertNotIn("<input", content)
+        self.assertRegex(content, row_pattern("name", "str", "'name'"))
+        self.assertRegex(content, row_pattern("label", "str", "'Name'"))
+        self.assertRegex(content, row_pattern("data", "str", "'Ada'", decorator="property"))
+
+    def test_safe_string_display(self):
+        """Verify a string marked safe for HTML is shown as text, like a str, with its own type."""
+        content = self.get_dump("django__safe_string")
+
+        self.assertRegex(
+            content,
+            r'<span class="type" title="{1}">{1}</span>\s*'
+            r'<code class="string">{0}&lt;b&gt;Bold&lt;/b&gt; text{0}</code>'.format(QUOTE, SAFE_STRING),
+        )
+
+    def test_lazy_string_display(self):
+        """Verify a lazy translation string is shown as its text."""
+        content = self.get_dump("django__lazy_string")
+
+        self.assertRegex(
+            content,
+            r'<span class="type" title="lazy str">lazy str</span>\s*'
+            r'<code class="string">{0}Sample lazy text{0}</code>'.format(QUOTE),
         )
 
     def test_request_display(self):
@@ -115,5 +142,11 @@ class DumpDieDjangoTypeTestCase(SimpleTestCase):
 
         self.assertDumpedType(content, "sample_template_response", "TemplateResponse")
         self.assertRegex(content, row_pattern("is_rendered", "bool", "True", decorator="property"))
+        # The rendered page is a SafeString, shown as text rather than one character at a time.
+        self.assertRegex(
+            content,
+            r'<span class="attribute" title="Attribute">rendered_content</span>:\s*'
+            r'<span class="type" title="{0}">{0}</span>\s*<code class="string">'.format(SAFE_STRING),
+        )
         # Without a status of its own, a response uses the 200 that HttpResponseBase sets as a class attribute.
         self.assertRegex(content, row_pattern("status_code", "int", "200", kind="class_attribute"))
