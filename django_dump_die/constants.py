@@ -109,6 +109,9 @@ ATTRIBUTES_START_EXPANDED = getattr(settings, "DJANGO_DD_ATTRIBUTES_START_EXPAND
 FUNCTION_RESULTS_START_EXPANDED = getattr(settings, "DJANGO_DD_FUNCTION_RESULTS_START_EXPANDED", True)
 # Whether the functions for an object should start expanded for viewing.
 FUNCTIONS_START_EXPANDED = getattr(settings, "DJANGO_DD_FUNCTIONS_START_EXPANDED", False)
+# Whether values whose names look sensitive, such as passwords, secret keys, tokens, and the session cookie, are shown.
+# Off by default, so that they are hidden like on Django's debug page. See SENSITIVE_NAME_PATTERN in utils.
+SHOW_SENSITIVE_VALUES = getattr(settings, "DJANGO_DD_SHOW_SENSITIVE_VALUES", False)
 # Whether the output should include private attributes and functions.
 INCLUDE_PRIVATE_METHODS = getattr(settings, "DJANGO_DD_INCLUDE_PRIVATE_MEMBERS", False)
 # Whether the output should include magic methods.

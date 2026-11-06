@@ -133,6 +133,29 @@ Example::
     DJANGO_DD_INCLUDE_PRIVATE_MEMBERS = True
 
 
+.. _show-sensitive-values:
+
+DJANGO_DD_SHOW_SENSITIVE_VALUES
+===============================
+
+By default, values whose names look sensitive, such as passwords, secret keys,
+tokens, and the session cookie, are hidden, like on Django's debug page.
+Functions with such names are not run for function results. See
+:doc:`security` for the names that are hidden. To show them, set this setting
+to ``True``.
+
+.. warning::
+    Dumps can be shown to someone else, and end up in screenshots. Only turn
+    this on for a server that only you use.
+
+:Type: ``bool``
+:Default: ``False``
+
+Example::
+
+    DJANGO_DD_SHOW_SENSITIVE_VALUES = True
+
+
 DJANGO_DD_INCLUDE_MAGIC_METHODS
 ===============================
 

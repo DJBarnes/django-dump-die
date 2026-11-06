@@ -13,6 +13,7 @@ from django import forms
 from django.template import Context, Template
 from django.test import SimpleTestCase, override_settings
 from django.utils.functional import cached_property
+from django.utils.html import format_html
 
 # Internal Imports.
 from django_dump_die import middleware
@@ -79,6 +80,30 @@ class RaisesOnRepr:
 
     def __repr__(self):
         raise ValueError("Repr failed.")
+
+
+class SafeRepr:
+    """Object whose repr is marked safe, as when built with format_html(), and has HTML in it."""
+
+    def __repr__(self):
+        return format_html("<b id={0}>key</b>", "injected")
+
+
+class HasSecrets:
+    """Object with sensitive attributes, a sensitive function to show the result of, and a harmless attribute."""
+
+    dd_function_results = ("get_token",)
+
+    def __init__(self, calls):
+        self.password = "hunter2"
+        self.credentials = {"user": "someone"}
+        self.name = "visible"
+        self.calls = calls
+
+    def get_token(self):
+        """Return a token. Must not be run while the value is hidden."""
+        self.calls.append("get_token")
+        return "token value"
 
 
 class SampleForm(forms.Form):
@@ -282,6 +307,41 @@ class DumpDieTagObjectsTestCase(SimpleTestCase):
     def tearDown(self):
         middleware.dump_objects.clear()
         super().tearDown()
+
+    def test_dict_key_with_a_safe_repr_is_escaped(self):
+        """Verify a dict key whose repr is marked safe is shown as text, not added to the page as HTML."""
+        content = render_dump({SafeRepr(): 1})
+
+        self.assertNotIn("<b id=injected>", content)
+        self.assertIn("&lt;b id=injected&gt;key&lt;/b&gt;", content)
+
+    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTION_RESULTS", True)
+    def test_sensitive_values_are_hidden(self):
+        """Verify attributes, dict keys, and function results with sensitive names are hidden, and others aren't."""
+        calls = []
+        content = render_dump({"api_key": "abc123", "secrets": HasSecrets(calls)})
+
+        for value in ("abc123", "hunter2", "someone", "token value"):
+            with self.subTest(value=value):
+                self.assertNotIn(value, content)
+        self.assertEqual(content.count("********************"), 4)
+        self.assertIn('title="Hidden, because its name looks sensitive.', content)
+        self.assertIn("visible", content)
+        # The sensitive function wasn't run.
+        self.assertEqual(calls, [])
+
+    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTION_RESULTS", True)
+    @patch("django_dump_die.utils.SHOW_SENSITIVE_VALUES", True)
+    def test_sensitive_values_are_shown_when_turned_on(self):
+        """Verify sensitive values are shown, and sensitive functions are run, when the setting is on."""
+        calls = []
+        content = render_dump({"api_key": "abc123", "secrets": HasSecrets(calls)})
+
+        for value in ("abc123", "hunter2", "someone", "token value"):
+            with self.subTest(value=value):
+                self.assertIn(value, content)
+        self.assertNotIn("********************", content)
+        self.assertEqual(calls, ["get_token"])
 
     def test_bound_field(self):
         """Verify a form's bound field is shown as a "bound" value."""

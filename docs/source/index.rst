@@ -28,6 +28,7 @@ and `Symfony <https://symfony.com/>`_ frameworks.
    usage
    built_in_examples
    configuration
+   security
    api_reference
    version_history
 

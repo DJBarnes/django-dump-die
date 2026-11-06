@@ -12,6 +12,8 @@ from unittest.mock import patch
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import SimpleTestCase, override_settings
 from django.utils.functional import cached_property
+from django.utils.html import format_html
+from django.utils.safestring import SafeData
 
 # Internal Imports.
 from django_dump_die import middleware
@@ -19,6 +21,7 @@ from django_dump_die.middleware import dd, dump
 from django_dump_die.utils import (
     get_attribute_type,
     get_method_type,
+    is_sensitive_name,
     is_dict,
     is_query,
     safe_repr,
@@ -94,6 +97,16 @@ class RaisesDoesNotExistOnRepr:
 
     def __repr__(self):
         raise ObjectDoesNotExist("Deleted.")
+
+
+class ReturnsSafeStringOnReprAndStr:
+    """Object whose repr and str are marked safe, as when built with format_html()."""
+
+    def __repr__(self):
+        return format_html("<b>{0}</b>", "repr")
+
+    def __str__(self):
+        return format_html("<b>{0}</b>", "str")
 
 
 class ReturnsNonStringOnStr:
@@ -276,6 +289,17 @@ class DumpDieSafeStringTestCase(SimpleTestCase):
         """Verify safe_str falls back to repr when str() raises a TypeError."""
         self.assertEqual(safe_str(ReturnsNonStringOnStr()), "<ReturnsNonStringOnStr>")
 
+    def test_safe_repr_and_safe_str_return_plain_strings(self):
+        """Verify a repr or str marked safe comes back as a plain str, so that templates escape it."""
+        obj = ReturnsSafeStringOnReprAndStr()
+        for label, function, expected in (("repr", safe_repr, "<b>repr</b>"), ("str", safe_str, "<b>str</b>")):
+            with self.subTest(function=label):
+                text = function(obj)
+
+                self.assertEqual(text, expected)
+                self.assertIs(type(text), str)
+                self.assertNotIsInstance(text, SafeData)
+
     def test_type_checks_of_none(self):
         """Verify the query and dict checks treat None as neither."""
         self.assertFalse(is_query(None))
@@ -364,3 +388,63 @@ class DumpDieAttributeTypeTestCase(SimpleTestCase):
         for attr, expected in cases:
             with self.subTest(attr=attr):
                 self.assertEqual(get_attribute_type(HasAttributeTypes, attr), expected)
+
+
+class DumpDieSensitiveNameTestCase(SimpleTestCase):
+    """Verify which attribute, key, and function names have their values hidden."""
+
+    def test_is_sensitive_name(self):
+        """Verify sensitive words, keys, and request headers are hidden, and similar harmless names aren't."""
+        cases = [
+            # Settings and request.META entries that Django's debug page hides.
+            ("SECRET_KEY", True),
+            ("SECRET_KEY_FALLBACKS", True),
+            ("PASSWORD", True),
+            ("EMAIL_HOST_PASSWORD", True),
+            ("HTTP_COOKIE", True),
+            ("HTTP_AUTHORIZATION", True),
+            ("HTTP_X_API_KEY", True),
+            # Attribute and key names.
+            ("password", True),
+            ("db_pass", True),
+            ("access_token", True),
+            ("csrfmiddlewaretoken", True),
+            ("csrftoken", True),
+            ("myApiKey", True),
+            ("privateKey", True),
+            ("session_key", True),
+            ("sessionid", True),
+            ("Cookie", True),
+            ("get_secret", True),
+            # Names that only look similar.
+            ("key", False),
+            ("primary_key", False),
+            ("cache_key", False),
+            ("KEY_PREFIX", False),
+            ("author", False),
+            ("is_authenticated", False),
+            ("passenger", False),
+            ("tokenize", False),
+            ("COOKIES", False),
+            ("CSRF_COOKIE_NAME", False),
+            ("SESSION_COOKIE_AGE", False),
+            ("DATABASES", False),
+            # Names that aren't strings, such as list indexes and dict keys of other types.
+            (3, False),
+            (None, False),
+        ]
+        for name, expected in cases:
+            with self.subTest(name=name):
+                self.assertEqual(is_sensitive_name(name), expected)
+
+    @override_settings(SESSION_COOKIE_NAME="my_session")
+    def test_session_cookie_name_setting_is_sensitive(self):
+        """Verify the session cookie is hidden by the name it is given in the SESSION_COOKIE_NAME setting."""
+        self.assertTrue(is_sensitive_name("my_session"))
+
+    @patch("django_dump_die.utils.SHOW_SENSITIVE_VALUES", True)
+    def test_nothing_is_sensitive_when_shown(self):
+        """Verify no name is hidden when the setting to show sensitive values is on."""
+        for name in ("SECRET_KEY", "password", "sessionid", "HTTP_COOKIE"):
+            with self.subTest(name=name):
+                self.assertFalse(is_sensitive_name(name))

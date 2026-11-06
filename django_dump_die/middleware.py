@@ -100,6 +100,18 @@ def dump_break(size=None):
 dump.br = dump_break
 
 
+def _set_content(response, content):
+    """
+    Replace the response's content, and its Content-Length header if it has one.
+
+    Middleware below this one, such as Django's CommonMiddleware, may have set Content-Length already. Left at the old
+    length, it would make the browser cut off the new content.
+    """
+    response.content = content
+    if response.has_header("Content-Length"):
+        response["Content-Length"] = str(len(response.content))
+
+
 class DumpAndDieMiddleware:
     """
     DumpAndDie Middleware.
@@ -166,45 +178,44 @@ class DumpAndDieMiddleware:
         Return the dump page instead of the response if anything was dumped.
         After an unhandled exception, add the dumps to the error page instead.
         """
+        # Nothing was dumped, so the response is returned unchanged.
+        if not dump_objects:
+            return response
+
+        # Take the dumped objects, so that they are only shown once.
+        objects = dump_objects[:]
+        dump_objects.clear()
+
+        # dump() and dump.br() only collect objects while DEBUG is on. But DEBUG can be turned off after they were
+        # collected, such as by override_settings in tests. Dumps can hold anything, including secrets, so they are
+        # never shown with DEBUG off.
+        if not settings.DEBUG:
+            return response
+
         # Determine if view had an unhandled non-dd exception.
         # This attribute will be set by the "process_exception" method below.
         has_non_dd_exception = getattr(request, "has_non_dd_exception", False)
 
-        # If there are un-dumped object in the dump_objects list and a
-        # non-dd-exception was not raised, assume that the user
-        # just forgot to use DD to actually die. Return the dd_view with those
-        # collected dump_objects instead of returning the default response.
-        # Nothing is collected while DEBUG is off, since dump() and dump.br() do nothing then.
+        # Without an unhandled exception, assume that the user just forgot to use dd() to actually die. Return the
+        # dump page with the collected objects instead of the response.
         # A "combo" view that shows the dumps above the original response is an idea for #45.
-        if dump_objects and has_non_dd_exception is False:
-            objects = dump_objects[:]
-            dump_objects.clear()
+        if not has_non_dd_exception:
             return dd_view(request, objects)
 
-        # If the request object had an unhandled non-dd exception, attempt to
-        # create a "combo" view that shows both the dumped objects and the
-        # original response content.
-        # Attempt to collect any dumps that ran prior to the unhandled exception
-        # and inject the dump info into the standard Django 500 error page.
-        # Only when there is something to show and DEBUG is on, so that production
-        # error pages are never altered.
+        # After an unhandled exception, add the dumps from before the exception to Django's error page, so that both
+        # are shown.
         # A setting to turn this on or off is an idea for #45.
-        if has_non_dd_exception and dump_objects and settings.DEBUG:
-            objects = dump_objects[:]
-            dump_objects.clear()
 
-            # Get the head and body content of the DD view
-            head_string = dd_view(request, objects, template_name="django_dump_die/partials/_head.html", as_string=True)
-            body_string = dd_view(request, objects, template_name="django_dump_die/partials/_body.html", as_string=True)
-            # Fetch the content of the standard Django 500 error page.
-            content = response.content.decode("utf-8")
-            # Inject the head and body parts of the DD view into the correct spots of the standard Django 500 error view.
-            content = content.replace("</head>", f"{head_string}</head>")
-            content = content.replace("<body>", f"<body>{body_string}")
-            # Set the new content on the response object
-            response.content = content.encode("utf-8")
+        # Get the head and body content of the DD view
+        head_string = dd_view(request, objects, template_name="django_dump_die/partials/_head.html", as_string=True)
+        body_string = dd_view(request, objects, template_name="django_dump_die/partials/_body.html", as_string=True)
+        # Fetch the content of the standard Django 500 error page.
+        content = response.content.decode("utf-8")
+        # Inject the head and body parts of the DD view into the correct spots of the standard Django 500 error view.
+        content = content.replace("</head>", f"{head_string}</head>", 1)
+        content = content.replace("<body>", f"<body>{body_string}", 1)
+        _set_content(response, content.encode("utf-8"))
 
-        # Regardless of whether the content was altered, return the response.
         return response
 
     def process_exception(self, request, exception):

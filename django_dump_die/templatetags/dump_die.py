@@ -42,8 +42,10 @@ from django_dump_die.constants import (
 )
 from django_dump_die.utils import (
     DumpBreak,
+    HiddenValue,
     get_dumped_object_info,
     is_valid_break_size,
+    is_sensitive_name,
     generate_unique_from_obj,
     get_members,
     get_class_name,
@@ -207,6 +209,12 @@ def dump_objects(objects):
 def is_dump_break(obj):
     """Return True if the dumped object is a break added with dump.br()."""
     return isinstance(obj, DumpBreak)
+
+
+@register.filter
+def is_hidden_value(obj):
+    """Return True if the value is hidden, because its name looks sensitive."""
+    return isinstance(obj, HiddenValue)
 
 
 @register.inclusion_tag("django_dump_die/partials/_dump_object.html")
@@ -794,6 +802,10 @@ def get_obj_values(obj):
                 attribute_type = get_attribute_type(obj, attr)
                 decorator = attribute_type if attribute_type in ("property", "cached_property") else None
 
+                # Hide the value if its name looks sensitive, such as a password, secret key, or session cookie.
+                if is_sensitive_name(attr):
+                    value = HiddenValue()
+
                 # If attr is not None (anything but set) change to safe_repr.
                 if attr is not None:
                     attr = safe_repr(attr)
@@ -903,6 +915,10 @@ def _get_function_result_error_row(name, exception):
 
 def _get_function_result(obj, name):
     """Run one listed function of the object, and return its row, with the result or the reason it has none."""
+    # A function whose name looks sensitive isn't run, and its result is hidden like a sensitive attribute.
+    if is_sensitive_name(name):
+        return _get_function_result_row(name, error=HiddenValue.text, error_title=HiddenValue.title)
+
     try:
         function = getattr(obj, name)
     except AttributeError:

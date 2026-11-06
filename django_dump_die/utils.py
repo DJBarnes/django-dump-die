@@ -7,6 +7,7 @@ import functools
 import inspect
 import io
 import linecache
+import re
 import tokenize
 from collections.abc import Sequence
 from decimal import Decimal
@@ -26,13 +27,19 @@ from tokenize import (
 )
 
 # Third-Party Imports.
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DatabaseError
 from django.http import QueryDict
 from django.utils.functional import Promise, cached_property as django_cached_property
 
 # Internal Imports.
-from django_dump_die.constants import COLORIZE_DUMPED_OBJECT_NAME, INCLUDE_FILENAME_LINENUMBER, PYTZ_PRESENT
+from django_dump_die.constants import (
+    COLORIZE_DUMPED_OBJECT_NAME,
+    INCLUDE_FILENAME_LINENUMBER,
+    PYTZ_PRESENT,
+    SHOW_SENSITIVE_VALUES,
+)
 
 # Imports that may not be accessible, depending on local python environment setup.
 if PYTZ_PRESENT:
@@ -51,6 +58,66 @@ class DumpBreak:
     def __init__(self, size=None):
         # Height of the break in lines, or None for the DJANGO_DD_BREAK_SIZE default.
         self.size = size
+
+
+# Names whose values are hidden. Based on what Django's debug page hides (SafeExceptionReporterFilter), but matched by
+# the words of a name, not anywhere in it. Django's page only checks settings and request.META, while dumps show the
+# attributes and keys of any object, where matching anywhere would also hide names such as "key", "author", and
+# "is_authenticated".
+# Words that make a name sensitive, such as SECRET_KEY, db_password, and access_token.
+SENSITIVE_WORDS = {
+    "auth",
+    "authorization",
+    "credential",
+    "credentials",
+    "passphrase",
+    "pass",
+    "passwd",
+    "password",
+    "pwd",
+    "secret",
+    "signature",
+    "token",
+}
+# Endings of a word that make a name sensitive, for names whose words aren't separated, such as csrfmiddlewaretoken.
+SENSITIVE_WORD_ENDINGS = ("apikey", "password", "secret", "token")
+# Words that make "key" after them sensitive, such as api_key, privateKey, and session_key. "key" alone, as in a
+# timezone's key, or after another word, as in primary_key or cache_key, isn't.
+SENSITIVE_KEY_WORDS = {"access", "api", "encryption", "license", "master", "private", "secret", "session", "signing"}
+# Whole names that are sensitive: the request header with the cookies, in request.META and in request.headers.
+SENSITIVE_NAMES = {"http_cookie", "cookie"}
+# Splits a name into words, at underscores and other separators, and between camelCase words.
+_NAME_WORDS_PATTERN = re.compile(r"[A-Z]+(?![a-z])|[A-Z]?[a-z]+|[0-9]+")
+
+
+class HiddenValue:
+    """Marker shown in place of a value whose name looks sensitive. See is_sensitive_name()."""
+
+    # The same stars as on Django's debug page.
+    text = "********************"
+    title = "Hidden, because its name looks sensitive. Set DJANGO_DD_SHOW_SENSITIVE_VALUES = True to show it."
+
+
+def is_sensitive_name(name):
+    """
+    Return True if the value with this attribute, key, or function name should be hidden.
+
+    Dumps can be shown to whoever makes the next request, or end up in a screenshot, so sensitive values are hidden
+    unless DJANGO_DD_SHOW_SENSITIVE_VALUES is on. Only names are checked, so other values, such as list items, are
+    shown.
+    """
+    if SHOW_SENSITIVE_VALUES or not isinstance(name, str):
+        return False
+    if name.lower() in SENSITIVE_NAMES or name == settings.SESSION_COOKIE_NAME:
+        return True
+
+    words = [word.lower() for word in _NAME_WORDS_PATTERN.findall(name)]
+    for index, word in enumerate(words):
+        if word in SENSITIVE_WORDS or word.endswith(SENSITIVE_WORD_ENDINGS):
+            return True
+        if word == "key" and index > 0 and words[index - 1] in SENSITIVE_KEY_WORDS:
+            return True
+    return False
 
 
 def is_valid_break_size(size):
@@ -600,8 +667,17 @@ def get_obj_type(obj):
     return obj_type
 
 
+def _plain_str(text):
+    """Return text as a plain str, not a str subclass.
+
+    A __repr__ or __str__ can return a SafeString, such as one built with format_html(). The templates would then
+    output it as HTML, without escaping it. As a plain str, autoescaping applies to it like any other value.
+    """
+    return str.__str__(text)
+
+
 def safe_repr(obj):
-    """Call repr() and ignore ObjectDoesNotExist."""
+    """Call repr() and ignore ObjectDoesNotExist. Always returns a plain str, so that templates escape it."""
     str_obj = ""
     try:
         str_obj = repr(obj)
@@ -611,18 +687,18 @@ def safe_repr(obj):
         # the list.
         str_obj = f"<{obj.__class__} DELETED>"
 
-    return str_obj
+    return _plain_str(str_obj)
 
 
 def safe_str(obj):
-    """Call str() and ignore TypeErrors if str() doesn't return a string."""
+    """Call str() and ignore TypeErrors if str() doesn't return a string. Always returns a plain str, like safe_repr."""
     str_obj = ""
     try:
         str_obj = str(obj)
     except (TypeError, ObjectDoesNotExist):
         str_obj = safe_repr(obj)
 
-    return str_obj
+    return _plain_str(str_obj)
 
 
 def is_iterable(obj):

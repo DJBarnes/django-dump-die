@@ -12,8 +12,30 @@ Action Needed When Upgrading
   correctly when it is installed. If your project uses ``pytz``, add it to
   your project's own requirements.
 
+* **Changed: sensitive values are hidden.** Like Django's debug page, dumps
+  now show ``********************`` in place of values whose names look
+  sensitive, such as ``SECRET_KEY``, ``password``, ``access_token``, the
+  session cookie, and the ``Cookie`` header. Functions with such names are not
+  run for function results. To show them again, set
+  ``DJANGO_DD_SHOW_SENSITIVE_VALUES = True``. See the new Security page of the
+  docs for the names that are hidden, and for other things to watch out for.
+
 Other Changes
 -------------
+
+* **Fixed: some values were added to the dump page as HTML.** A dict key
+  whose ``repr()`` was marked safe, such as one built with ``format_html()``,
+  was added to the page as HTML instead of shown as text. Every value is now
+  escaped.
+
+* **Fixed: the error page with dumps could be cut off.** After an unhandled
+  exception, dumps are added to Django's error page. The page kept its old
+  ``Content-Length``, such as one set by ``CommonMiddleware``, so the browser
+  stopped reading it early.
+
+* **Fixed: dumps were shown after DEBUG was turned off.** Objects dumped while
+  ``DEBUG`` was on, such as in a test that turns it on, were still shown on
+  the next response after it was turned off. They are now dropped instead.
 
 * **Fixed: some strings and form fields were dumped badly.** Subclasses of
   ``str``, such as Django's ``SafeString`` from ``mark_safe()`` or a rendered
