@@ -28,7 +28,7 @@ pipenv run sphinx-build -WE docs/source docs/build   # CI builds docs with warni
 ## Conventions
 
 - Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/): `type(scope): summary`. Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `build`, `ci`, `chore`. Commits are GPG-signed (`commit.gpgsign` is set in this repo's local git config).
-- Each user-facing change adds an entry to the "Unreleased" section of `docs/source/version_history.rst` in the same commit.
+- Each user-facing change adds an entry to the "Unreleased" section at the top of `docs/source/version_history.rst` in the same commit (add the section if the last release removed it).
 - Supported versions are kept wide on purpose (Python ≥3.6, Django ≥2.2) until a complete release; don't drop old versions without asking.
 
 ## Architecture

@@ -35,7 +35,7 @@ Here are a few things you can do that will increase the likelihood of your pull 
 - Verify new functionality and tests do not reduce test coverage.
 - Keep your changes as focused as possible. If there are multiple changes you would like to make that are not dependent upon each other, consider submitting them as separate pull requests.
 - Write commit messages as [Conventional Commits](https://www.conventionalcommits.org/): `type(scope): summary`, for example `fix(middleware): ...` or `test: ...`.
-- Add an entry for each user-facing change to the "Unreleased" section of `docs/source/version_history.rst`, in the same commit.
+- Add an entry for each user-facing change to the "Unreleased" section at the top of `docs/source/version_history.rst`, in the same commit. If there is none yet since the last release, add it.
 
 Work in Progress pull requests are also welcome to get feedback early on, or if there is something blocking you.
 
