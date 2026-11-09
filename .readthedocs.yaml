@@ -1,15 +1,17 @@
 version: 2
 
+# The same Python as the docs build in CI (the docs tox env, on Python 3.14).
 build:
-  os: "ubuntu-22.04"
+  os: "ubuntu-24.04"
   tools:
-    python: "3.11"
+    python: "3.14"
 
-# Build from the docs/ directory with Sphinx
+# Build from the docs/ directory with Sphinx. Warnings fail the build, as with -WE in CI.
 sphinx:
   configuration: docs/source/conf.py
+  fail_on_warning: true
 
-# Explicitly set the version of Python and its requirements
+# The packages needed to build the docs.
 python:
   install:
     - requirements: docs/requirements.txt
