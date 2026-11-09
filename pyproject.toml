@@ -101,7 +101,8 @@ test = [
 
 [project.urls]
 Homepage = "https://github.com/djbarnes/django-dump-die"
-Documentation = "https://django-dump-die.readthedocs.io/en/main/"
+Documentation = "https://django-dump-die.readthedocs.io/en/stable/"
+Changelog = "https://django-dump-die.readthedocs.io/en/stable/version_history.html"
 "Bug Tracker" = "https://github.com/djbarnes/django-dump-die/issues"
 "Source Code" = "https://github.com/djbarnes/django-dump-die"
 

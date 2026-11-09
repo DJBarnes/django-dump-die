@@ -28,7 +28,9 @@ The entire concept is heavily based on the dump die functionality that comes
 with PHP's [Laravel](https://laravel.com/)
 and [Symfony](https://symfony.com/) frameworks.
 
-Full documentation on [ReadTheDocs](https://django-dump-die.readthedocs.io/en/latest/).
+Full documentation on [ReadTheDocs](https://django-dump-die.readthedocs.io/en/stable/), including the
+[Version History](https://django-dump-die.readthedocs.io/en/stable/version_history.html) of what changed in each
+release.
 
 ![dd_sample_output](https://user-images.githubusercontent.com/4390026/173413467-afcea349-a28b-42c0-bd18-5922df17b453.png)
 
@@ -169,10 +171,10 @@ removed before any actual commits.
 
 ### Usage & Parameters
 For further documentation on usage and parameters, see
-[ReadTheDocs/Usage](https://django-dump-die.readthedocs.io/en/latest/usage.html)
+[ReadTheDocs/Usage](https://django-dump-die.readthedocs.io/en/stable/usage.html)
 
 
 ## Configuration
 The package has a few available configuration options and settings, which are
 documented at
-[ReadTheDocs/Configuration](https://django-dump-die.readthedocs.io/en/latest/configuration.html)
+[ReadTheDocs/Configuration](https://django-dump-die.readthedocs.io/en/stable/configuration.html)
