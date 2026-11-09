@@ -198,7 +198,7 @@ def get_dumped_object_info(obj, index_range=None, deepcopy=None):
         # stream, is dumped as it is, with a note, instead of stopping the view.
         try:
             obj, original_obj = copy.deepcopy(obj), obj
-        except Exception as exception:  # pylint: disable=broad-exception-caught
+        except Exception as exception:
             obj_name.append(get_not_copied_name_part(exception))
 
     return (filename, linenumber, obj_name, obj, function_doc, start_index, end_index, original_obj)
@@ -455,7 +455,7 @@ def process_object_name(object_name):
         for token_number, token_value, start, end, _ in all_tokens:
 
             # Ignore newlines and endmarkers
-            if token_number == NEWLINE or token_number == ENDMARKER:
+            if token_number in (NEWLINE, ENDMARKER):
                 continue
 
             # Keep a space where the name had whitespace, such as in "a if b else c", since each part is shown in its
@@ -732,7 +732,7 @@ def get_obj_type(obj):
     # Special handling for certain types.
     if obj_type == "NoneType":
         obj_type = "null"
-    elif PYTZ_PRESENT and isinstance(obj, pytz.BaseTzInfo):  # pylint: disable=E0606
+    elif PYTZ_PRESENT and isinstance(obj, pytz.BaseTzInfo):
         obj_type = "pytz_timezone"
     elif isinstance(obj, Promise):
         # A lazy string, such as from gettext_lazy(), whose class is a "__proxy__".

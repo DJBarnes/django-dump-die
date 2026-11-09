@@ -185,7 +185,7 @@ class DumpDieFunctionResultsTestCase(SimpleTestCase):
 
     @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
     def test_object_with_getattr_has_no_error(self):
-        """Verify an object whose __getattr__ returns something for any name isn't read as having the class attribute."""
+        """Verify an object whose __getattr__ returns something for any name isn't taken to have the class attribute."""
         content = render_dumped(AnswersAnyName())
 
         self.assertNotIn("Function Results", content)

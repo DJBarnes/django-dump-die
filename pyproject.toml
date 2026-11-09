@@ -72,10 +72,9 @@ browser = [
     "selenium",
 ]
 dev = [
-    "black",
+    "colorama",
     "coverage",
-    "pylint",
-    "pylint-django",
+    "ruff",
 ]
 doc = [
     "doc8",
@@ -111,9 +110,41 @@ Changelog = "https://django-dump-die.readthedocs.io/en/stable/version_history.ht
 
 # region Third-Party Package Settings
 
-# "Black" formatter settings.
-[tool.black]
+# "Ruff" formatter and linter settings.
+[tool.ruff]
 line-length = 120
+# Ruff's oldest target. The package supports Python 3.6 (requires-python), which tox tests.
+target-version = "py37"
+# Python files only; code examples in Markdown keep the docs' style.
+extend-exclude = ["*.md", "docs/build"]
+# The middleware adds dd() and dump() to builtins, so calling code doesn't import them.
+builtins = ["dd", "dump"]
+
+[tool.ruff.lint]
+# pyflakes, pycodestyle, bugbear, pep8-naming, Ruff's pylint rules, and its Django rules.
+select = ["F", "E", "W", "B", "N", "PL", "DJ"]
+ignore = [
+    # The "too many ..." checks, which the project's pylint configuration also disabled.
+    "PLR0911",
+    "PLR0912",
+    "PLR0913",
+    "PLR0915",
+    "PLR0917",
+    # Magic values in comparisons (an optional pylint extension).
+    "PLR2004",
+    # `else: if` instead of `elif` (pylint's no-else checks were disabled).
+    "PLR5501",
+]
+
+[tool.ruff.lint.pep8-naming]
+# Test assertion helpers follow unittest's naming.
+extend-ignore-names = ["assert*"]
+
+[tool.ruff.lint.per-file-ignores]
+# This module re-exports the views for `from django_dump_die.views import ...`.
+"django_dump_die/views/__init__.py" = ["F401"]
+# The sample models are dumped with Django's own __str__.
+"django_dump_die/views/example_helpers.py" = ["DJ008"]
 
 [tool.setuptools]
 zip-safe = false
@@ -194,99 +225,3 @@ exclude_lines = [
 partial_branches = ["pragma: no branch", "if hasattr\\(SampleDjangoModel, .*"]
 
 # endregion Testing Settings
-
-
-# region Pylint Settings
-
-[tool.pylint.main]
-# List of plugins (as comma separated values of python module names) to load,
-# usually to register additional checkers.
-load-plugins = ["pylint_django", "pylint.extensions.no_self_use"]
-
-# Good variable names which should always be accepted, separated by a comma.
-good-names = [
-    "pk",
-    "register",
-    "f",
-    "i",
-    "x",
-    "y",
-    "db",
-    "dd",
-    "fs",
-    "by",
-    "ws",
-    "wb",
-    "urlpatterns",
-    "app_name",
-    "logger",
-    "UserModel",
-    "websocket_urlpatterns",
-]
-
-# List of valid names for the first argument in a metaclass class method.
-valid-metaclass-classmethod-first-arg = ["cls"]
-
-[tool.pylint."django foreign keys referenced by strings"]
-# A module containing Django settings to be used while linting.
-django-settings-module = "django_dump_die_tests.django_test_project.settings"
-
-[tool.pylint.format]
-# Regexp for a line that is allowed to be longer than the limit.
-ignore-long-lines = "([^A-Za-z0-9_]https?:\\/\\/\\S+|(\\s|^)def test_|Model .* was already registered)"
-
-# Maximum number of characters on a single line.
-max-line-length = 120
-
-[tool.pylint."messages control"]
-# Disable the message, report, category or checker with the given id(s). You can
-# either give multiple identifiers separated by comma (,) or put this option
-# multiple times (only on the command line, not in the configuration file where
-# it should appear only once). You can also use "--disable=all" to disable
-# everything first and then re-enable specific checks. For example, if you want
-# to run only the similarities checker, you can use "--disable=all
-# --enable=similarities". If you want to run only the classes checker, but have
-# no Warning level messages displayed, use "--disable=all --enable=classes
-# --disable=W".
-disable = [
-    # Default disables
-    "raw-checker-failed",
-    "bad-inline-option",
-    "locally-disabled",
-    "file-ignored",
-    "suppressed-message",
-    "useless-suppression",
-    "deprecated-pragma",
-    "use-implicit-booleaness-not-comparison-to-string",
-    "use-implicit-booleaness-not-comparison-to-zero",
-    "use-symbolic-message-instead",
-    # Project disables
-    "arguments-differ",
-    "broad-exception-caught",
-    "duplicate-code",
-    "no-else-raise",
-    "no-else-return",
-    "signature-differs",
-    "too-few-public-methods",
-    "too-many-ancestors",
-    "too-many-arguments",
-    "too-many-branches",
-    "too-many-instance-attributes",
-    "too-many-lines",
-    "too-many-locals",
-    "too-many-nested-blocks",
-    "too-many-public-methods",
-    "too-many-statements",
-    "wrong-import-order",
-]
-
-[tool.pylint.miscellaneous]
-# List of note tags to take in consideration, separated by a comma.
-notes = ["DEBUG", "REVIEW", "HACK", "XXX", "L8R", "LOCK", "TODO", "FIXME"]
-
-[tool.pylint.variables]
-# List of additional names supposed to be defined in builtins. Remember that you
-# should avoid defining new builtins when possible.
-additional-builtins = ["dump", "dd"]
-
-# endregion Pylint Settings

@@ -17,8 +17,8 @@ pipenv run python runtests.py --force-django-manage-test   # same tests with man
 pipenv run pytest tests/django_dump_die_tests/simple_types/test_simple_types.py
 pipenv run pytest "tests/django_dump_die_tests/general/test_general.py::DumpDieGeneralTestCase::test_debug_off_skips_all_dumps"
 tox                                              # Python 3.6–3.14 × Django 2.2–6.1 matrix, browser, docs, warnings
-pipenv run black .                               # line length 120
-pipenv run pylint django_dump_die
+pipenv run ruff format .                         # format with Ruff (line length 120; settings in pyproject.toml)
+pipenv run ruff check .                          # lint with Ruff; CI runs both
 pipenv run sphinx-build -WE docs/source docs/build   # CI builds docs with warnings as errors
 ./docs/generate_docs.sh                          # regenerates docs/source/api_reference with sphinx-apidoc
 ```
@@ -53,7 +53,7 @@ The tag tracks each object's "unique" (based on its `id`) in a `skip_set` and mo
 
 **Front-end** (`static/django_dump_die/js/dd.js`): plain JavaScript; the page loads Bootstrap 4's CSS but no jQuery or Bootstrap JS. Each `.arrow-toggle` (`data-dd-toggle="collapse"` when collapsible; without it the section is "always show") is directly followed by its `.dd-wrapper`/`.li-wrapper` section and contains its `.arrow`, and `dd.js` relies on that structure. One delegated click handler opens/closes a section with Bootstrap's `.collapsing` height transition; CTRL+click and the toolbar buttons set many sections at once without animation. Keep it linear in page size: no per-element handlers or document-wide queries per element (see #30). Dumped output can sit inside another page (template tag, dumps above a page), so every lookup is limited to `.dump-wrapper` (`SCOPE`), and `dd.js` can be loaded twice (`var` plus `window.djangoDumpDie ||`). Likewise, `dd.css` and `_custom_color_theme.html` scope class selectors with `:where(.dump-wrapper)`, which keeps their specificity unchanged so custom themes still override them; page-level rules use `html.dump-die-page`.
 
-**Settings** (`app_settings.py`): every `DJANGO_DD_*` option is an attribute of `app_settings`, named without the prefix (`app_settings.MAX_RECURSION_DEPTH` reads `DJANGO_DD_MAX_RECURSION_DEPTH`). Each is a `Setting(default)` descriptor on `AppSettings` that reads the Django setting on every access, so `override_settings` works; tests use it instead of patching. Being attributes, a misspelled setting is a pylint `no-member` error. To add a setting, add a `Setting` to `AppSettings` and a section to `docs/source/configuration.rst`; `general/test_app_settings.py` checks the two match. `constants.py` only holds real constants (types, `DEFAULT_FUNCTION_RESULTS`, `BREAK_STYLES`).
+**Settings** (`app_settings.py`): every `DJANGO_DD_*` option is an attribute of `app_settings`, named without the prefix (`app_settings.MAX_RECURSION_DEPTH` reads `DJANGO_DD_MAX_RECURSION_DEPTH`). Each is a `Setting(default)` descriptor on `AppSettings` that reads the Django setting on every access, so `override_settings` works; tests use it instead of patching. Being attributes, a misspelled setting is caught: `general/test_app_settings.py` checks that every `app_settings.NAME` in the package, and every `DJANGO_DD_*` name in the package, tests and docs (except the `DJANGO_DD_SELENIUM_*` environment variables), is a setting. To add a setting, add a `Setting` to `AppSettings` and a section to `docs/source/configuration.rst`; the same test file checks the two match. `constants.py` only holds real constants (types, `DEFAULT_FUNCTION_RESULTS`, `BREAK_STYLES`).
 
 **Example views**: `views/example_views.py` and `views/example_helpers.py` (sample classes, Django models, and a form) power the browsable example pages in `django_dump_die/urls.py`, which ship with the package. The sample models live in that shipped module.
 

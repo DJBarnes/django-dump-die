@@ -38,7 +38,7 @@ def function_type_no_docstring(request):
 
 def function_type_lambda(request):
     """Test view dumping a lambda."""
-    sample_lambda = lambda value: value * 2  # noqa: E731 pylint: disable=unnecessary-lambda-assignment
+    sample_lambda = lambda value: value * 2  # noqa: E731
     dump(sample_lambda)
     return _done(request)
 

@@ -114,7 +114,7 @@ class ReturnsNonStringOnStr:
     """Object whose str() is invalid, because __str__ doesn't return a string."""
 
     def __str__(self):
-        return 42
+        return 42  # noqa: PLE0307 - Not a string, on purpose.
 
     def __repr__(self):
         return "<ReturnsNonStringOnStr>"
@@ -283,7 +283,7 @@ class DumpDieDumpedObjectInfoTestCase(SimpleTestCase):
 
     def test_name_is_unknown_without_the_source(self):
         """Verify a dump in code that has no source file, such as code run with exec(), has an unknown name."""
-        exec("dump(42)", {"dump": dump})  # pylint: disable=exec-used
+        exec("dump(42)", {"dump": dump})
 
         self.assertEqual(get_dumped_name(get_dumped_info()), "Unknown_Object_Name")
 

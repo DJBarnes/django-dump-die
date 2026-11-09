@@ -265,7 +265,7 @@ def dump_object(
     intermediate_value = None
 
     # Determine if pytz timezone object for use in below decisions.
-    is_pytz_timezone = PYTZ_PRESENT and isinstance(obj, pytz.BaseTzInfo)  # pylint: disable=E0606
+    is_pytz_timezone = PYTZ_PRESENT and isinstance(obj, pytz.BaseTzInfo)
 
     # Handle if object is in skip set, aka already processed.
     intermediate_css_class = None
@@ -757,7 +757,7 @@ def get_obj_values(obj, item_range=None):
                 params = get_callable_params(value)
 
                 # Get the documentation for the method.
-                value = inspect.getdoc(value)
+                doc = inspect.getdoc(value)
 
                 # Get the access modifier for the method.
                 access_modifier = _get_access_modifier(attr)
@@ -766,7 +766,7 @@ def get_obj_values(obj, item_range=None):
                 method_type = get_method_type(obj, attr)
 
                 # Append function to list of functions
-                functions.append([attr, params, value, access_modifier, method_type])
+                functions.append([attr, params, doc, access_modifier, method_type])
 
             else:  # Handle member attributes.
 
@@ -779,49 +779,49 @@ def get_obj_values(obj, item_range=None):
                 decorator = attribute_type if attribute_type in ("property", "cached_property") else None
 
                 # Hide the value if its name looks sensitive, such as a password, secret key, or session cookie.
-                if is_sensitive_name(attr):
-                    value = HiddenValue()
+                shown_value = HiddenValue() if is_sensitive_name(attr) else value
 
-                # If attr is not None (anything but set) change to safe_repr.
-                if attr is not None:
-                    attr = safe_repr(attr)
+                # The name shown. If attr is not None (anything but set) change to safe_repr.
+                label = attr
+                if label is not None:
+                    label = safe_repr(label)
 
                 # If not a dict and not None, remove the outside quotes so
                 # it looks more like an attribute and not a string.
-                if not is_dict(obj) and attr is not None:
-                    attr = re.sub("'", "", attr)
+                if not is_dict(obj) and label is not None:
+                    label = re.sub("'", "", label)
 
                 # Determine what type attribute is so that the access modifier,
                 # css class, and title can be appropriately set.
                 # Processing order is: Index, const, key, set, attribute
-                if is_number(attr):  # Index.
+                if is_number(label):  # Index.
                     access_modifier = None
                     css_class = "index"
                     title = "Index"
-                elif is_const(attr):  # Constant.
-                    access_modifier = _get_access_modifier(attr)
+                elif is_const(label):  # Constant.
+                    access_modifier = _get_access_modifier(label)
                     css_class = "constant"
                     title = "Constant"
-                elif is_key(attr):  # Key.
+                elif is_key(label):  # Key.
                     access_modifier = None
                     css_class = "key"
                     title = "Key"
                     decorator = None
-                elif attr is None:  # Set.
+                elif label is None:  # Set.
                     access_modifier = None
                     css_class = ""
                     title = ""
                 elif attribute_type == "class_attribute":  # Attribute from the object's class.
-                    access_modifier = _get_access_modifier(attr)
+                    access_modifier = _get_access_modifier(label)
                     css_class = "class_attribute"
                     title = "Class Attribute"
                 else:  # Instance Attribute.
-                    access_modifier = _get_access_modifier(attr)
+                    access_modifier = _get_access_modifier(label)
                     css_class = "attribute"
                     title = "Attribute"
 
                 # Append the attribute information to the list of attributes.
-                attributes.append([attr, value, access_modifier, css_class, title, decorator])
+                attributes.append([label, shown_value, access_modifier, css_class, title, decorator])
 
         except Exception as inner_exception:
             # First get exception data.
@@ -905,7 +905,7 @@ def _get_function_result(obj, name):
                 FUNCTION_RESULTS_ATTRIBUTE
             ),
         )
-    except Exception as exception:  # pylint: disable=broad-exception-caught
+    except Exception as exception:
         # Such as a listed property that raises an error.
         return _get_function_result_error_row(name, exception)
     if not callable(function):
@@ -935,7 +935,7 @@ def _get_function_result(obj, name):
 
     try:
         value = function()
-    except Exception as exception:  # pylint: disable=broad-exception-caught
+    except Exception as exception:
         # Show the error in place of the result, so that the rest of the dump still shows.
         return _get_function_result_error_row(name, exception)
 
@@ -1030,8 +1030,7 @@ def _process_root_indices(start, end, parent_length):
         start = parent_length + start
 
         # Reset if still negative.
-        if start < 0:
-            start = 0
+        start = max(start, 0)
 
     # If the original value of end is None, there is no specified end and
     # it makes sense to then run from the start, now that it is calculated,
@@ -1044,8 +1043,7 @@ def _process_root_indices(start, end, parent_length):
         end = parent_length + end
 
         # Reset if still negative.
-        if end < 0:
-            end = 0
+        end = max(end, 0)
 
     # Handle if user provided a start_index that is higher than end_index.
     if start > end:

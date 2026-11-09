@@ -20,10 +20,8 @@ pytz = "*"                        # Needed until fully on ZoneInfo.
  ##
 [dev-packages]
 # Syntax formatting and checking dependencies.
-black = "*"                       # "Uncompromising" Python code formatter.
 colorama = "*"                    # Shows runtests.py output colors in older Windows consoles.
-pylint = "*"                      # Linter for Python syntax. Must be run in console via "pylint" command.
-pylint-django = "*"               # Improves code analysis for Django projects.
+ruff = "*"                        # Formatter and linter ("ruff format", "ruff check").
 
 # Testing/Pytest dependencies.
 coverage = "*"                    # Outputs testing coverage data.

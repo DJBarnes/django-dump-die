@@ -226,7 +226,7 @@ class DumpDieTagSettingsTestCase(SimpleTestCase):
         """Verify dumping a function, a callable object, or a class shows it without calling it."""
         calls = []
 
-        def no_docstring():  # pylint: disable=missing-function-docstring
+        def no_docstring():
             calls.append("function")
 
         class CallableObject:

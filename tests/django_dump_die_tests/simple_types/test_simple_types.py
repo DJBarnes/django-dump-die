@@ -3,7 +3,6 @@ Tests for "simple" type DD output.
 """
 
 # System Imports.
-from unittest.mock import patch
 
 # Third-Party Imports.
 from django.test import override_settings

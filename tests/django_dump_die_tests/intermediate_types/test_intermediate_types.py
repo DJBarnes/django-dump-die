@@ -55,7 +55,10 @@ def opening(dumped_name, type_name, value):
                         <span class="section_name">Attributes</span>
                         <span id="arrow-{unique}-attributes" class="arrow"></span>
                     </a>
-                    <div class="li-wrapper collapse {unique}-attributes show" data-unique-attributes="{unique}-attributes">
+                    <div
+                        class="li-wrapper collapse {unique}-attributes show"
+                        data-unique-attributes="{unique}-attributes"
+                    >
     """.format(name=dumped_name, type=type_name, value=value, unique=UNIQUE)
 
 

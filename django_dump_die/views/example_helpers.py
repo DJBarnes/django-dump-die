@@ -54,7 +54,7 @@ def sample_func():
     return 42
 
 
-def sample_func_param(param1, *args, some_kwarg=None, **kwargs):  # pylint: disable=unused-argument
+def sample_func_param(param1, *args, some_kwarg=None, **kwargs):
     """Sample param doc string.
 
     :param param1: Doc for param1.
@@ -65,7 +65,7 @@ def sample_func_param(param1, *args, some_kwarg=None, **kwargs):  # pylint: disa
 class EmptyClass:
     """Empty sample class"""
 
-    pass  # pylint: disable=unnecessary-pass
+    pass
 
 
 class SimpleClass:
@@ -422,7 +422,7 @@ class SampleModelForm(ModelForm):
 # The sample models have no database tables, so offer no choices for the form's relation fields.
 # Dumping the form, or its class, otherwise counts and lists each field's choices from the database.
 # Instances copy these class-level fields, so this covers both.
-for _field in SampleModelForm.base_fields.values():  # pylint: disable=no-member
+for _field in SampleModelForm.base_fields.values():
     if hasattr(_field, "queryset"):
         _field.queryset = _field.queryset.none()
 
@@ -895,7 +895,7 @@ class ClassTypesHelper:
     def dump_complex_class_attributes(self):
         """Dump attributes of a complex class"""
         sample_complex_class = ComplexClass()
-        dump(sample_complex_class._sample_private_simple_class)  # pylint: disable=protected-access
+        dump(sample_complex_class._sample_private_simple_class)
         dump(sample_complex_class.sample_public_simple_class)
         dump(sample_complex_class.sample_public_simple_class.sample_public_dict)
         dump(sample_complex_class.sample_public_simple_class.sample_public_dict["first"])

@@ -13,8 +13,13 @@ from django.test import SimpleTestCase, override_settings
 import django_dump_die
 from django_dump_die.app_settings import AppSettings, Setting, app_settings
 
+PACKAGE_DIR = Path(django_dump_die.__file__).resolve().parent
+TESTS_DIR = Path(__file__).resolve().parent.parent
 # The configuration docs, which only exist in a checkout of the repository, not in an installed package.
-CONFIGURATION_DOCS = Path(django_dump_die.__file__).resolve().parent.parent / "docs" / "source" / "configuration.rst"
+DOCS_DIR = PACKAGE_DIR.parent / "docs" / "source"
+CONFIGURATION_DOCS = DOCS_DIR / "configuration.rst"
+# Environment variables for the browser tests, which share the prefix but aren't settings.
+NOT_SETTINGS = ("DJANGO_DD_SELENIUM_",)
 
 
 def get_setting_names():
@@ -57,3 +62,24 @@ class DumpDieAppSettingsTestCase(SimpleTestCase):
         documented = re.findall(r"^(DJANGO_DD_[A-Z_]+)\n=+$", CONFIGURATION_DOCS.read_text(encoding="utf-8"), re.M)
 
         self.assertEqual(sorted(documented), get_setting_names())
+
+    def test_package_only_uses_settings_that_exist(self):
+        """Verify every app_settings attribute the package reads is a setting, so that a misspelled one is caught."""
+        for path in sorted(PACKAGE_DIR.rglob("*.py")):
+            for name in re.findall(r"\bapp_settings\.([A-Za-z_]\w*)", path.read_text(encoding="utf-8")):
+                with self.subTest(file=str(path.relative_to(PACKAGE_DIR)), name=name):
+                    self.assertIsInstance(vars(AppSettings).get(name), Setting)
+
+    def test_every_setting_name_exists(self):
+        """Verify every DJANGO_DD_ name in the package, tests, and docs is a setting, such as in override_settings().
+
+        The version history is left out, since it can name settings that were removed.
+        """
+        paths = [*PACKAGE_DIR.rglob("*.py"), *PACKAGE_DIR.rglob("*.html"), *TESTS_DIR.rglob("*.py")]
+        paths += [path for path in DOCS_DIR.glob("*.rst") if path.name != "version_history.rst"]
+        settings_names = get_setting_names()
+        for path in sorted(paths):
+            for name in sorted(set(re.findall(r"\bDJANGO_DD_[A-Z][A-Z0-9_]*", path.read_text(encoding="utf-8")))):
+                if not name.startswith(NOT_SETTINGS):
+                    with self.subTest(file=path.name, name=name):
+                        self.assertIn(name, settings_names)

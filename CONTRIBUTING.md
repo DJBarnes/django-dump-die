@@ -2,7 +2,7 @@
 
 [fork]: /fork
 [pr]: /compare
-[style]: https://pypi.org/project/black/
+[style]: https://docs.astral.sh/ruff/
 [code-of-conduct]: CODE_OF_CONDUCT.md
 
 Hi there! We're thrilled that you'd like to contribute to this project. Your help is essential for keeping it great.
@@ -30,7 +30,7 @@ We'd also love PRs. If you're thinking of a large PR, we advise opening up an is
 
 Here are a few things you can do that will increase the likelihood of your pull request being accepted:
 
-- Follow the [style guide][style] which is using standard.
+- Format and lint your code with [Ruff][style]: `pipenv run ruff format .` and `pipenv run ruff check .` (settings are in `pyproject.toml`).
 - Write and update tests.
 - Verify new functionality and tests do not reduce test coverage.
 - Keep your changes as focused as possible. If there are multiple changes you would like to make that are not dependent upon each other, consider submitting them as separate pull requests.

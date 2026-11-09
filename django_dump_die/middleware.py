@@ -32,7 +32,7 @@ logger = logging.getLogger("django_dump_die")
 dump_objects = []
 
 
-class DumpAndDie(Exception):
+class DumpAndDie(Exception):  # noqa: N818 - Public name, raised by dd().
     """
     DumpAndDie Exception.
     Triggers the middleware exception logic which outputs the alternate dd debug view.
@@ -194,7 +194,7 @@ class DumpAndDieMiddleware:
             else:  # pragma: no cover
                 # asgiref before 3.6, as installed on Python 3.6, which CI tests. How Django before 4.1 detects async
                 # middleware.
-                self._is_coroutine = asyncio.coroutines._is_coroutine  # pylint: disable=protected-access
+                self._is_coroutine = asyncio.coroutines._is_coroutine
 
         # Add global dd() function.
         __builtins__["dd"] = dd

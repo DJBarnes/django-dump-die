@@ -8,7 +8,7 @@ from django.template.loader import render_to_string
 from django_dump_die.app_settings import app_settings
 
 
-def dd_view(request, objects, template_name="django_dump_die/dd.html", extra_context={}, as_string=False):
+def dd_view(request, objects, template_name="django_dump_die/dd.html", extra_context=None, as_string=False):
     """
     Return DumpDie view.
     :param request: Request object.
@@ -43,7 +43,7 @@ def dd_view(request, objects, template_name="django_dump_die/dd.html", extra_con
         "custom_color_theme": custom_color_theme,
         "multiline_function_docs": multiline_function_docs,
     }
-    context.update(extra_context)
+    context.update(extra_context or {})
 
     # If returning the raw string, render to string and return string.
     if as_string:

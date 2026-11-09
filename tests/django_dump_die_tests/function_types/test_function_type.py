@@ -108,7 +108,8 @@ class DumpDieFunctionTypeTestCase(IntegrationTestCase):
             <div class="dump-wrapper">
                 <span class="dumped_function" title="Dumped Function">
                     <span class="dumped_name">sample_object</span><span class="dumped_name">.</span>
-                    <span class="function">sample_class_func</span><span class="braces">(</span><span class="braces">)</span>
+                    <span class="function">sample_class_func</span>
+                    <span class="braces">(</span><span class="braces">)</span>
                 </span>:
                 <span class="docs">Sample class func doc string</span>
             </div>

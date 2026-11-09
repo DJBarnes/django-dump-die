@@ -7,7 +7,7 @@ set it.
 
 Settings are read each time they are used, not once on import. So override_settings works for them, in this
 package's tests and in a project's own tests. And as attributes, instead of setting names in strings, a misspelled
-setting is caught by pylint and editors.
+setting is caught by editors, and by the package's tests (see general/test_app_settings.py).
 
 Every setting is documented in docs/source/configuration.rst.
 """
