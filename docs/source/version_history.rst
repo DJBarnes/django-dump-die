@@ -1,8 +1,8 @@
 Version History
 ***************
 
-Unreleased
-==========
+0.2.1 (2026-11-09)
+==================
 
 * **Fixed: the Documentation link on PyPI.** It pointed at a version of the
   docs that isn't built. It now points at the docs of the newest release, and
