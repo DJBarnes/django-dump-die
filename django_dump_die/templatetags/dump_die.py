@@ -434,6 +434,11 @@ def _add_unique_map_entry(obj, original_obj, root_unique):
     obj_unique = generate_unique_from_obj(obj)
     original_obj_unique = generate_unique_from_obj(original_obj)
 
+    # Map each object once. Objects that refer back to an object already mapped, such as a form's bound fields
+    # referring to their form, would otherwise recurse forever.
+    if obj_unique in deepcopy_unique_map[root_unique]:
+        return
+
     # Add the new unique to the root unique map.
     deepcopy_unique_map[root_unique][obj_unique] = original_obj_unique
 

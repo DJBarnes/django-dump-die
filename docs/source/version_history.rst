@@ -23,6 +23,11 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Fixed: deep copying an object that refers back to itself failed.** Such
+  as any Django form, whose bound fields refer to their form. The dump failed
+  with a ``RecursionError``, with ``deepcopy=True`` or the new
+  ``DJANGO_DD_DEEPCOPY`` setting.
+
 * **Fixed: uniques could be wrong, and their records grew without limit.**
   The records used to count an object dumped more than once, and to match
   deep copies to their originals, were kept for as long as the server ran.

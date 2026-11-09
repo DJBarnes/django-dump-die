@@ -366,6 +366,23 @@ class DumpDieTagObjectsTestCase(SimpleTestCase):
         self.assertIn("value", content)
         self.assertIn('data-highlight-unique="{0}"'.format(generate_unique_from_obj(branch.leaf)), content)
 
+    def test_deepcopy_of_object_that_refers_to_itself(self):
+        """Verify a deep-copied object that refers back to itself is dumped, with the unique of the original."""
+        branch = Branch()
+        branch.leaf.branch = branch
+        dump(branch, deepcopy=True)
+        content = render_dumped_objects()
+
+        self.assertIn('data-unique="{0}"'.format(generate_unique_from_obj(branch)), content)
+        self.assertIn('data-highlight-unique="{0}"'.format(generate_unique_from_obj(branch.leaf)), content)
+
+    def test_deepcopy_of_form(self):
+        """Verify a deep-copied form is dumped, though its bound fields refer back to it."""
+        dump(SampleForm(), deepcopy=True)
+        content = render_dumped_objects()
+
+        self.assertIn('<span class="type" title="SampleForm">SampleForm</span>', content)
+
     def test_object_dumped_twice_on_a_page_is_counted(self):
         """Verify the second dump of one object on a page gets a count after its unique, so the two are told apart."""
         branch = Branch()
