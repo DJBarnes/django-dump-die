@@ -406,7 +406,6 @@ def process_object_name(object_name):
 
     # If the dumped object name should be colorized
     if app_settings.COLORIZE_DUMPED_OBJECT_NAME:
-
         # List of function names
         functions = []
 
@@ -453,7 +452,6 @@ def process_object_name(object_name):
         # Iterate over tokens classifying them with a CSS class.
         previous_end = None
         for token_number, token_value, start, end, _ in all_tokens:
-
             # Ignore newlines and endmarkers
             if token_number in (NEWLINE, ENDMARKER):
                 continue

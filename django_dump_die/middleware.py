@@ -52,7 +52,6 @@ def dd(obj, index_range=None, deepcopy=None):
     """
 
     if settings.DEBUG:
-
         # Get the object info
         object_info = get_dumped_object_info(obj, index_range, deepcopy)
 
@@ -72,7 +71,6 @@ def dump(obj, index_range=None, deepcopy=None):
     """
 
     if settings.DEBUG:
-
         # Get the object info
         object_info = get_dumped_object_info(obj, index_range, deepcopy)
 

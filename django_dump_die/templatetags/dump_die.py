@@ -294,7 +294,6 @@ def dump_object(
 
     # Handle if at the root object, or not past the maximum depth yet.
     elif is_complex_type(current_depth):
-
         # Handle for new "unique" object output.
         return _handle_complex_type(
             obj,
@@ -736,9 +735,7 @@ def get_obj_values(obj, item_range=None):
     # Once all members have been collected, attempt to figure out what type, access modifier, css class, and title
     # should be used for each attribute/function/value in the members.
     for attr, value in members:
-
         try:
-
             # Skip private members if not including them.
             # Magic members also start with an underscore, but follow their own setting below.
             if is_private(attr) and not is_magic(attr) and not app_settings.INCLUDE_PRIVATE_MEMBERS:
@@ -748,7 +745,6 @@ def get_obj_values(obj, item_range=None):
             # If so, Functions will just return documentation.
             is_callable = callable(value)
             if is_callable:  # Handle member functions.
-
                 # Skip dunder (magic) methods if not including them.
                 if is_magic(attr) and not app_settings.INCLUDE_MAGIC_METHODS:
                     continue
@@ -769,7 +765,6 @@ def get_obj_values(obj, item_range=None):
                 functions.append([attr, params, doc, access_modifier, method_type])
 
             else:  # Handle member attributes.
-
                 # Always skip dunder attributes.
                 if is_magic(attr):
                     continue
