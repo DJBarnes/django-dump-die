@@ -389,6 +389,31 @@ class DumpDieTagObjectsTestCase(SimpleTestCase):
                 self.assertIn('data-unique="{0}"'.format(unique), content)
                 self.assertNotIn('data-unique="{0}_1"'.format(unique), content)
 
+    @override_settings(DJANGO_DD_DEEPCOPY=True)
+    def test_object_that_cannot_be_copied_is_noted_after_its_name(self):
+        """Verify the not copied note follows the dumped name, with the reason as its title."""
+        generator = (value for value in [1, 2])
+        dump(generator)
+        content = render_dumped_objects()
+
+        self.assertRegex(
+            content,
+            r'<span class="dumped_name">generator</span> '
+            r'<span class="empty" title="DJANGO_DD_DEEPCOPY is on, [^"]*TypeError: [^"]*">\(not copied\)</span>',
+        )
+
+    @override_settings(DJANGO_DD_DEEPCOPY=True)
+    def test_deepcopy_setting_shows_each_dump_as_it_was(self):
+        """Verify two dumps of one object, changed between them, each show the object as it was when dumped."""
+        values = ["first_state"]
+        dump(values)
+        values[0] = "second_state"
+        dump(values)
+        content = render_dumped_objects()
+
+        # Without quotes, which Django 2.2 escapes differently.
+        self.assertLess(content.index("first_state"), content.index("second_state"))
+
     def test_index_range_of_root_iterable(self):
         """Verify only the root iterable's items inside index_range are expanded."""
         branches = [Branch(), Branch(), Branch()]

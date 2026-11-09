@@ -132,8 +132,13 @@ class Enum:
             setattr(self, key, val)
 
 
-def get_dumped_object_info(obj, index_range=None, deepcopy=False):
-    """Get all the required information to be able to dump an object"""
+def get_dumped_object_info(obj, index_range=None, deepcopy=None):
+    """
+    Get all the required information to be able to dump an object.
+
+    :param deepcopy: Whether to dump a deep copy of the object, as it is now, instead of the object as it is when the
+        page is shown. None uses the DJANGO_DD_DEEPCOPY setting.
+    """
     # Get object filename, linenumber, and name
     filename, linenumber, obj_name = get_dumped_object_name_and_location(obj)
 
@@ -153,17 +158,38 @@ def get_dumped_object_info(obj, index_range=None, deepcopy=False):
     if isinstance(obj, EnumMeta):
         obj = Enum(**obj.__members__)
 
-    # Handle if deepcopy set.
+    # Handle if deepcopy set. The original object is kept, so that uniques still show which objects are the same.
     original_obj = None
-    try:
+    if deepcopy is not None:
         if deepcopy:
+            # Asked for in the call, so an object that can't be copied is an error.
             original_obj = obj
-            obj = copy.deepcopy(obj)
-    except TypeError as type_error:
-        original_obj = None
-        raise TypeError(f"Object contains type that can't be deep copied. - {type_error}") from None
+            try:
+                obj = copy.deepcopy(obj)
+            except TypeError as type_error:
+                raise TypeError(f"Object contains type that can't be deep copied. - {type_error}") from None
+    elif app_settings.DEEPCOPY:
+        # Asked for by the setting, for every dump. An object that can't be copied, such as a request with its input
+        # stream, is dumped as it is, with a note, instead of stopping the view.
+        try:
+            obj, original_obj = copy.deepcopy(obj), obj
+        except Exception as exception:  # pylint: disable=broad-exception-caught
+            obj_name.append(get_not_copied_name_part(exception))
 
     return (filename, linenumber, obj_name, obj, function_doc, start_index, end_index, original_obj)
+
+
+def get_not_copied_name_part(exception):
+    """Part of a dumped object's name that notes that it couldn't be deep copied, with the reason in its title."""
+    return {
+        "css_class": "empty",
+        "value": "(not copied)",
+        "space_before": True,
+        "title": (
+            "DJANGO_DD_DEEPCOPY is on, but this object couldn't be deep copied, so it shows the object as it is when "
+            f"the page is shown, not when it was dumped. {type(exception).__name__}: {exception}"
+        ),
+    }
 
 
 def get_dumped_object_name_and_location(object_needing_name):

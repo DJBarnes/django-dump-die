@@ -26,7 +26,7 @@
       {# Display the name of the dumped object so long as not None #}
       {% if obj_name is not None %}
         <span class="dumped_function" title="Dumped Function">
-          {% for entry in obj_name %}{% if entry.space_before %} {% endif %}<span class="{{ entry.css_class }}">{{ entry.value }}</span>{% endfor %}
+          {% for entry in obj_name %}{% if entry.space_before %} {% endif %}<span class="{{ entry.css_class }}"{% if entry.title %} title="{{ entry.title }}"{% endif %}>{{ entry.value }}</span>{% endfor %}
         </span>:
       {% else %}
         <span class="empty" title="Dumped Function">Unknown Function</span>:
@@ -44,7 +44,7 @@
       {# Display the name of the dumped object so long as not None #}
       {% if obj_name is not None %}
         <span class="dumped_object" title="Dumped Object">
-          {% for entry in obj_name %}{% if entry.space_before %} {% endif %}<span class="{{ entry.css_class }}">{{ entry.value }}</span>{% endfor %}
+          {% for entry in obj_name %}{% if entry.space_before %} {% endif %}<span class="{{ entry.css_class }}"{% if entry.title %} title="{{ entry.title }}"{% endif %}>{{ entry.value }}</span>{% endfor %}
         </span>:
       {% else %}
         <span class="empty" title="Dumped Object">Unknown Object</span>:

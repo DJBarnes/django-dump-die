@@ -43,7 +43,7 @@ class DumpAndDie(Exception):
         self.object = obj
 
 
-def dd(obj, index_range=None, deepcopy=False):
+def dd(obj, index_range=None, deepcopy=None):
     """
     Immediately return debug template with info about objects.
     Includes any objects passed in through dump().
@@ -60,7 +60,7 @@ def dd(obj, index_range=None, deepcopy=False):
         raise DumpAndDie(object_info)
 
 
-def dump(obj, index_range=None, deepcopy=False):
+def dump(obj, index_range=None, deepcopy=None):
     """
     Show debug template whenever response finishes.
     dd() will also include objects from dump().

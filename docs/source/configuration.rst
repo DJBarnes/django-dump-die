@@ -121,6 +121,35 @@ Example::
     ]
 
 
+.. _deepcopy-setting:
+
+DJANGO_DD_DEEPCOPY
+==================
+
+By default, a dump shows the object as it is when the page is shown, at the
+end of the request. Changes made to it after the ``dump()`` call show up in
+the dump, and two dumps of one object show the same thing. To dump a deep
+copy of each object instead, as it is at the time of the call, set this
+setting to ``True``. It does the same as passing ``deepcopy=True`` to every
+call. Passing ``deepcopy=True`` or ``deepcopy=False`` to a call still
+overrides it for that call.
+
+Copying takes time and memory for large objects, and runs any
+``__deepcopy__`` methods the objects define.
+
+Some objects can't be deep copied, such as a request with its input stream,
+a generator, or an open file. With this setting on, those are dumped as they
+are, with ``(not copied)`` after their name. Hover over it to see why. With
+``deepcopy=True`` in the call, they raise a ``TypeError`` instead.
+
+:Type: ``bool``
+:Default: ``False``
+
+Example::
+
+    DJANGO_DD_DEEPCOPY = True
+
+
 DJANGO_DD_INCLUDE_PRIVATE_MEMBERS
 =================================
 

@@ -30,6 +30,15 @@ Other Changes
   ``id()``, which Python reuses, an object could be taken for one dumped on
   an earlier page, and get the wrong unique. They are now kept for one page.
 
+* **Added: a setting to deep copy every dump.** With the new
+  ``DJANGO_DD_DEEPCOPY`` setting on, each dump shows the object as it was at
+  the time of the call, as with ``deepcopy=True``, so that dumping one object
+  before and after a change shows both states. ``deepcopy=True`` or
+  ``deepcopy=False`` in a call still overrides it. Objects that can't be
+  copied are dumped as they are, with a ``(not copied)`` note, instead of
+  raising an error. The default of the ``deepcopy`` argument is now ``None``,
+  which uses the setting.
+
 * **Fixed: override_settings didn't change most settings.** Most
   ``DJANGO_DD_*`` settings were read once, when the package was imported, so
   ``override_settings`` in a project's tests had no effect on them. All

@@ -133,6 +133,54 @@ class DumpDieDumpedObjectInfoTestCase(SimpleTestCase):
         with self.assertRaisesMessage(TypeError, "Object contains type that can't be deep copied."):
             dump(generator, deepcopy=True)
 
+    def test_deepcopy_is_off_by_default(self):
+        """Verify an object is dumped as itself, not a copy, by default, so later changes show in the dump."""
+        values = [1, 2]
+        dump(values)
+
+        info = get_dumped_info()
+        self.assertIs(info[3], values)
+        self.assertIsNone(info[7])
+
+    @override_settings(DJANGO_DD_DEEPCOPY=True)
+    def test_deepcopy_setting_dumps_a_copy(self):
+        """Verify the setting dumps a copy of the object as it was, and keeps the original for its uniques."""
+        values = [1, [2]]
+        dump(values)
+        values[1].append(3)
+
+        info = get_dumped_info()
+        self.assertEqual(info[3], [1, [2]])
+        self.assertIsNot(info[3], values)
+        self.assertIs(info[7], values)
+        self.assertEqual(get_dumped_name(info), "values")
+
+    @override_settings(DJANGO_DD_DEEPCOPY=True)
+    def test_deepcopy_argument_overrides_the_setting(self):
+        """Verify deepcopy=False in a call dumps the object itself, even with the setting on."""
+        values = [1, 2]
+        dump(values, deepcopy=False)
+
+        info = get_dumped_info()
+        self.assertIs(info[3], values)
+        self.assertIsNone(info[7])
+
+    @override_settings(DJANGO_DD_DEEPCOPY=True)
+    def test_deepcopy_setting_dumps_an_object_that_cannot_be_copied_as_it_is(self):
+        """Verify the setting dumps an object that can't be deep copied as itself, with a note, without an error."""
+        generator = (value for value in [1, 2])
+        dump(generator)
+
+        info = get_dumped_info()
+        self.assertIs(info[3], generator)
+        self.assertIsNone(info[7])
+        note = info[2][-1]
+        self.assertEqual(note["value"], "(not copied)")
+        self.assertTrue(note["space_before"])
+        self.assertIn("DJANGO_DD_DEEPCOPY is on, but this object couldn't be deep copied", note["title"])
+        self.assertIn("TypeError: ", note["title"])
+        self.assertEqual(get_dumped_name(info), "generator (not copied)")
+
     @override_settings(DJANGO_DD_INCLUDE_FILENAME_LINENUMBER=True)
     def test_filename_and_line_number_are_included_when_enabled(self):
         """Verify the dumped object's file and line number are collected when the setting is on."""

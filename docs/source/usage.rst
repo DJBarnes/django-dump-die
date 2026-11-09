@@ -141,12 +141,17 @@ deepcopy
 --------
 
 :Type: ``bool``
-:Default: ``False``
+:Default: ``None``, which uses the
+          :ref:`DJANGO_DD_DEEPCOPY <deepcopy-setting>` setting (``False``
+          by default)
 
 A boolean to specify if passed objects should be deep-copied before being
 passed into dd/dump logic. If set to ``True``, then preserves the exact state
 of the object at the time of passing into dd/dump. Useful if you are dumping an
 object, then making changes to that object, and then dumping it again.
+
+To deep copy every dumped object, set ``DJANGO_DD_DEEPCOPY = True`` instead
+of passing ``deepcopy=True`` to each call.
 
 Example::
 

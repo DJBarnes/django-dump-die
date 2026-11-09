@@ -78,6 +78,9 @@ class AppSettings:
     # Functions whose results are shown, by class name. A class's entry replaces its entry in
     # constants.DEFAULT_FUNCTION_RESULTS.
     FUNCTION_RESULTS = Setting({})
+    # Whether dump() and dd() dump a deep copy of each object, as it is when dumped, instead of the object as it is when
+    # the page is shown. The deepcopy argument of a call overrides it.
+    DEEPCOPY = Setting(False)
     # Whether function doc output should try to fit on one line, or output with original newlines.
     MULTILINE_FUNCTION_DOCS = Setting(False)
     # Line shown across a break added with dump.br(): one of constants.BREAK_STYLES.
