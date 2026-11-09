@@ -1,16 +1,27 @@
 Version History
 ***************
 
+Unreleased
+==========
+
+* **Fixed: the Documentation link on PyPI.** It pointed at a version of the
+  docs that isn't built. It now points at the docs of the newest release, and
+  a new Changelog link points at this page.
+
+* **Added: the history of versions before 0.2.0.** The entries for 0.1.0 to
+  0.1.7 were written in 2026, from the project's commits, since those
+  versions had no version history of their own.
+
+* **Fixed: the 0.2.0 notes said 0.1.7 installed pytz.** It didn't: no
+  version of the package has listed ``pytz`` as a dependency, so 0.2.0
+  changed nothing about it. Timezones from ``pytz`` are dumped when it is
+  installed, as before.
+
 0.2.0 (2026-11-09)
 ==================
 
 Action Needed When Upgrading
 ----------------------------
-
-* **Changed: pytz is no longer installed with the package.** 0.1.7 listed
-  ``pytz`` as a dependency. Timezone objects from ``pytz`` are still dumped
-  correctly when it is installed. If your project uses ``pytz``, add it to
-  your project's own requirements.
 
 * **Changed: sensitive values are hidden.** Like Django's debug page, dumps
   now show ``********************`` in place of values whose names look
@@ -266,3 +277,91 @@ Other Changes
 * **Removed: test-only urls and views.** ``django_dump_die.test_urls`` and
   ``django_dump_die.views.test_views`` were only used by the package's tests,
   and moved out of the package.
+
+
+0.1.7 (2023-09-17)
+==================
+
+* No changes to the package. Updates to how the docs are built on
+  ReadTheDocs, and a code of conduct.
+
+
+0.1.6 (2023-09-03)
+==================
+
+Action Needed When Upgrading
+----------------------------
+
+* **Changed: Python 3.8 and Django 3.2 or later are needed.** Support for
+  Python 3.11 and Django 4.1 and 4.2 was added, and support for Python 3.7
+  and Django 3.0 and 3.1 removed.
+
+Other Changes
+-------------
+
+* **Fixed: enum members were dumped incorrectly on Python 3.11.**
+
+
+0.1.5 (2022-10-24)
+==================
+
+Action Needed When Upgrading
+----------------------------
+
+* **Changed: the default DJANGO_DD_MAX_RECURSION_DEPTH is 5.** It was 20.
+  Set ``DJANGO_DD_MAX_RECURSION_DEPTH`` to dump deeper objects.
+
+Other Changes
+-------------
+
+* **Fixed: DJANGO_DD_MAX_ITERABLE_LENGTH and DJANGO_DD_MAX_RECURSION_DEPTH
+  didn't limit dumps correctly.**
+
+* **Fixed: a dict's length wasn't shown after its type.**
+
+
+0.1.4 (2022-09-09)
+==================
+
+* **Added: the traceback of an object that fails while it is dumped.** When
+  reading an object's members raises an exception, the dump shows an
+  ``EXCEPTION`` row. Hover over it to see the exception's type, message, and
+  traceback.
+
+* **Fixed: Django QueryDict objects, such as request.GET, failed to dump.**
+  Immutable ones, as Django gives requests, raised an error.
+
+* **Fixed: dumping a model class with a many-to-many field failed.**
+
+* **Added: a Built-In Examples page in the docs.**
+
+
+0.1.3 (2022-07-19)
+==================
+
+* **Fixed: import errors on Python before 3.9, and without pytz.** The
+  package needed ``zoneinfo``, which was added in Python 3.9, and ``pytz``.
+  Both are now optional, and their timezones are dumped when they are
+  available.
+
+
+0.1.2 (2022-06-28)
+==================
+
+* No changes to the package. The docs say to install it from PyPI, and the
+  README links to them.
+
+
+0.1.1 (2022-06-28)
+==================
+
+* No changes to the package. Fixed its version number in the docs and the
+  package settings.
+
+
+0.1.0 (2022-06-28)
+==================
+
+* First release: ``dd()`` and ``dump()`` show dumped objects in an expandable
+  tree, in place of the page, with color themes and highlighting of the same
+  object where it is shown more than once.
