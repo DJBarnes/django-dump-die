@@ -63,6 +63,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # a tool used for development and debugging, it must be True.
 DEBUG = True
 
+# Hash passwords quickly. Django's default hasher is slow on purpose, which only slows tests down.
+PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
 # endregion Main settings for testing
 
 
@@ -78,6 +81,10 @@ else:
     # manage.py shows all console output always, even on success.
     # So we want it off to avoid information overload and spam.
     DJANGO_EXPANDED_TESTCASES_DEBUG_PRINT = False
+
+# Don't create django-expanded-test-cases' default test users. It creates four before every test, and these tests
+# only make anonymous requests, so they never use them.
+DJANGO_EXPANDED_TESTCASES_AUTO_GENERATE_USERS = False
 
 
 # Browser for the browser (Selenium) tests, chosen per developer with the DJANGO_DD_SELENIUM_BROWSER
