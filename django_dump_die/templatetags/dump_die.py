@@ -60,7 +60,8 @@ register = template.Library()
 
 # region Module Variables
 
-# Stores the uniques for each dumped root object.
+# Uniques of the dumped root objects on the page being rendered, to count objects dumped more than once, and the
+# uniques of the original objects of deep copies. Cleared for each page of dumps by the dump_objects tag.
 repeat_iteration_tracker = {}
 deepcopy_unique_map = {}
 
@@ -182,6 +183,12 @@ def dump_objects(objects):
         )
     if app_settings.INCLUDE_FUNCTION_RESULTS:
         _check_function_results_setting()
+
+    # The trackers of repeated objects only last for one page of dumps. Kept longer, they would grow for as long as
+    # the server runs. And since a unique comes from id(), which Python reuses once an object is gone, an object on a
+    # later page could be taken for one dumped earlier, and get its count or deep copy uniques.
+    repeat_iteration_tracker.clear()
+    deepcopy_unique_map.clear()
 
     # _dump_objects.html passes each dumped object, and its deepcopy original, to the dump_object tag through
     # template variables, which would call them if they are callable. So hold callables until dump_object gets them.

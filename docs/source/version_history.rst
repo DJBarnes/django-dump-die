@@ -23,6 +23,13 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Fixed: uniques could be wrong, and their records grew without limit.**
+  The records used to count an object dumped more than once, and to match
+  deep copies to their originals, were kept for as long as the server ran.
+  They grew with every dump, and since a unique comes from the object's
+  ``id()``, which Python reuses, an object could be taken for one dumped on
+  an earlier page, and get the wrong unique. They are now kept for one page.
+
 * **Fixed: override_settings didn't change most settings.** Most
   ``DJANGO_DD_*`` settings were read once, when the package was imported, so
   ``override_settings`` in a project's tests had no effect on them. All

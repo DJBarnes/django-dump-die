@@ -366,6 +366,29 @@ class DumpDieTagObjectsTestCase(SimpleTestCase):
         self.assertIn("value", content)
         self.assertIn('data-highlight-unique="{0}"'.format(generate_unique_from_obj(branch.leaf)), content)
 
+    def test_object_dumped_twice_on_a_page_is_counted(self):
+        """Verify the second dump of one object on a page gets a count after its unique, so the two are told apart."""
+        branch = Branch()
+        unique = generate_unique_from_obj(branch)
+        dump(branch)
+        dump(branch)
+        content = render_dumped_objects()
+
+        self.assertIn('data-unique="{0}"'.format(unique), content)
+        self.assertIn('data-unique="{0}_1"'.format(unique), content)
+
+    def test_object_dumped_on_an_earlier_page_is_not_counted(self):
+        """Verify the count of repeated objects starts again on each page, so it doesn't carry over between requests."""
+        branch = Branch()
+        unique = generate_unique_from_obj(branch)
+        for page in ("first", "second"):
+            with self.subTest(page=page):
+                dump(branch)
+                content = render_dumped_objects()
+
+                self.assertIn('data-unique="{0}"'.format(unique), content)
+                self.assertNotIn('data-unique="{0}_1"'.format(unique), content)
+
     def test_index_range_of_root_iterable(self):
         """Verify only the root iterable's items inside index_range are expanded."""
         branches = [Branch(), Branch(), Branch()]
