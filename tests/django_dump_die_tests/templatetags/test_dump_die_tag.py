@@ -143,6 +143,13 @@ class DumpDieRootIndicesTestCase(SimpleTestCase):
             with self.subTest(start=start, end=end):
                 self.assertEqual(_process_root_indices(start, end, 10), expected)
 
+    @override_settings(DJANGO_DD_MAX_ITERABLE_LENGTH=None)
+    def test_process_root_indices_without_a_limit(self):
+        """Verify a limit of None runs to the end of the root iterable, from the start index if there is one."""
+        for start, expected in ((None, (0, 10)), (2, (2, 12)), (-3, (7, 17))):
+            with self.subTest(start=start):
+                self.assertEqual(_process_root_indices(start, None, 10), expected)
+
 
 @override_settings(DEBUG=True)
 class DumpDieTagSettingsTestCase(SimpleTestCase):
@@ -432,13 +439,14 @@ class DumpDieTagObjectsTestCase(SimpleTestCase):
         self.assertLess(content.index("first_state"), content.index("second_state"))
 
     def test_index_range_of_root_iterable(self):
-        """Verify only the root iterable's items inside index_range are expanded."""
+        """Verify only the root iterable's items inside index_range are listed, then how many more there are."""
         branches = [Branch(), Branch(), Branch()]
         dump(branches, index_range=(0, 1))
         content = render_dumped_objects()
 
-        # Only the first item is expanded. The other two only show their unique.
+        # Only the first item is listed. The other two are only counted.
         expanded = [content.count('data-unique="{0}"'.format(generate_unique_from_obj(b))) for b in branches]
         self.assertEqual(expanded, [1, 0, 0])
         for branch in branches[1:]:
-            self.assertIn('data-highlight-unique="{0}"'.format(generate_unique_from_obj(branch)), content)
+            self.assertNotIn(generate_unique_from_obj(branch), content)
+        self.assertIn("… 2 more</span>", content)

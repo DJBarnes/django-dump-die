@@ -75,7 +75,8 @@ Dumping Runs Code
 =================
 
 Dumping an object reads its attributes, which runs the code of its
-properties, and evaluates a dumped QuerySet. Function results, when they are
+properties, and a dumped QuerySet runs two queries, to count its rows and to
+fetch the rows that are dumped. Function results, when they are
 turned on, run the functions they list. A dump can therefore query the
 database or change the state of an object, like any other code that reads
 it.

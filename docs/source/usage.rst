@@ -110,16 +110,20 @@ Available Parameters
 Both the ``dd()`` and ``dump()`` functions take the same parameters, in the
 same ordering:
 
+.. _index-range:
+
 index_range
 -----------
 
 :Type: ``int, list, tuple``
 :Default: ``None``
 
-An index range to modify output values of the parent entity (if iterable).
-Allows changing the range of which direct-child indexes are fully examined.
-Only affects the direct children of the outermost parent object. Can be useful
-with large datasets, when only wanting to examine a specific range of values.
+Which items of the dumped object to dump, if it is iterable, such as a list
+or a QuerySet. Only affects the items of the dumped object itself, not of the
+iterables inside it. Can be useful with large datasets, when only wanting to
+examine a specific range of values. The items before and after the range are
+each shown as one line with how many there are, such as ``… 18 before`` and
+``… 63 more``, and a QuerySet only fetches the rows in the range.
 
 When an index range is passed, the end index of that range overrides the
 ``DJANGO_DD_MAX_ITERABLE_LENGTH`` value set in settings.

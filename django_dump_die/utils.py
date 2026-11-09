@@ -6,9 +6,11 @@ import dis
 import functools
 import inspect
 import io
+import itertools
 import linecache
 import re
 import tokenize
+from collections import namedtuple
 from collections.abc import Sequence
 from decimal import Decimal
 from enum import EnumMeta, Enum as OrigEnum
@@ -88,12 +90,35 @@ SENSITIVE_NAMES = {"http_cookie", "cookie"}
 _NAME_WORDS_PATTERN = re.compile(r"[A-Z]+(?![a-z])|[A-Z]?[a-z]+|[0-9]+")
 
 
-class HiddenValue:
-    """Marker shown in place of a value whose name looks sensitive. See is_sensitive_name()."""
+class Placeholder:
+    """Shown in place of values that aren't dumped. Its title says why."""
+
+    text = ""
+    title = ""
+
+
+class HiddenValue(Placeholder):
+    """Shown in place of a value whose name looks sensitive. See is_sensitive_name()."""
 
     # The same stars as on Django's debug page.
     text = "********************"
     title = "Hidden, because its name looks sensitive. Set DJANGO_DD_SHOW_SENSITIVE_VALUES = True to show it."
+
+
+class NotDumpedItems(Placeholder):
+    """Shown in place of the items of an iterable that aren't dumped, before or after the items that are."""
+
+    title = (
+        "Not dumped, to keep large iterables fast. Set how many items are dumped with DJANGO_DD_MAX_ITERABLE_LENGTH, "
+        "or which items of the dumped object with the index_range of dump() and dd()."
+    )
+
+    def __init__(self, count, before=False):
+        self.text = f"\u2026 {count} before" if before else f"\u2026 {count} more"
+
+
+# The items of an iterable to dump, from start up to stop, out of its length.
+ItemRange = namedtuple("ItemRange", ["start", "stop", "length"])
 
 
 def is_sensitive_name(name):
@@ -543,8 +568,12 @@ def generate_unique_from_obj(obj):
     return unique
 
 
-def get_members(obj):
-    """Attempts to get object members. Falls back to an empty list."""
+def get_members(obj, item_range=None):
+    """Attempts to get object members. Falls back to an empty list.
+
+    :param item_range: ItemRange of the items to list, for an iterable that isn't a dict. The items before and after
+        it are each listed as one NotDumpedItems. None lists every item, except the rows of a QuerySet.
+    """
 
     # Get initial member set or empty list.
     members = inspect.getmembers(obj)
@@ -562,18 +591,39 @@ def get_members(obj):
             # Standard dictionary members.
             members.extend(obj.items())
 
+    elif is_query(obj):
+        # Slicing a QuerySet that isn't evaluated yet fetches only those rows. Its rows are only listed for an item
+        # range, since listing all of them, such as to match a deep copy to its original, would load the whole table.
+        if item_range is not None:
+            rows = obj[item_range.start : item_range.stop]
+            members.extend(_get_item_members(enumerate(rows, item_range.start), item_range))
+
     elif is_iterable(obj):
         # Lists, sets, etc.
+        items, start = obj, 0
+        if item_range is not None:
+            items, start = itertools.islice(obj, item_range.start, item_range.stop), item_range.start
         if _is_indexable(obj):
             # Use indexes as left half.
-            members.extend(list(enumerate(obj)))
+            members.extend(_get_item_members(enumerate(items, start), item_range))
         elif is_set(obj):
             # Use None as left half. Most likely a set.
-            members.extend([(None, x) for x in obj])
+            members.extend(_get_item_members(((None, item) for item in items), item_range))
     elif is_enum_member(obj):
         # Prevent enum entry from recursively showing up in entries members.
         members = [m for m in members if not is_enum_member(m[1])]
 
+    return members
+
+
+def _get_item_members(item_members, item_range):
+    """Return the members of an iterable's items, with a NotDumpedItems for those before and after the item range."""
+    members = list(item_members)
+    if item_range is not None:
+        if item_range.start > 0:
+            members.insert(0, (None, NotDumpedItems(item_range.start, before=True)))
+        if item_range.stop < item_range.length:
+            members.append((None, NotDumpedItems(item_range.length - item_range.stop)))
     return members
 
 
@@ -727,10 +777,13 @@ def safe_str(obj):
 
 def is_iterable(obj):
     """Return True if object can be iterated."""
+    if is_query(obj):
+        # Without iterating it or getting its length, which would load every row. See get_members().
+        return True
     try:
         iter(obj) and len(obj)
     except DatabaseError:
-        # Such as a QuerySet whose query fails. Dump it as an object instead of failing the whole dump.
+        # Such as a raw QuerySet whose query fails. Dump it as an object instead of failing the whole dump.
         return False
     except NotImplementedError:
         return False
@@ -744,7 +797,9 @@ def is_iterable(obj):
 def is_query(obj):
     """Return True if object is most likely a query."""
     if obj is not None:
-        return _in_dir(obj, "as_manager") and _in_dir(obj, "all") and _in_dir(obj, "filter")
+        # One dir(), since is_iterable() calls this for every object dumped.
+        names = dir(obj)
+        return "as_manager" in names and "all" in names and "filter" in names
 
 
 def is_dict(obj):

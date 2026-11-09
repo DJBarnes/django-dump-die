@@ -27,6 +27,8 @@ from django_dump_die.constants import (
 from django_dump_die.utils import (
     DumpBreak,
     HiddenValue,
+    ItemRange,
+    Placeholder,
     get_dumped_object_info,
     is_valid_break_size,
     is_sensitive_name,
@@ -207,9 +209,9 @@ def is_dump_break(obj):
 
 
 @register.filter
-def is_hidden_value(obj):
-    """Return True if the value is hidden, because its name looks sensitive."""
-    return isinstance(obj, HiddenValue)
+def is_placeholder(obj):
+    """Return True if the value is shown in place of values that aren't dumped, such as a hidden sensitive value."""
+    return isinstance(obj, Placeholder)
 
 
 @register.inclusion_tag("django_dump_die/partials/_dump_object.html")
@@ -217,12 +219,11 @@ def dump_object(
     obj,
     root_obj,
     skip_set=None,
-    current_iteration=0,
     current_depth=0,
-    root_index_start=None,
-    root_index_end=None,
     original_obj=None,
     parent_is_intermediate=False,
+    root_index_start=None,
+    root_index_end=None,
 ):
     """Determines template dd/dump info for provided object.
 
@@ -234,18 +235,19 @@ def dump_object(
       * Complex - Complex objects that recursively display attribute/function values for self and all children.
 
     Note:
-      * If we have exceeded specified iteration count or depth, then defaults back to "simple" type output.
+      * If we have exceeded the specified depth, then defaults back to "simple" type output.
       * On each call, inner children are minimally processed, and fully processed later in a new call to templatetag.
+      * Only the items of an iterable that are dumped are listed: the first MAX_ITERABLE_LENGTH, or for the root
+        object the items in its index range. See _get_item_range().
 
     :param obj: Object to iterate over and attempt to parse information from.
     :param root_obj: Root, parent object associated with current object.
     :param skip_set: Set of already-processed objects. Used to skip re-processing identical non-objects.
-    :param current_iteration: Current iteration-index. Used to track current index of object we're iterating through.
     :param current_depth: Current depth-index. Used to track how deep of child-members we're iterating through.
-    :param root_index_start: Starting index for root iterable object. If None, uses default behavior.
-    :param root_index_end: Ending index for root iterable object. If None, uses default behavior.
     :param original_obj: Original object, for handling uniques if dealing with deepcopy.
     :param parent_is_intermediate: Boolean indicating that parent is intermediate type. Do not recurse further.
+    :param root_index_start: Starting index of the root iterable's items to dump. Only given for the root object.
+    :param root_index_end: Ending index of the root iterable's items to dump. Only given for the root object.
     """
     # A callable object, root object, or original object reaches this tag wrapped, so that the template passing it
     # here didn't call it. Unwrap them, so that the rest of the code works with the real objects.
@@ -290,34 +292,8 @@ def dump_object(
             original_obj=original_obj,
         )
 
-    # Handle if element is iterable and we are at the root's element direct children (depth of 1),
-    elif is_iterable(root_obj) and current_depth == 1:
-
-        # Handle unique indexing logic for root element.
-        root_index_start, root_index_end = _process_root_indices(
-            root_index_start,
-            root_index_end,
-            len(root_obj),
-        )
-
-        # Handle if current index is between root_index values.
-        # Otherwise fallback to "already processed" logic.
-        if current_iteration >= root_index_start and current_iteration < root_index_end:
-
-            # Handle for new "unique" object output.
-            return _handle_complex_type(
-                obj,
-                root_obj,
-                unique,
-                root_count,
-                skip_set=skip_set,
-                current_iteration=current_iteration,
-                current_depth=current_depth,
-                original_obj=original_obj,
-            )
-
-    # Handle if not at root element and/or "root_index" values are not set.
-    elif is_complex_type(current_depth, current_iteration):
+    # Handle if at the root object, or not past the maximum depth yet.
+    elif is_complex_type(current_depth):
 
         # Handle for new "unique" object output.
         return _handle_complex_type(
@@ -326,7 +302,6 @@ def dump_object(
             unique,
             root_count,
             skip_set=skip_set,
-            current_iteration=current_iteration,
             current_depth=current_depth,
             root_index_start=root_index_start,
             root_index_end=root_index_end,
@@ -334,8 +309,7 @@ def dump_object(
         )
 
     # If we're here then the object has already been processed before,
-    # or we have reached the max depth or number of iterations
-    # or outside the bounds of the root indexes to process.
+    # or we have reached the max depth.
     # In any case, just return the type and unique of the object for output.
     return {
         "type": get_obj_type(obj),
@@ -372,7 +346,8 @@ def _generate_unique(obj, root_obj, original_obj):
 
     # If there is an original_obj, we may need to create the unique map so that
     # we can restore the original uniques to the deepcopied object.
-    if original_obj:
+    # Compared with None, since the truth of some objects runs code, such as a QuerySet, which loads every row.
+    if original_obj is not None:
         # Ensure root unique in root_unique_map.
         if root_unique not in deepcopy_unique_map:
             # Create the unique mapping of current deepcopy to original object.
@@ -494,19 +469,17 @@ def _is_intermediate_type(obj):
     return type(obj) in INTERMEDIATE_TYPES or get_class_name(obj) in app_settings.ADDITIONAL_INTERMEDIATE_TYPES
 
 
-def is_complex_type(current_depth, current_iteration):
-    """Return if we should render the full object"""
+def is_complex_type(current_depth):
+    """Return if we should render the full object.
+
+    The items of an iterable past MAX_ITERABLE_LENGTH aren't checked here, since they aren't listed. See get_members().
+    """
     return (
         # Ensure all dump calls are processed.
         current_depth == 0
-        # Check for any nested objects
-        or (
-            # Check if the max_recursion is set to None or we have not reached it yet.
-            (app_settings.MAX_RECURSION_DEPTH is None or current_depth < app_settings.MAX_RECURSION_DEPTH)
-            # And if the max_iterable_length is set to None,
-            # or we have not reached it yet or we are at the root level.
-            and (app_settings.MAX_ITERABLE_LENGTH is None or current_iteration < app_settings.MAX_ITERABLE_LENGTH)
-        )
+        # Check if the max_recursion is set to None or we have not reached it yet.
+        or app_settings.MAX_RECURSION_DEPTH is None
+        or current_depth < app_settings.MAX_RECURSION_DEPTH
     )
 
 
@@ -599,13 +572,10 @@ def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, 
         "type": get_obj_type(obj),
         "is_iterable": False,
         "depth": 0,
-        "root_index_start": None,
-        "root_index_end": None,
         "original_obj": _hold_if_callable(original_obj),
     }
     if app_settings.INCLUDE_ATTRIBUTES or function_results:
         # Used by both sections to dump their values.
-        context["index"] = 0
         context["root_obj"] = _hold_if_callable(root_obj)
         context["skip"] = set()
     if app_settings.INCLUDE_ATTRIBUTES:
@@ -625,7 +595,6 @@ def _handle_complex_type(
     unique,
     root_count,
     skip_set=None,
-    current_iteration=0,
     current_depth=0,
     root_index_start=None,
     root_index_end=None,
@@ -640,27 +609,34 @@ def _handle_complex_type(
     :param root_count: Count of how many times the root object has been dumped as a string prefixed with '_'.
     :param original_obj: Original object, for handling uniques if dealing with deepcopy.
     :param skip_set: Set of already-processed objects. Used to skip re-processing identical objects.
-    :param current_iteration: Current iteration-index. Used to track current index of object we're iterating through.
     :param current_depth: Current depth-index. Used to track how deep of child-members we're iterating through.
-    :param root_index_start:
-    :param root_index_end:
+    :param root_index_start: Starting index of the root iterable's items to dump. Only given for the root object.
+    :param root_index_end: Ending index of the root iterable's items to dump. Only given for the root object.
     """
     # Add unique to skip so it won't be processed a second time by additional
     # recursive calls to this template tag.
     skip_set.add(unique)
 
-    # If the object is a query, evaluate it.
-    # This prevents a crash because a lazy queryset has too many members.
+    # Get a QuerySet's length with count(), which doesn't load its rows if it isn't evaluated yet, unlike len().
+    # Only the rows dumped are fetched. See get_members().
+    length = None
     query_exception = None
     if is_query(obj):
         try:
-            obj = list(obj)
+            length = obj.count()
         except DatabaseError as exception:
             # The query failed, such as when its table doesn't exist. Show the error instead of the results.
             query_exception = exception
 
+    is_dict_obj = is_dict(obj)
+    is_iterable_obj = (
+        query_exception is None and is_iterable(obj) and not is_dict_obj and not isinstance(obj, memoryview)
+    )
+    if length is None and (is_iterable_obj or is_dict_obj):
+        length = _get_length(obj)
+
     # Determine which type of braces should be used.
-    if isinstance(obj, list):
+    if isinstance(obj, list) or (is_iterable_obj and is_query(obj)):
         braces = "[]"
     elif isinstance(obj, tuple):
         braces = "()"
@@ -671,15 +647,15 @@ def _handle_complex_type(
     if query_exception is not None:
         attributes, functions = [_get_exception_attribute(query_exception)], []
     else:
-        attributes, functions = get_obj_values(obj)
+        item_range = None
+        if is_iterable_obj:
+            item_range = _get_item_range(length, root_index_start, root_index_end)
+        attributes, functions = get_obj_values(obj, item_range)
 
     # A query that failed has no results to show, only its error.
     function_results = []
     if app_settings.INCLUDE_FUNCTION_RESULTS and query_exception is None:
         function_results = get_function_results(obj)
-
-    is_iterable_obj = is_iterable(obj) and not is_dict(obj) and not isinstance(obj, memoryview)
-    is_dict_obj = is_dict(obj)
 
     # Return information required to render object.
     # The object, root object, and original object go through template variables again, to the dump_object calls
@@ -694,20 +670,17 @@ def _handle_complex_type(
         "braces": braces,
         "object": _hold_if_callable(obj),
         # Worked out here, since the template can't use the length filter on an object that may be wrapped.
-        "length": _get_length(obj) if is_iterable_obj or is_dict_obj else None,
+        "length": length,
         "unique": unique,
         "root_count": root_count,
         "type": get_obj_type(obj),
         "is_iterable": is_iterable_obj,
         "is_dict": is_dict_obj,
         "depth": current_depth,
-        "root_index_start": root_index_start,
-        "root_index_end": root_index_end,
         "original_obj": _hold_if_callable(original_obj),
     }
     if app_settings.INCLUDE_ATTRIBUTES or function_results:
         # Used by both sections to dump their values.
-        context["index"] = current_iteration
         context["root_obj"] = _hold_if_callable(root_obj)
         context["skip"] = skip_set
     if app_settings.INCLUDE_ATTRIBUTES:
@@ -741,8 +714,11 @@ def _get_exception_attribute(exception):
     return ["EXCEPTION", str(exception), None, "empty", title, None]
 
 
-def get_obj_values(obj):
-    """Determines full corresponding member values (attributes/functions) of object."""
+def get_obj_values(obj, item_range=None):
+    """Determines full corresponding member values (attributes/functions) of object.
+
+    :param item_range: ItemRange of the items to list, for an iterable. See get_members().
+    """
 
     # Initialize attribute/function lists. This is what we ultimately return.
     attributes = []  # (attr, value, access_modifier, css_class, title, decorator)
@@ -750,7 +726,7 @@ def get_obj_values(obj):
 
     try:
         # Attempt to get member values of object. Falls back to empty list on failure.
-        members = get_members(obj)
+        members = get_members(obj, item_range)
 
     except Exception as exception:
         # On exception, add exception to attributes and return the attributes.
@@ -1042,8 +1018,12 @@ def _process_root_indices(start, end, parent_length):
     # If we got this far, at least one is set. Make sure the other is set as well.
     if start is None:
         start = 0
+    # MAX_ITERABLE_LENGTH None means no limit.
+    limit = app_settings.MAX_ITERABLE_LENGTH
+    if limit is None:
+        limit = parent_length
     if end is None:
-        end = app_settings.MAX_ITERABLE_LENGTH
+        end = limit
 
     # Handle if provided start_index is negative.
     if start < 0:
@@ -1057,7 +1037,7 @@ def _process_root_indices(start, end, parent_length):
     # it makes sense to then run from the start, now that it is calculated,
     # to the max iterable length.
     if orig_end is None:
-        end = start + app_settings.MAX_ITERABLE_LENGTH
+        end = start + limit
 
     # Handle if provided end_index is negative.
     if end < 0:
@@ -1075,6 +1055,16 @@ def _process_root_indices(start, end, parent_length):
 
     # Return the processed indices.
     return start, end
+
+
+def _get_item_range(length, root_index_start=None, root_index_end=None):
+    """Return the ItemRange of an iterable's items to dump.
+
+    The root object's items are those in the index_range of dump() and dd(), and otherwise, like the items of other
+    iterables, the first MAX_ITERABLE_LENGTH.
+    """
+    start, stop = _process_root_indices(root_index_start, root_index_end, length)
+    return ItemRange(min(start, length), min(stop, length), length)
 
 
 def _get_collapsable_values(has_function_results=False):

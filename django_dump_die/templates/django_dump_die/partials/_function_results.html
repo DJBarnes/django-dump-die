@@ -30,10 +30,8 @@
         <span class="function" title="Function Result">{{ result.name }}<span class="braces">()</span></span>:
         {% if result.error %}
           <span class="empty" title="{{ result.error_title }}">{{ result.error }}</span>
-        {% elif intermediate %}
-          {% dump_object result.value root_obj skip 0 new_depth root_index_start root_index_end original_obj True %}
         {% else %}
-          {% dump_object result.value root_obj skip 0 new_depth root_index_start root_index_end original_obj False %}
+          {% dump_object result.value root_obj skip new_depth original_obj intermediate %}
         {% endif %}
       {% endwith %}
     </li>

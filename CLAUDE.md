@@ -47,7 +47,7 @@ pipenv run sphinx-build -WE docs/source docs/build   # CI builds docs with warni
 **Rendering** (`templatetags/dump_die.py`): rendering recurses through templates. `dump_object` is an inclusion tag, and its template (`partials/_dump_object.html` → `output_types/*.html` → `partials/_attributes.html` / `_functions.html`) calls `dump_object` again for each child. Each object is classified as one of:
 - **simple**: `constants.SIMPLE_TYPES`. Prints the value only.
 - **intermediate**: `constants.INTERMEDIATE_TYPES`, such as datetimes and paths. Expands one level; its children are rendered as simple.
-- **complex**: everything else. Fully recursive, limited by `MAX_RECURSION_DEPTH` and `MAX_ITERABLE_LENGTH`, plus optional `index_range` slicing of the root iterable.
+- **complex**: everything else. Fully recursive, limited by `MAX_RECURSION_DEPTH`. Of an iterable (not a dict), `utils.get_members` lists only the items in its `utils.ItemRange` (the first `MAX_ITERABLE_LENGTH`, or the root's `index_range`), with a `NotDumpedItems` placeholder for those before and after. A QuerySet is never iterated or measured with `len()`: it is counted with `count()` and sliced, so only the dumped rows are fetched.
 
 The tag tracks each object's "unique" (based on its `id`) in a `skip_set` and module-level maps (`repeat_iteration_tracker`, `deepcopy_unique_map`). This avoids infinite loops and renders objects it has already seen as back-references. The template `{% dump %}` tag checks `settings.DEBUG` itself, and loads the CSS/JS only for the first dump on a page.
 

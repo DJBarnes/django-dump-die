@@ -9,7 +9,7 @@ import json
 
 # Third-Party Imports.
 from django.core.exceptions import ObjectDoesNotExist
-from django.test import SimpleTestCase, override_settings
+from django.test import SimpleTestCase, TestCase, override_settings
 from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.safestring import SafeData
@@ -17,11 +17,13 @@ from django.utils.safestring import SafeData
 # Internal Imports.
 from django_dump_die import middleware
 from django_dump_die.middleware import dd, dump
+from django_dump_die.views.example_helpers import SampleRelation
 from django_dump_die.utils import (
     get_attribute_type,
     get_method_type,
     is_sensitive_name,
     is_dict,
+    is_iterable,
     is_query,
     safe_repr,
     safe_str,
@@ -495,3 +497,17 @@ class DumpDieSensitiveNameTestCase(SimpleTestCase):
         for name in ("SECRET_KEY", "password", "sessionid", "HTTP_COOKIE"):
             with self.subTest(name=name):
                 self.assertFalse(is_sensitive_name(name))
+
+
+class DumpDieIterableQueryTestCase(TestCase):
+    """Verify which queries count as iterable, without running them where possible."""
+
+    def test_queryset_is_iterable_without_a_query(self):
+        """Verify a QuerySet is iterable without running its query, which would load every row."""
+        with self.assertNumQueries(0):
+            self.assertTrue(is_iterable(SampleRelation.objects.all()))
+
+    def test_raw_queryset_whose_query_fails_is_not_iterable(self):
+        """Verify a raw QuerySet, which runs its query to be iterated, isn't iterable if the query fails."""
+        # The sample models have no database table.
+        self.assertFalse(is_iterable(SampleRelation.objects.raw("SELECT * FROM django_dump_die_samplerelation")))

@@ -32,13 +32,20 @@ Example::
 DJANGO_DD_MAX_ITERABLE_LENGTH
 =============================
 
-As the tool inspects an iterable object it will recurse into each object in the
-iterable. This may mean a lot of recursion for a very long iterable. This
-setting will limit the length of processed elements in an iterable to prevent
-long processing times.
+How many items of each iterable to dump, such as a list, tuple, set, or
+QuerySet. The items after them are not dumped, and are shown as one line with
+how many more there are, such as ``… 980 more``. This keeps a dump of a large
+iterable fast. A QuerySet only fetches the rows that are dumped, and is
+counted with ``count()``.
+
+To dump other items of the dumped object itself, use the
+:ref:`index_range <index-range>` argument of ``dump()`` and ``dd()``.
+
+Dicts are not limited, so that dicts such as ``settings`` or
+``request.META`` can be read in full.
 
 .. note::
-    Setting the value to ```None``` will mean no limit.
+    Setting the value to ``None`` will mean no limit.
 
 :Type: ``int``
 :Default: ``20``

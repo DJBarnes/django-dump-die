@@ -23,6 +23,23 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Changed: large iterables and QuerySets are dumped quickly.** Only the
+  items that are dumped are listed, the first
+  ``DJANGO_DD_MAX_ITERABLE_LENGTH`` or those in the ``index_range``. The
+  items after them are shown as one line with how many more there are, such
+  as ``… 980 more``, and those before an ``index_range`` as one line such as
+  ``… 18 before``. Before, every item had its own line, simple values such as
+  numbers showed every value, and a list of a million items took minutes. A
+  QuerySet no longer loads every row: it is counted with ``count()``, and only
+  the rows that are dumped are fetched. It is also dumped as itself, labeled
+  ``QuerySet`` with its own attributes and functions, instead of as a list.
+  Dicts are not limited, as before.
+  (`#54 <https://github.com/DJBarnes/django-dump-die/issues/54>`_)
+
+* **Fixed: DJANGO_DD_MAX_ITERABLE_LENGTH = None failed.** The docs say
+  ``None`` means no limit, but dumping a list of objects failed with a
+  ``TypeError``.
+
 * **Fixed: deep copying an object that refers back to itself failed.** Such
   as any Django form, whose bound fields refer to their form. The dump failed
   with a ``RecursionError``, with ``deepcopy=True`` or the new
