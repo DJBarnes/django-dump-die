@@ -73,6 +73,8 @@ release.
     Neither the `dump` command nor the `dd` command will do anything if **DEBUG** is not set to `True`.
     With that said, this is a tool for debugging. You should not include this package
     in production nor should you ever have **DEBUG** set to `True` in production.
+    See [Security](https://django-dump-die.readthedocs.io/en/stable/security.html) for what to watch out for
+    while using it.
 
     ---
 
@@ -106,6 +108,16 @@ it is time to return the response. At this point, Django-Dump-Die will
 intercept and replace the response with the data that has been dumped thus
 far.
 
+To keep the page and show the dumps above its own content instead, set
+[DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE](https://django-dump-die.readthedocs.io/en/stable/configuration.html#show-dumps-above-page) to ``True``.
+This only works for HTML pages. Other responses, such as JSON, files, and
+redirects, are still replaced by the dumps.
+
+If the request raises an unhandled exception, the dumps from before the
+exception are shown above Django's error page, so that you see both. See
+[DJANGO_DD_SHOW_DUMPS_ON_ERROR_PAGE](https://django-dump-die.readthedocs.io/en/stable/configuration.html#show-dumps-on-error-page) to turn
+this off.
+
 ---
 :information_source: **NOTE**
 Because dump die uses middleware to internally handle keeping track of
@@ -116,6 +128,9 @@ during the request-response cycle. Most commonly this will be a
 Attempting to ``dump`` or ``dd`` from a console command will not work.
 
 ---
+
+On Django 3.1 or later, the middleware supports both sync and async requests, so `dump()` and `dd()` work the same
+in sync and async views.
 
 <br>
 
