@@ -8,18 +8,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-Dependencies come from Pipenv: `pipenv install --dev` (`Pipfile.lock` is gitignored, so there is nothing to `sync`).
+Dependencies come from uv: `uv sync --all-extras` creates `.venv/` with the package and its `dev`, `doc`, `test`, and `browser` extras (Python 3.14, from `.python-version`). `uv.lock` is gitignored, so development dependencies aren't pinned; `uv sync --all-extras --upgrade` updates them. `uv run` always uses the project's `.venv/`, even when the shell has `VIRTUAL_ENV` set from another project.
 
 ```bash
-pipenv run python runtests.py                    # pytest (settings and pythonpath come from pyproject.toml)
-pipenv run python runtests.py --with-coverage    # plus an HTML report in .django_dump_die_coverage_html_report/
-pipenv run python runtests.py --force-django-manage-test   # same tests with manage.py test
-pipenv run pytest tests/django_dump_die_tests/simple_types/test_simple_types.py
-pipenv run pytest "tests/django_dump_die_tests/general/test_general.py::DumpDieGeneralTestCase::test_debug_off_skips_all_dumps"
+uv run python runtests.py                        # pytest (settings and pythonpath come from pyproject.toml)
+uv run python runtests.py --with-coverage        # plus an HTML report in .django_dump_die_coverage_html_report/
+uv run python runtests.py --force-django-manage-test   # same tests with manage.py test
+uv run pytest tests/django_dump_die_tests/simple_types/test_simple_types.py
+uv run pytest "tests/django_dump_die_tests/general/test_general.py::DumpDieGeneralTestCase::test_debug_off_skips_all_dumps"
 tox                                              # Python 3.6–3.14 × Django 2.2–6.1 matrix, browser, docs, warnings
-pipenv run ruff format .                         # format with Ruff (line length 120; settings in pyproject.toml)
-pipenv run ruff check .                          # lint with Ruff; CI runs both
-pipenv run sphinx-build -WE docs/source docs/build   # CI builds docs with warnings as errors
+uv run ruff format .                             # format with Ruff (line length 120; settings in pyproject.toml)
+uv run ruff check .                              # lint with Ruff; CI runs both
+uv run sphinx-build -WE docs/source docs/build   # CI builds docs with warnings as errors
 ./docs/generate_docs.sh                          # regenerates docs/source/api_reference with sphinx-apidoc
 ```
 

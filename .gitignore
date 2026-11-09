@@ -146,8 +146,8 @@ DEBUG
 env.py
 SECRET_KEY
 
-# Ignore Pipfile.lock. We don't want to lock develolpment to specific packages.
-Pipfile.lock
+# Ignore the uv lock file. We don't want to lock development to specific packages.
+uv.lock
 
 # Ignore apps.py as it is only needed for the restructured text extension
 /apps.py

@@ -20,6 +20,7 @@ from django_dump_die.middleware import dd, dump
 from django_dump_die.views.example_helpers import SampleRelation
 from django_dump_die.utils import (
     get_attribute_type,
+    get_callable_name,
     get_method_type,
     is_sensitive_name,
     is_dict,
@@ -353,6 +354,27 @@ class DumpDieSafeStringTestCase(SimpleTestCase):
         """Verify the query and dict checks treat None as neither."""
         self.assertFalse(is_query(None))
         self.assertFalse(is_dict(None))
+
+
+class HasInvalidSignature:
+    """Callable whose signature can't be read, because its __signature__ isn't a Signature."""
+
+    __signature__ = "not a signature"
+
+    def __call__(self):
+        """Do nothing."""
+
+
+class DumpDieCallableNameTestCase(SimpleTestCase):
+    """Verify the name shown for a dumped callable."""
+
+    def test_callable_name_has_its_signature(self):
+        """Verify the signature follows the callable's name."""
+        self.assertEqual(get_callable_name("sample", lambda first, second=2: None), "sample(first, second=2)")
+
+    def test_callable_without_a_signature_gets_empty_parentheses(self):
+        """Verify a callable whose signature can't be read gets empty parentheses, instead of failing the dump."""
+        self.assertEqual(get_callable_name("sample", HasInvalidSignature()), "sample()")
 
 
 class DumpDieMethodTypeTestCase(SimpleTestCase):

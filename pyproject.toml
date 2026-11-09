@@ -110,6 +110,12 @@ Changelog = "https://django-dump-die.readthedocs.io/en/stable/version_history.ht
 
 # region Third-Party Package Settings
 
+# "uv" development environment settings.
+[tool.uv]
+# The development environment (`uv sync --all-extras`) uses a recent Python. The package itself supports Python 3.6
+# and later (requires-python); tox tests the older versions.
+environments = ["python_version >= '3.12'"]
+
 # "Ruff" formatter and linter settings.
 [tool.ruff]
 line-length = 120

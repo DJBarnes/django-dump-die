@@ -18,11 +18,12 @@ We'd also love PRs. If you're thinking of a large PR, we advise opening up an is
 ## Submitting a pull request
 
 1. [Fork][fork] and clone the repository.
-1. Configure and install Pipenv: `python -m pip install pipenv`.
-1. Create a virtual environment using pipenv for the latest supported version of python.
-1. Configure and install the dependencies: `pipenv install --dev`.
-1. Make sure the tests pass on your machine: `pipenv run python runtests.py`.
-1. Ensure you are able to run tests with code coverage: `pipenv run python runtests.py --with-coverage`.
+1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/).
+1. Create the virtual environment (`.venv/`) with the dependencies: `uv sync --all-extras`. The project doesn't pin
+   its development dependencies (`uv.lock` isn't committed), so run `uv sync --all-extras --upgrade` now and then to
+   update them to their latest versions.
+1. Make sure the tests pass on your machine: `uv run python runtests.py`.
+1. Ensure you are able to run tests with code coverage: `uv run python runtests.py --with-coverage`.
 1. Create a new branch: `git checkout -b my-branch-name`.
 1. Make your change, add tests, and make sure the tests still pass.
 1. Push to your fork and [submit a pull request][pr].
@@ -30,7 +31,7 @@ We'd also love PRs. If you're thinking of a large PR, we advise opening up an is
 
 Here are a few things you can do that will increase the likelihood of your pull request being accepted:
 
-- Format and lint your code with [Ruff][style]: `pipenv run ruff format .` and `pipenv run ruff check .` (settings are in `pyproject.toml`).
+- Format and lint your code with [Ruff][style]: `uv run ruff format .` and `uv run ruff check .` (settings are in `pyproject.toml`).
 - Write and update tests.
 - Verify new functionality and tests do not reduce test coverage.
 - Keep your changes as focused as possible. If there are multiple changes you would like to make that are not dependent upon each other, consider submitting them as separate pull requests.
@@ -49,18 +50,18 @@ The tests live in `tests/django_dump_die_tests/`. `tests/` is not a Python packa
 To run one file or one test:
 
 ```bash
-pipenv run pytest tests/django_dump_die_tests/simple_types/test_simple_types.py
-pipenv run pytest "tests/django_dump_die_tests/general/test_general.py::DumpDieGeneralTestCase::test_debug_off_skips_all_dumps"
+uv run pytest tests/django_dump_die_tests/simple_types/test_simple_types.py
+uv run pytest "tests/django_dump_die_tests/general/test_general.py::DumpDieGeneralTestCase::test_debug_off_skips_all_dumps"
 ```
 
 `python runtests.py --force-django-manage-test` runs the same tests with `manage.py test` instead of pytest. To run the full matrix of Python and Django versions, run `tox`.
 
 ### Browser tests
 
-`browser/` holds Selenium tests of the dump page's JavaScript (expanding, collapsing, the toolbar, and duplicate highlighting). They run with the rest of the tests when `selenium` is installed (it is in the Pipfile's dev packages), and need a browser. Choose it with environment variables:
+`browser/` holds Selenium tests of the dump page's JavaScript (expanding, collapsing, the toolbar, and duplicate highlighting). They run with the rest of the tests when `selenium` is installed (it is in the `browser` extra, which `uv sync --all-extras` installs), and need a browser. Choose it with environment variables:
 
 - `DJANGO_DD_SELENIUM_BROWSER`: `firefox` (the default), `chrome`, or `none` to skip the browser tests.
-- `DJANGO_DD_SELENIUM_HEADLESS=true`: run the browser without a window.
+- `DJANGO_DD_SELENIUM_HEADLESS`: the browser runs without a window by default. Set it to `false` to show the window.
 - `DJANGO_DD_SELENIUM_BROWSER_BINARY`: the browser's executable, if Selenium doesn't find it. Firefox installed as a snap (as on Ubuntu) is found without it.
 
 `tox -e browser` runs only the browser tests, in headless Firefox.
