@@ -82,7 +82,8 @@ else:
 
 # Browser for the browser (Selenium) tests, chosen per developer with the DJANGO_DD_SELENIUM_BROWSER
 # environment variable: "firefox" (the default), "chrome", or "none" to skip the browser tests.
-# Set DJANGO_DD_SELENIUM_HEADLESS=true to run the browser without a window.
+# The browser runs headless, without a window, so that it doesn't get in the way of other work. Set
+# DJANGO_DD_SELENIUM_HEADLESS=false to watch it, such as while debugging a test.
 DJANGO_DD_SELENIUM_BROWSER = os.environ.get("DJANGO_DD_SELENIUM_BROWSER", "firefox").lower()
 DJANGO_EXPANDED_TESTCASES_SELENIUM_BROWSER = DJANGO_DD_SELENIUM_BROWSER
 # Set DJANGO_DD_SELENIUM_BROWSER_BINARY to the browser's executable if it isn't found. Firefox installed as a
@@ -95,7 +96,7 @@ if (
     and os.path.exists(SNAP_FIREFOX_BINARY)
 ):
     DJANGO_DD_SELENIUM_BROWSER_BINARY = SNAP_FIREFOX_BINARY
-if os.environ.get("DJANGO_DD_SELENIUM_HEADLESS", "").lower() in ("1", "true", "yes"):
+if os.environ.get("DJANGO_DD_SELENIUM_HEADLESS", "true").lower() not in ("0", "false", "no"):
     # Passed as browser options, because each browser spells its headless option differently.
     DJANGO_EXPANDED_TESTCASES_SELENIUM_EXTRA_BROWSER_OPTIONS = (
         ["-headless"] if DJANGO_DD_SELENIUM_BROWSER == "firefox" else ["--headless=new"]
