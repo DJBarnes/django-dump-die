@@ -15,29 +15,13 @@ from django.forms.boundfield import BoundField
 from django.utils.functional import Promise
 
 # Internal Imports.
+from django_dump_die.app_settings import app_settings
 from django_dump_die.constants import (
-    BREAK_SIZE,
-    BREAK_STYLE,
     BREAK_STYLES,
     DEFAULT_FUNCTION_RESULTS,
-    FUNCTION_RESULTS,
     FUNCTION_RESULTS_ATTRIBUTE,
-    FUNCTION_RESULTS_START_EXPANDED,
-    INCLUDE_FUNCTION_RESULTS,
     SIMPLE_TYPES,
     INTERMEDIATE_TYPES,
-    ADDITIONAL_SIMPLE_TYPES,
-    ADDITIONAL_INTERMEDIATE_TYPES,
-    MAX_RECURSION_DEPTH,
-    MAX_ITERABLE_LENGTH,
-    MULTILINE_FUNCTION_DOCS,
-    CONTENT_STARTS_EXPANDED,
-    ATTRIBUTES_START_EXPANDED,
-    FUNCTIONS_START_EXPANDED,
-    INCLUDE_PRIVATE_METHODS,
-    INCLUDE_MAGIC_METHODS,
-    INCLUDE_ATTRIBUTES,
-    INCLUDE_FUNCTIONS,
     PYTZ_PRESENT,
 )
 from django_dump_die.utils import (
@@ -184,15 +168,19 @@ def dump(context, obj):
 @register.inclusion_tag("django_dump_die/partials/_dump_objects.html")
 def dump_objects(objects):
     """Template tag that can be used to dump a list of objects"""
-    if BREAK_STYLE not in BREAK_STYLES:
+    if app_settings.BREAK_STYLE not in BREAK_STYLES:
         raise ValueError(
-            'DJANGO_DD_BREAK_STYLE must be one of {0}, not "{1}".'.format(", ".join(BREAK_STYLES), BREAK_STYLE)
+            'DJANGO_DD_BREAK_STYLE must be one of {0}, not "{1}".'.format(
+                ", ".join(BREAK_STYLES), app_settings.BREAK_STYLE
+            )
         )
-    if not is_valid_break_size(BREAK_SIZE):
+    if not is_valid_break_size(app_settings.BREAK_SIZE):
         raise ValueError(
-            "DJANGO_DD_BREAK_SIZE must be a whole number of lines, 1 or more, not {0!r}.".format(BREAK_SIZE)
+            "DJANGO_DD_BREAK_SIZE must be a whole number of lines, 1 or more, not {0!r}.".format(
+                app_settings.BREAK_SIZE
+            )
         )
-    if INCLUDE_FUNCTION_RESULTS:
+    if app_settings.INCLUDE_FUNCTION_RESULTS:
         _check_function_results_setting()
 
     # _dump_objects.html passes each dumped object, and its deepcopy original, to the dump_object tag through
@@ -202,7 +190,7 @@ def dump_objects(objects):
         (filename, linenumber, obj_name, _hold_if_callable(obj), function_doc, start, end, _hold_if_callable(original))
         for filename, linenumber, obj_name, obj, function_doc, start, end, original in objects
     ]
-    return {"objects": objects, "break_style": BREAK_STYLE, "break_size": BREAK_SIZE}
+    return {"objects": objects, "break_style": app_settings.BREAK_STYLE, "break_size": app_settings.BREAK_SIZE}
 
 
 @register.filter
@@ -455,7 +443,7 @@ def _add_unique_map_entry(obj, original_obj, root_unique):
         if _is_simple_type(value) or _is_intermediate_type(obj) or _is_intermediate_type(original_obj):
             continue
         # Skip private members if not including them and functions.
-        if (is_private(attr) and not INCLUDE_PRIVATE_METHODS) or callable(value):
+        if (is_private(attr) and not app_settings.INCLUDE_PRIVATE_MEMBERS) or callable(value):
             continue
 
         # Loop through orig members looking for a match.
@@ -476,7 +464,7 @@ def _is_simple_type(obj):
     return (
         obj is None
         or type(obj) in SIMPLE_TYPES
-        or get_class_name(obj) in ADDITIONAL_SIMPLE_TYPES
+        or get_class_name(obj) in app_settings.ADDITIONAL_SIMPLE_TYPES
         # Subclasses of str, such as Django's SafeString, and lazy strings, such as from gettext_lazy(), are shown as
         # their text, like a str. Enum members that are also strings stay enums.
         or (isinstance(obj, (str, Promise)) and not is_enum_member(obj))
@@ -491,7 +479,7 @@ def _is_intermediate_type(obj):
         return True
 
     # Handling for all other objects.
-    return type(obj) in INTERMEDIATE_TYPES or get_class_name(obj) in ADDITIONAL_INTERMEDIATE_TYPES
+    return type(obj) in INTERMEDIATE_TYPES or get_class_name(obj) in app_settings.ADDITIONAL_INTERMEDIATE_TYPES
 
 
 def is_complex_type(current_depth, current_iteration):
@@ -502,10 +490,10 @@ def is_complex_type(current_depth, current_iteration):
         # Check for any nested objects
         or (
             # Check if the max_recursion is set to None or we have not reached it yet.
-            (MAX_RECURSION_DEPTH is None or current_depth < MAX_RECURSION_DEPTH)
+            (app_settings.MAX_RECURSION_DEPTH is None or current_depth < app_settings.MAX_RECURSION_DEPTH)
             # And if the max_iterable_length is set to None,
             # or we have not reached it yet or we are at the root level.
-            and (MAX_ITERABLE_LENGTH is None or current_iteration < MAX_ITERABLE_LENGTH)
+            and (app_settings.MAX_ITERABLE_LENGTH is None or current_iteration < app_settings.MAX_ITERABLE_LENGTH)
         )
     )
 
@@ -578,17 +566,17 @@ def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, 
 
     # Attempt to get corresponding attribute/function values of object.
     attributes, functions = get_obj_values(obj)
-    function_results = get_function_results(obj) if INCLUDE_FUNCTION_RESULTS else []
+    function_results = get_function_results(obj) if app_settings.INCLUDE_FUNCTION_RESULTS else []
 
     # Return information required to render object.
     # The object, root object, and original object go through template variables again, to the dump_object calls
     # for the children, so callables stay wrapped. See NotCalledInTemplates.
     context = {
-        "include_attributes": INCLUDE_ATTRIBUTES,
+        "include_attributes": app_settings.INCLUDE_ATTRIBUTES,
         # Only objects with functions listed have a Function Results section. Most objects have none, and an
         # empty section on each of them would only be noise.
         "include_function_results": bool(function_results),
-        "include_functions": INCLUDE_FUNCTIONS,
+        "include_functions": app_settings.INCLUDE_FUNCTIONS,
         "collapsable": _get_collapsable_values(has_function_results=bool(function_results)),
         "braces": "{}",
         "object": _hold_if_callable(obj),
@@ -603,18 +591,18 @@ def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, 
         "root_index_end": None,
         "original_obj": _hold_if_callable(original_obj),
     }
-    if INCLUDE_ATTRIBUTES or function_results:
+    if app_settings.INCLUDE_ATTRIBUTES or function_results:
         # Used by both sections to dump their values.
         context["index"] = 0
         context["root_obj"] = _hold_if_callable(root_obj)
         context["skip"] = set()
-    if INCLUDE_ATTRIBUTES:
+    if app_settings.INCLUDE_ATTRIBUTES:
         context["attributes"] = attributes
     if function_results:
         context["function_results"] = function_results
-    if INCLUDE_FUNCTIONS:
+    if app_settings.INCLUDE_FUNCTIONS:
         context["functions"] = functions
-        context["multiline_function_docs"] = MULTILINE_FUNCTION_DOCS
+        context["multiline_function_docs"] = app_settings.MULTILINE_FUNCTION_DOCS
 
     return context
 
@@ -675,7 +663,7 @@ def _handle_complex_type(
 
     # A query that failed has no results to show, only its error.
     function_results = []
-    if INCLUDE_FUNCTION_RESULTS and query_exception is None:
+    if app_settings.INCLUDE_FUNCTION_RESULTS and query_exception is None:
         function_results = get_function_results(obj)
 
     is_iterable_obj = is_iterable(obj) and not is_dict(obj) and not isinstance(obj, memoryview)
@@ -685,11 +673,11 @@ def _handle_complex_type(
     # The object, root object, and original object go through template variables again, to the dump_object calls
     # for the children, so callables stay wrapped. See NotCalledInTemplates.
     context = {
-        "include_attributes": INCLUDE_ATTRIBUTES,
+        "include_attributes": app_settings.INCLUDE_ATTRIBUTES,
         # Only objects with functions listed have a Function Results section. Most objects have none, and an
         # empty section on each of them would only be noise.
         "include_function_results": bool(function_results),
-        "include_functions": INCLUDE_FUNCTIONS,
+        "include_functions": app_settings.INCLUDE_FUNCTIONS,
         "collapsable": _get_collapsable_values(has_function_results=bool(function_results)),
         "braces": braces,
         "object": _hold_if_callable(obj),
@@ -705,18 +693,18 @@ def _handle_complex_type(
         "root_index_end": root_index_end,
         "original_obj": _hold_if_callable(original_obj),
     }
-    if INCLUDE_ATTRIBUTES or function_results:
+    if app_settings.INCLUDE_ATTRIBUTES or function_results:
         # Used by both sections to dump their values.
         context["index"] = current_iteration
         context["root_obj"] = _hold_if_callable(root_obj)
         context["skip"] = skip_set
-    if INCLUDE_ATTRIBUTES:
+    if app_settings.INCLUDE_ATTRIBUTES:
         context["attributes"] = attributes
     if function_results:
         context["function_results"] = function_results
-    if INCLUDE_FUNCTIONS:
+    if app_settings.INCLUDE_FUNCTIONS:
         context["functions"] = functions
-        context["multiline_function_docs"] = MULTILINE_FUNCTION_DOCS
+        context["multiline_function_docs"] = app_settings.MULTILINE_FUNCTION_DOCS
 
     return context
 
@@ -765,7 +753,7 @@ def get_obj_values(obj):
 
             # Skip private members if not including them.
             # Magic members also start with an underscore, but follow their own setting below.
-            if is_private(attr) and not is_magic(attr) and not INCLUDE_PRIVATE_METHODS:
+            if is_private(attr) and not is_magic(attr) and not app_settings.INCLUDE_PRIVATE_MEMBERS:
                 continue
 
             # Determine if the value is callable (function).
@@ -774,7 +762,7 @@ def get_obj_values(obj):
             if is_callable:  # Handle member functions.
 
                 # Skip dunder (magic) methods if not including them.
-                if is_magic(attr) and not INCLUDE_MAGIC_METHODS:
+                if is_magic(attr) and not app_settings.INCLUDE_MAGIC_METHODS:
                     continue
 
                 # Get the method signature for attr.
@@ -880,13 +868,13 @@ def _is_list_of_names(names):
 
 def _check_function_results_setting():
     """Raise a ValueError if DJANGO_DD_FUNCTION_RESULTS isn't a dict of class names to lists of function names."""
-    if not isinstance(FUNCTION_RESULTS, dict):
+    if not isinstance(app_settings.FUNCTION_RESULTS, dict):
         raise ValueError(
             "DJANGO_DD_FUNCTION_RESULTS must be a dict of class names to lists of function names, not {0!r}.".format(
-                FUNCTION_RESULTS
+                app_settings.FUNCTION_RESULTS
             )
         )
-    for class_name, names in FUNCTION_RESULTS.items():
+    for class_name, names in app_settings.FUNCTION_RESULTS.items():
         if not _is_list_of_names(names):
             raise ValueError(
                 "DJANGO_DD_FUNCTION_RESULTS[{0!r}] must be a list of function names, not {1!r}.".format(
@@ -978,7 +966,7 @@ def get_function_results(obj):
         return []
 
     class_name = get_class_name(obj)
-    names = set(FUNCTION_RESULTS.get(class_name, DEFAULT_FUNCTION_RESULTS.get(class_name, ())))
+    names = set(app_settings.FUNCTION_RESULTS.get(class_name, DEFAULT_FUNCTION_RESULTS.get(class_name, ())))
     rows = []
 
     # Read the class attribute without running anything. getattr() would also call a __getattr__ method, which can
@@ -1043,7 +1031,7 @@ def _process_root_indices(start, end, parent_length):
     if start is None:
         start = 0
     if end is None:
-        end = MAX_ITERABLE_LENGTH
+        end = app_settings.MAX_ITERABLE_LENGTH
 
     # Handle if provided start_index is negative.
     if start < 0:
@@ -1057,7 +1045,7 @@ def _process_root_indices(start, end, parent_length):
     # it makes sense to then run from the start, now that it is calculated,
     # to the max iterable length.
     if orig_end is None:
-        end = start + MAX_ITERABLE_LENGTH
+        end = start + app_settings.MAX_ITERABLE_LENGTH
 
     # Handle if provided end_index is negative.
     if end < 0:
@@ -1085,39 +1073,39 @@ def _get_collapsable_values(has_function_results=False):
 
     # Determine default sets.
     content_set = {
-        "arrow": "▼" if CONTENT_STARTS_EXPANDED else "▶",
-        "show": "show" if CONTENT_STARTS_EXPANDED else "",
+        "arrow": "▼" if app_settings.CONTENT_STARTS_EXPANDED else "▶",
+        "show": "show" if app_settings.CONTENT_STARTS_EXPANDED else "",
         "always_show": "false",
-        "class": "" if CONTENT_STARTS_EXPANDED else "collapsed",
-        "aria": "true" if CONTENT_STARTS_EXPANDED else "false",
+        "class": "" if app_settings.CONTENT_STARTS_EXPANDED else "collapsed",
+        "aria": "true" if app_settings.CONTENT_STARTS_EXPANDED else "false",
     }
     attr_set = {
-        "arrow": "▼" if ATTRIBUTES_START_EXPANDED else "▶",
-        "show": "show" if ATTRIBUTES_START_EXPANDED else "",
+        "arrow": "▼" if app_settings.ATTRIBUTES_START_EXPANDED else "▶",
+        "show": "show" if app_settings.ATTRIBUTES_START_EXPANDED else "",
         "always_show": "false",
-        "class": "" if ATTRIBUTES_START_EXPANDED else "collapsed",
-        "aria": "true" if ATTRIBUTES_START_EXPANDED else "false",
+        "class": "" if app_settings.ATTRIBUTES_START_EXPANDED else "collapsed",
+        "aria": "true" if app_settings.ATTRIBUTES_START_EXPANDED else "false",
     }
     result_set = {
-        "arrow": "▼" if FUNCTION_RESULTS_START_EXPANDED else "▶",
-        "show": "show" if FUNCTION_RESULTS_START_EXPANDED else "",
+        "arrow": "▼" if app_settings.FUNCTION_RESULTS_START_EXPANDED else "▶",
+        "show": "show" if app_settings.FUNCTION_RESULTS_START_EXPANDED else "",
         "always_show": "false",
-        "class": "" if FUNCTION_RESULTS_START_EXPANDED else "collapsed",
-        "aria": "true" if FUNCTION_RESULTS_START_EXPANDED else "false",
+        "class": "" if app_settings.FUNCTION_RESULTS_START_EXPANDED else "collapsed",
+        "aria": "true" if app_settings.FUNCTION_RESULTS_START_EXPANDED else "false",
     }
     func_set = {
-        "arrow": "▼" if FUNCTIONS_START_EXPANDED else "▶",
-        "show": "show" if FUNCTIONS_START_EXPANDED else "",
+        "arrow": "▼" if app_settings.FUNCTIONS_START_EXPANDED else "▶",
+        "show": "show" if app_settings.FUNCTIONS_START_EXPANDED else "",
         "always_show": "false",
-        "class": "" if FUNCTIONS_START_EXPANDED else "collapsed",
-        "aria": "true" if FUNCTIONS_START_EXPANDED else "false",
+        "class": "" if app_settings.FUNCTIONS_START_EXPANDED else "collapsed",
+        "aria": "true" if app_settings.FUNCTIONS_START_EXPANDED else "false",
     }
 
     # If only one section is shown, it doesn't make sense for it to have an expandable arrow, so it's always shown.
     sections = [
-        (INCLUDE_ATTRIBUTES, attr_set),
+        (app_settings.INCLUDE_ATTRIBUTES, attr_set),
         (has_function_results, result_set),
-        (INCLUDE_FUNCTIONS, func_set),
+        (app_settings.INCLUDE_FUNCTIONS, func_set),
     ]
     shown_sets = [section_set for included, section_set in sections if included]
     if len(shown_sets) == 1:

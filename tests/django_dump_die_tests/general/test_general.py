@@ -63,7 +63,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
         url = reverse("django_dump_die__tests__general:break")
         for style in ("dashed", "solid", "dotted", "blank"):
             with self.subTest(style=style):
-                with patch("django_dump_die.templatetags.dump_die.BREAK_STYLE", style):
+                with override_settings(DJANGO_DD_BREAK_STYLE=style):
                     content = self.client.get(url).content.decode("utf-8")
 
                 self.assertIn('class="dump-wrapper dump-break dump-break-{0}"'.format(style), content)
@@ -71,7 +71,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
     @override_settings(DEBUG=True)
     def test_unknown_break_style_setting_raises_an_error(self):
         """Verify a break style that isn't one of the documented styles raises an error."""
-        with patch("django_dump_die.templatetags.dump_die.BREAK_STYLE", "wavy"):
+        with override_settings(DJANGO_DD_BREAK_STYLE="wavy"):
             with self.assertRaisesMessage(ValueError, "DJANGO_DD_BREAK_STYLE must be one of"):
                 self.client.get(reverse("django_dump_die__tests__general:break"))
 
@@ -88,7 +88,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
     @override_settings(DEBUG=True)
     def test_break_size_setting_sets_the_default_height(self):
         """Verify DJANGO_DD_BREAK_SIZE sets the height of breaks that have no size of their own."""
-        with patch("django_dump_die.templatetags.dump_die.BREAK_SIZE", 3):
+        with override_settings(DJANGO_DD_BREAK_SIZE=3):
             content = self.client.get(reverse("django_dump_die__tests__general:break")).content.decode("utf-8")
         self.assertIn('class="dump-wrapper dump-break dump-break-dashed" style="--dump-break-size: 3"', content)
 
@@ -97,7 +97,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
         """Verify a DJANGO_DD_BREAK_SIZE that isn't a whole number of lines raises an error."""
         for size in (0, "2", True):
             with self.subTest(setting=size):
-                with patch("django_dump_die.templatetags.dump_die.BREAK_SIZE", size):
+                with override_settings(DJANGO_DD_BREAK_SIZE=size):
                     with self.assertRaisesMessage(ValueError, "DJANGO_DD_BREAK_SIZE must be a whole number of lines"):
                         self.client.get(reverse("django_dump_die__tests__general:break"))
 

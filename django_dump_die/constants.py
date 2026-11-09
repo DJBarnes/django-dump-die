@@ -7,7 +7,6 @@ from decimal import Decimal
 from pathlib import PosixPath, PurePath, PurePosixPath, PureWindowsPath
 
 # Third-Party Imports.
-from django.conf import settings
 from django.forms.boundfield import BoundField
 from django.utils import timezone
 
@@ -59,29 +58,6 @@ if ZONEINFO_PRESENT:
     INTERMEDIATE_TYPES.append(ZoneInfo)
 
 
-# List of additional simple types defined as strings that do not need to be recursively inspected.
-ADDITIONAL_SIMPLE_TYPES = getattr(settings, "DJANGO_DD_ADDITIONAL_SIMPLE_TYPES", [])
-# List of additional intermediate types defined as strings that do not need to be recursively inspected.
-ADDITIONAL_INTERMEDIATE_TYPES = getattr(settings, "DJANGO_DD_ADDITIONAL_INTERMEDIATE_TYPES", [])
-# Max recursion depth to go while processing the dumped variable.
-# Deep recursion will cause DD to take forever on complex structures.
-MAX_RECURSION_DEPTH = getattr(settings, "DJANGO_DD_MAX_RECURSION_DEPTH", 5)
-# Max number of entries in an iterable to process further with recursion.
-# After reaching an entry beyond this length, it will just print the unique
-# instead of recursing into the entry to find further details.
-# EX: if set to 20, a list of 30 will recursively inspect and print out 20
-# items and then simply print the unique for the last 10.
-MAX_ITERABLE_LENGTH = getattr(settings, "DJANGO_DD_MAX_ITERABLE_LENGTH", 20)
-# Whether each dump should include the filename and linenumber of the dump call.
-INCLUDE_FILENAME_LINENUMBER = getattr(settings, "DJANGO_DD_INCLUDE_FILENAME_LINENUMBER", False)
-# Whether attributes should be included in the output.
-INCLUDE_ATTRIBUTES = getattr(settings, "DJANGO_DD_INCLUDE_ATTRIBUTES", True)
-# Whether functions should be included in the output.
-INCLUDE_FUNCTIONS = getattr(settings, "DJANGO_DD_INCLUDE_FUNCTIONS", False)
-# Whether the results of some functions should be included in the output. Off by default, since it runs code.
-INCLUDE_FUNCTION_RESULTS = getattr(settings, "DJANGO_DD_INCLUDE_FUNCTION_RESULTS", False)
-# Functions whose results are shown, by class name. A class's entry replaces its entry in DEFAULT_FUNCTION_RESULTS.
-FUNCTION_RESULTS = getattr(settings, "DJANGO_DD_FUNCTION_RESULTS", {})
 # Functions whose results are shown by default, by class name. Only functions that are cheap, have no side effects,
 # and don't touch the filesystem or network.
 DEFAULT_FUNCTION_RESULTS = {
@@ -92,27 +68,5 @@ DEFAULT_FUNCTION_RESULTS = {
 }
 # Name of the class attribute that lists the methods whose results are shown for that class's objects.
 FUNCTION_RESULTS_ATTRIBUTE = "dd_function_results"
-# Whether function doc output should try to fit on one line, or output with original newlines.
-MULTILINE_FUNCTION_DOCS = getattr(settings, "DJANGO_DD_MULTILINE_FUNCTION_DOCS", False)
-# Line shown across a break added with dump.br(): "dashed", "solid", "dotted", or "blank" for no line.
-BREAK_STYLE = getattr(settings, "DJANGO_DD_BREAK_STYLE", "dashed")
+# Lines a break added with dump.br() can have, for the BREAK_STYLE setting. "blank" has no line.
 BREAK_STYLES = ("dashed", "solid", "dotted", "blank")
-# Default height of a break added with dump.br(), as a whole number of lines.
-BREAK_SIZE = getattr(settings, "DJANGO_DD_BREAK_SIZE", 1)
-# Whether or not to colorize the name of the dumped object
-COLORIZE_DUMPED_OBJECT_NAME = getattr(settings, "DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME", True)
-# Whether objects overarching item content (Attribute, Function) should start expanded for viewing.
-CONTENT_STARTS_EXPANDED = getattr(settings, "DJANGO_DD_CONTENT_STARTS_EXPANDED", False)
-# Whether the attributes for an object should start expanded for viewing.
-ATTRIBUTES_START_EXPANDED = getattr(settings, "DJANGO_DD_ATTRIBUTES_START_EXPANDED", True)
-# Whether the function results for an object should start expanded for viewing.
-FUNCTION_RESULTS_START_EXPANDED = getattr(settings, "DJANGO_DD_FUNCTION_RESULTS_START_EXPANDED", True)
-# Whether the functions for an object should start expanded for viewing.
-FUNCTIONS_START_EXPANDED = getattr(settings, "DJANGO_DD_FUNCTIONS_START_EXPANDED", False)
-# Whether values whose names look sensitive, such as passwords, secret keys, tokens, and the session cookie, are shown.
-# Off by default, so that they are hidden like on Django's debug page. See SENSITIVE_NAME_PATTERN in utils.
-SHOW_SENSITIVE_VALUES = getattr(settings, "DJANGO_DD_SHOW_SENSITIVE_VALUES", False)
-# Whether the output should include private attributes and functions.
-INCLUDE_PRIVATE_METHODS = getattr(settings, "DJANGO_DD_INCLUDE_PRIVATE_MEMBERS", False)
-# Whether the output should include magic methods.
-INCLUDE_MAGIC_METHODS = getattr(settings, "DJANGO_DD_INCLUDE_MAGIC_METHODS", False)

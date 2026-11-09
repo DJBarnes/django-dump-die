@@ -6,7 +6,6 @@ Tests for the DumpDie template tag's handling of settings, index ranges, deep co
 import re
 from datetime import date, datetime
 from enum import Enum
-from unittest.mock import patch
 
 # Third-Party Imports.
 from django import forms
@@ -18,7 +17,8 @@ from django.utils.html import format_html
 # Internal Imports.
 from django_dump_die import middleware
 from django_dump_die.middleware import dump
-from django_dump_die.templatetags.dump_die import MAX_ITERABLE_LENGTH, _process_root_indices
+from django_dump_die.app_settings import app_settings
+from django_dump_die.templatetags.dump_die import _process_root_indices
 from django_dump_die.utils import generate_unique_from_obj
 
 
@@ -130,11 +130,11 @@ class DumpDieRootIndicesTestCase(SimpleTestCase):
     def test_process_root_indices(self):
         """Verify each start and end index gives the expected range, for a root iterable of 10 items."""
         cases = [
-            ((None, None), (0, MAX_ITERABLE_LENGTH)),
-            ((2, None), (2, 2 + MAX_ITERABLE_LENGTH)),
+            ((None, None), (0, app_settings.MAX_ITERABLE_LENGTH)),
+            ((2, None), (2, 2 + app_settings.MAX_ITERABLE_LENGTH)),
             ((None, 5), (0, 5)),
-            ((-3, None), (7, 7 + MAX_ITERABLE_LENGTH)),
-            ((-30, None), (0, MAX_ITERABLE_LENGTH)),
+            ((-3, None), (7, 7 + app_settings.MAX_ITERABLE_LENGTH)),
+            ((-30, None), (0, app_settings.MAX_ITERABLE_LENGTH)),
             ((0, -2), (0, 8)),
             ((0, -30), (0, 0)),
             ((5, 2), (2, 5)),
@@ -148,7 +148,7 @@ class DumpDieRootIndicesTestCase(SimpleTestCase):
 class DumpDieTagSettingsTestCase(SimpleTestCase):
     """Verify the dump output follows the attribute, function, private, and magic member settings."""
 
-    @patch("django_dump_die.templatetags.dump_die.INCLUDE_ATTRIBUTES", False)
+    @override_settings(DJANGO_DD_INCLUDE_ATTRIBUTES=False)
     def test_attributes_left_out(self):
         """Verify complex and intermediate objects have no Attributes section when attributes are off."""
         for obj in (Branch(), datetime(2026, 1, 2)):
@@ -158,7 +158,7 @@ class DumpDieTagSettingsTestCase(SimpleTestCase):
                 self.assertNotIn('<span class="section_name">Attributes</span>', content)
                 self.assertNotIn('<span class="attribute"', content)
 
-    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTIONS", True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTIONS=True)
     def test_functions_included(self):
         """Verify complex and intermediate objects have a Functions section when functions are on."""
         for obj, function_name in ((Branch(), "do_work"), (datetime(2026, 1, 2), "isoformat")):
@@ -170,7 +170,7 @@ class DumpDieTagSettingsTestCase(SimpleTestCase):
                 # Magic methods stay out unless they are turned on too.
                 self.assertNotIn("__init__", content)
 
-    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTIONS", True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTIONS=True)
     def test_static_and_class_methods_are_marked(self):
         """Verify static and class methods are marked in the Functions section, and normal methods aren't."""
         for label, obj in (("class", HasMethodTypes), ("instance", HasMethodTypes())):
@@ -250,8 +250,8 @@ class DumpDieTagSettingsTestCase(SimpleTestCase):
         dump(NeedsArguments)
         self.assertIn('<span class="type" title="type">type</span>', render_dumped_objects())
 
-    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTIONS", True)
-    @patch("django_dump_die.templatetags.dump_die.INCLUDE_ATTRIBUTES", False)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTIONS=True)
+    @override_settings(DJANGO_DD_INCLUDE_ATTRIBUTES=False)
     def test_only_functions_section_is_not_collapsible(self):
         """Verify the Functions section, when it is the only section, is always shown and can't be collapsed."""
         content = render_dump(Branch())
@@ -282,7 +282,7 @@ class DumpDieTagSettingsTestCase(SimpleTestCase):
         self.assertEqual(content.count('<code class="intermediate">2026-01-02</code>'), 2)
         self.assertNotIn('class="datetime"', content)
 
-    @patch("django_dump_die.templatetags.dump_die.INCLUDE_PRIVATE_METHODS", True)
+    @override_settings(DJANGO_DD_INCLUDE_PRIVATE_MEMBERS=True)
     def test_private_members_included(self):
         """Verify private attributes are shown, with the private access modifier, when they are on."""
         content = render_dump(Branch())
@@ -290,8 +290,8 @@ class DumpDieTagSettingsTestCase(SimpleTestCase):
         self.assertIn('<span class="access-modifier">#</span>', content)
         self.assertIn("_private_value", content)
 
-    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTIONS", True)
-    @patch("django_dump_die.templatetags.dump_die.INCLUDE_MAGIC_METHODS", True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTIONS=True)
+    @override_settings(DJANGO_DD_INCLUDE_MAGIC_METHODS=True)
     def test_magic_methods_included(self):
         """Verify magic methods are shown, with the magic access modifier, when they and functions are on."""
         content = render_dump(Branch())
@@ -315,7 +315,7 @@ class DumpDieTagObjectsTestCase(SimpleTestCase):
         self.assertNotIn("<b id=injected>", content)
         self.assertIn("&lt;b id=injected&gt;key&lt;/b&gt;", content)
 
-    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTION_RESULTS", True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
     def test_sensitive_values_are_hidden(self):
         """Verify attributes, dict keys, and function results with sensitive names are hidden, and others aren't."""
         calls = []
@@ -330,8 +330,8 @@ class DumpDieTagObjectsTestCase(SimpleTestCase):
         # The sensitive function wasn't run.
         self.assertEqual(calls, [])
 
-    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTION_RESULTS", True)
-    @patch("django_dump_die.utils.SHOW_SENSITIVE_VALUES", True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
+    @override_settings(DJANGO_DD_SHOW_SENSITIVE_VALUES=True)
     def test_sensitive_values_are_shown_when_turned_on(self):
         """Verify sensitive values are shown, and sensitive functions are run, when the setting is on."""
         calls = []

@@ -6,7 +6,6 @@ settings that turn it on and choose the functions.
 # System Imports.
 import re
 from datetime import datetime, timedelta, timezone
-from unittest.mock import patch
 
 # Third-Party Imports.
 from django.template import Context, Template
@@ -17,8 +16,6 @@ from django.urls import reverse
 from django_dump_die import middleware
 from django_dump_die.middleware import dump
 
-RESULTS_ON = "django_dump_die.templatetags.dump_die.INCLUDE_FUNCTION_RESULTS"
-RESULTS_SETTING = "django_dump_die.templatetags.dump_die.FUNCTION_RESULTS"
 # An escaped single quote. Django before 3.0 escapes it as &#39;, later versions as &#x27;.
 QUOTE = r"&#(?:x27|39);"
 
@@ -121,7 +118,7 @@ class DumpDieFunctionResultsTestCase(SimpleTestCase):
         self.assertNotIn("Function Results", content)
         self.assertEqual(invoice.calls, [])
 
-    @patch(RESULTS_ON, True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
     def test_listed_functions_are_run_and_shown(self):
         """Verify each function in dd_function_results is run once, and its result shown, sorted by name."""
         invoice = Invoice()
@@ -147,13 +144,13 @@ class DumpDieFunctionResultsTestCase(SimpleTestCase):
 
         values = {"name": "first", "items": [1, 2]}
         expected = render_without_uniques(values)
-        with patch(RESULTS_ON, True):
+        with override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True):
             content = render_without_uniques(values)
 
         self.assertEqual(content, expected)
         self.assertNotIn("Function Results", content)
 
-    @patch(RESULTS_ON, True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
     def test_functions_that_cannot_be_run_show_why(self):
         """Verify a function that needs arguments isn't run, and errors and invalid names are shown in their rows."""
         invoice = Invoice()
@@ -168,7 +165,7 @@ class DumpDieFunctionResultsTestCase(SimpleTestCase):
         self.assertRegex(content, result_row("broken_property") + r'<span class="empty" title="Exception Occurred')
         self.assertRegex(content, "KeyError: {0}No such total.{0}".format(QUOTE))
 
-    @patch(RESULTS_ON, True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
     def test_callable_result_is_not_called(self):
         """Verify a result that is itself a function is dumped without being called."""
         invoice = Invoice()
@@ -177,7 +174,7 @@ class DumpDieFunctionResultsTestCase(SimpleTestCase):
         self.assertRegex(content, result_row("make_greeter") + r'<span class="type" title="function">function</span>')
         self.assertNotIn("greet", invoice.calls)
 
-    @patch(RESULTS_ON, True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
     def test_invalid_class_attribute_shows_an_error(self):
         """Verify a dd_function_results that isn't a list of names shows an error, and runs nothing."""
         content = render_dumped(ListsOneString())
@@ -186,21 +183,21 @@ class DumpDieFunctionResultsTestCase(SimpleTestCase):
         self.assertIn("Not A List Of Function Names", content)
         self.assertNotRegex(content, result_row("total"))
 
-    @patch(RESULTS_ON, True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
     def test_object_with_getattr_has_no_error(self):
         """Verify an object whose __getattr__ returns something for any name isn't read as having the class attribute."""
         content = render_dumped(AnswersAnyName())
 
         self.assertNotIn("Function Results", content)
 
-    @patch(RESULTS_ON, True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
     def test_dumped_class_runs_nothing(self):
         """Verify a dumped class shows no results, since its methods aren't bound to an object."""
         content = render_dumped(Invoice)
 
         self.assertNotIn("Function Results", content)
 
-    @patch(RESULTS_ON, True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
     def test_built_in_functions_for_dates_and_times(self):
         """Verify the built-in functions are run for datetime and timedelta objects."""
         moment = datetime(2026, 11, 5, 12, 30, tzinfo=timezone.utc)
@@ -224,8 +221,10 @@ class DumpDieFunctionResultsTestCase(SimpleTestCase):
             + r'<span class="type" title="float">float</span> <code class="number">120.0</code>',
         )
 
-    @patch(RESULTS_ON, True)
-    @patch(RESULTS_SETTING, {"datetime": ["isoformat"], "timedelta": [], "Invoice": ["not_listed"]})
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
+    @override_settings(
+        DJANGO_DD_FUNCTION_RESULTS={"datetime": ["isoformat"], "timedelta": [], "Invoice": ["not_listed"]}
+    )
     def test_setting_replaces_the_list_of_a_class(self):
         """Verify the setting's entry for a class replaces the built-in list, and is added to dd_function_results."""
         content = render_dumped(datetime(2026, 11, 5, 12, 30))
@@ -241,7 +240,7 @@ class DumpDieFunctionResultsTestCase(SimpleTestCase):
         self.assertRegex(content, result_row("total"))
         self.assertIn("not_listed", invoice.calls)
 
-    @patch(RESULTS_ON, True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
     def test_invalid_setting_raises_an_error(self):
         """Verify a setting that isn't a dict of class names to lists of function names raises a clear error."""
         cases = [
@@ -250,13 +249,13 @@ class DumpDieFunctionResultsTestCase(SimpleTestCase):
             ({"datetime": [42]}, "DJANGO_DD_FUNCTION_RESULTS['datetime'] must be a list of function names"),
         ]
         for value, message in cases:
-            with self.subTest(value=value), patch(RESULTS_SETTING, value):
+            with self.subTest(value=value), override_settings(DJANGO_DD_FUNCTION_RESULTS=value):
                 with self.assertRaisesMessage(ValueError, message):
                     render_dumped("anything")
         middleware.dump_objects.clear()
 
-    @patch(RESULTS_ON, True)
-    @patch("django_dump_die.templatetags.dump_die.INCLUDE_ATTRIBUTES", False)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
+    @override_settings(DJANGO_DD_INCLUDE_ATTRIBUTES=False)
     def test_only_section_is_always_shown(self):
         """Verify the Function Results section is always shown, without an arrow, when it is the only section."""
         content = render_dumped(Invoice())
@@ -267,7 +266,7 @@ class DumpDieFunctionResultsTestCase(SimpleTestCase):
         self.assertIn("always-show", results_toggle)
         self.assertNotIn("data-dd-toggle", results_toggle)
 
-    @patch(RESULTS_ON, True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
     def test_section_starts_expanded_with_an_arrow(self):
         """Verify the section has its own arrow, starts open by default, and can start closed instead."""
         content = render_dumped(Invoice())
@@ -275,7 +274,7 @@ class DumpDieFunctionResultsTestCase(SimpleTestCase):
         self.assertRegex(content, r'class="li-wrapper collapse [\w-]+-function-results show"')
         self.assertRegex(content, r'data-dd-type="result"')
 
-        with patch("django_dump_die.templatetags.dump_die.FUNCTION_RESULTS_START_EXPANDED", False):
+        with override_settings(DJANGO_DD_FUNCTION_RESULTS_START_EXPANDED=False):
             content = render_dumped(Invoice())
         self.assertRegex(content, r'class="li-wrapper collapse [\w-]+-function-results "')
 
@@ -307,7 +306,7 @@ class DumpDieFunctionResultsPageTestCase(TestCase):
                     self.assertIn(f'id="expand-{name}"', content)
                     self.assertIn(f'id="collapse-{name}"', content)
 
-    @patch(RESULTS_ON, True)
+    @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
     def test_queryset_whose_query_fails_has_no_results(self):
         """Verify a QuerySet whose query fails shows its error, and no function results."""
         response = self.client.get(reverse("django_dump_die__tests__general:database_error"))
@@ -315,4 +314,4 @@ class DumpDieFunctionResultsPageTestCase(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("no such table: django_dump_die_samplerelation", content)
-        self.assertNotIn("Function Results", content)
+        self.assertNotIn('<span class="section_name">Function Results</span>', content)

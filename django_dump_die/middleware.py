@@ -24,6 +24,7 @@ except ImportError:
     markcoroutinefunction = None
 
 # Internal Imports.
+from django_dump_die.app_settings import app_settings
 from .views import dd_view
 from django_dump_die.utils import DumpBreak, get_dumped_object_info, is_valid_break_size
 
@@ -254,15 +255,13 @@ class DumpAndDieMiddleware:
         # are shown. Without an HTML error page to add them to, such as for a request that doesn't accept HTML, the
         # error is returned as it is, since it matters more than the dumps.
         if has_non_dd_exception:
-            if getattr(settings, "DJANGO_DD_SHOW_DUMPS_ON_ERROR_PAGE", True):
+            if app_settings.SHOW_DUMPS_ON_ERROR_PAGE:
                 _add_dumps_above_page(request, response, objects)
             return response
 
         # Without an exception, dump() was used without dd(). Show the dumps above the page's own content if that's
         # turned on and the response is an HTML page.
-        if getattr(settings, "DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE", False) and _add_dumps_above_page(
-            request, response, objects
-        ):
+        if app_settings.SHOW_DUMPS_ABOVE_PAGE and _add_dumps_above_page(request, response, objects):
             return response
 
         # Otherwise, return the dump page instead of the response.

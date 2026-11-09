@@ -34,11 +34,9 @@ from django.http import QueryDict
 from django.utils.functional import Promise, cached_property as django_cached_property
 
 # Internal Imports.
+from django_dump_die.app_settings import app_settings
 from django_dump_die.constants import (
-    COLORIZE_DUMPED_OBJECT_NAME,
-    INCLUDE_FILENAME_LINENUMBER,
     PYTZ_PRESENT,
-    SHOW_SENSITIVE_VALUES,
 )
 
 # Imports that may not be accessible, depending on local python environment setup.
@@ -106,7 +104,7 @@ def is_sensitive_name(name):
     unless DJANGO_DD_SHOW_SENSITIVE_VALUES is on. Only names are checked, so other values, such as list items, are
     shown.
     """
-    if SHOW_SENSITIVE_VALUES or not isinstance(name, str):
+    if app_settings.SHOW_SENSITIVE_VALUES or not isinstance(name, str):
         return False
     if name.lower() in SENSITIVE_NAMES or name == settings.SESSION_COOKIE_NAME:
         return True
@@ -179,7 +177,7 @@ def get_dumped_object_name_and_location(object_needing_name):
     linenumber = None
     filename = None
     # If we are to show the filename and linenumber
-    if INCLUDE_FILENAME_LINENUMBER:
+    if app_settings.INCLUDE_FILENAME_LINENUMBER:
         # Get line number
         linenumber = frame_info.lineno
         # Get filename
@@ -356,7 +354,7 @@ def process_object_name(object_name):
     name = []
 
     # If the dumped object name should be colorized
-    if COLORIZE_DUMPED_OBJECT_NAME:
+    if app_settings.COLORIZE_DUMPED_OBJECT_NAME:
 
         # List of function names
         functions = []

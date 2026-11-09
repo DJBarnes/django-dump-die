@@ -23,6 +23,11 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Fixed: override_settings didn't change most settings.** Most
+  ``DJANGO_DD_*`` settings were read once, when the package was imported, so
+  ``override_settings`` in a project's tests had no effect on them. All
+  settings are now read each time they are used.
+
 * **Added: dumps above the page.** With the new
   ``DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE`` setting on, ``dump()`` without ``dd()``
   shows the dumps above the page's own content, instead of replacing the page.

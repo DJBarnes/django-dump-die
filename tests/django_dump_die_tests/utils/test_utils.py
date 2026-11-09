@@ -6,7 +6,6 @@ Tests for the DumpDie utils that collect and prepare dumped object information.
 import functools
 import inspect
 import json
-from unittest.mock import patch
 
 # Third-Party Imports.
 from django.core.exceptions import ObjectDoesNotExist
@@ -134,7 +133,7 @@ class DumpDieDumpedObjectInfoTestCase(SimpleTestCase):
         with self.assertRaisesMessage(TypeError, "Object contains type that can't be deep copied."):
             dump(generator, deepcopy=True)
 
-    @patch("django_dump_die.utils.INCLUDE_FILENAME_LINENUMBER", True)
+    @override_settings(DJANGO_DD_INCLUDE_FILENAME_LINENUMBER=True)
     def test_filename_and_line_number_are_included_when_enabled(self):
         """Verify the dumped object's file and line number are collected when the setting is on."""
         value = 42
@@ -246,7 +245,7 @@ class DumpDieDumpedObjectInfoTestCase(SimpleTestCase):
 
         self.assertEqual(get_dumped_name(get_dumped_info()), "Unknown_Object_Name")
 
-    @patch("django_dump_die.utils.COLORIZE_DUMPED_OBJECT_NAME", False)
+    @override_settings(DJANGO_DD_COLORIZE_DUMPED_OBJECT_NAME=False)
     def test_name_is_one_uncolored_part_when_colorizing_is_off(self):
         """Verify the dumped object's name isn't split into colorized parts when the setting is off."""
         value = 42
@@ -442,7 +441,7 @@ class DumpDieSensitiveNameTestCase(SimpleTestCase):
         """Verify the session cookie is hidden by the name it is given in the SESSION_COOKIE_NAME setting."""
         self.assertTrue(is_sensitive_name("my_session"))
 
-    @patch("django_dump_die.utils.SHOW_SENSITIVE_VALUES", True)
+    @override_settings(DJANGO_DD_SHOW_SENSITIVE_VALUES=True)
     def test_nothing_is_sensitive_when_shown(self):
         """Verify no name is hidden when the setting to show sensitive values is on."""
         for name in ("SECRET_KEY", "password", "sessionid", "HTTP_COOKIE"):

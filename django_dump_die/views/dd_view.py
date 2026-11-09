@@ -1,9 +1,11 @@
 """Core view for DumpDie library. All logic renders from this."""
 
 # Third-Party Imports.
-from django.conf import settings
 from django.shortcuts import render
 from django.template.loader import render_to_string
+
+# Internal Imports.
+from django_dump_die.app_settings import app_settings
 
 
 def dd_view(request, objects, template_name="django_dump_die/dd.html", extra_context={}, as_string=False):
@@ -13,16 +15,16 @@ def dd_view(request, objects, template_name="django_dump_die/dd.html", extra_con
     :param objects: Set of objects to dump.
     """
     # Get toolbar options.
-    include_util_toolbar = getattr(settings, "DJANGO_DD_INCLUDE_UTILITY_TOOLBAR", True)
-    attrs_enabled = getattr(settings, "DJANGO_DD_INCLUDE_ATTRIBUTES", True)
-    funcs_enabled = getattr(settings, "DJANGO_DD_INCLUDE_FUNCTIONS", False)
-    results_enabled = getattr(settings, "DJANGO_DD_INCLUDE_FUNCTION_RESULTS", False)
+    include_util_toolbar = app_settings.INCLUDE_UTILITY_TOOLBAR
+    attrs_enabled = app_settings.INCLUDE_ATTRIBUTES
+    funcs_enabled = app_settings.INCLUDE_FUNCTIONS
+    results_enabled = app_settings.INCLUDE_FUNCTION_RESULTS
 
     # Get user theme choices.
-    force_light_theme = getattr(settings, "DJANGO_DD_FORCE_LIGHT_THEME", False)
-    force_dark_theme = getattr(settings, "DJANGO_DD_FORCE_DARK_THEME", False)
-    custom_color_theme = getattr(settings, "DJANGO_DD_COLOR_SCHEME", None)
-    multiline_function_docs = getattr(settings, "DJANGO_DD_MULTILINE_FUNCTION_DOCS", False)
+    force_light_theme = app_settings.FORCE_LIGHT_THEME
+    force_dark_theme = app_settings.FORCE_DARK_THEME
+    custom_color_theme = app_settings.COLOR_SCHEME
+    multiline_function_docs = app_settings.MULTILINE_FUNCTION_DOCS
 
     # Validate chosen themes.
     if force_light_theme and force_dark_theme:

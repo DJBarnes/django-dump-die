@@ -9,7 +9,6 @@ it without a window.
 # System Imports.
 from importlib.util import find_spec
 from unittest import skipIf
-from unittest.mock import patch
 
 # Third-Party Imports.
 from django.conf import settings
@@ -191,9 +190,7 @@ class DumpDieBrowserTestCase(LiveServerTestCase):
             if state["collapsible"] and state["type"] == "type":
                 self.assertToggleState(state, False)
 
-    # The setting shows the toolbar's type buttons, and the patched constant adds the Functions sections.
     @override_settings(DJANGO_DD_INCLUDE_FUNCTIONS=True)
-    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTIONS", True)
     def test_toolbar_expands_and_collapses_one_section_type(self):
         """Verify the toolbar's type, attribute, and function buttons only open and close those sections."""
         self.open_page()
@@ -212,10 +209,7 @@ class DumpDieBrowserTestCase(LiveServerTestCase):
                     if state["collapsible"] and state["type"] == section_type:
                         self.assertToggleState(state, False)
 
-    # The settings show the toolbar's buttons, and the patched constants add the sections.
     @override_settings(DJANGO_DD_INCLUDE_FUNCTIONS=True, DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
-    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTIONS", True)
-    @patch("django_dump_die.templatetags.dump_die.INCLUDE_FUNCTION_RESULTS", True)
     def test_toolbar_expands_and_collapses_function_results(self):
         """Verify the toolbar's Function Results buttons only open and close those sections."""
         self.open_page()

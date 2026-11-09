@@ -5,6 +5,9 @@ There are various configuration options that can be set via
 `Django Settings <https://docs.djangoproject.com/en/dev/topics/settings/>`_ to
 control the overall look, feel, and functionality of the tool.
 
+Settings are read each time they are used, so they can be changed in tests
+with Django's ``override_settings``.
+
 
 DJANGO_DD_MAX_RECURSION_DEPTH
 =============================
