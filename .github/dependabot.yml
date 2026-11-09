@@ -1,0 +1,16 @@
+version: 2
+updates:
+  # The workflows pin each action to a commit, with its version in a comment. Dependabot updates both.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # One pull request for all action updates.
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    commit-message:
+      # Conventional Commits, such as "ci(deps): bump actions/checkout from 7.0.1 to 7.0.2".
+      prefix: "ci"
+      include: "scope"

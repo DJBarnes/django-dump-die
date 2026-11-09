@@ -30,6 +30,8 @@ uv run sphinx-build -WE docs/source docs/build   # CI builds docs with warnings 
 - Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/): `type(scope): summary`. Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `build`, `ci`, `chore`. Commits are GPG-signed (`commit.gpgsign` is set in this repo's local git config).
 - Each user-facing change adds an entry to the "Unreleased" section at the top of `docs/source/version_history.rst` in the same commit (add the section if the last release removed it).
 - Supported versions are kept wide on purpose (Python ≥3.6, Django ≥2.2) until a complete release; don't drop old versions without asking.
+- Workflows pin every action to a commit, with its version in a comment (`uses: actions/checkout@<sha> # v7.0.1`), and Dependabot (`.github/dependabot.yml`) proposes updates weekly. Pin any new action the same way, and check workflow changes with `actionlint` and `zizmor`.
+- Releases: see "Releasing" in CONTRIBUTING.md. `release.yaml` runs only for `X.Y.Z` tags, fails if the tag doesn't match the built version, and the `release` environment waits for a reviewer before publishing to PyPI.
 
 ## Architecture
 

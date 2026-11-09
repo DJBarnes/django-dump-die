@@ -66,6 +66,15 @@ uv run pytest "tests/django_dump_die_tests/general/test_general.py::DumpDieGener
 
 `tox -e browser` runs only the browser tests, in headless Firefox.
 
+## Releasing
+
+For maintainers:
+
+1. In a pull request, set `__version__` in `django_dump_die/__init__.py`, and rename the "Unreleased" section of `docs/source/version_history.rst` to the version and date, such as "0.2.0 (2026-11-09)".
+1. After it is merged, tag the merged commit with the same version, without a `v`, and push the tag: `git tag -s 0.2.0 -m "0.2.0"` and `git push origin 0.2.0`.
+1. The "Publish Release" workflow builds the package and checks that the tag matches the built version. The publish job then waits for approval in the `release` environment: open the workflow run and choose "Review deployments".
+1. After approval, it publishes to PyPI with trusted publishing.
+
 ## Resources
 
 - [How to Contribute to Open Source](https://opensource.guide/how-to-contribute/)
