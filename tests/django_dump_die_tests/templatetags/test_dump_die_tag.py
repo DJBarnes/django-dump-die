@@ -435,7 +435,6 @@ class DumpDieTagObjectsTestCase(SimpleTestCase):
         dump(values)
         content = render_dumped_objects()
 
-        # Without quotes, which Django 2.2 escapes differently.
         self.assertLess(content.index("first_state"), content.index("second_state"))
 
     def test_index_range_of_root_iterable(self):

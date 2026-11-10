@@ -46,10 +46,8 @@ if PYTZ_PRESENT:
     import pytz
 
 
-# Types of cached properties. functools.cached_property was added in Python 3.8.
-CACHED_PROPERTY_TYPES = (django_cached_property,) + (
-    (functools.cached_property,) if hasattr(functools, "cached_property") else ()
-)
+# Types of cached properties.
+CACHED_PROPERTY_TYPES = (django_cached_property, functools.cached_property)
 
 
 class DumpBreak:

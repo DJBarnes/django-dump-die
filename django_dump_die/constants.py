@@ -5,6 +5,7 @@ import datetime
 import types
 from decimal import Decimal
 from pathlib import PosixPath, PurePath, PurePosixPath, PureWindowsPath
+from zoneinfo import ZoneInfo
 
 # Third-Party Imports.
 from django.forms.boundfield import BoundField
@@ -17,12 +18,6 @@ try:
     PYTZ_PRESENT = True
 except ImportError:
     PYTZ_PRESENT = False
-try:
-    from zoneinfo import ZoneInfo
-
-    ZONEINFO_PRESENT = True
-except ImportError:
-    ZONEINFO_PRESENT = False
 
 
 # Simple types that do not need to be recursively inspected.
@@ -52,10 +47,8 @@ INTERMEDIATE_TYPES = [
     PurePath,
     PurePosixPath,
     PureWindowsPath,
+    ZoneInfo,
 ]
-
-if ZONEINFO_PRESENT:
-    INTERMEDIATE_TYPES.append(ZoneInfo)
 
 
 # Functions whose results are shown by default, by class name. Only functions that are cheap, have no side effects,

@@ -14,7 +14,7 @@ from django.test import override_settings
 from django_expanded_test_cases import IntegrationTestCase
 
 # Internal Imports.
-from django_dump_die.constants import PYTZ_PRESENT, ZONEINFO_PRESENT
+from django_dump_die.constants import PYTZ_PRESENT
 
 UNIQUE = "data_9001"
 
@@ -235,7 +235,6 @@ class DumpDieIntermediateTypeTestCase(IntegrationTestCase):
             ],
         )
 
-    @skipUnless(ZONEINFO_PRESENT, "zoneinfo was added in Python 3.9.")
     def test_zoneinfo_timezone_display(self, _mocked_unique):
         """Verify a zoneinfo timezone shows its key."""
         self.assertDump(

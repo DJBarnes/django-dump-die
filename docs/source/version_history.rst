@@ -1,6 +1,18 @@
 Version History
 ***************
 
+Unreleased
+==========
+
+Action Needed When Upgrading
+----------------------------
+
+* **Changed: Python 3.10 and Django 4.2 or later are needed.** Support for
+  Python 3.6 to 3.9 and Django 2.2 to 4.1 is removed. These are the oldest
+  versions the package works with without extra code for older versions,
+  and all of the removed versions are past their end of life. To keep using
+  an older Python or Django, stay on 0.2.1.
+
 0.2.1 (2026-11-09)
 ==================
 

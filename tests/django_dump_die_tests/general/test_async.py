@@ -3,32 +3,20 @@ Tests for the DumpDie middleware under ASGI, with async views.
 """
 
 # System Imports.
-from unittest import skipIf
 from unittest.mock import patch
 
 # Third-Party Imports.
-import django
+from asgiref.sync import iscoroutinefunction, sync_to_async
 from django.contrib.auth.models import User
+from django.core.handlers import base
+from django.core.handlers.asgi import ASGIHandler
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-# Async views, async middleware, and the AsyncClient came in Django 3.1.
-ASYNC_SUPPORTED = django.VERSION >= (3, 1)
-if ASYNC_SUPPORTED:
-    from asgiref.sync import sync_to_async
-
-    try:
-        from asgiref.sync import iscoroutinefunction
-    except ImportError:
-        # asgiref before 3.6, as installed on Python 3.6.
-        from asyncio import iscoroutinefunction
-    from django.core.handlers import base
-    from django.core.handlers.asgi import ASGIHandler
-
-    from django_dump_die.middleware import DumpAndDieMiddleware
+# Internal Imports.
+from django_dump_die.middleware import DumpAndDieMiddleware
 
 
-@skipIf(not ASYNC_SUPPORTED, "Async middleware needs Django 3.1 or later.")
 @override_settings(DEBUG=True)
 class DumpDieAsyncTestCase(TestCase):
     """Verify dumping from async views, and that the middleware runs async under ASGI."""

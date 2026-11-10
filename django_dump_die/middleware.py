@@ -3,25 +3,12 @@ Middleware for DumpAndDie.
 """
 
 # System Imports.
-import asyncio
 import logging
 import re
 
 # Third-Party Imports.
+from asgiref.sync import iscoroutinefunction, markcoroutinefunction, sync_to_async
 from django.conf import settings
-
-# Imports that may not be accessible, depending on the Django version.
-try:
-    from asgiref.sync import sync_to_async
-except ImportError:
-    # Django 2.2 doesn't install asgiref, and doesn't support async middleware.
-    sync_to_async = None
-try:
-    from asgiref.sync import iscoroutinefunction, markcoroutinefunction
-except ImportError:
-    # asgiref before 3.6, which Django 3.1 to 4.0 allow.
-    iscoroutinefunction = asyncio.iscoroutinefunction
-    markcoroutinefunction = None
 
 # Internal Imports.
 from django_dump_die.app_settings import app_settings
@@ -171,7 +158,7 @@ class DumpAndDieMiddleware:
 
     Allows access to php/laravel-like function dd().
 
-    Supports both sync and async requests (Django 3.1+), so that under ASGI it doesn't make Django switch between
+    Supports both sync and async requests, so that under ASGI it doesn't make Django switch between
     the event loop and a thread around the view on every request.
     """
 
@@ -187,12 +174,7 @@ class DumpAndDieMiddleware:
         # Under ASGI, Django passes an async get_response. Mark this middleware as async too, so that Django awaits it.
         self.is_async = iscoroutinefunction(get_response)
         if self.is_async:
-            if markcoroutinefunction is not None:
-                markcoroutinefunction(self)
-            else:  # pragma: no cover
-                # asgiref before 3.6, as installed on Python 3.6, which CI tests. How Django before 4.1 detects async
-                # middleware.
-                self._is_coroutine = asyncio.coroutines._is_coroutine
+            markcoroutinefunction(self)
 
         # Add global dd() function.
         __builtins__["dd"] = dd

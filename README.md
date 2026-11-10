@@ -2,8 +2,8 @@ Django Dump & Die
 ============================
 
 [![PyPI](https://img.shields.io/pypi/v/django-dump-die?color=blue)](https://img.shields.io/pypi/v/django-dump-die?color=blue)
-[![Python Versions](https://img.shields.io/badge/python-%3E%3D3.6-brightgreen)](https://img.shields.io/badge/python-%3E%3D3.6-brightgreen)
-[![Django Versions](https://img.shields.io/badge/django-%3E%3D2.2-brightgreen)](https://img.shields.io/badge/django-%3E%3D2.2-brightgreen)
+[![Python Versions](https://img.shields.io/badge/python-%3E%3D3.10-brightgreen)](https://img.shields.io/badge/python-%3E%3D3.10-brightgreen)
+[![Django Versions](https://img.shields.io/badge/django-%3E%3D4.2-brightgreen)](https://img.shields.io/badge/django-%3E%3D4.2-brightgreen)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Run Tests](https://github.com/DJBarnes/django-dump-die/actions/workflows/test.yaml/badge.svg)](https://github.com/DJBarnes/django-dump-die/actions/workflows/test.yaml)
 [![Coverage Status](https://coveralls.io/repos/github/DJBarnes/django-dump-die/badge.svg?branch=main)](https://coveralls.io/github/DJBarnes/django-dump-die?branch=main)
@@ -129,7 +129,7 @@ Attempting to ``dump`` or ``dd`` from a console command will not work.
 
 ---
 
-On Django 3.1 or later, the middleware supports both sync and async requests, so `dump()` and `dd()` work the same
+The middleware supports both sync and async requests, so `dump()` and `dd()` work the same
 in sync and async views.
 
 <br>

@@ -426,8 +426,6 @@ class DumpDieAttributeTypeTestCase(SimpleTestCase):
 
     def test_get_attribute_type_of_a_functools_cached_property(self):
         """Verify functools.cached_property is detected, before and after it is computed."""
-        if not hasattr(functools, "cached_property"):
-            self.skipTest("functools.cached_property was added in Python 3.8.")
 
         class HasFunctoolsCachedProperty:
             """Class with a functools cached property."""

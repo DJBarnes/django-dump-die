@@ -22,13 +22,7 @@ license = { file = "LICENSE" }
 classifiers = [
     "Environment :: Web Environment",
     "Framework :: Django",
-    "Framework :: Django :: 2",
-    "Framework :: Django :: 2.2",
-    "Framework :: Django :: 3",
-    "Framework :: Django :: 3.2",
     "Framework :: Django :: 4",
-    "Framework :: Django :: 4.0",
-    "Framework :: Django :: 4.1",
     "Framework :: Django :: 4.2",
     "Framework :: Django :: 5",
     "Framework :: Django :: 5.0",
@@ -42,10 +36,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -63,8 +53,8 @@ keywords = [
     "inspect",
     "tool",
 ]
-requires-python = ">=3.6"
-dependencies = ["django >= 2.2.0"]
+requires-python = ">=3.10"
+dependencies = ["django >= 4.2"]
 dynamic = ["version"]
 
 [project.optional-dependencies]
@@ -88,12 +78,10 @@ test = [
     "django-expanded-test-cases",
     "freezegun",
     "pillow",
-    # pytest 9 (Python 3.10+) reports subTest results itself; older versions need the pytest-subtests plugin.
-    "pytest>=9; python_version >= '3.10'",
-    "pytest; python_version < '3.10'",
+    # pytest 9 reports subTest results itself.
+    "pytest>=9",
     "pytest-cov",
     "pytest-django",
-    "pytest-subtests; python_version < '3.10'",
     "pytest-xdist",
     "pytz",
 ]
@@ -112,15 +100,14 @@ Changelog = "https://django-dump-die.readthedocs.io/en/stable/version_history.ht
 
 # "uv" development environment settings.
 [tool.uv]
-# The development environment (`uv sync --all-extras`) uses a recent Python. The package itself supports Python 3.6
+# The development environment (`uv sync --all-extras`) uses a recent Python. The package itself supports Python 3.10
 # and later (requires-python); tox tests the older versions.
 environments = ["python_version >= '3.12'"]
 
 # "Ruff" formatter and linter settings.
 [tool.ruff]
 line-length = 120
-# Ruff's oldest target. The package supports Python 3.6 (requires-python), which tox tests.
-target-version = "py37"
+# The oldest Python to support comes from requires-python.
 # Python files only; code examples in Markdown keep the docs' style.
 extend-exclude = ["*.md", "docs/build"]
 # The middleware adds dd() and dump() to builtins, so calling code doesn't import them.
@@ -223,11 +210,7 @@ exclude_lines = [
     "except AttributeError:",
     "except NotImplementedError:",
     "except Exception:\\n\\s*pass",
-    "if ZONEINFO_PRESENT:",
     "if PYTZ_PRESENT:",
 ]
-
-# Setting this replaces coverage's default list, so it includes the default "pragma: no branch" too.
-partial_branches = ["pragma: no branch", "if hasattr\\(SampleDjangoModel, .*"]
 
 # endregion Testing Settings

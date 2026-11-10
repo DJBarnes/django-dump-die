@@ -45,7 +45,7 @@ this off.
 ASGI and Async Views
 --------------------
 
-On Django 3.1 or later, the middleware supports both sync and async requests.
+The middleware supports both sync and async requests.
 Under ASGI it runs async, so it doesn't make Django switch between the event
 loop and a thread around your views on every request. Only when something was
 dumped does it render the dump page in a thread, since rendering can query the

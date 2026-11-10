@@ -3,19 +3,18 @@
 # System Imports.
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import PosixPath, PurePosixPath
+from zoneinfo import ZoneInfo
 
 # Third-Party Imports.
 from django.shortcuts import render
 
 # Internal Imports.
-from django_dump_die.constants import PYTZ_PRESENT, ZONEINFO_PRESENT
+from django_dump_die.constants import PYTZ_PRESENT
 from django_dump_die.middleware import dd, dump
 
 # Imports that may not be accessible, depending on local python environment setup.
 if PYTZ_PRESENT:
     import pytz
-if ZONEINFO_PRESENT:
-    from zoneinfo import ZoneInfo
 
 
 def _done(request):
