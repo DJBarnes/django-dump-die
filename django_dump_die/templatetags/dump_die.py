@@ -2,6 +2,7 @@
 
 # System Imports.
 import inspect
+from contextvars import ContextVar
 import re
 import traceback
 import types
@@ -63,9 +64,24 @@ register = template.Library()
 # region Module Variables
 
 # Uniques of the dumped root objects on the page being rendered, to count objects dumped more than once, and the
-# uniques of the original objects of deep copies. Cleared for each page of dumps by the dump_objects tag.
-repeat_iteration_tracker = {}
-deepcopy_unique_map = {}
+# uniques of the original objects of deep copies. The dump_objects tag sets new ones for each page of dumps, in a
+# context variable, so that pages rendered at the same time, such as in two threads, each have their own. Use
+# _get_trackers() to read them.
+_trackers = ContextVar("django_dump_die_trackers")
+
+
+def _get_trackers():
+    """Return the repeat iteration tracker and the deepcopy unique map of the page being rendered.
+
+    Outside of a dump_objects tag, such as when a test calls dump_object directly, they are created when first needed.
+    """
+    try:
+        return _trackers.get()
+    except LookupError:
+        trackers = ({}, {})
+        _trackers.set(trackers)
+        return trackers
+
 
 # endregion Module Variables
 
@@ -188,9 +204,9 @@ def dump_objects(objects):
 
     # The trackers of repeated objects only last for one page of dumps. Kept longer, they would grow for as long as
     # the server runs. And since a unique comes from id(), which Python reuses once an object is gone, an object on a
-    # later page could be taken for one dumped earlier, and get its count or deep copy uniques.
-    repeat_iteration_tracker.clear()
-    deepcopy_unique_map.clear()
+    # later page could be taken for one dumped earlier, and get its count or deep copy uniques. The page is rendered
+    # in this thread, by the dump_object tags this template calls, so they see the trackers set here.
+    _trackers.set(({}, {}))
 
     # _dump_objects.html passes each dumped object, and its deepcopy original, to the dump_object tag through
     # template variables, which would call them if they are callable. So hold callables until dump_object gets them.
@@ -334,6 +350,8 @@ def _generate_unique(obj, root_obj, original_obj):
     :param root_obj: Root object associated with current obj. Used for deepcopy mapping logic.
     :param original_obj: Original instance of object corresponding to current obj. Used for deepcopy mapping logic.
     """
+    repeat_iteration_tracker, deepcopy_unique_map = _get_trackers()
+
     # Get a unique for the object.
     unique = generate_unique_from_obj(obj)
 
@@ -393,6 +411,7 @@ def _generate_unique(obj, root_obj, original_obj):
 
 def _create_unique_map(obj, root_unique, original_obj):
     """Create an entry in the root_unique_map for this object."""
+    _repeat_iteration_tracker, deepcopy_unique_map = _get_trackers()
 
     # Create a dict for that unique map.
     deepcopy_unique_map[root_unique] = {}
@@ -403,6 +422,7 @@ def _create_unique_map(obj, root_unique, original_obj):
 
 def _add_unique_map_entry(obj, original_obj, root_unique):
     """Add a unique entry to the unique entry map."""
+    _repeat_iteration_tracker, deepcopy_unique_map = _get_trackers()
 
     # Calculate the obj unique and the original obj unique.
     obj_unique = generate_unique_from_obj(obj)

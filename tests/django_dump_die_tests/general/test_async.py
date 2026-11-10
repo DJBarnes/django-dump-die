@@ -30,6 +30,14 @@ class DumpDieAsyncTestCase(TestCase):
         self.assertIn("Dumped from an async view.", content)
         self.assertNotIn("Async page content.", content)
 
+    async def test_dump_in_sync_view_under_asgi_shows_dump_page(self):
+        """Verify dump() in a sync view, which Django runs in a thread under ASGI, is shown with the request."""
+        response = await self.async_client.get(reverse("django_dump_die__tests__general:dump_only"))
+        content = response.content.decode("utf-8")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Dumped without dd.", content)
+
     async def test_dd_in_async_view_shows_dump_page(self):
         """Verify dd() in an async view shows the dump page."""
         response = await self.async_client.get(reverse("django_dump_die__tests__general:async_dd"))

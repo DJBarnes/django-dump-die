@@ -123,7 +123,7 @@ def is_sensitive_name(name):
     """
     Return True if the value with this attribute, key, or function name should be hidden.
 
-    Dumps can be shown to whoever makes the next request, or end up in a screenshot, so sensitive values are hidden
+    Dumps can be shown to whoever opens the page, or end up in a screenshot, so sensitive values are hidden
     unless DJANGO_DD_SHOW_SENSITIVE_VALUES is on. Only names are checked, so other values, such as list items, are
     shown.
     """

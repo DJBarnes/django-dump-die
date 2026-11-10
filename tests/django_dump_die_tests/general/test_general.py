@@ -49,11 +49,11 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
     @override_settings(DEBUG=False)
     def test_break_does_nothing_when_debug_is_off(self):
         """Verify dump.br() adds nothing to the dumped objects when debug is off."""
-        middleware.dump_objects.clear()
+        middleware.get_dump_objects().clear()
 
         dump.br()
 
-        self.assertEqual(middleware.dump_objects, [])
+        self.assertEqual(middleware.get_dump_objects(), [])
 
     @override_settings(DEBUG=True)
     def test_break_style_setting(self):
@@ -106,7 +106,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
                 with self.subTest(debug=debug, size=size), override_settings(DEBUG=debug):
                     with self.assertRaisesMessage(ValueError, "dump.br() size must be a whole number of lines"):
                         dump.br(size=size)
-        middleware.dump_objects.clear()
+        middleware.get_dump_objects().clear()
 
     @override_settings(DEBUG=True)
     def test_custom_color_theme_keys_each_set_their_own_color(self):

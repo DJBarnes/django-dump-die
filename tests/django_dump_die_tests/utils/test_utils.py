@@ -34,7 +34,7 @@ from django_dump_die.utils import (
 
 def get_dumped_info():
     """Return the information collected by the last dump() call, and remove it from the dumped objects."""
-    return middleware.dump_objects.pop()
+    return middleware.get_dump_objects().pop()
 
 
 def get_dumped_name(info):
@@ -126,7 +126,7 @@ class DumpDieDumpedObjectInfoTestCase(SimpleTestCase):
     """Verify the information collected about dumped objects."""
 
     def tearDown(self):
-        middleware.dump_objects.clear()
+        middleware.get_dump_objects().clear()
         super().tearDown()
 
     def test_deepcopy_of_object_that_cannot_be_copied_raises_an_error(self):
@@ -225,8 +225,8 @@ class DumpDieDumpedObjectInfoTestCase(SimpleTestCase):
         dump(first); dump(second)  # noqa: E702
         # fmt: on
 
-        self.assertEqual(get_dumped_name(middleware.dump_objects[0]), "first")
-        self.assertEqual(get_dumped_name(middleware.dump_objects[1]), "second")
+        self.assertEqual(get_dumped_name(middleware.get_dump_objects()[0]), "first")
+        self.assertEqual(get_dumped_name(middleware.get_dump_objects()[1]), "second")
 
     def test_name_after_another_use_of_dump_on_the_line(self):
         """Verify a dump after dump.br(), or after an attribute named dump, on the same line gets its own name."""

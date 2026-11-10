@@ -119,8 +119,8 @@ def render_dump(obj):
 
 def render_dumped_objects():
     """Render everything collected by dump() calls, then clear the collected objects."""
-    objects = middleware.dump_objects[:]
-    middleware.dump_objects.clear()
+    objects = middleware.get_dump_objects()[:]
+    middleware.get_dump_objects().clear()
     return Template("{% load dump_die %}{% dump_objects objects %}").render(Context({"objects": objects}))
 
 
@@ -312,7 +312,7 @@ class DumpDieTagObjectsTestCase(SimpleTestCase):
     """Verify the dump output of bound fields, members that raise, deep copies, and index ranges."""
 
     def tearDown(self):
-        middleware.dump_objects.clear()
+        middleware.get_dump_objects().clear()
         super().tearDown()
 
     def test_dict_key_with_a_safe_repr_is_escaped(self):

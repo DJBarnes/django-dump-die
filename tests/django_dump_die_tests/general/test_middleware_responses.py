@@ -34,19 +34,33 @@ def get_response_that_keeps_the_dump_page(label):
     return HttpResponse(b"<html><body>\xff</body></html>", content_type="text/html; charset=utf-8")
 
 
-def process_response(response, has_non_dd_exception=False):
-    """Run the middleware's response handling for a response from the rest of the middleware chain."""
+def dump_value():
+    """Dump a value, as a view does."""
+    value = 42
+    dump(value)
+
+
+def process_response(response, has_non_dd_exception=False, view=dump_value):
+    """Run a request through the middleware, which calls view and then returns response from the rest of the chain.
+
+    Each request starts without dumps, so the dumps to show are made in view, during the request.
+    """
     request = RequestFactory().get("/")
     if has_non_dd_exception:
         request.has_non_dd_exception = True
-    return DumpAndDieMiddleware(lambda request: response)(request)
+
+    def get_response(request):
+        view()
+        return response
+
+    return DumpAndDieMiddleware(get_response)(request)
 
 
 class DumpDieMiddlewareResponseTestCase(SimpleTestCase):
     """Verify the responses the middleware returns, and that dumps are only ever shown with DEBUG on."""
 
     def tearDown(self):
-        middleware.dump_objects.clear()
+        middleware.get_dump_objects().clear()
         super().tearDown()
 
     @override_settings(DEBUG=True)
@@ -54,8 +68,6 @@ class DumpDieMiddlewareResponseTestCase(SimpleTestCase):
         """Verify adding the dumps to an error page updates its Content-Length, such as one set by CommonMiddleware."""
         response = HttpResponse(ERROR_PAGE, status=500)
         response["Content-Length"] = str(len(ERROR_PAGE))
-        value = 42
-        dump(value)
 
         response = process_response(response, has_non_dd_exception=True)
 
@@ -66,8 +78,6 @@ class DumpDieMiddlewareResponseTestCase(SimpleTestCase):
     @override_settings(DEBUG=True)
     def test_error_page_without_content_length_gets_none(self):
         """Verify adding the dumps to an error page doesn't add a Content-Length header that it didn't have."""
-        value = 42
-        dump(value)
 
         response = process_response(HttpResponse(ERROR_PAGE, status=500), has_non_dd_exception=True)
 
@@ -79,16 +89,20 @@ class DumpDieMiddlewareResponseTestCase(SimpleTestCase):
         for has_non_dd_exception in (False, True):
             with self.subTest(has_non_dd_exception=has_non_dd_exception):
                 original = HttpResponse(ERROR_PAGE)
-                secret = "collected while DEBUG was on"
-                with override_settings(DEBUG=True):
-                    dump(secret)
+
+                def dump_while_debug_is_on():
+                    secret = "collected while DEBUG was on"
+                    with override_settings(DEBUG=True):
+                        dump(secret)
 
                 with override_settings(DEBUG=False):
-                    response = process_response(original, has_non_dd_exception=has_non_dd_exception)
+                    response = process_response(
+                        original, has_non_dd_exception=has_non_dd_exception, view=dump_while_debug_is_on
+                    )
 
                 self.assertIs(response, original)
                 self.assertEqual(response.content.decode("utf-8"), ERROR_PAGE)
-                self.assertEqual(middleware.dump_objects, [])
+                self.assertEqual(middleware.get_dump_objects(), [])
 
 
 @override_settings(DEBUG=True, DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE=True)
@@ -96,15 +110,13 @@ class DumpDieAbovePageTestCase(SimpleTestCase):
     """Verify dumps shown above a page's own content, with DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE on."""
 
     def tearDown(self):
-        middleware.dump_objects.clear()
+        middleware.get_dump_objects().clear()
         super().tearDown()
 
     def test_dumps_are_added_to_the_top_of_the_body(self):
         """Verify the dumps follow the body tag, with its attributes, and the CSS and JS end the head."""
         response = HttpResponse(PAGE)
         response["Content-Length"] = str(len(PAGE))
-        value = 42
-        dump(value)
 
         response = process_response(response)
         content = response.content.decode("utf-8")
@@ -116,12 +128,10 @@ class DumpDieAbovePageTestCase(SimpleTestCase):
         self.assertTrue(body.lstrip().startswith('<div class="dump-die-above-page">'))
         self.assertLess(body.index('<span class="dumped_name">value</span>'), body.index("<h1>Page</h1>"))
         self.assertEqual(response["Content-Length"], str(len(response.content)))
-        self.assertEqual(middleware.dump_objects, [])
+        self.assertEqual(middleware.get_dump_objects(), [])
 
     def test_page_without_a_head_gets_the_css_and_js_in_its_body(self):
         """Verify a page without a head gets the CSS and JS at the start of its body, before the dumps."""
-        value = 42
-        dump(value)
 
         response = process_response(HttpResponse("<body><h1>Page</h1></body>"))
         content = response.content.decode("utf-8")
@@ -133,8 +143,6 @@ class DumpDieAbovePageTestCase(SimpleTestCase):
     def test_page_in_another_charset_keeps_its_charset(self):
         """Verify the page is read and written in its own charset."""
         page = "<html><head></head><body><p>Caf\u00e9</p></body></html>"
-        value = 42
-        dump(value)
 
         response = process_response(HttpResponse(page.encode("latin-1"), content_type="text/html; charset=latin-1"))
 
@@ -145,9 +153,6 @@ class DumpDieAbovePageTestCase(SimpleTestCase):
         """Verify responses that dumps can't be added to still get the dump page, so that the dumps aren't lost."""
         for label in ("json", "redirect", "streaming", "file", "compressed", "no body", "undecodable"):
             with self.subTest(response=label):
-                value = 42
-                dump(value)
-
                 response = process_response(get_response_that_keeps_the_dump_page(label))
                 content = response.content.decode("utf-8")
 
@@ -159,8 +164,6 @@ class DumpDieAbovePageTestCase(SimpleTestCase):
     @override_settings(DJANGO_DD_SHOW_DUMPS_ABOVE_PAGE=False)
     def test_page_is_replaced_by_default(self):
         """Verify the dump page replaces an HTML page when the setting is off, as it is by default."""
-        value = 42
-        dump(value)
 
         content = process_response(HttpResponse(PAGE)).content.decode("utf-8")
 
@@ -173,13 +176,11 @@ class DumpDieErrorPageTestCase(SimpleTestCase):
     """Verify dumps added to Django's error page after an unhandled exception."""
 
     def tearDown(self):
-        middleware.dump_objects.clear()
+        middleware.get_dump_objects().clear()
         super().tearDown()
 
     def test_dumps_are_added_above_the_error_page(self):
         """Verify the dumps are in the same wrapper as dumps above a page, so the toolbar doesn't cover the error."""
-        value = 42
-        dump(value)
 
         content = process_response(HttpResponse(ERROR_PAGE, status=500), has_non_dd_exception=True).content.decode()
 
@@ -188,22 +189,18 @@ class DumpDieErrorPageTestCase(SimpleTestCase):
     def test_error_that_is_not_an_html_page_is_returned_unchanged(self):
         """Verify an error response that dumps can't be added to, such as plain text, is kept, and dumps dropped."""
         original = HttpResponse("Error", status=500, content_type="text/plain")
-        value = 42
-        dump(value)
 
         response = process_response(original, has_non_dd_exception=True)
 
         self.assertIs(response, original)
         self.assertEqual(response.content, b"Error")
-        self.assertEqual(middleware.dump_objects, [])
+        self.assertEqual(middleware.get_dump_objects(), [])
 
     @override_settings(DJANGO_DD_SHOW_DUMPS_ON_ERROR_PAGE=False)
     def test_error_page_is_left_unchanged_when_turned_off(self):
         """Verify the error page gets no dumps, and the dumps are dropped, when the setting is off."""
-        value = 42
-        dump(value)
 
         response = process_response(HttpResponse(ERROR_PAGE, status=500), has_non_dd_exception=True)
 
         self.assertEqual(response.content.decode("utf-8"), ERROR_PAGE)
-        self.assertEqual(middleware.dump_objects, [])
+        self.assertEqual(middleware.get_dump_objects(), [])

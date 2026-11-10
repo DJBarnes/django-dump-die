@@ -13,6 +13,19 @@ Action Needed When Upgrading
   and all of the removed versions are past their end of life. To keep using
   an older Python or Django, stay on 0.2.1.
 
+Other Changes
+-------------
+
+* **Fixed: requests showed each other's dumps.** Dumped objects were
+  collected in one list for the whole server. When requests ran at the same
+  time, such as with ``runserver``'s threads or under ASGI, a request could
+  show another's dumps, and the other then showed none. And a request that
+  failed before its response was handled left its dumps for the next request
+  that dumped anything. Each request now shows only its own dumps. Pages of
+  dumps rendered at the same time also keep their own count of repeated
+  objects.
+  (`#34 <https://github.com/DJBarnes/django-dump-die/issues/34>`_)
+
 0.2.1 (2026-11-09)
 ==================
 

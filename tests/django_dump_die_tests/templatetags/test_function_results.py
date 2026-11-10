@@ -94,8 +94,8 @@ class AnswersAnyName:
 def render_dumped(obj):
     """Dump an object with dump(), and render the dump. Dumped with dump(), since a template would call a callable."""
     dump(obj)
-    objects = middleware.dump_objects[:]
-    middleware.dump_objects.clear()
+    objects = middleware.get_dump_objects()[:]
+    middleware.get_dump_objects().clear()
     return Template("{% load dump_die %}{% dump_objects objects %}").render(Context({"objects": objects}))
 
 
@@ -252,7 +252,7 @@ class DumpDieFunctionResultsTestCase(SimpleTestCase):
             with self.subTest(value=value), override_settings(DJANGO_DD_FUNCTION_RESULTS=value):
                 with self.assertRaisesMessage(ValueError, message):
                     render_dumped("anything")
-        middleware.dump_objects.clear()
+        middleware.get_dump_objects().clear()
 
     @override_settings(DJANGO_DD_INCLUDE_FUNCTION_RESULTS=True)
     @override_settings(DJANGO_DD_INCLUDE_ATTRIBUTES=False)

@@ -5,6 +5,7 @@ Middleware for DumpAndDie.
 # System Imports.
 import logging
 import re
+from contextvars import ContextVar
 
 # Third-Party Imports.
 from asgiref.sync import iscoroutinefunction, markcoroutinefunction, sync_to_async
@@ -16,7 +17,34 @@ from .views import dd_view
 from django_dump_die.utils import DumpBreak, get_dumped_object_info, is_valid_break_size
 
 logger = logging.getLogger("django_dump_die")
-dump_objects = []
+
+# The objects dumped in the current request. The middleware sets a new list for each request, so that a request only
+# shows its own dumps, even when requests run at the same time, in threads or in async tasks. Django runs sync code of
+# an async request in a thread with a copy of the request's context, which holds the same list, so its dumps are kept
+# too. Use get_dump_objects() to read it.
+_dump_objects = ContextVar("django_dump_die_dump_objects")
+
+
+def get_dump_objects():
+    """Return the list of objects dumped in the current request.
+
+    Outside of a request, such as in a test or the shell, it is a list for the current context, created when first
+    needed.
+    """
+    try:
+        return _dump_objects.get()
+    except LookupError:
+        objects = []
+        _dump_objects.set(objects)
+        return objects
+
+
+def _take_dump_objects():
+    """Return the objects dumped in the current request, and empty its list, so that they are only shown once."""
+    dump_objects = get_dump_objects()
+    objects = dump_objects[:]
+    dump_objects.clear()
+    return objects
 
 
 class DumpAndDie(Exception):  # noqa: N818 - Public name, raised by dd().
@@ -53,8 +81,7 @@ def dump(obj, index_range=None, deepcopy=None):
 
     Does nothing if DEBUG != True
 
-    NOTE: Not thread safe, this will collect objects server wide,
-    dumped objects can come from multiple requests.
+    Objects are collected for the current request only, so requests that run at the same time each show their own.
     """
 
     if settings.DEBUG:
@@ -62,7 +89,7 @@ def dump(obj, index_range=None, deepcopy=None):
         object_info = get_dumped_object_info(obj, index_range, deepcopy)
 
         # Run dd core logic.
-        dump_objects.append(object_info)
+        get_dump_objects().append(object_info)
 
 
 def dump_break(size=None):
@@ -80,7 +107,7 @@ def dump_break(size=None):
         raise ValueError("dump.br() size must be a whole number of lines, 1 or more, not {0!r}.".format(size))
 
     if settings.DEBUG:
-        dump_objects.append((None, None, None, DumpBreak(size), None, None, None, None))
+        get_dump_objects().append((None, None, None, DumpBreak(size), None, None, None, None))
 
 
 # Make dump_break available as dump.br().
@@ -189,24 +216,36 @@ class DumpAndDieMiddleware:
         if self.is_async:
             return self.__acall__(request)
 
-        # Get the response
-        response = self.get_response(request)
-        return self._process_response(request, response)
+        # Each request starts without dumps, so that it never shows those of another request, or those left by a
+        # request that failed before its response was handled.
+        token = _dump_objects.set([])
+        try:
+            # Get the response
+            response = self.get_response(request)
+            return self._process_response(request, response)
+        finally:
+            _dump_objects.reset(token)
 
     async def __acall__(self, request):
         """
         Async version of __call__, used under ASGI.
         Awaits the rest of the middleware chain directly, and only switches to a thread when something was dumped.
         """
-        response = await self.get_response(request)
+        # Each request starts without dumps, as in __call__. The request's task keeps this context for all of the
+        # request, and sync code run in a thread gets a copy of it, which holds the same list.
+        token = _dump_objects.set([])
+        try:
+            response = await self.get_response(request)
 
-        # Nothing was dumped, so the response is returned unchanged, without leaving the event loop.
-        if not dump_objects:
-            return response
+            # Nothing was dumped, so the response is returned unchanged, without leaving the event loop.
+            if not get_dump_objects():
+                return response
 
-        # Rendering the dump page can query the database, such as for a dumped QuerySet, which Django only allows
-        # in sync code. So render it in a thread.
-        return await sync_to_async(self._process_response, thread_sensitive=True)(request, response)
+            # Rendering the dump page can query the database, such as for a dumped QuerySet, which Django only allows
+            # in sync code. So render it in a thread.
+            return await sync_to_async(self._process_response, thread_sensitive=True)(request, response)
+        finally:
+            _dump_objects.reset(token)
 
     def _process_response(self, request, response):
         """
@@ -214,12 +253,11 @@ class DumpAndDieMiddleware:
         After an unhandled exception, add the dumps to the error page instead.
         """
         # Nothing was dumped, so the response is returned unchanged.
-        if not dump_objects:
+        if not get_dump_objects():
             return response
 
         # Take the dumped objects, so that they are only shown once.
-        objects = dump_objects[:]
-        dump_objects.clear()
+        objects = _take_dump_objects()
 
         # dump() and dump.br() only collect objects while DEBUG is on. But DEBUG can be turned off after they were
         # collected, such as by override_settings in tests. Dumps can hold anything, including secrets, so they are
@@ -256,10 +294,9 @@ class DumpAndDieMiddleware:
         If not, ignore and allow standard exception handling.
         """
         if isinstance(exception, DumpAndDie):
-            # Create a copy of the list, and clear it.
-            objects = dump_objects[:]
+            # Take the objects dumped before dd(), and add the one passed to dd().
+            objects = _take_dump_objects()
             objects.append(exception.object)
-            dump_objects.clear()
 
             # Return custom DumpAndDie output view.
             return dd_view(request, objects)

@@ -19,15 +19,15 @@ The example pages in ``django_dump_die.urls`` are for trying the package out
 locally. Don't include them in a project that is deployed.
 
 
-Dumps Are Shared Between Requests
-=================================
+Dumps Are Shown to Whoever Opens the Page
+=========================================
 
-Dumped objects are collected in one list for the whole server process, not
-for each request. A dump is shown on the next response the server sends,
-which isn't always a response to the request that made it. On a development
-server that several people use, or a test server with ``DEBUG`` on, one
-person's dumps can be shown to someone else. That can include their session
-cookie, which lets the other person log in as them.
+Dumped objects are collected for each request, and shown only in that
+request's response, even when requests run at the same time. But anyone who
+opens a page that dumps sees what it dumps. On a development server that
+several people use, or a test server with ``DEBUG`` on, that can include
+someone else's data, such as a dumped request with their session cookie,
+which lets the other person log in as them.
 
 Only use ``dump()`` and ``dd()`` on a server that only you use.
 

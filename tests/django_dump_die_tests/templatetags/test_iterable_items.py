@@ -28,8 +28,8 @@ class Item:
 
 def render_dumped_objects():
     """Render everything collected by dump() calls, then clear the collected objects."""
-    objects = middleware.dump_objects[:]
-    middleware.dump_objects.clear()
+    objects = middleware.get_dump_objects()[:]
+    middleware.get_dump_objects().clear()
     return Template("{% load dump_die %}{% dump_objects objects %}").render(Context({"objects": objects}))
 
 
@@ -53,7 +53,7 @@ class DumpDieIterableItemsTestCase(SimpleTestCase):
     """Verify only the dumped items of an iterable are listed, followed by how many more there are."""
 
     def tearDown(self):
-        middleware.dump_objects.clear()
+        middleware.get_dump_objects().clear()
         super().tearDown()
 
     def test_items_past_the_limit_are_not_listed(self):
@@ -175,7 +175,7 @@ class DumpDieQuerySetItemsTestCase(TestCase):
         User.objects.bulk_create([User(username=f"user{number:02}") for number in range(25)])
 
     def tearDown(self):
-        middleware.dump_objects.clear()
+        middleware.get_dump_objects().clear()
         super().tearDown()
 
     def test_queryset_fetches_only_the_dumped_rows(self):
