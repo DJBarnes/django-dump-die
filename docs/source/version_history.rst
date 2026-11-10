@@ -20,12 +20,12 @@ Other Changes
   management command, the shell, or a background task, ``dump()`` printed
   nothing, and kept the objects it collected for as long as the process ran,
   and ``dd()`` failed with an unreadable error. They now print the object to
-  the console (stderr) as an indented tree, with the same limits and hidden
-  sensitive values as the dump page, and ``dd()`` then stops with a message
-  saying why. ``dd()`` and ``dump()`` are now built-ins as soon as Django
-  starts, not only once the middleware is loaded, and can also be imported
-  with ``from django_dump_die import dd, dump``. See "Outside of a Request"
-  in the usage docs.
+  the console (stderr) as an indented tree, with the same limits, hidden
+  sensitive values, and colors as the dump page, and ``dd()`` then stops with
+  a message saying why. ``dd()`` and ``dump()`` are now built-ins as soon as
+  Django starts, not only once the middleware is loaded, and can also be
+  imported with ``from django_dump_die import dd, dump``. See "Outside of a
+  Request" in the usage docs.
   (`#21 <https://github.com/DJBarnes/django-dump-die/issues/21>`_)
 
 * **Fixed: requests showed each other's dumps.** Dumped objects were

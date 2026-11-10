@@ -120,8 +120,8 @@ this off.
 
 Outside of a request, such as in a management command, the shell, or a
 background task, there is no page to show dumps on. There, ``dump()`` prints
-the object to the console as an indented tree, with the same limits and
-hidden sensitive values as the dump page, and ``dd()`` prints it and then
+the object to the console as an indented tree, with the same limits, hidden
+sensitive values, and colors as the dump page, and ``dd()`` prints it and then
 stops by raising an exception. See
 [ReadTheDocs/Usage](https://django-dump-die.readthedocs.io/en/stable/usage.html#outside-of-a-request).
 

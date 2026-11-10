@@ -5,10 +5,12 @@ Tests for dd() and dump() outside of a request, such as in a management command,
 # System Imports.
 import builtins
 import io
+import os
 import re
 from contextlib import contextmanager, redirect_stderr
 from datetime import date
 from decimal import Decimal
+from unittest.mock import patch
 
 # Third-Party Imports.
 from django.contrib.auth.models import User
@@ -19,7 +21,7 @@ from django.test.utils import CaptureQueriesContext
 # Internal Imports.
 import django_dump_die
 from django_dump_die import functions
-from django_dump_die.console import format_dump
+from django_dump_die.console import ConsoleColors, _nearest_256_color, format_dump, get_console_colors
 from django_dump_die.functions import DumpAndDie, dd, dump, get_dump_objects
 from django_dump_die.utils import DumpBreak, generate_unique_from_obj
 
@@ -234,3 +236,85 @@ class DumpDieBuiltinsTestCase(SimpleTestCase):
         self.assertIs(django_dump_die.dump, functions.dump)
         with self.assertRaisesRegex(AttributeError, re.escape("has no attribute 'missing'")):
             django_dump_die.missing  # noqa: B018 - The attribute lookup is what is tested.
+
+
+class TerminalOutput(io.StringIO):
+    """Output that reports being a terminal, as stderr does when nothing redirects it."""
+
+    def isatty(self):
+        return True
+
+
+def without_color_variables():
+    """Return the environment without the variables that turn console colors on or off."""
+    names = ("NO_COLOR", "FORCE_COLOR", "DJANGO_COLORS", "COLORTERM")
+    return {name: value for name, value in os.environ.items() if name not in names}
+
+
+@override_settings(DEBUG=True)
+class DumpDieConsoleColorsTestCase(SimpleTestCase):
+    """Verify console dumps have the page's colors in a terminal, and are plain text otherwise."""
+
+    def colors_for(self, stream, **environment):
+        """Return the colors for output to stream, with only the given color variables set."""
+        with patch.dict(os.environ, {**without_color_variables(), **environment}, clear=True):
+            return get_console_colors(stream)
+
+    def test_colored_in_a_terminal(self):
+        """Verify output to a terminal is colored, with 24-bit colors when the terminal says it supports them."""
+        self.assertIsInstance(self.colors_for(TerminalOutput()), ConsoleColors)
+        self.assertFalse(self.colors_for(TerminalOutput()).truecolor)
+        for value in ("truecolor", "24bit"):
+            with self.subTest(colorterm=value):
+                self.assertTrue(self.colors_for(TerminalOutput(), COLORTERM=value).truecolor)
+
+    def test_plain_when_not_a_terminal(self):
+        """Verify output to a file or a pipe is plain, unless FORCE_COLOR is set."""
+        self.assertIsNone(self.colors_for(io.StringIO()))
+        self.assertIsInstance(self.colors_for(io.StringIO(), FORCE_COLOR="1"), ConsoleColors)
+
+    def test_plain_when_colors_are_turned_off(self):
+        """Verify NO_COLOR and Django's DJANGO_COLORS=nocolor turn colors off, even in a terminal."""
+        for name, value in (("NO_COLOR", "1"), ("DJANGO_COLORS", "nocolor")):
+            with self.subTest(variable=name):
+                self.assertIsNone(self.colors_for(TerminalOutput(), **{name: value}))
+
+    def test_colors_match_the_page(self):
+        """Verify a part of a dump gets the page's color for its class, as a 24-bit or 256-color code."""
+        self.assertEqual(ConsoleColors(truecolor=True)("text", "type"), "\033[38;2;133;153;0mtext\033[0m")
+        self.assertEqual(ConsoleColors()("text", "type"), "\033[38;5;100mtext\033[0m")
+
+    def test_text_without_a_color_is_unchanged(self):
+        """Verify a class without a color, such as the braces, and empty text are left as they are."""
+        self.assertEqual(ConsoleColors()("{", "braces"), "{")
+        self.assertEqual(ConsoleColors()("", "type"), "")
+
+    @override_settings(DJANGO_DD_COLOR_SCHEME={"meta": {"type": "#ff0000"}, "dark": {"color": "#000000"}})
+    def test_custom_color_scheme_is_used(self):
+        """Verify colors from DJANGO_DD_COLOR_SCHEME replace the page's, and other classes keep the defaults."""
+        colors = ConsoleColors(truecolor=True)
+
+        self.assertEqual(colors("text", "type"), "\033[38;2;255;0;0mtext\033[0m")
+        self.assertEqual(colors("text", "string"), "\033[38;2;42;161;152mtext\033[0m")
+
+    def test_nearest_256_color(self):
+        """Verify a color is matched to the nearest terminal color, from the color cube or the greys."""
+        for color, expected in (((0, 0, 0), 16), ((255, 255, 255), 231), ((255, 0, 0), 196), ((128, 128, 128), 244)):
+            with self.subTest(color=color):
+                self.assertEqual(_nearest_256_color(*color), expected)
+
+    def test_dump_to_a_terminal_is_colored(self):
+        """Verify dump() colors its output in a terminal: the name, the type, the unique, keys, and values."""
+        values = {"count": 3}
+        output = TerminalOutput()
+        with patch.dict(os.environ, without_color_variables(), clear=True), patch("sys.stderr", output):
+            dump(values)
+
+        colors = ConsoleColors()
+        self.assertEqual(
+            output.getvalue(),
+            f"{colors('values', 'dumped_name')}: {colors('dict:1', 'type')} "
+            f"{colors(generate_unique_from_obj(values), 'unique')} {{\n"
+            f"    {colors(chr(39) + 'count' + chr(39), 'key')}: {colors('3', 'number')}\n"
+            "}\n",
+        )

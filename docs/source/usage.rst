@@ -62,6 +62,13 @@ of sensitive values. An object shown again, such as one that refers back to
 itself, shows the same unique as where it is shown in full. Functions aren't
 listed, but :ref:`function results <function-results>` are.
 
+In a terminal, the tree has the dump page's colors, including any changed by
+:ref:`DJANGO_DD_COLOR_SCHEME <color-scheme>`. Terminals that set
+``COLORTERM=truecolor`` get the exact colors, and others the nearest of the
+256 standard terminal colors. Output to a file or a pipe is plain text,
+unless the ``FORCE_COLOR`` environment variable is set. Set ``NO_COLOR``, or
+Django's ``DJANGO_COLORS=nocolor``, to turn colors off.
+
 ``dd()`` prints the object, then stops by raising the ``DumpAndDie``
 exception, with a message saying why. In a management command, this ends the
 command with a traceback. In the shell, it returns to the prompt.

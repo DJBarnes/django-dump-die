@@ -143,9 +143,9 @@ def _print_to_console(object_info):
     """Print a dumped object, or a break, to the console (stderr), so that it doesn't mix with a command's output."""
     # Imported here, since the console output uses the template tag's code, which isn't needed until something is
     # printed.
-    from django_dump_die.console import format_dump  # noqa: PLC0415
+    from django_dump_die.console import format_dump, get_console_colors  # noqa: PLC0415
 
-    sys.stderr.write(format_dump(object_info) + "\n")
+    sys.stderr.write(format_dump(object_info, get_console_colors(sys.stderr)) + "\n")
 
 
 def install_builtins():

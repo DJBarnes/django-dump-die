@@ -559,6 +559,8 @@ Example::
     DJANGO_DD_FORCE_DARK_THEME = True
 
 
+.. _color-scheme:
+
 DJANGO_DD_COLOR_SCHEME
 ======================
 
