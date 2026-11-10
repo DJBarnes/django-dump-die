@@ -118,16 +118,12 @@ exception are shown above Django's error page, so that you see both. See
 [DJANGO_DD_SHOW_DUMPS_ON_ERROR_PAGE](https://django-dump-die.readthedocs.io/en/stable/configuration.html#show-dumps-on-error-page) to turn
 this off.
 
----
-:information_source: **NOTE**
-Because dump die uses middleware to internally handle keeping track of
-what to dump and then actually dumping the data to the browser, any
-call to ``dump`` or ``dd`` must be done in a file that will be processed
-during the request-response cycle. Most commonly this will be a
-``views.py`` file, but could also be utils called from a view.
-Attempting to ``dump`` or ``dd`` from a console command will not work.
-
----
+Outside of a request, such as in a management command, the shell, or a
+background task, there is no page to show dumps on. There, ``dump()`` prints
+the object to the console as an indented tree, with the same limits and
+hidden sensitive values as the dump page, and ``dd()`` prints it and then
+stops by raising an exception. See
+[ReadTheDocs/Usage](https://django-dump-die.readthedocs.io/en/stable/usage.html#outside-of-a-request).
 
 The middleware supports both sync and async requests, so `dump()` and `dd()` work the same
 in sync and async views.

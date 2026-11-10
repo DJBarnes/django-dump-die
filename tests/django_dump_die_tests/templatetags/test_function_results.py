@@ -13,6 +13,7 @@ from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 
 # Internal Imports.
+from django_dump_die_tests.collected_dumps import CollectDumpsMixin
 from django_dump_die import middleware
 from django_dump_die.middleware import dump
 
@@ -107,7 +108,7 @@ def result_row(name):
 
 
 @override_settings(DEBUG=True)
-class DumpDieFunctionResultsTestCase(SimpleTestCase):
+class DumpDieFunctionResultsTestCase(CollectDumpsMixin, SimpleTestCase):
     """Verify which function results are shown, and how."""
 
     def test_off_by_default(self):

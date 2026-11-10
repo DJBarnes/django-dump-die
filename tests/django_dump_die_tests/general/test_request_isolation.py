@@ -14,7 +14,9 @@ from django.template import Context, Template
 from django.test import RequestFactory, SimpleTestCase, override_settings
 
 # Internal Imports.
+from django_dump_die_tests.collected_dumps import CollectDumpsMixin
 from django_dump_die import middleware
+from django_dump_die.functions import collect_dumps
 from django_dump_die.middleware import DumpAndDieMiddleware, dump
 from django_dump_die.utils import generate_unique_from_obj
 
@@ -27,14 +29,14 @@ def run_in_threads(*targets):
     """Run each target in its own thread, and return their results, or raise the first exception.
 
     Each runs in a new, empty context, as a thread does by default, so that the results don't depend on whether
-    threads copy their parent's context, as they can on Python 3.14.
+    threads copy their parent's context, as they can on Python 3.14. Its dumps are collected, as in a request.
     """
     results = [None] * len(targets)
     errors = []
 
     def run(index, target):
         try:
-            results[index] = contextvars.Context().run(target)
+            results[index] = contextvars.Context().run(collected, target)
         except Exception as exception:  # Raised again in the test's thread below.
             errors.append(exception)
 
@@ -48,6 +50,12 @@ def run_in_threads(*targets):
     return results
 
 
+def collected(target):
+    """Run target while collecting its dumps, as in a request, and return its result."""
+    with collect_dumps():
+        return target()
+
+
 def render_page():
     """Render a page of the objects dumped in this context, as the dump page does."""
     objects = middleware.get_dump_objects()[:]
@@ -55,7 +63,7 @@ def render_page():
 
 
 @override_settings(DEBUG=True)
-class DumpDieRequestIsolationTestCase(SimpleTestCase):
+class DumpDieRequestIsolationTestCase(CollectDumpsMixin, SimpleTestCase):
     """Verify each request shows only the objects dumped during it."""
 
     def tearDown(self):

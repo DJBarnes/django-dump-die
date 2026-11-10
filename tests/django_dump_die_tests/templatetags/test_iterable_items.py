@@ -14,6 +14,7 @@ from django.test import SimpleTestCase, TestCase, override_settings
 from django.test.utils import CaptureQueriesContext
 
 # Internal Imports.
+from django_dump_die_tests.collected_dumps import CollectDumpsMixin
 from django_dump_die import middleware
 from django_dump_die.middleware import dump
 from django_dump_die.utils import generate_unique_from_obj
@@ -49,7 +50,7 @@ def expanded(obj):
 
 
 @override_settings(DEBUG=True)
-class DumpDieIterableItemsTestCase(SimpleTestCase):
+class DumpDieIterableItemsTestCase(CollectDumpsMixin, SimpleTestCase):
     """Verify only the dumped items of an iterable are listed, followed by how many more there are."""
 
     def tearDown(self):
@@ -167,7 +168,7 @@ class DumpDieIterableItemsTestCase(SimpleTestCase):
 
 
 @override_settings(DEBUG=True)
-class DumpDieQuerySetItemsTestCase(TestCase):
+class DumpDieQuerySetItemsTestCase(CollectDumpsMixin, TestCase):
     """Verify a dumped QuerySet fetches only the rows that are dumped, and counts the rest."""
 
     @classmethod

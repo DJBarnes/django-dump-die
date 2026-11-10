@@ -15,6 +15,7 @@ from django.utils.functional import cached_property
 from django.utils.html import format_html
 
 # Internal Imports.
+from django_dump_die_tests.collected_dumps import CollectDumpsMixin
 from django_dump_die import middleware
 from django_dump_die.middleware import dump
 from django_dump_die.app_settings import app_settings
@@ -152,7 +153,7 @@ class DumpDieRootIndicesTestCase(SimpleTestCase):
 
 
 @override_settings(DEBUG=True)
-class DumpDieTagSettingsTestCase(SimpleTestCase):
+class DumpDieTagSettingsTestCase(CollectDumpsMixin, SimpleTestCase):
     """Verify the dump output follows the attribute, function, private, and magic member settings."""
 
     @override_settings(DJANGO_DD_INCLUDE_ATTRIBUTES=False)
@@ -308,7 +309,7 @@ class DumpDieTagSettingsTestCase(SimpleTestCase):
 
 
 @override_settings(DEBUG=True)
-class DumpDieTagObjectsTestCase(SimpleTestCase):
+class DumpDieTagObjectsTestCase(CollectDumpsMixin, SimpleTestCase):
     """Verify the dump output of bound fields, members that raise, deep copies, and index ranges."""
 
     def tearDown(self):

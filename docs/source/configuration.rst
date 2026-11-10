@@ -9,6 +9,8 @@ Settings are read each time they are used, so they can be changed in tests
 with Django's ``override_settings``.
 
 
+.. _max-recursion-depth:
+
 DJANGO_DD_MAX_RECURSION_DEPTH
 =============================
 
@@ -28,6 +30,8 @@ Example::
     DJANGO_DD_MAX_RECURSION_DEPTH = 10
 
 
+
+.. _max-iterable-length:
 
 DJANGO_DD_MAX_ITERABLE_LENGTH
 =============================

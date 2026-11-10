@@ -33,14 +33,45 @@ exception are shown above Django's error page, so that you see both. See
 :ref:`DJANGO_DD_SHOW_DUMPS_ON_ERROR_PAGE <show-dumps-on-error-page>` to turn
 this off.
 
-.. note::
+Outside of a Request
+--------------------
 
-    Because dump die uses middleware to internally handle keeping track of
-    what to dump and then actually dumping the data to the browser, any
-    call to ``dump`` or ``dd`` must be done in a file that will be processed
-    during the request-response cycle. Most commonly this will be a
-    ``views.py`` file, but could also be utils called from a view.
-    Attempting to ``dump`` or ``dd`` from a console command will not work.
+Outside of a request, such as in a management command, the ``manage.py
+shell``, or a background task, there is no page to show dumps on. There,
+``dump()`` prints the object to the console (stderr) right away, as an
+indented tree:
+
+.. code-block:: text
+
+    account: Account Account_8576962937966 {
+        items: list:25 list_137231406966784 [
+            0: 0
+            ...
+            19: 19
+            … 5 more
+        ]
+        name: 'example'
+        owner: Account Account_8576962937966
+        password: ********************
+    }
+
+The tree follows the same settings as the dump page, such as
+:ref:`DJANGO_DD_MAX_RECURSION_DEPTH <max-recursion-depth>`,
+:ref:`DJANGO_DD_MAX_ITERABLE_LENGTH <max-iterable-length>`, and the hiding
+of sensitive values. An object shown again, such as one that refers back to
+itself, shows the same unique as where it is shown in full. Functions aren't
+listed, but :ref:`function results <function-results>` are.
+
+``dd()`` prints the object, then stops by raising the ``DumpAndDie``
+exception, with a message saying why. In a management command, this ends the
+command with a traceback. In the shell, it returns to the prompt.
+
+``dump.br()`` prints a line across.
+
+As in requests, ``dd()`` and ``dump()`` do nothing unless ``DEBUG`` is
+``True``, and they are built-ins, so they don't need to be imported. In code
+that runs before Django is set up, import them with
+``from django_dump_die import dd, dump``.
 
 ASGI and Async Views
 --------------------

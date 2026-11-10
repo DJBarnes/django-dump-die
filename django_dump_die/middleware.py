@@ -5,7 +5,6 @@ Middleware for DumpAndDie.
 # System Imports.
 import logging
 import re
-from contextvars import ContextVar
 
 # Third-Party Imports.
 from asgiref.sync import iscoroutinefunction, markcoroutinefunction, sync_to_async
@@ -13,30 +12,21 @@ from django.conf import settings
 
 # Internal Imports.
 from django_dump_die.app_settings import app_settings
+from django_dump_die.functions import (
+    DumpAndDie,
+    collect_dumps,
+    dd,
+    dump,
+    dump_break,
+    get_dump_objects,
+    install_builtins,
+)
 from .views import dd_view
-from django_dump_die.utils import DumpBreak, get_dumped_object_info, is_valid_break_size
+
+# dd(), dump(), and DumpAndDie live in functions.py, and can still be imported from here, as before.
+__all__ = ["DumpAndDie", "DumpAndDieMiddleware", "dd", "dump", "dump_break", "get_dump_objects"]
 
 logger = logging.getLogger("django_dump_die")
-
-# The objects dumped in the current request. The middleware sets a new list for each request, so that a request only
-# shows its own dumps, even when requests run at the same time, in threads or in async tasks. Django runs sync code of
-# an async request in a thread with a copy of the request's context, which holds the same list, so its dumps are kept
-# too. Use get_dump_objects() to read it.
-_dump_objects = ContextVar("django_dump_die_dump_objects")
-
-
-def get_dump_objects():
-    """Return the list of objects dumped in the current request.
-
-    Outside of a request, such as in a test or the shell, it is a list for the current context, created when first
-    needed.
-    """
-    try:
-        return _dump_objects.get()
-    except LookupError:
-        objects = []
-        _dump_objects.set(objects)
-        return objects
 
 
 def _take_dump_objects():
@@ -45,73 +35,6 @@ def _take_dump_objects():
     objects = dump_objects[:]
     dump_objects.clear()
     return objects
-
-
-class DumpAndDie(Exception):  # noqa: N818 - Public name, raised by dd().
-    """
-    DumpAndDie Exception.
-    Triggers the middleware exception logic which outputs the alternate dd debug view.
-    """
-
-    def __init__(self, obj):
-        super().__init__(obj)
-        self.object = obj
-
-
-def dd(obj, index_range=None, deepcopy=None):
-    """
-    Immediately return debug template with info about objects.
-    Includes any objects passed in through dump().
-
-    Does nothing if DEBUG != True.
-    """
-
-    if settings.DEBUG:
-        # Get the object info
-        object_info = get_dumped_object_info(obj, index_range, deepcopy)
-
-        # Run dd core logic.
-        raise DumpAndDie(object_info)
-
-
-def dump(obj, index_range=None, deepcopy=None):
-    """
-    Show debug template whenever response finishes.
-    dd() will also include objects from dump().
-
-    Does nothing if DEBUG != True
-
-    Objects are collected for the current request only, so requests that run at the same time each show their own.
-    """
-
-    if settings.DEBUG:
-        # Get the object info
-        object_info = get_dumped_object_info(obj, index_range, deepcopy)
-
-        # Run dd core logic.
-        get_dump_objects().append(object_info)
-
-
-def dump_break(size=None):
-    """
-    Show a break between the objects dumped before and after it.
-    Used as dump.br(), so that it doesn't need its own built-in name.
-
-    :param size: Height of the break, as a whole number of lines. Defaults to DJANGO_DD_BREAK_SIZE.
-
-    Does nothing if DEBUG != True
-    """
-
-    # Check the size even when DEBUG is off, so that a typo shows up at the call.
-    if size is not None and not is_valid_break_size(size):
-        raise ValueError("dump.br() size must be a whole number of lines, 1 or more, not {0!r}.".format(size))
-
-    if settings.DEBUG:
-        get_dump_objects().append((None, None, None, DumpBreak(size), None, None, None, None))
-
-
-# Make dump_break available as dump.br().
-dump.br = dump_break
 
 
 def _set_content(response, content):
@@ -203,10 +126,8 @@ class DumpAndDieMiddleware:
         if self.is_async:
             markcoroutinefunction(self)
 
-        # Add global dd() function.
-        __builtins__["dd"] = dd
-        # Add global dump() function.
-        __builtins__["dump"] = dump
+        # Make dd() and dump() built-ins. The app's ready() does too, for code that runs outside of requests.
+        install_builtins()
 
     def __call__(self, request):
         """
@@ -218,13 +139,10 @@ class DumpAndDieMiddleware:
 
         # Each request starts without dumps, so that it never shows those of another request, or those left by a
         # request that failed before its response was handled.
-        token = _dump_objects.set([])
-        try:
+        with collect_dumps():
             # Get the response
             response = self.get_response(request)
             return self._process_response(request, response)
-        finally:
-            _dump_objects.reset(token)
 
     async def __acall__(self, request):
         """
@@ -233,8 +151,7 @@ class DumpAndDieMiddleware:
         """
         # Each request starts without dumps, as in __call__. The request's task keeps this context for all of the
         # request, and sync code run in a thread gets a copy of it, which holds the same list.
-        token = _dump_objects.set([])
-        try:
+        with collect_dumps():
             response = await self.get_response(request)
 
             # Nothing was dumped, so the response is returned unchanged, without leaving the event loop.
@@ -244,8 +161,6 @@ class DumpAndDieMiddleware:
             # Rendering the dump page can query the database, such as for a dumped QuerySet, which Django only allows
             # in sync code. So render it in a thread.
             return await sync_to_async(self._process_response, thread_sensitive=True)(request, response)
-        finally:
-            _dump_objects.reset(token)
 
     def _process_response(self, request, response):
         """

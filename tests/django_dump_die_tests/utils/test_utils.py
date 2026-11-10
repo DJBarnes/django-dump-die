@@ -15,6 +15,7 @@ from django.utils.html import format_html
 from django.utils.safestring import SafeData
 
 # Internal Imports.
+from django_dump_die_tests.collected_dumps import CollectDumpsMixin
 from django_dump_die import middleware
 from django_dump_die.middleware import dd, dump
 from django_dump_die.views.example_helpers import SampleRelation
@@ -122,7 +123,7 @@ class ReturnsNonStringOnStr:
 
 
 @override_settings(DEBUG=True)
-class DumpDieDumpedObjectInfoTestCase(SimpleTestCase):
+class DumpDieDumpedObjectInfoTestCase(CollectDumpsMixin, SimpleTestCase):
     """Verify the information collected about dumped objects."""
 
     def tearDown(self):

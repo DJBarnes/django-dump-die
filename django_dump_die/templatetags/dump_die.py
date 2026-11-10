@@ -70,6 +70,17 @@ register = template.Library()
 _trackers = ContextVar("django_dump_die_trackers")
 
 
+def start_page_of_dumps():
+    """Start new records of repeated objects, for a new page of dumps, such as the dump page or one console dump.
+
+    The records only last for one page of dumps. Kept longer, they would grow for as long as the server runs. And
+    since a unique comes from id(), which Python reuses once an object is gone, an object on a later page could be
+    taken for one dumped earlier, and get its count or deep copy uniques. The page is rendered in the same thread, by
+    the dump_object calls that follow, so they see the records set here.
+    """
+    _trackers.set(({}, {}))
+
+
 def _get_trackers():
     """Return the repeat iteration tracker and the deepcopy unique map of the page being rendered.
 
@@ -202,11 +213,7 @@ def dump_objects(objects):
     if app_settings.INCLUDE_FUNCTION_RESULTS:
         _check_function_results_setting()
 
-    # The trackers of repeated objects only last for one page of dumps. Kept longer, they would grow for as long as
-    # the server runs. And since a unique comes from id(), which Python reuses once an object is gone, an object on a
-    # later page could be taken for one dumped earlier, and get its count or deep copy uniques. The page is rendered
-    # in this thread, by the dump_object tags this template calls, so they see the trackers set here.
-    _trackers.set(({}, {}))
+    start_page_of_dumps()
 
     # _dump_objects.html passes each dumped object, and its deepcopy original, to the dump_object tag through
     # template variables, which would call them if they are callable. So hold callables until dump_object gets them.
