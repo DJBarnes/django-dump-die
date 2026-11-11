@@ -11,6 +11,7 @@
         {% if sections_collapsible %}
           <p id="expand-types" class="button">Expand <br>Content</p>
           {% if attrs_enabled %}<p id="expand-attrs" class="button">Expand <br>Attributes</p>{% endif %}
+          {% if relations_enabled %}<p id="expand-relations" class="button">Expand <br>Relations</p>{% endif %}
           {% if results_enabled %}<p id="expand-results" class="button">Expand <br>Function Results</p>{% endif %}
           {% if funcs_enabled %}<p id="expand-funcs" class="button">Expand <br>Functions</p>{% endif %}
         {% endif %}
@@ -25,6 +26,7 @@
         {% if sections_collapsible %}
           <p id="collapse-types" class="button">Collapse <br>Content</p>
           {% if attrs_enabled %}<p id="collapse-attrs" class="button">Collapse <br>Attributes</p>{% endif %}
+          {% if relations_enabled %}<p id="collapse-relations" class="button">Collapse <br>Relations</p>{% endif %}
           {% if results_enabled %}<p id="collapse-results" class="button">Collapse <br>Function Results</p>{% endif %}
           {% if funcs_enabled %}<p id="collapse-funcs" class="button">Collapse <br>Functions</p>{% endif %}
         {% endif %}

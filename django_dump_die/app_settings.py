@@ -71,6 +71,11 @@ class AppSettings:
     INCLUDE_FILENAME_LINENUMBER = Setting(False)
     # Whether attributes should be included in the output.
     INCLUDE_ATTRIBUTES = Setting(True)
+    # Whether the relations of model instances should be included in the output, in their own section.
+    INCLUDE_RELATIONS = Setting(True)
+    # How many relation steps from the dumped object to follow relations that return one object, such as foreign
+    # keys, querying the database for those not loaded already. 0 only shows what is loaded.
+    RELATED_OBJECT_DEPTH = Setting(3)
     # Whether functions should be included in the output.
     INCLUDE_FUNCTIONS = Setting(False)
     # Whether the results of some functions should be included in the output. Off by default, since it runs code.
@@ -93,6 +98,8 @@ class AppSettings:
     CONTENT_STARTS_EXPANDED = Setting(False)
     # Whether the attributes for an object should start expanded for viewing.
     ATTRIBUTES_START_EXPANDED = Setting(True)
+    # Whether the relations of a model instance should start expanded for viewing.
+    RELATIONS_START_EXPANDED = Setting(True)
     # Whether the function results for an object should start expanded for viewing.
     FUNCTION_RESULTS_START_EXPANDED = Setting(True)
     # Whether the functions for an object should start expanded for viewing.

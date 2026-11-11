@@ -1,0 +1,38 @@
+{% load dump_die %}
+
+
+<a
+  class="arrow-toggle {{ collapsable.relation.class }}"
+  title="[Ctrl+click] Expand all children"
+  {% if collapsable.relation.always_show == 'false' %}
+    data-dd-toggle="collapse"
+  {% endif %}
+  data-target=".{{ unique }}{{ root_count }}-relations"
+  data-dd-type="relation"
+  aria-label="Open/Close"
+  aria-expanded="{{ collapsable.relation.aria }}"
+>
+  <span class="section_name">Relations</span>
+  <span id="arrow-{{ unique }}{{ root_count }}-relations" class="arrow">
+    {{ collapsable.relation.arrow }}
+  </span>
+</a>
+
+<div
+  class="li-wrapper collapse {{ unique }}{{ root_count }}-relations {{ collapsable.relation.show }}"
+  data-unique-relations="{{ unique }}{{ root_count }}-relations"
+>
+  {% for relation in relations %}
+    <li>
+      {% with depth|add:'1' as new_depth %}
+        <span class="attribute" title="{{ relation.title }}">{{ relation.name }}</span>:
+        {# Shown in place of a relation that isn't loaded and isn't followed, or is hidden or failed to load. #}
+        {% if relation.value|is_placeholder %}
+          <span class="empty" title="{{ relation.value.title }}">{{ relation.value.text }}</span>
+        {% else %}
+          {% dump_object relation.value root_obj skip new_depth original_obj False relation_steps=next_relation_steps %}
+        {% endif %}
+      {% endwith %}
+    </li>
+  {% endfor %}
+</div>

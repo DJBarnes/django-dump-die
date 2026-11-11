@@ -5,6 +5,7 @@ from django.shortcuts import render
 
 # Internal Imports.
 from django_dump_die.middleware import dd, dump
+from django_dump_die_tests.django_test_project.models import Book
 
 
 class BrowserTestClass:
@@ -30,6 +31,12 @@ def nested_example(request):
         BrowserTestClass(),
     ]
     dd(nested_example)
+
+
+def relations_example(request):
+    """Dumps a model instance, which has a Relations section. It isn't saved, so the page runs no queries."""
+    sample_book = Book(title="Draft")
+    dd(sample_book)
 
 
 def template_dump_example(request):

@@ -294,7 +294,7 @@ var djangoDumpDie = window.djangoDumpDie || {
     },
 
     /**
-     * Open or close all toggles of one type ("type", "attr", "result", or "func"), or all toggles.
+     * Open or close all toggles of one type ("type", "attr", "relation", "result", or "func"), or all toggles.
      */
     setTypeOpen(type, open) {
         const filter = type ? (toggle) => toggle.dataset.ddType === type : null;
@@ -312,6 +312,9 @@ var djangoDumpDie = window.djangoDumpDie || {
     },
     expandAllAttributes() {
         djangoDumpDie.setTypeOpen('attr', true);
+    },
+    expandAllRelations() {
+        djangoDumpDie.setTypeOpen('relation', true);
     },
     expandAllFunctionResults() {
         djangoDumpDie.setTypeOpen('result', true);
@@ -338,6 +341,9 @@ var djangoDumpDie = window.djangoDumpDie || {
     collapseAllAttributes() {
         djangoDumpDie.setTypeOpen('attr', false);
     },
+    collapseAllRelations() {
+        djangoDumpDie.setTypeOpen('relation', false);
+    },
     collapseAllFunctionResults() {
         djangoDumpDie.setTypeOpen('result', false);
     },
@@ -359,6 +365,7 @@ var djangoDumpDie = window.djangoDumpDie || {
             'expand-all': djangoDumpDie.expandAllElements,
             'expand-types': djangoDumpDie.expandAllTypes,
             'expand-attrs': djangoDumpDie.expandAllAttributes,
+            'expand-relations': djangoDumpDie.expandAllRelations,
             'expand-results': djangoDumpDie.expandAllFunctionResults,
             'expand-funcs': djangoDumpDie.expandAllFunctions,
             'expand-1st-lvl': djangoDumpDie.expandFirstLevel,
@@ -366,6 +373,7 @@ var djangoDumpDie = window.djangoDumpDie || {
             'collapse-all': djangoDumpDie.collapseAllElements,
             'collapse-types': djangoDumpDie.collapseAllTypes,
             'collapse-attrs': djangoDumpDie.collapseAllAttributes,
+            'collapse-relations': djangoDumpDie.collapseAllRelations,
             'collapse-results': djangoDumpDie.collapseAllFunctionResults,
             'collapse-funcs': djangoDumpDie.collapseAllFunctions,
             'collapse-1st-lvl': djangoDumpDie.collapseFirstLevel,

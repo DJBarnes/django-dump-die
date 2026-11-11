@@ -31,7 +31,7 @@
         {% if result.error %}
           <span class="empty" title="{{ result.error_title }}">{{ result.error }}</span>
         {% else %}
-          {% dump_object result.value root_obj skip new_depth original_obj intermediate %}
+          {% dump_object result.value root_obj skip new_depth original_obj intermediate relation_steps=relation_steps %}
         {% endif %}
       {% endwith %}
     </li>

@@ -31,7 +31,8 @@ from tokenize import (
 # Third-Party Imports.
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import DatabaseError
+from django.db import DatabaseError, models
+from django.db.models import ForeignObjectRel
 from django.http import QueryDict
 from django.utils.functional import Promise, cached_property as django_cached_property
 
@@ -117,6 +118,89 @@ class NotDumpedItems(Placeholder):
 
 # The items of an iterable to dump, from start up to stop, out of its length.
 ItemRange = namedtuple("ItemRange", ["start", "stop", "length"])
+
+
+class NotLoadedRelation(Placeholder):
+    """Shown in place of a relation of a model instance that isn't loaded, and isn't followed. See get_relations()."""
+
+    text = "Not loaded"
+
+    def __init__(self, name, returns_many):
+        if returns_many:
+            self.title = (
+                "Not loaded, so that the dump doesn't query the database. Load it with "
+                f'prefetch_related("{name}"), or dump it, such as dump(obj.{name}.all()).'
+            )
+        else:
+            self.title = (
+                "Not loaded, so that the dump doesn't query the database. Load it with "
+                f'select_related("{name}") or prefetch_related("{name}"), follow more relations with '
+                f"DJANGO_DD_RELATED_OBJECT_DEPTH, or dump it, such as dump(obj.{name})."
+            )
+
+
+class RelationError(Placeholder):
+    """Shown in place of a relation of a model instance that couldn't be read, such as when its table doesn't exist."""
+
+    title = "Reading this relation failed."
+
+    def __init__(self, exception):
+        self.text = f"{type(exception).__name__}: {exception}"
+
+
+# A relation of a model instance: the attribute it is read by, its field, and whether it returns a related manager
+# (reverse foreign keys, and many-to-many in both directions) instead of one object.
+Relation = namedtuple("Relation", ["name", "field", "returns_many"])
+
+# Returned by get_loaded_relation() for a relation that would need a query to read.
+NOT_LOADED = object()
+
+
+def get_relations(obj):
+    """Return the relations of a model instance, as Relation tuples sorted by name, or an empty list for other objects.
+
+    Includes reverse relations, by their accessor, such as user_set. get_fields() leaves out the hidden ones, whose
+    related_name ends in "+", and which have no accessor.
+    """
+    if not isinstance(obj, models.Model):
+        return []
+    relations = []
+    for field in obj._meta.get_fields():
+        if field.is_relation:
+            name = field.get_accessor_name() if isinstance(field, ForeignObjectRel) else field.name
+            relations.append(Relation(name, field, bool(field.one_to_many or field.many_to_many)))
+    return sorted(relations, key=lambda relation: relation.name)
+
+
+def get_loaded_relation(obj, relation):
+    """Return the value of a relation of a model instance if it can be read without querying the database.
+
+    That is a related object already loaded, such as by select_related(), a related manager's rows already loaded by
+    prefetch_related(), or None when there is nothing to load, such as for a foreign key without a value. Returns
+    NOT_LOADED otherwise.
+    """
+    field = relation.field
+    if relation.returns_many:
+        # Getting the queryset doesn't run it. It holds the rows if prefetch_related() loaded them.
+        queryset = getattr(obj, relation.name).get_queryset()
+        return queryset if queryset._result_cache is not None else NOT_LOADED
+
+    if field.is_cached(obj):
+        try:
+            return getattr(obj, relation.name)
+        except ObjectDoesNotExist:
+            # A reverse one-to-one relation that was looked up, and has no object.
+            return None
+
+    # Nothing to load: a forward relation without a value, or a reverse one of an object that isn't saved.
+    if isinstance(field, ForeignObjectRel):
+        has_value = obj.pk is not None
+    elif hasattr(field, "fk_field"):
+        # A GenericForeignKey, whose value is in its object id field.
+        has_value = getattr(obj, field.fk_field) is not None
+    else:
+        has_value = any(getattr(obj, local.attname) is not None for local in field.local_related_fields)
+    return NOT_LOADED if has_value else None
 
 
 def is_sensitive_name(name):
@@ -571,8 +655,10 @@ def get_members(obj, item_range=None):
         it are each listed as one NotDumpedItems. None lists every item, except the rows of a QuerySet.
     """
 
-    # Get initial member set or empty list.
-    members = inspect.getmembers(obj)
+    # Get initial member set or empty list. A model instance's relations are left out: reading them can query the
+    # database, so they are read in the Relations section instead. See get_relations().
+    relation_names = {relation.name for relation in get_relations(obj)}
+    members = _get_members_without(obj, relation_names) if relation_names else inspect.getmembers(obj)
 
     # Add type specific members that will not be included from the use of the inspect.getmembers function.
     if is_dict(obj):
@@ -610,6 +696,20 @@ def get_members(obj, item_range=None):
         members = [m for m in members if not is_enum_member(m[1])]
 
     return members
+
+
+def _get_members_without(obj, names):
+    """Return the members of an object, like inspect.getmembers(), without reading the attributes in names."""
+    members = []
+    for name in dir(obj):
+        if name in names:
+            continue
+        try:
+            members.append((name, getattr(obj, name)))
+        except AttributeError:
+            # As inspect.getmembers() does, such as for a manager, which isn't accessible from an instance.
+            continue
+    return sorted(members, key=lambda member: member[0])
 
 
 def _get_item_members(item_members, item_range):

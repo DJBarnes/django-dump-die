@@ -176,9 +176,13 @@ def _format_name(obj_name, unknown, paint):
     )
 
 
-def _format_object(obj, root_obj, skip_set, depth, original_obj, parent_is_intermediate, paint, start=None, end=None):
+def _format_object(
+    obj, root_obj, skip_set, depth, original_obj, parent_is_intermediate, paint, start=None, end=None, relation_steps=0
+):
     """Return the lines of an object's tree. The first line follows the object's name or key."""
-    context = dump_object(obj, root_obj, skip_set, depth, original_obj, parent_is_intermediate, start, end)
+    context = dump_object(
+        obj, root_obj, skip_set, depth, original_obj, parent_is_intermediate, start, end, relation_steps=relation_steps
+    )
 
     # A simple value, such as a string or a number.
     if "simple" in context:
@@ -206,6 +210,7 @@ def _format_object(obj, root_obj, skip_set, depth, original_obj, parent_is_inter
     lines = [f"{header} {unique} {opening}"]
     children = context.get("skip")
     is_intermediate = bool(context.get("intermediate"))
+    steps = context.get("relation_steps", 0)
 
     for label, value, _access_modifier, css_class, *_ in context.get("attributes", []):
         key = f"{paint(str(label), css_class)}: " if label is not None else ""
@@ -213,7 +218,28 @@ def _format_object(obj, root_obj, skip_set, depth, original_obj, parent_is_inter
             # Such as a hidden sensitive value, or the items past the limit.
             child = [paint(value.text, "empty")]
         else:
-            child = _format_object(value, root_obj, children, depth + 1, original_obj, is_intermediate, paint)
+            child = _format_object(
+                value, root_obj, children, depth + 1, original_obj, is_intermediate, paint, relation_steps=steps
+            )
+        lines.extend(_indent(key, child))
+
+    # A model instance's relations follow its attributes, as on the page.
+    for relation in context.get("relations", []):
+        key = f"{paint(relation['name'], 'attribute')}: "
+        if isinstance(relation["value"], Placeholder):
+            # Such as a relation that isn't loaded, with how to load it on the page.
+            child = [paint(relation["value"].text, "empty")]
+        else:
+            child = _format_object(
+                relation["value"],
+                root_obj,
+                children,
+                depth + 1,
+                original_obj,
+                False,
+                paint,
+                relation_steps=context["next_relation_steps"],
+            )
         lines.extend(_indent(key, child))
 
     for result in context.get("function_results", []):
@@ -221,7 +247,16 @@ def _format_object(obj, root_obj, skip_set, depth, original_obj, parent_is_inter
         if result.get("error"):
             child = [paint(result["error"], "empty")]
         else:
-            child = _format_object(result["value"], root_obj, children, depth + 1, original_obj, is_intermediate, paint)
+            child = _format_object(
+                result["value"],
+                root_obj,
+                children,
+                depth + 1,
+                original_obj,
+                is_intermediate,
+                paint,
+                relation_steps=steps,
+            )
         lines.extend(_indent(key, child))
 
     lines.append(closing)

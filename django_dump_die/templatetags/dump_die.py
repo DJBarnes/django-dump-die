@@ -11,6 +11,7 @@ from decimal import Decimal
 # Third-Party Imports.
 from django import template
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import DatabaseError
 from django.forms.boundfield import BoundField
 from django.utils.functional import Promise
@@ -29,8 +30,13 @@ from django_dump_die.utils import (
     DumpBreak,
     HiddenValue,
     ItemRange,
+    NOT_LOADED,
+    NotLoadedRelation,
+    RelationError,
     Placeholder,
     get_dumped_object_info,
+    get_loaded_relation,
+    get_relations,
     is_valid_break_size,
     is_sensitive_name,
     generate_unique_from_obj,
@@ -247,6 +253,7 @@ def dump_object(
     parent_is_intermediate=False,
     root_index_start=None,
     root_index_end=None,
+    relation_steps=0,
 ):
     """Determines template dd/dump info for provided object.
 
@@ -271,6 +278,8 @@ def dump_object(
     :param parent_is_intermediate: Boolean indicating that parent is intermediate type. Do not recurse further.
     :param root_index_start: Starting index of the root iterable's items to dump. Only given for the root object.
     :param root_index_end: Ending index of the root iterable's items to dump. Only given for the root object.
+    :param relation_steps: How many relations were followed to get to the object from the dumped object. Decides
+        which of a model instance's relations are followed. See _get_relation_rows().
     """
     # A callable object, root object, or original object reaches this tag wrapped, so that the template passing it
     # here didn't call it. Unwrap them, so that the rest of the code works with the real objects.
@@ -313,6 +322,7 @@ def dump_object(
             root_count,
             skip_set=skip_set,
             original_obj=original_obj,
+            relation_steps=relation_steps,
         )
 
     # Handle if at the root object, or not past the maximum depth yet.
@@ -328,6 +338,7 @@ def dump_object(
             root_index_start=root_index_start,
             root_index_end=root_index_end,
             original_obj=original_obj,
+            relation_steps=relation_steps,
         )
 
     # If we're here then the object has already been processed before,
@@ -554,7 +565,7 @@ def _get_intermediate_css_class(obj):
     return "bound" if isinstance(obj, BoundField) else "intermediate"
 
 
-def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, original_obj=None):
+def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, original_obj=None, relation_steps=0):
     """Handling for a intermediate object.
 
     Effectively, it's an object that's complex enough to have associated attributes and functions that we want to
@@ -599,6 +610,7 @@ def _handle_intermediate_type(obj, root_obj, unique, root_count, skip_set=None, 
         "is_iterable": False,
         "depth": 0,
         "original_obj": _hold_if_callable(original_obj),
+        "relation_steps": relation_steps,
     }
     if app_settings.INCLUDE_ATTRIBUTES or function_results:
         # Used by both sections to dump their values.
@@ -625,6 +637,7 @@ def _handle_complex_type(
     root_index_start=None,
     root_index_end=None,
     original_obj=None,
+    relation_steps=0,
 ):
     """
     Main logic for outputting information for a given "unique".
@@ -638,6 +651,7 @@ def _handle_complex_type(
     :param current_depth: Current depth-index. Used to track how deep of child-members we're iterating through.
     :param root_index_start: Starting index of the root iterable's items to dump. Only given for the root object.
     :param root_index_end: Ending index of the root iterable's items to dump. Only given for the root object.
+    :param relation_steps: How many relations were followed to get to the object from the dumped object.
     """
     # Add unique to skip so it won't be processed a second time by additional
     # recursive calls to this template tag.
@@ -683,6 +697,9 @@ def _handle_complex_type(
     if app_settings.INCLUDE_FUNCTION_RESULTS and query_exception is None:
         function_results = get_function_results(obj)
 
+    # A model instance's relations, in their own section.
+    relations = _get_relation_rows(obj, relation_steps) if app_settings.INCLUDE_RELATIONS else []
+
     # Return information required to render object.
     # The object, root object, and original object go through template variables again, to the dump_object calls
     # for the children, so callables stay wrapped. See NotCalledInTemplates.
@@ -692,7 +709,10 @@ def _handle_complex_type(
         # empty section on each of them would only be noise.
         "include_function_results": bool(function_results),
         "include_functions": app_settings.INCLUDE_FUNCTIONS,
-        "collapsable": _get_collapsable_values(has_function_results=bool(function_results)),
+        "collapsable": _get_collapsable_values(
+            has_function_results=bool(function_results), has_relations=bool(relations)
+        ),
+        "include_relations": bool(relations),
         "braces": braces,
         "object": _hold_if_callable(obj),
         # Worked out here, since the template can't use the length filter on an object that may be wrapped.
@@ -704,13 +724,17 @@ def _handle_complex_type(
         "is_dict": is_dict_obj,
         "depth": current_depth,
         "original_obj": _hold_if_callable(original_obj),
+        "relation_steps": relation_steps,
     }
-    if app_settings.INCLUDE_ATTRIBUTES or function_results:
-        # Used by both sections to dump their values.
+    if app_settings.INCLUDE_ATTRIBUTES or function_results or relations:
+        # Used by the sections to dump their values.
         context["root_obj"] = _hold_if_callable(root_obj)
         context["skip"] = skip_set
     if app_settings.INCLUDE_ATTRIBUTES:
         context["attributes"] = attributes
+    if relations:
+        context["relations"] = relations
+        context["next_relation_steps"] = relation_steps + 1
     if function_results:
         context["function_results"] = function_results
     if app_settings.INCLUDE_FUNCTIONS:
@@ -718,6 +742,54 @@ def _handle_complex_type(
         context["multiline_function_docs"] = app_settings.MULTILINE_FUNCTION_DOCS
 
     return context
+
+
+def _get_relation_rows(obj, relation_steps):
+    """Return the rows of a model instance's Relations section, or an empty list for other objects.
+
+    Each relation shows what is already loaded, such as by select_related() or prefetch_related(). A relation that
+    isn't loaded is followed, with a query, when it returns one object and is no more than
+    DJANGO_DD_RELATED_OBJECT_DEPTH relation steps from the dumped object. Otherwise, it shows that it isn't loaded,
+    and how to load it.
+
+    :param obj: Object to get the relations of.
+    :param relation_steps: How many relations were followed to get to obj from the dumped object.
+    """
+    rows = []
+    step = relation_steps + 1
+    for relation in get_relations(obj):
+        if is_sensitive_name(relation.name):
+            # Like an attribute with such a name, and without reading it, such as an auth_token.
+            value = HiddenValue()
+        else:
+            try:
+                value = get_loaded_relation(obj, relation)
+                if value is NOT_LOADED:
+                    if not relation.returns_many and step <= app_settings.RELATED_OBJECT_DEPTH:
+                        value = _follow_related_object(obj, relation)
+                    else:
+                        value = NotLoadedRelation(relation.name, relation.returns_many)
+            except Exception as exception:
+                # Such as a table that doesn't exist, or a related manager of an object that isn't saved.
+                value = RelationError(exception)
+        rows.append(
+            {
+                "name": relation.name,
+                # The value goes through a template variable to dump_object. See NotCalledInTemplates.
+                "value": _hold_if_callable(value),
+                "title": "Related Manager" if relation.returns_many else "Related Object",
+            }
+        )
+    return rows
+
+
+def _follow_related_object(obj, relation):
+    """Return the object of a relation that returns one object, loading it from the database. None if it has none."""
+    try:
+        return getattr(obj, relation.name)
+    except ObjectDoesNotExist:
+        # Such as a reverse one-to-one relation without an object.
+        return None
 
 
 # endregion Type Handling Functions
@@ -1087,10 +1159,11 @@ def _get_item_range(length, root_index_start=None, root_index_end=None):
     return ItemRange(min(start, length), min(stop, length), length)
 
 
-def _get_collapsable_values(has_function_results=False):
+def _get_collapsable_values(has_function_results=False, has_relations=False):
     """Get the arrow and collapsable values
 
     :param has_function_results: Whether the object has a Function Results section.
+    :param has_relations: Whether the object has a Relations section.
     """
 
     # Determine default sets.
@@ -1107,6 +1180,13 @@ def _get_collapsable_values(has_function_results=False):
         "always_show": "false",
         "class": "" if app_settings.ATTRIBUTES_START_EXPANDED else "collapsed",
         "aria": "true" if app_settings.ATTRIBUTES_START_EXPANDED else "false",
+    }
+    relation_set = {
+        "arrow": "▼" if app_settings.RELATIONS_START_EXPANDED else "▶",
+        "show": "show" if app_settings.RELATIONS_START_EXPANDED else "",
+        "always_show": "false",
+        "class": "" if app_settings.RELATIONS_START_EXPANDED else "collapsed",
+        "aria": "true" if app_settings.RELATIONS_START_EXPANDED else "false",
     }
     result_set = {
         "arrow": "▼" if app_settings.FUNCTION_RESULTS_START_EXPANDED else "▶",
@@ -1126,6 +1206,7 @@ def _get_collapsable_values(has_function_results=False):
     # If only one section is shown, it doesn't make sense for it to have an expandable arrow, so it's always shown.
     sections = [
         (app_settings.INCLUDE_ATTRIBUTES, attr_set),
+        (has_relations, relation_set),
         (has_function_results, result_set),
         (app_settings.INCLUDE_FUNCTIONS, func_set),
     ]
@@ -1144,6 +1225,7 @@ def _get_collapsable_values(has_function_results=False):
     return {
         "content": content_set,
         "attribute": attr_set,
+        "relation": relation_set,
         "function_result": result_set,
         "function": func_set,
     }

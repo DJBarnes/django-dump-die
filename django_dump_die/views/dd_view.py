@@ -17,6 +17,7 @@ def dd_view(request, objects, template_name="django_dump_die/dd.html", extra_con
     # Get toolbar options.
     include_util_toolbar = app_settings.INCLUDE_UTILITY_TOOLBAR
     attrs_enabled = app_settings.INCLUDE_ATTRIBUTES
+    relations_enabled = app_settings.INCLUDE_RELATIONS
     funcs_enabled = app_settings.INCLUDE_FUNCTIONS
     results_enabled = app_settings.INCLUDE_FUNCTION_RESULTS
 
@@ -34,10 +35,14 @@ def dd_view(request, objects, template_name="django_dump_die/dd.html", extra_con
         "objects": objects,
         "include_util_toolbar": include_util_toolbar,
         "attrs_enabled": attrs_enabled,
+        "relations_enabled": relations_enabled,
         "funcs_enabled": funcs_enabled,
         "results_enabled": results_enabled,
         # With more than one section, each section has its own arrow, and the toolbar has buttons for each.
-        "sections_collapsible": sum(bool(enabled) for enabled in (attrs_enabled, results_enabled, funcs_enabled)) > 1,
+        "sections_collapsible": sum(
+            bool(enabled) for enabled in (attrs_enabled, relations_enabled, results_enabled, funcs_enabled)
+        )
+        > 1,
         "force_light_theme": force_light_theme,
         "force_dark_theme": force_dark_theme,
         "custom_color_theme": custom_color_theme,

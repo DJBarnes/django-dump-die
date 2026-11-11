@@ -136,8 +136,9 @@ extend-ignore-names = ["assert*"]
 [tool.ruff.lint.per-file-ignores]
 # This module re-exports the views for `from django_dump_die.views import ...`.
 "django_dump_die/views/__init__.py" = ["F401"]
-# The sample models are dumped with Django's own __str__.
+# The sample models, and the test models, are dumped with Django's own __str__.
 "django_dump_die/views/example_helpers.py" = ["DJ008"]
+"tests/django_dump_die_tests/django_test_project/models.py" = ["DJ008"]
 
 [tool.setuptools]
 zip-safe = false

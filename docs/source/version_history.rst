@@ -16,6 +16,22 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Added: a Relations section for model instances.** A dumped model
+  instance shows its relations in their own section, after its Attributes:
+  its foreign keys and one-to-one fields, its many-to-many fields, and its
+  reverse relations, such as ``user_set``. Before, many-to-many fields and
+  reverse relations were only listed as functions, which are hidden by
+  default, even when ``prefetch_related()`` had loaded their rows, and a
+  foreign key without a value was left out. Relations that return one object,
+  such as foreign keys, are followed as before, up to
+  ``DJANGO_DD_RELATED_OBJECT_DEPTH`` relations away, three by default,
+  instead of until ``DJANGO_DD_MAX_RECURSION_DEPTH``. Related managers show
+  the rows ``prefetch_related()`` loaded, without a query. Other relations
+  say they aren't loaded, and how to load them. The section can be turned
+  off with ``DJANGO_DD_INCLUDE_RELATIONS``, and collapsed with
+  ``DJANGO_DD_RELATIONS_START_EXPANDED``. See "Relations" in the usage docs.
+  (`#22 <https://github.com/DJBarnes/django-dump-die/issues/22>`_)
+
 * **Added: dd() and dump() print to the console outside of a request.** In a
   management command, the shell, or a background task, ``dump()`` printed
   nothing, and kept the objects it collected for as long as the process ran,

@@ -243,6 +243,49 @@ Example::
     DJANGO_DD_INCLUDE_ATTRIBUTES = False
 
 
+DJANGO_DD_INCLUDE_RELATIONS
+===========================
+
+By default, a dumped model instance shows its relations, such as its foreign
+keys, many-to-many fields, and reverse relations like ``user_set``, in their
+own **Relations** section. See :ref:`relations` for what is shown. If you
+would like to leave the section out, set this setting to ``False``.
+
+:Type: ``bool``
+:Default: ``True``
+
+Example::
+
+    DJANGO_DD_INCLUDE_RELATIONS = False
+
+
+.. _related-object-depth:
+
+DJANGO_DD_RELATED_OBJECT_DEPTH
+==============================
+
+How many relations away from the dumped object to follow relations that
+return one object, such as foreign keys and one-to-one fields, loading the
+ones that aren't loaded yet from the database. Each costs a query.
+
+A relation of the dumped object itself is one relation away. A relation of
+that related object is two away, and so on. A relation further away than this
+setting is only shown if it is already loaded, such as with
+``select_related()``. Otherwise, it shows **Not loaded**. Set it to ``0`` to
+only show what is already loaded, and never query the database for relations.
+
+Relations that return a related manager, such as many-to-many fields and
+reverse foreign keys, aren't followed. They show their rows if they are
+already loaded with ``prefetch_related()``.
+
+:Type: ``int``
+:Default: ``3``
+
+Example::
+
+    DJANGO_DD_RELATED_OBJECT_DEPTH = 1
+
+
 DJANGO_DD_INCLUDE_FUNCTIONS
 ===========================
 
@@ -387,9 +430,9 @@ Controls if Attribute sections are expanded on page load or not.
 .. note::
 
     Only applies when **Attributes** and at least one other section, the
-    **Function Results** or the **Functions**, are turned on. If
-    **Attributes** are the only section, they are always expanded, as they are
-    the only content available for the dumped object.
+    **Relations**, the **Function Results**, or the **Functions**, are shown.
+    If **Attributes** are the only section, they are always expanded, as they
+    are the only content available for the dumped object.
 
 If set to ``True``, then opening an item will instantly show the fully
 expanded Attribute section.
@@ -405,6 +448,27 @@ Example::
     DJANGO_DD_ATTRIBUTES_START_EXPANDED = False
 
 
+DJANGO_DD_RELATIONS_START_EXPANDED
+==================================
+
+Controls if Relations sections, of dumped model instances, are expanded on
+page load or not. Expanded by default, so that a model instance's foreign keys
+are shown as soon as it is opened.
+
+.. note::
+
+    Only applies when **Relations** and at least one other section, the
+    **Attributes**, the **Function Results**, or the **Functions**, are shown.
+    If **Relations** are the only section, they are always expanded.
+
+:Type: ``bool``
+:Default: ``True``
+
+Example::
+
+    DJANGO_DD_RELATIONS_START_EXPANDED = False
+
+
 DJANGO_DD_FUNCTION_RESULTS_START_EXPANDED
 =========================================
 
@@ -415,8 +479,8 @@ to see them.
 .. note::
 
     Only applies when **Function Results** and at least one other section, the
-    **Attributes** or the **Functions**, are turned on. If **Function
-    Results** are the only section, they are always expanded.
+    **Attributes**, the **Relations**, or the **Functions**, are shown. If
+    **Function Results** are the only section, they are always expanded.
 
 :Type: ``bool``
 :Default: ``True``
@@ -434,9 +498,9 @@ Controls if Function sections are expanded on page load or not.
 .. note::
 
     Only applies when **Functions** and at least one other section, the
-    **Attributes** or the **Function Results**, are turned on. If
-    **Functions** are the only section, they are always expanded, as they are
-    the only content available for the dumped object.
+    **Attributes**, the **Relations**, or the **Function Results**, are shown.
+    If **Functions** are the only section, they are always expanded, as they
+    are the only content available for the dumped object.
 
 If set to ``True``, then opening an item will instantly show the fully
 expanded Function section.

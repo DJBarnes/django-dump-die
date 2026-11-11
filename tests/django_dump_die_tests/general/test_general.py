@@ -515,7 +515,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
                 "members = get_members(obj, item_range)",
                 'utils.py", line',
                 "in get_members",
-                "members = inspect.getmembers(obj)",
+                "inspect.getmembers(obj)",
                 'example_helpers.py", line',
                 "in trigger",
                 "return self.my_list[1]",

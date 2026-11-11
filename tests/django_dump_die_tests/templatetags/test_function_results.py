@@ -287,12 +287,16 @@ class DumpDieFunctionResultsPageTestCase(TestCase):
     def test_toolbar_buttons_follow_the_enabled_sections(self):
         """Verify the toolbar has buttons for each shown section, when there is more than one section."""
         url = reverse("django_dump_die__tests__general:dd_only")
+        no_relations = {"DJANGO_DD_INCLUDE_RELATIONS": False}
         cases = [
-            ({}, []),
-            ({"DJANGO_DD_INCLUDE_FUNCTION_RESULTS": True}, ["types", "attrs", "results"]),
-            ({"DJANGO_DD_INCLUDE_FUNCTIONS": True}, ["types", "attrs", "funcs"]),
+            # Relations are on by default, so model instances can have two sections.
+            ({}, ["types", "attrs", "relations"]),
+            (no_relations, []),
+            ({"DJANGO_DD_INCLUDE_FUNCTION_RESULTS": True}, ["types", "attrs", "relations", "results"]),
+            ({**no_relations, "DJANGO_DD_INCLUDE_FUNCTION_RESULTS": True}, ["types", "attrs", "results"]),
+            ({**no_relations, "DJANGO_DD_INCLUDE_FUNCTIONS": True}, ["types", "attrs", "funcs"]),
             (
-                {"DJANGO_DD_INCLUDE_FUNCTION_RESULTS": True, "DJANGO_DD_INCLUDE_ATTRIBUTES": False},
+                {**no_relations, "DJANGO_DD_INCLUDE_FUNCTION_RESULTS": True, "DJANGO_DD_INCLUDE_ATTRIBUTES": False},
                 [],
             ),
         ]
@@ -301,7 +305,9 @@ class DumpDieFunctionResultsPageTestCase(TestCase):
                 with override_settings(**settings):
                     content = self.client.get(url).content.decode("utf-8")
 
-                shown = sorted(set(re.findall(r'id="(?:expand|collapse)-(types|attrs|results|funcs)"', content)))
+                shown = sorted(
+                    set(re.findall(r'id="(?:expand|collapse)-(types|attrs|relations|results|funcs)"', content))
+                )
                 self.assertEqual(shown, sorted(buttons))
                 for name in buttons:
                     self.assertIn(f'id="expand-{name}"', content)

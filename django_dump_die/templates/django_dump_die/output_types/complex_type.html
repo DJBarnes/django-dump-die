@@ -34,6 +34,11 @@
       {% include "django_dump_die/partials/_attributes.html" %}
     {% endif %}
   </ul>
+  {% if include_relations %}
+    <ul class="attribute-list">
+      {% include "django_dump_die/partials/_relations.html" %}
+    </ul>
+  {% endif %}
   {% if include_function_results %}
     <ul class="attribute-list">
       {% include "django_dump_die/partials/_function_results.html" %}

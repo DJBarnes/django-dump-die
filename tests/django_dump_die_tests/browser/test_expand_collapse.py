@@ -231,6 +231,25 @@ class DumpDieBrowserTestCase(LiveServerTestCase):
             elif state["collapsible"] and state["type"] == "func":
                 self.assertToggleState(state, False)
 
+    def test_toolbar_expands_and_collapses_relations(self):
+        """Verify the toolbar's Relations buttons only open and close the Relations sections of model instances."""
+        self.open_page("django_dump_die__tests__browser:relations")
+        types = {state["type"] for state in self.get_states() if state["collapsible"]}
+        self.assertEqual(types, {"type", "attr", "relation"})
+
+        # Relations start open, so collapse them first.
+        self.click_toolbar("collapse-relations")
+        for state in self.get_states():
+            if state["collapsible"] and state["type"] == "relation":
+                self.assertToggleState(state, False)
+            elif state["collapsible"] and state["type"] == "attr":
+                self.assertToggleState(state, True)
+
+        self.click_toolbar("expand-relations")
+        for state in self.get_states():
+            if state["collapsible"] and state["type"] == "relation":
+                self.assertToggleState(state, True)
+
     def test_duplicate_uniques_highlight_together(self):
         """Verify hovering over a unique that appears more than once highlights all of its copies."""
         self.open_page()

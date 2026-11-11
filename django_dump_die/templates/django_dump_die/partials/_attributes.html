@@ -38,7 +38,7 @@
         {% if value|is_placeholder %}
           <span class="empty" title="{{ value.title }}">{{ value.text }}</span>
         {% else %}
-          {% dump_object value root_obj skip new_depth original_obj intermediate %}
+          {% dump_object value root_obj skip new_depth original_obj intermediate relation_steps=relation_steps %}
         {% endif %}
       {% endwith %}
     </li>

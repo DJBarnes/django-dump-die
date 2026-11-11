@@ -229,6 +229,41 @@ Example::
     dump.br()
     dd(order.items)
 
+.. _relations:
+
+Relations
+=========
+
+A dumped model instance shows its relations in their own **Relations**
+section, after its Attributes: its foreign keys and one-to-one fields, its
+many-to-many fields, and its reverse relations, such as ``user_set``.
+
+Reading a relation can query the database, so dumps only do that within
+limits:
+
+* **Relations that return one object**, such as a foreign key, are followed
+  up to :ref:`DJANGO_DD_RELATED_OBJECT_DEPTH <related-object-depth>`
+  relations away from the dumped object, three by default. Each that isn't
+  loaded yet costs a query.
+
+* **Relations that return a related manager**, such as a many-to-many field
+  or ``user_set``, show their rows only if ``prefetch_related()`` already
+  loaded them, without a query.
+
+A relation that isn't shown says **Not loaded**. Hover over it to see how to
+load it: with ``select_related()`` or ``prefetch_related()`` on the QuerySet,
+or by dumping the relation itself, such as ``dump(user.groups.all())``.
+
+.. code-block:: python
+
+    users = User.objects.select_related("profile").prefetch_related("groups")
+    dump(users)  # Each user's profile and groups are shown, without more queries.
+
+Relation names that look sensitive, such as ``auth_token``, are hidden like
+attributes, without being loaded. Turn the section off with
+``DJANGO_DD_INCLUDE_RELATIONS``, and choose whether it starts expanded with
+``DJANGO_DD_RELATIONS_START_EXPANDED``.
+
 .. _function-results:
 
 Function Results
