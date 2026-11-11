@@ -20,7 +20,7 @@ size of the object being dumped. This setting will limit the depth of recursion
 to prevent long processing times.
 
 .. note::
-    Setting the value to ```None``` will mean no limit.
+    Setting the value to ``None`` will mean no limit.
 
 :Type: ``int``
 :Default: ``5``
@@ -70,14 +70,15 @@ further and instead simply output a string representation of that simple type.
 
 Predefined simple types include:
 
+* None
 * bool
-* BoundField
 * bytes
 * Decimal
 * float
 * int
 * module
-* str
+* str, including its subclasses, such as Django's ``SafeString``, and lazy
+  strings, such as from ``gettext_lazy()``
 
 If you would like to add additional simple types that are specific to your
 project, you can do that here. Be sure to list each type in the list as a
@@ -110,12 +111,14 @@ times, these direct-child attributes are not further expandable.
 
 Predefined intermediate types include:
 
-* bytesarray
+* BoundField, a form's field, shown as its rendered widget
+* bytearray
 * complex number
 * datetime
 * date
 * time
-* timezone
+* timedelta
+* timezone, including ``ZoneInfo``, and pytz timezones when pytz is installed
 * pathlib paths
 
 If you would like to add additional intermediate types that are specific to
@@ -202,7 +205,7 @@ Example::
 DJANGO_DD_INCLUDE_MAGIC_METHODS
 ===============================
 
-By default, Magic methods (those enclosed by dunders, ie `__str__`) are not
+By default, Magic methods (those enclosed by dunders, ie ``__str__``) are not
 included in the output. If you would like to include magic methods in the
 output, set this setting to ``True``.
 
@@ -249,7 +252,9 @@ DJANGO_DD_INCLUDE_RELATIONS
 By default, a dumped model instance shows its relations, such as its foreign
 keys, many-to-many fields, and reverse relations like ``user_set``, in their
 own **Relations** section. See :ref:`relations` for what is shown. If you
-would like to leave the section out, set this setting to ``False``.
+would like to leave the section out, set this setting to ``False``. Relations
+are then not shown at all, and not loaded from the database, as they aren't
+attributes.
 
 :Type: ``bool``
 :Default: ``True``
@@ -267,7 +272,8 @@ DJANGO_DD_RELATED_OBJECT_DEPTH
 How many relations away from the dumped object to follow relations that
 return one object, such as foreign keys and one-to-one fields, loading the
 ones that aren't loaded yet from the database. Each costs a query, except in
-a dumped QuerySet, which fetches them with its rows, in one query.
+a dumped QuerySet that isn't evaluated yet, which fetches them with its rows,
+in one query.
 
 A relation of the dumped object itself is one relation away. A relation of
 that related object is two away, and so on. A relation further away than this
@@ -404,7 +410,8 @@ Example::
 
 DJANGO_DD_BREAK_STYLE
 =====================
-The line shown across a break added with ``dump.br()``. One of ``"dashed"``,
+The line shown across a break added with ``dump.br()`` on the page. In the
+console, a break is always a dashed line. One of ``"dashed"``,
 ``"solid"``, ``"dotted"``, or ``"blank"`` for no line, which leaves a blank
 row. Any other value raises a ``ValueError`` when a dump page is shown.
 
@@ -435,10 +442,12 @@ DJANGO_DD_CONTENT_STARTS_EXPANDED
 =================================
 
 By default, everything is collapsed when dumped on the screen. Optionally,
-each content item can be expanded to show the **Attribute** and
-**Function** sections.
+each content item can be expanded to show its sections: **Attributes**,
+**Relations**, **Function Results**, and **Functions**.
 
-See below related ``DJANGO_DD_ATTRIBUTES_START_EXPANDED`` and
+See below the related ``DJANGO_DD_ATTRIBUTES_START_EXPANDED``,
+``DJANGO_DD_RELATIONS_START_EXPANDED``,
+``DJANGO_DD_FUNCTION_RESULTS_START_EXPANDED``, and
 ``DJANGO_DD_FUNCTIONS_START_EXPANDED`` settings for details of how those
 sections are handled.
 
@@ -625,7 +634,8 @@ DJANGO_DD_FORCE_LIGHT_THEME
 By default, the included color theme will change depending on the setting of
 your browser to either light or dark. If you normally have your browser set to
 dark but would like to force this tool to display the light theme, change this
-setting to ``True``.
+setting to ``True``. It can't be on together with
+``DJANGO_DD_FORCE_DARK_THEME``, which raises a ``ValueError``.
 
 :Type: ``bool``
 :Default: ``False``
@@ -642,6 +652,8 @@ By default, the included color theme will change depending on the setting of
 your browser to either light or dark. If you normally have your browser set to
 light but would like to force this tool to display the dark theme, change this
 setting to ``True``.
+It can't be on together with ``DJANGO_DD_FORCE_LIGHT_THEME``, which raises a
+``ValueError``.
 
 :Type: ``bool``
 :Default: ``False``
@@ -699,7 +711,7 @@ Example::
             'unique': <value>,              #  Unique hash for class
         },
         'identifiers': {
-            'section_name': <value>,        #  The words "Attribute" or "Function", denoting each section
+            'section_name': <value>,        #  The name of each section, such as "Attributes" or "Relations"
             'attribute': <value>,           #  Attribute
             'class_attribute': <value>,     #  Attribute whose value comes from the object's class
             'constant': <value>,            #  Class constants

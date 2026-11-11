@@ -4,15 +4,15 @@ Welcome to Django-Dump-Die's documentation!
 Django-Dump-Die is a `Django <https://www.djangoproject.com/>`_ app that
 provides a couple of debug tools, in the form of built-in methods
 ``dump`` and ``dd``. These allow sending details about a variable to the
-browser for inspection.
+browser for inspection, or to the console outside of a request.
 
 Dumped variables are presented in an easy-to-read and
 fully expandable/collapsible tree. You can easily understand complex objects
 and the results of Django queries with a simple call to either method.
 
-When ``dump`` and/or ``dd`` are called, dump die will intercept the page
-response and replace the contents of the response with detailed information
-about the corresponding variables passed for inspection.
+When ``dump`` and/or ``dd`` are called, dump die will, by default, intercept
+the page response and replace the contents of the response with detailed
+information about the corresponding variables passed for inspection.
 
 The entire concept is heavily based on the dump die functionality that comes
 with PHP's `Laravel <https://laravel.com/>`_

@@ -16,6 +16,16 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
+* **Fixed: the dump template tag showed a name and location from Django's
+  code.** ``{% dump %}`` showed the name ``Unknown_Object_Name``, and with
+  ``DJANGO_DD_INCLUDE_FILENAME_LINENUMBER`` on, a location inside Django's
+  template code. It now shows **Unknown Object**, and no location, since it
+  can't see the template's variable name or line.
+
+* **Fixed: DJANGO_DD_MULTILINE_FUNCTION_DOCS didn't apply to a dumped
+  function.** It only applied to the docs in the Functions section, not to a
+  function dumped itself, such as ``dump(my_function)``.
+
 * **Fixed: objects made while a page of dumps was shown could be shown as
   already shown.** A unique comes from the object's ``id()``, which Python
   reuses once an object is gone. Objects made while the page was shown, such

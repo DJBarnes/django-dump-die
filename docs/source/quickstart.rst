@@ -46,7 +46,8 @@ Quickstart
 
 5.  From a file that is part of the request-response cycle such as a Django
     View in ``views.py``, make a call to ``dd`` passing it a variable
-    to inspect.
+    to inspect. Outside of a request, such as in a management command, it
+    prints to the console instead. See :doc:`usage`.
 
     **views.py**
 

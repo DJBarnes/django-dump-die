@@ -128,6 +128,13 @@ stops by raising an exception. See
 The middleware supports both sync and async requests, so `dump()` and `dd()` work the same
 in sync and async views.
 
+A dumped model instance shows its relations in their own section: foreign keys
+and one-to-one fields are followed up to three relations away, and many-to-many
+fields and reverse relations, such as `user_set`, show the rows
+`prefetch_related()` already loaded. Other relations say they aren't loaded,
+and how to load them. See
+[ReadTheDocs/Usage](https://django-dump-die.readthedocs.io/en/stable/usage.html#relations).
+
 <br>
 
 Example:

@@ -2,7 +2,7 @@
 Settings for DumpDie, read from the project's Django settings.
 
 Use them as attributes of app_settings, such as app_settings.MAX_RECURSION_DEPTH. Each is the Django setting of the
-same name with the DJANGO_DD_ prefix, such as DJANGO_DD_MAX_RECURSION_DEPTH, or its default if the project doesn't
+same name with the ``DJANGO_DD_`` prefix, such as DJANGO_DD_MAX_RECURSION_DEPTH, or its default if the project doesn't
 set it.
 
 Settings are read each time they are used, not once on import. So override_settings works for them, in this
@@ -23,7 +23,7 @@ SETTING_PREFIX = "DJANGO_DD_"
 
 class Setting:
     """
-    A DumpDie setting, read from the Django setting of the same name with the DJANGO_DD_ prefix.
+    A DumpDie setting, read from the Django setting of the same name with the ``DJANGO_DD_`` prefix.
 
     A descriptor: as a class attribute of AppSettings, it reads the Django setting each time the attribute is used.
     """

@@ -13,10 +13,42 @@ Subpackages
 Submodules
 ----------
 
+django\_dump\_die.app\_settings module
+--------------------------------------
+
+.. automodule:: django_dump_die.app_settings
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+django\_dump\_die.apps module
+-----------------------------
+
+.. automodule:: django_dump_die.apps
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+django\_dump\_die.console module
+--------------------------------
+
+.. automodule:: django_dump_die.console
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 django\_dump\_die.constants module
 ----------------------------------
 
 .. automodule:: django_dump_die.constants
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+django\_dump\_die.functions module
+----------------------------------
+
+.. automodule:: django_dump_die.functions
    :members:
    :show-inheritance:
    :undoc-members:

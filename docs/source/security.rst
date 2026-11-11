@@ -95,8 +95,8 @@ Dumping Runs Code
 =================
 
 Dumping an object reads its attributes, which runs the code of its
-properties, and a dumped QuerySet runs two queries, to count its rows and to
-fetch the rows that are dumped. A model instance's
+properties, and a dumped QuerySet that isn't evaluated yet runs two queries,
+to count its rows and to fetch the rows that are dumped. A model instance's
 :ref:`relations <relations>` are loaded from the database within
 :ref:`DJANGO_DD_RELATED_OBJECT_DEPTH <related-object-depth>` and
 :ref:`DJANGO_DD_RELATED_MANAGER_DEPTH <related-manager-depth>`, so a dump

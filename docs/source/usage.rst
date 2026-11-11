@@ -7,7 +7,9 @@ The middleware is where most of this package's heavy lifting happens.
 
 By having the middleware installed, you can run ``dump(<variable>)`` and/or
 ``dd(<variable>)`` in any file that is part of the request-response cycle,
-and it will run the dump logic. No importing or extra logic is required.
+and it will run the dump logic. No importing or extra logic is required. For
+code that runs outside of a request, such as a management command, see
+`Outside of a Request`_.
 
 Each ``dump(<variable>)`` command will add the passed object to an internal
 list that will be dumped either when a ``dd(<variable>)`` is used, or if the
@@ -29,7 +31,9 @@ This only works for HTML pages. Other responses, such as JSON, files, and
 redirects, are still replaced by the dumps.
 
 If the request raises an unhandled exception, the dumps from before the
-exception are shown above Django's error page, so that you see both. See
+exception are shown above Django's error page, so that you see both. Without
+an HTML error page to add them to, such as for a request that doesn't accept
+HTML, the error is returned as it is, without the dumps. See
 :ref:`DJANGO_DD_SHOW_DUMPS_ON_ERROR_PAGE <show-dumps-on-error-page>` to turn
 this off.
 
@@ -64,14 +68,15 @@ listed, but :ref:`function results <function-results>` are.
 
 In a terminal, the tree has the dump page's colors, including any changed by
 :ref:`DJANGO_DD_COLOR_SCHEME <color-scheme>`. Terminals that set
-``COLORTERM=truecolor`` get the exact colors, and others the nearest of the
+``COLORTERM=truecolor`` (or ``24bit``) get the exact colors, and others the nearest of the
 256 standard terminal colors. Output to a file or a pipe is plain text,
 unless the ``FORCE_COLOR`` environment variable is set. Set ``NO_COLOR``, or
 Django's ``DJANGO_COLORS=nocolor``, to turn colors off.
 
 ``dd()`` prints the object, then stops by raising the ``DumpAndDie``
 exception, with a message saying why. In a management command, this ends the
-command with a traceback. In the shell, it returns to the prompt.
+command with a traceback. In the shell, it shows the traceback and returns to
+the prompt.
 
 ``dump.br()`` prints a line across.
 
@@ -177,7 +182,7 @@ Example::
     # Single index
     dump(my_list, index_range=18)  # Will do from index 18 to 18 + DJANGO_DD_MAX_ITERABLE_LENGTH
     # Range index
-    dd(my_list, index_range=(18, 37))  # Will do from index 18 to 37
+    dd(my_list, index_range=(18, 37))  # Will do from index 18 up to, but not including, 37
 
 deepcopy
 --------
@@ -279,8 +284,8 @@ Function Results
 ================
 
 The dump can also run some functions of a dumped object, and show what they
-return, in a **Function Results** section between the Attributes and the
-Functions. This is off by default. Turn it on with
+return, in a **Function Results** section after the Attributes and the
+Relations, and before the Functions. This is off by default. Turn it on with
 ``DJANGO_DD_INCLUDE_FUNCTION_RESULTS``::
 
     DJANGO_DD_INCLUDE_FUNCTION_RESULTS = True
@@ -401,11 +406,6 @@ dump tag.
 
 .. note::
 
-    The output for this dump will not contain the name of the variable being
-    dumped nor the filename and line number that the dump was called from.
-
-.. note::
-
-    Because the CSS for the page will be a mash-up of your project and the
-    required styling for the dump, you will likely see lots of
-    changes to your site when using this tag. This is normal.
+    The output for this dump shows **Unknown Object** instead of the name of
+    the variable being dumped, and doesn't show the filename and line number
+    that the dump was called from, since the tag can't see them.
