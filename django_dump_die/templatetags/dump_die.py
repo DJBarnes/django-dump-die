@@ -2,6 +2,7 @@
 
 # System Imports.
 import inspect
+from collections import namedtuple
 from contextvars import ContextVar
 import re
 import traceback
@@ -69,10 +70,17 @@ register = template.Library()
 
 # region Module Variables
 
-# Uniques of the dumped root objects on the page being rendered, to count objects dumped more than once, and the
-# uniques of the original objects of deep copies. The dump_objects tag sets new ones for each page of dumps, in a
-# context variable, so that pages rendered at the same time, such as in two threads, each have their own. Use
-# _get_trackers() to read them.
+# Records of the page of dumps being rendered:
+#   * repeat_iteration_tracker: the uniques of the dumped root objects, to count objects dumped more than once.
+#   * deepcopy_unique_map: the uniques of the original objects of deep copies.
+#   * dumped_objects: every object given a unique, kept until the page is done. A unique comes from id(), which Python
+#     reuses as soon as an object is gone. Objects made while the page is rendered, such as a followed related
+#     manager's QuerySet, a function result, or a property that returns a new object each time, would otherwise be
+#     gone once their part of the page is rendered, and the next such object could get the same unique, and be
+#     taken for one already shown.
+# The dump_objects tag sets new ones for each page of dumps, in a context variable, so that pages rendered at the same
+# time, such as in two threads, each have their own. Use _get_trackers() to read them.
+PageRecords = namedtuple("PageRecords", ["repeat_iteration_tracker", "deepcopy_unique_map", "dumped_objects"])
 _trackers = ContextVar("django_dump_die_trackers")
 
 
@@ -84,18 +92,18 @@ def start_page_of_dumps():
     taken for one dumped earlier, and get its count or deep copy uniques. The page is rendered in the same thread, by
     the dump_object calls that follow, so they see the records set here.
     """
-    _trackers.set(({}, {}))
+    _trackers.set(PageRecords({}, {}, []))
 
 
 def _get_trackers():
-    """Return the repeat iteration tracker and the deepcopy unique map of the page being rendered.
+    """Return the PageRecords of the page being rendered.
 
     Outside of a dump_objects tag, such as when a test calls dump_object directly, they are created when first needed.
     """
     try:
         return _trackers.get()
     except LookupError:
-        trackers = ({}, {})
+        trackers = PageRecords({}, {}, [])
         _trackers.set(trackers)
         return trackers
 
@@ -290,8 +298,10 @@ def dump_object(
     # Will be used to skip objects already done to prevent infinite loops.
     skip_set = skip_set or set()
 
-    # Generate the unique
+    # Generate the unique, and keep the object until the page is done, so that no other object gets its id(), and so
+    # its unique, while the page is rendered. See PageRecords.
     unique, root_count = _generate_unique(obj, root_obj, original_obj)
+    _get_trackers().dumped_objects.append(obj)
 
     # Following section will determine what should get rendered out.
     intermediate_value = None
@@ -368,7 +378,7 @@ def _generate_unique(obj, root_obj, original_obj):
     :param root_obj: Root object associated with current obj. Used for deepcopy mapping logic.
     :param original_obj: Original instance of object corresponding to current obj. Used for deepcopy mapping logic.
     """
-    repeat_iteration_tracker, deepcopy_unique_map = _get_trackers()
+    repeat_iteration_tracker, deepcopy_unique_map, _dumped_objects = _get_trackers()
 
     # Get a unique for the object.
     unique = generate_unique_from_obj(obj)
@@ -429,7 +439,7 @@ def _generate_unique(obj, root_obj, original_obj):
 
 def _create_unique_map(obj, root_unique, original_obj):
     """Create an entry in the root_unique_map for this object."""
-    _repeat_iteration_tracker, deepcopy_unique_map = _get_trackers()
+    deepcopy_unique_map = _get_trackers().deepcopy_unique_map
 
     # Create a dict for that unique map.
     deepcopy_unique_map[root_unique] = {}
@@ -440,7 +450,7 @@ def _create_unique_map(obj, root_unique, original_obj):
 
 def _add_unique_map_entry(obj, original_obj, root_unique):
     """Add a unique entry to the unique entry map."""
-    _repeat_iteration_tracker, deepcopy_unique_map = _get_trackers()
+    deepcopy_unique_map = _get_trackers().deepcopy_unique_map
 
     # Calculate the obj unique and the original obj unique.
     obj_unique = generate_unique_from_obj(obj)

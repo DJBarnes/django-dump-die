@@ -201,6 +201,21 @@ class DumpDieRelationsTestCase(CollectDumpsMixin, TestCase):
         self.assertIn("… 5 more", content)
         self.assertIn("LIMIT 20", queries[1])
 
+    @override_settings(DJANGO_DD_RELATED_MANAGER_DEPTH=1)
+    def test_each_followed_related_manager_is_shown(self):
+        """Verify each row's followed related manager shows its rows, though each is a new QuerySet made on the page.
+
+        Each QuerySet is gone once its row is shown, and Python reuses ids. Without keeping it until the page is done,
+        the next row's QuerySet could get its id(), and so its unique, and be shown as already shown, without a query.
+        """
+        authors = Author.objects.bulk_create([Author(name=f"writer{number:02}") for number in range(20)])
+        Book.objects.bulk_create([Book(author=author, title=f"{author.name}-book") for author in authors])
+        content, _queries = self.dumped(Author.objects.filter(name__startswith="writer").order_by("name"))
+
+        for author in authors:
+            with self.subTest(author=author.name):
+                self.assertIn(f"&#x27;{author.name}-book&#x27;", content)
+
     def test_related_manager_of_an_unsaved_object(self):
         """Verify a related manager that can't be used, on an object that isn't saved, shows why."""
         content, _queries = self.dumped(Book(title="Draft"))
