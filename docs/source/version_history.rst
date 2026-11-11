@@ -16,24 +16,6 @@ Action Needed When Upgrading
 Other Changes
 -------------
 
-* **Fixed: the dump template tag showed a name and location from Django's
-  code.** ``{% dump %}`` showed the name ``Unknown_Object_Name``, and with
-  ``DJANGO_DD_INCLUDE_FILENAME_LINENUMBER`` on, a location inside Django's
-  template code. It now shows **Unknown Object**, and no location, since it
-  can't see the template's variable name or line.
-
-* **Fixed: DJANGO_DD_MULTILINE_FUNCTION_DOCS didn't apply to a dumped
-  function.** It only applied to the docs in the Functions section, not to a
-  function dumped itself, such as ``dump(my_function)``.
-
-* **Fixed: objects made while a page of dumps was shown could be shown as
-  already shown.** A unique comes from the object's ``id()``, which Python
-  reuses once an object is gone. Objects made while the page was shown, such
-  as a function result, or a property that returns a new object each time,
-  were gone once their part of the page was shown, and the next one could get
-  the same unique, and be shown as already shown, without its contents. They
-  are now kept until the page is done.
-
 * **Added: a Relations section for model instances.** A dumped model
   instance shows its relations in their own section, after its Attributes:
   its foreign keys and one-to-one fields, its many-to-many fields, and its
@@ -76,6 +58,25 @@ Other Changes
   dumps rendered at the same time also keep their own count of repeated
   objects.
   (`#34 <https://github.com/DJBarnes/django-dump-die/issues/34>`_)
+
+* **Fixed: objects made while a page of dumps was shown could be shown as
+  already shown.** A unique comes from the object's ``id()``, which Python
+  reuses once an object is gone. Objects made while the page was shown, such
+  as a function result, or a property that returns a new object each time,
+  were gone once their part of the page was shown, and the next one could get
+  the same unique, and be shown as already shown, without its contents. They
+  are now kept until the page is done.
+
+* **Fixed: the dump template tag showed a name and location from Django's
+  code.** ``{% dump %}`` showed the name ``Unknown_Object_Name``, and with
+  ``DJANGO_DD_INCLUDE_FILENAME_LINENUMBER`` on, a location inside Django's
+  template code. It now shows **Unknown Object**, and no location, since it
+  can't see the template's variable name or line.
+
+* **Fixed: DJANGO_DD_MULTILINE_FUNCTION_DOCS didn't apply to a dumped
+  function.** It only applied to the docs in the Functions section, not to a
+  function dumped itself, such as ``dump(my_function)``.
+
 
 0.2.1 (2026-11-09)
 ==================
