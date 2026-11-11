@@ -40,7 +40,7 @@ show ``********************`` in their place. Hover over the stars to see why
 the value is hidden. A function whose name looks sensitive is not run for
 :ref:`function results <function-results>`.
 
-A value is hidden when its attribute, key, or function name:
+A value is hidden when its attribute, key, relation, or function name:
 
 * has a word such as ``password``, ``pass``, ``secret``, ``token``, ``auth``,
   ``credentials``, or ``signature``, such as ``SECRET_KEY``,
@@ -61,6 +61,10 @@ Words are found from underscores and from camelCase, so names that only
 contain these letters, such as ``key``, ``author``, ``is_authenticated``, or
 ``passenger``, are still shown.
 
+A relation whose name looks sensitive, such as ``auth_token``, is also never
+loaded from the database, and values inside related objects are hidden by
+their names like any others, such as a related user's ``password``.
+
 Only names are checked. A value you dump directly, such as
 ``dump(settings.SECRET_KEY)``, is shown, since you asked for it. So are
 sensitive values that have no name, such as an item in a list.
@@ -71,12 +75,32 @@ Only do this on a server that only you use, and take care with screenshots
 of your dumps.
 
 
+Console Dumps Can End Up in Logs
+================================
+
+Outside of a request, such as in a management command or a background task,
+``dump()`` and ``dd()`` print to the console's error output (stderr). Servers
+and task workers often send that to log files, or to a logging service, where
+other people can read it, and where it is kept. Sensitive values are hidden
+there too, but everything else that is dumped, such as personal data, is in
+the logs. Only dump in code that runs on a server that only you use, with
+``DEBUG`` on.
+
+Text printed to the console can't control the terminal: characters that
+could, such as the escape sequences of a file name like
+``report\x1b[2J.pdf``, are shown escaped.
+
+
 Dumping Runs Code
 =================
 
 Dumping an object reads its attributes, which runs the code of its
 properties, and a dumped QuerySet runs two queries, to count its rows and to
-fetch the rows that are dumped. Function results, when they are
-turned on, run the functions they list. A dump can therefore query the
-database or change the state of an object, like any other code that reads
-it.
+fetch the rows that are dumped. A model instance's
+:ref:`relations <relations>` are loaded from the database within
+:ref:`DJANGO_DD_RELATED_OBJECT_DEPTH <related-object-depth>` and
+:ref:`DJANGO_DD_RELATED_MANAGER_DEPTH <related-manager-depth>`, so a dump
+can run many queries, especially with a large related manager depth.
+Function results, when they are turned on, run the functions they list. A
+dump can therefore query the database or change the state of an object, like
+any other code that reads it.

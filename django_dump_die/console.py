@@ -94,6 +94,23 @@ def plain(text, css_class):
     return text
 
 
+def printable(text, keep_line_breaks=False):
+    """Return text with its non-printable characters escaped, as repr() does, such as \x1b for an escape character.
+
+    Values printed with str(), such as a path, or an exception's message, can hold escape sequences that control the
+    terminal, such as one that sets its title or clears the screen, or invisible characters that change how the text
+    reads, such as a right-to-left override. They often come from a site's users, such as a file name.
+
+    :param keep_line_breaks: Whether line breaks and tabs are kept, such as in a function's docs.
+    """
+    return "".join(
+        character
+        if character.isprintable() or (keep_line_breaks and character in "\n\t")
+        else repr(character)[1:-1]
+        for character in text
+    )
+
+
 def get_console_colors(stream):
     """Return the colors for a dump printed to stream, or None for plain text.
 
@@ -136,7 +153,11 @@ def format_dump(object_info, colors=None):
 
     :param colors: ConsoleColors to color the text with, or None for plain text.
     """
-    paint = colors or plain
+    color = colors or plain
+
+    def paint(text, css_class):
+        """Return text escaped for the terminal, in the color of css_class."""
+        return color(printable(text, keep_line_breaks=css_class == "docs"), css_class)
     filename, linenumber, obj_name, obj, function_doc, root_index_start, root_index_end, original_obj = object_info
 
     if isinstance(obj, DumpBreak):

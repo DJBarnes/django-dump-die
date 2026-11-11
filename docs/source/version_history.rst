@@ -53,7 +53,8 @@ Other Changes
   a message saying why. ``dd()`` and ``dump()`` are now built-ins as soon as
   Django starts, not only once the middleware is loaded, and can also be
   imported with ``from django_dump_die import dd, dump``. See "Outside of a
-  Request" in the usage docs.
+  Request" in the usage docs. Characters that could control the terminal,
+  such as the escape sequences in a file name, are shown escaped.
   (`#21 <https://github.com/DJBarnes/django-dump-die/issues/21>`_)
 
 * **Fixed: requests showed each other's dumps.** Dumped objects were

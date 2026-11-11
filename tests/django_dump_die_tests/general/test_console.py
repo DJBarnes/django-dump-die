@@ -9,6 +9,7 @@ import os
 import re
 from contextlib import contextmanager, redirect_stderr
 from datetime import date
+from pathlib import PurePosixPath
 from decimal import Decimal
 from unittest.mock import patch
 
@@ -21,9 +22,9 @@ from django.test.utils import CaptureQueriesContext
 # Internal Imports.
 import django_dump_die
 from django_dump_die import functions
-from django_dump_die.console import ConsoleColors, _nearest_256_color, format_dump, get_console_colors
+from django_dump_die.console import ConsoleColors, _nearest_256_color, format_dump, get_console_colors, printable
 from django_dump_die.functions import DumpAndDie, dd, dump, get_dump_objects
-from django_dump_die.utils import DumpBreak, generate_unique_from_obj
+from django_dump_die.utils import DumpBreak, RelationError, generate_unique_from_obj
 
 
 class Account:
@@ -53,6 +54,13 @@ class HasResults:
 def sample_function(first, second=2):
     """Add two numbers."""
     return first + second
+
+
+def documented_function():
+    """First line.
+
+    Second paragraph.
+    """
 
 
 @contextmanager
@@ -198,6 +206,51 @@ class DumpDieConsoleTestCase(SimpleTestCase):
     def test_break_object(self):
         """Verify a break is formatted as a line, without a name."""
         self.assertEqual(format_dump((None, None, None, DumpBreak(1), None, None, None, None)), "-" * 60)
+
+
+@override_settings(DEBUG=True)
+class DumpDieConsoleEscapingTestCase(SimpleTestCase):
+    """Verify text printed to the console can't control the terminal, such as with escape sequences in a file name."""
+
+    def test_escape_sequences_in_a_value_are_escaped(self):
+        """Verify an escape sequence in a value printed with str(), such as a path, is shown, not sent to a terminal."""
+        upload = PurePosixPath("/uploads/\x1b]0;owned\x07report\x1b[2J.pdf")
+        with console() as output:
+            dump(upload)
+
+        self.assertNotIn("\x1b", output.getvalue())
+        self.assertIn("/uploads/\\x1b]0;owned\\x07report\\x1b[2J.pdf", output.getvalue())
+
+    def test_escape_sequences_in_an_error_are_escaped(self):
+        """Verify an escape sequence in a shown error, such as a relation's, is escaped."""
+        errors = {"error": RelationError(ValueError("bad \x1b[2J value"))}
+        text = format_dump(("errors", None, None, errors, None, None, None, None))
+
+        self.assertNotIn("\x1b", text)
+        self.assertIn("ValueError: bad \\x1b[2J value", text)
+
+    def test_invisible_characters_are_escaped(self):
+        """Verify characters that change how text reads, such as a right-to-left override, are shown escaped."""
+        self.assertEqual(printable("abc\u202edef"), "abc\\u202edef")
+
+    def test_line_breaks_are_kept_only_in_docs(self):
+        """Verify a function's docs keep their line breaks, and line breaks in values are escaped."""
+        self.assertEqual(printable("one\ntwo"), "one\\ntwo")
+        self.assertEqual(printable("one\ntwo", keep_line_breaks=True), "one\ntwo")
+        with console() as output:
+            dump(documented_function)
+
+        self.assertIn("First line.\n\nSecond paragraph.", output.getvalue())
+
+    def test_colored_text_is_escaped_too(self):
+        """Verify the escaping happens before the colors are added, so the color codes still work."""
+        upload = PurePosixPath("/uploads/\x1b[2J.pdf")
+        output = TerminalOutput()
+        with patch.dict(os.environ, without_color_variables(), clear=True), patch("sys.stderr", output):
+            dump(upload)
+
+        self.assertIn("\033[38;5;", output.getvalue())
+        self.assertNotIn("\x1b[2J", output.getvalue())
 
 
 @override_settings(DEBUG=True)
