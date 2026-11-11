@@ -748,9 +748,10 @@ def _get_relation_rows(obj, relation_steps):
     """Return the rows of a model instance's Relations section, or an empty list for other objects.
 
     Each relation shows what is already loaded, such as by select_related() or prefetch_related(). A relation that
-    isn't loaded is followed, with a query, when it returns one object and is no more than
-    DJANGO_DD_RELATED_OBJECT_DEPTH relation steps from the dumped object. Otherwise, it shows that it isn't loaded,
-    and how to load it.
+    isn't loaded is followed, with queries, when it is no more than DJANGO_DD_RELATED_OBJECT_DEPTH relation steps from
+    the dumped object, for one that returns one object, or DJANGO_DD_RELATED_MANAGER_DEPTH, for one that returns a
+    related manager. A related manager is followed as its QuerySet, which, like any dumped QuerySet, only fetches
+    the rows that are shown. Otherwise, it shows that it isn't loaded, and how to load it.
 
     :param obj: Object to get the relations of.
     :param relation_steps: How many relations were followed to get to obj from the dumped object.
@@ -765,7 +766,10 @@ def _get_relation_rows(obj, relation_steps):
             try:
                 value = get_loaded_relation(obj, relation)
                 if value is NOT_LOADED:
-                    if not relation.returns_many and step <= app_settings.RELATED_OBJECT_DEPTH:
+                    if relation.returns_many and step <= app_settings.RELATED_MANAGER_DEPTH:
+                        # Not run here: dumped like any QuerySet, with a count and only the rows shown.
+                        value = getattr(obj, relation.name).all()
+                    elif not relation.returns_many and step <= app_settings.RELATED_OBJECT_DEPTH:
                         value = _follow_related_object(obj, relation)
                     else:
                         value = NotLoadedRelation(relation.name, relation.returns_many)

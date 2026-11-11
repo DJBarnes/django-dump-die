@@ -129,7 +129,8 @@ class NotLoadedRelation(Placeholder):
         if returns_many:
             self.title = (
                 "Not loaded, so that the dump doesn't query the database. Load it with "
-                f'prefetch_related("{name}"), or dump it, such as dump(obj.{name}.all()).'
+                f'prefetch_related("{name}"), follow more relations with DJANGO_DD_RELATED_MANAGER_DEPTH, or dump it, '
+                f"such as dump(obj.{name}.all())."
             )
         else:
             self.title = (

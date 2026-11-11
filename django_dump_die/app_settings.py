@@ -76,6 +76,10 @@ class AppSettings:
     # How many relation steps from the dumped object to follow relations that return one object, such as foreign
     # keys, querying the database for those not loaded already. 0 only shows what is loaded.
     RELATED_OBJECT_DEPTH = Setting(3)
+    # How many relation steps from the dumped object to follow relations that return a related manager, such as
+    # many-to-many fields and reverse foreign keys, querying the database for their rows. Each costs a count and a
+    # query for the rows shown. 0 only shows rows already loaded with prefetch_related().
+    RELATED_MANAGER_DEPTH = Setting(0)
     # Whether functions should be included in the output.
     INCLUDE_FUNCTIONS = Setting(False)
     # Whether the results of some functions should be included in the output. Off by default, since it runs code.

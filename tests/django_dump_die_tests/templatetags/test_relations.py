@@ -152,6 +152,7 @@ class DumpDieRelationsTestCase(CollectDumpsMixin, TestCase):
 
         self.assertRegex(content, not_loaded("tags", "Related Manager"))
         self.assertIn("prefetch_related(&quot;tags&quot;)", content)
+        self.assertIn("DJANGO_DD_RELATED_MANAGER_DEPTH", content)
         self.assertEqual(queries, [])
 
     def test_prefetched_related_manager_is_shown(self):
@@ -169,6 +170,34 @@ class DumpDieRelationsTestCase(CollectDumpsMixin, TestCase):
         self.assertIn("&#x27;science&#x27;", book_content)
         self.assertIn("&#x27;Notes&#x27;", author_content)
         self.assertEqual(book_queries + author_queries, [])
+
+    @override_settings(DJANGO_DD_RELATED_OBJECT_DEPTH=0, DJANGO_DD_RELATED_MANAGER_DEPTH=1)
+    def test_related_manager_is_followed(self):
+        """Verify a related manager within DJANGO_DD_RELATED_MANAGER_DEPTH is counted, and its rows fetched."""
+        book = Book.objects.get(title="Notes")
+        content, queries = self.dumped(book)
+
+        self.assertRegex(
+            content, re.escape(relation("tags", "Related Manager")) + r'\s*<span class="type"[^>]*>QuerySet:1'
+        )
+        self.assertIn("&#x27;science&#x27;", content)
+        self.assertEqual(len(queries), 2, queries)
+        self.assertIn("COUNT(", queries[0])
+        # The tag's own books are two relations away, past the depth.
+        self.assertRegex(content, not_loaded("books", "Related Manager"))
+
+    @override_settings(DJANGO_DD_RELATED_OBJECT_DEPTH=0, DJANGO_DD_RELATED_MANAGER_DEPTH=1)
+    def test_followed_related_manager_fetches_only_the_rows_shown(self):
+        """Verify a followed related manager with more rows than the limit only fetches the rows shown."""
+        book = Book.objects.get(title="Notes")
+        book.tags.add(*Tag.objects.bulk_create([Tag(name=f"tag{number:02}") for number in range(24)]))
+        content, queries = self.dumped(book)
+
+        self.assertRegex(
+            content, re.escape(relation("tags", "Related Manager")) + r'\s*<span class="type"[^>]*>QuerySet:25'
+        )
+        self.assertIn("… 5 more", content)
+        self.assertIn("LIMIT 20", queries[1])
 
     def test_related_manager_of_an_unsaved_object(self):
         """Verify a related manager that can't be used, on an object that isn't saved, shows why."""

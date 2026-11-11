@@ -26,10 +26,12 @@ Other Changes
   such as foreign keys, are followed as before, up to
   ``DJANGO_DD_RELATED_OBJECT_DEPTH`` relations away, three by default,
   instead of until ``DJANGO_DD_MAX_RECURSION_DEPTH``. Related managers show
-  the rows ``prefetch_related()`` loaded, without a query. Other relations
-  say they aren't loaded, and how to load them. The section can be turned
-  off with ``DJANGO_DD_INCLUDE_RELATIONS``, and collapsed with
-  ``DJANGO_DD_RELATIONS_START_EXPANDED``. See "Relations" in the usage docs.
+  the rows ``prefetch_related()`` loaded, without a query, and can be
+  followed too, with ``DJANGO_DD_RELATED_MANAGER_DEPTH``, which is off by
+  default. Other relations say they aren't loaded, and how to load them. The
+  section can be turned off with ``DJANGO_DD_INCLUDE_RELATIONS``, and
+  collapsed with ``DJANGO_DD_RELATIONS_START_EXPANDED``. See "Relations" in
+  the usage docs.
   (`#22 <https://github.com/DJBarnes/django-dump-die/issues/22>`_)
 
 * **Added: dd() and dump() print to the console outside of a request.** In a

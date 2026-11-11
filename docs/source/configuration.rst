@@ -275,8 +275,8 @@ setting is only shown if it is already loaded, such as with
 only show what is already loaded, and never query the database for relations.
 
 Relations that return a related manager, such as many-to-many fields and
-reverse foreign keys, aren't followed. They show their rows if they are
-already loaded with ``prefetch_related()``.
+reverse foreign keys, follow
+:ref:`DJANGO_DD_RELATED_MANAGER_DEPTH <related-manager-depth>` instead.
 
 :Type: ``int``
 :Default: ``3``
@@ -285,6 +285,33 @@ Example::
 
     DJANGO_DD_RELATED_OBJECT_DEPTH = 1
 
+
+.. _related-manager-depth:
+
+DJANGO_DD_RELATED_MANAGER_DEPTH
+===============================
+
+How many relations away from the dumped object to follow relations that
+return a related manager, such as many-to-many fields and reverse foreign keys
+like ``user_set``, loading the rows of the ones that aren't loaded yet from the
+database.
+
+A followed related manager is dumped like a QuerySet: it is counted, and only
+its first ``DJANGO_DD_MAX_ITERABLE_LENGTH`` rows are fetched, so each costs two
+queries. But each of those rows can have related managers of its own, so the
+number of queries grows quickly with each relation away. Off by default: only
+rows already loaded with ``prefetch_related()`` are shown, without a query, and
+others show **Not loaded**.
+
+Counted like :ref:`DJANGO_DD_RELATED_OBJECT_DEPTH <related-object-depth>`: a
+relation of the dumped object itself is one relation away.
+
+:Type: ``int``
+:Default: ``0``
+
+Example::
+
+    DJANGO_DD_RELATED_MANAGER_DEPTH = 1
 
 DJANGO_DD_INCLUDE_FUNCTIONS
 ===========================

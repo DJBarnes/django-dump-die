@@ -247,8 +247,11 @@ limits:
   loaded yet costs a query.
 
 * **Relations that return a related manager**, such as a many-to-many field
-  or ``user_set``, show their rows only if ``prefetch_related()`` already
-  loaded them, without a query.
+  or ``user_set``, show the rows ``prefetch_related()`` already loaded,
+  without a query. They are only followed, with queries, up to
+  :ref:`DJANGO_DD_RELATED_MANAGER_DEPTH <related-manager-depth>` relations
+  away, which is off by default. Each followed one is counted, and only its
+  first rows are fetched, like a dumped QuerySet.
 
 A relation that isn't shown says **Not loaded**. Hover over it to see how to
 load it: with ``select_related()`` or ``prefetch_related()`` on the QuerySet,
