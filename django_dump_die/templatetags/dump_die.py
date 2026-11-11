@@ -690,7 +690,7 @@ def _handle_complex_type(
         item_range = None
         if is_iterable_obj:
             item_range = _get_item_range(length, root_index_start, root_index_end)
-        attributes, functions = get_obj_values(obj, item_range)
+        attributes, functions = get_obj_values(obj, item_range, relation_steps)
 
     # A query that failed has no results to show, only its error.
     function_results = []
@@ -816,10 +816,11 @@ def _get_exception_attribute(exception):
     return ["EXCEPTION", str(exception), None, "empty", title, None]
 
 
-def get_obj_values(obj, item_range=None):
+def get_obj_values(obj, item_range=None, relation_steps=0):
     """Determines full corresponding member values (attributes/functions) of object.
 
     :param item_range: ItemRange of the items to list, for an iterable. See get_members().
+    :param relation_steps: How many relations were followed to get to obj from the dumped object. See get_members().
     """
 
     # Initialize attribute/function lists. This is what we ultimately return.
@@ -828,7 +829,7 @@ def get_obj_values(obj, item_range=None):
 
     try:
         # Attempt to get member values of object. Falls back to empty list on failure.
-        members = get_members(obj, item_range)
+        members = get_members(obj, item_range, relation_steps)
 
     except Exception as exception:
         # On exception, add exception to attributes and return the attributes.

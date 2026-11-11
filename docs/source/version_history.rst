@@ -25,7 +25,9 @@ Other Changes
   foreign key without a value was left out. Relations that return one object,
   such as foreign keys, are followed as before, up to
   ``DJANGO_DD_RELATED_OBJECT_DEPTH`` relations away, three by default,
-  instead of until ``DJANGO_DD_MAX_RECURSION_DEPTH``. Related managers show
+  instead of until ``DJANGO_DD_MAX_RECURSION_DEPTH``. A dumped QuerySet
+  fetches them with its rows, in one query, instead of one query for each
+  related object of each row. Related managers show
   the rows ``prefetch_related()`` loaded, without a query, and can be
   followed too, with ``DJANGO_DD_RELATED_MANAGER_DEPTH``, which is off by
   default. Other relations say they aren't loaded, and how to load them. The

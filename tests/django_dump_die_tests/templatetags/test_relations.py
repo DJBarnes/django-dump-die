@@ -5,6 +5,7 @@ loaded, and which only say they aren't loaded.
 
 # System Imports.
 import re
+from unittest.mock import patch
 
 # Third-Party Imports.
 from django.db import connection
@@ -16,7 +17,8 @@ from django.test.utils import CaptureQueriesContext
 from django_dump_die import middleware
 from django_dump_die.console import format_dump
 from django_dump_die.middleware import dump
-from django_dump_die.utils import get_relations
+from django_dump_die import utils
+from django_dump_die.utils import get_related_object_lookups, get_relations
 from django_dump_die.views.example_helpers import SampleDjangoModel
 from django_dump_die_tests.collected_dumps import CollectDumpsMixin
 from django_dump_die_tests.django_test_project.models import Author, AuthToken, Book, Note, Profile, Tag
@@ -283,3 +285,85 @@ class DumpDieRelationsTestCase(CollectDumpsMixin, TestCase):
         self.assertIn("\n    author: Author ", output)
         self.assertIn("\n        name: 'Ada'\n", output)
         self.assertIn("\n    tags: Not loaded\n", output)
+
+
+@override_settings(DEBUG=True)
+class DumpDieRelatedObjectBatchingTestCase(CollectDumpsMixin, TestCase):
+    """Verify a dumped QuerySet fetches the related objects the dump follows with its rows, in one query."""
+
+    @classmethod
+    def setUpTestData(cls):
+        for number in range(3):
+            author = Author.objects.create(name=f"author{number}")
+            Profile.objects.create(author=author, bio=f"bio{number}")
+            AuthToken.objects.create(author=author, key=f"key{number}")
+            Book.objects.create(author=author, title=f"book{number}")
+
+    def dumped(self, obj):
+        """Dump an object, and return the page and the queries it ran."""
+        with CaptureQueriesContext(connection) as queries:
+            dump(obj)
+            content = render_dumped_objects()
+        return content, [query["sql"] for query in queries.captured_queries]
+
+    def test_queryset_fetches_related_objects_with_its_rows(self):
+        """Verify the rows' authors and their profiles come in the same query as the rows, not one query each."""
+        content, queries = self.dumped(Book.objects.order_by("title"))
+
+        self.assertEqual(len(queries), 2, queries)
+        self.assertIn("COUNT(", queries[0])
+        self.assertIn("JOIN", queries[1])
+        for number in range(3):
+            self.assertIn(f"&#x27;bio{number}&#x27;", content)
+        # A sensitive relation is never read, so it isn't fetched either.
+        self.assertNotIn("authtoken", queries[1])
+
+    @override_settings(DJANGO_DD_RELATED_OBJECT_DEPTH=1)
+    def test_only_related_objects_within_the_depth_are_fetched(self):
+        """Verify related objects past DJANGO_DD_RELATED_OBJECT_DEPTH aren't fetched, and say they aren't loaded."""
+        content, queries = self.dumped(Book.objects.order_by("title"))
+
+        self.assertEqual(len(queries), 2, queries)
+        self.assertNotIn("profile", queries[1])
+        self.assertRegex(content, not_loaded("profile"))
+
+    @override_settings(DJANGO_DD_RELATED_OBJECT_DEPTH=0)
+    def test_nothing_is_fetched_at_depth_zero(self):
+        """Verify no related objects are fetched with the rows when relations aren't followed."""
+        _content, queries = self.dumped(Book.objects.order_by("title"))
+
+        self.assertEqual(len(queries), 2, queries)
+        self.assertNotIn("JOIN", queries[1])
+
+    def test_lookups_of_the_followed_relations(self):
+        """Verify the lookups are the followed relations: not sensitive ones, or the one back to where they came."""
+        self.assertCountEqual(
+            get_related_object_lookups(Book, 3), ["author", "author__profile", "editor", "editor__profile"]
+        )
+        self.assertEqual(get_related_object_lookups(Book, 1), ["author", "editor"])
+        self.assertEqual(get_related_object_lookups(Book, 0), [])
+
+    def test_querysets_that_select_related_does_not_work_with(self):
+        """Verify QuerySets that select_related() can't be added to are dumped as before, with their rows."""
+        for label, queryset in (
+            ("only", Book.objects.order_by("title").only("title")),
+            ("values", Book.objects.order_by("title").values("title")),
+            ("union", Book.objects.filter(title="book0").union(Book.objects.filter(title="book1"))),
+        ):
+            with self.subTest(queryset=label):
+                content, _queries = self.dumped(queryset)
+                self.assertIn("book0", content)
+
+    def test_rows_are_fetched_alone_if_fetching_them_with_related_objects_fails(self):
+        """Verify a QuerySet whose rows can't be fetched with their related objects is still dumped, without them."""
+
+        class FailsWhenFetched:
+            """Stands in for a QuerySet with select_related() that fails when its rows are fetched."""
+
+            def __getitem__(self, index):
+                raise ValueError("The rows can't be fetched this way.")
+
+        with patch.object(utils, "_with_related_objects", return_value=FailsWhenFetched()):
+            content, _queries = self.dumped(Book.objects.order_by("title"))
+
+        self.assertIn("&#x27;bio0&#x27;", content)

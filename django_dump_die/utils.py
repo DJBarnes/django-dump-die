@@ -33,6 +33,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DatabaseError, models
 from django.db.models import ForeignObjectRel
+from django.db.models.query import ModelIterable
 from django.http import QueryDict
 from django.utils.functional import Promise, cached_property as django_cached_property
 
@@ -649,11 +650,13 @@ def generate_unique_from_obj(obj):
     return unique
 
 
-def get_members(obj, item_range=None):
+def get_members(obj, item_range=None, relation_steps=0):
     """Attempts to get object members. Falls back to an empty list.
 
     :param item_range: ItemRange of the items to list, for an iterable that isn't a dict. The items before and after
         it are each listed as one NotDumpedItems. None lists every item, except the rows of a QuerySet.
+    :param relation_steps: How many relations were followed to get to obj from the dumped object. For a QuerySet, its
+        rows' related objects within DJANGO_DD_RELATED_OBJECT_DEPTH are fetched with the rows. See _get_rows().
     """
 
     # Get initial member set or empty list. A model instance's relations are left out: reading them can query the
@@ -678,7 +681,7 @@ def get_members(obj, item_range=None):
         # Slicing a QuerySet that isn't evaluated yet fetches only those rows. Its rows are only listed for an item
         # range, since listing all of them, such as to match a deep copy to its original, would load the whole table.
         if item_range is not None:
-            rows = obj[item_range.start : item_range.stop]
+            rows = _get_rows(obj, item_range, relation_steps)
             members.extend(_get_item_members(enumerate(rows, item_range.start), item_range))
 
     elif is_iterable(obj):
@@ -697,6 +700,64 @@ def get_members(obj, item_range=None):
         members = [m for m in members if not is_enum_member(m[1])]
 
     return members
+
+
+def _get_rows(queryset, item_range, relation_steps):
+    """Return the rows of a QuerySet in item_range, fetched with the related objects the dump will follow.
+
+    The Relations section follows each row's relations that return one object, such as foreign keys, up to
+    DJANGO_DD_RELATED_OBJECT_DEPTH relations away. Fetching them with the rows, with select_related(), takes one query,
+    instead of one for each relation of each row. Falls back to fetching the rows alone, for a QuerySet that
+    select_related() can't be added to.
+    """
+    rows = queryset[item_range.start : item_range.stop]
+    with_related = _with_related_objects(queryset, relation_steps)
+    if with_related is not None:
+        try:
+            return list(with_related[item_range.start : item_range.stop])
+        except Exception:
+            # Such as a QuerySet the checks in _with_related_objects() didn't catch. The rows are fetched alone.
+            pass
+    return rows
+
+
+def _with_related_objects(queryset, relation_steps):
+    """Return the QuerySet with select_related() for the related objects the dump will follow, or None for none.
+
+    None for a QuerySet that is evaluated already, or that select_related() doesn't work with: values(), only() and
+    defer(), and union() and the like.
+    """
+    if not app_settings.INCLUDE_RELATIONS or getattr(queryset, "_result_cache", None) is not None:
+        return None
+    query = getattr(queryset, "query", None)
+    if getattr(queryset, "_iterable_class", None) is not ModelIterable or query.combinator or query.deferred_loading[0]:
+        return None
+    lookups = get_related_object_lookups(queryset.model, app_settings.RELATED_OBJECT_DEPTH - relation_steps)
+    return queryset.select_related(*lookups) if lookups else None
+
+
+def get_related_object_lookups(model, depth, prefix="", came_from=None):
+    """Return the select_related() lookups of a model's relations that return one object, up to depth relations away.
+
+    The same relations as the Relations section follows, so that they can be fetched in one query. Left out are those
+    with sensitive names, which are never read, generic foreign keys, which select_related() can't follow, and the
+    relation back to the object just came from, which Django fills in already.
+
+    :param came_from: The relation followed to get to model, whose reverse is left out.
+    """
+    if depth <= 0:
+        return []
+    lookups = []
+    for field in model._meta.get_fields():
+        returns_one = field.is_relation and (field.many_to_one or field.one_to_one) and field.related_model is not None
+        if not returns_one or (came_from is not None and field.remote_field is came_from):
+            continue
+        name = field.get_accessor_name() if isinstance(field, ForeignObjectRel) else field.name
+        if is_sensitive_name(name):
+            continue
+        lookups.append(prefix + name)
+        lookups.extend(get_related_object_lookups(field.related_model, depth - 1, f"{prefix}{name}__", field))
+    return lookups
 
 
 def _get_members_without(obj, names):

@@ -253,6 +253,12 @@ limits:
   away, which is off by default. Each followed one is counted, and only its
   first rows are fetched, like a dumped QuerySet.
 
+A dumped QuerySet that isn't evaluated yet fetches its rows' related objects
+in the same query as its rows, with ``select_related()``, instead of one query
+for each related object of each row. This doesn't work with a QuerySet that
+uses ``values()``, ``only()``, ``defer()``, or ``union()``, nor for generic
+foreign keys, or related managers, whose rows are fetched for each one.
+
 A relation that isn't shown says **Not loaded**. Hover over it to see how to
 load it: with ``select_related()`` or ``prefetch_related()`` on the QuerySet,
 or by dumping the relation itself, such as ``dump(user.groups.all())``.

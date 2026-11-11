@@ -512,7 +512,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
                 # version. So only check that the frames from this package are there.
                 'dump_die.py", line',
                 "in get_obj_values",
-                "members = get_members(obj, item_range)",
+                "members = get_members(obj, item_range, relation_steps)",
                 'utils.py", line',
                 "in get_members",
                 "inspect.getmembers(obj)",

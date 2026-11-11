@@ -266,7 +266,8 @@ DJANGO_DD_RELATED_OBJECT_DEPTH
 
 How many relations away from the dumped object to follow relations that
 return one object, such as foreign keys and one-to-one fields, loading the
-ones that aren't loaded yet from the database. Each costs a query.
+ones that aren't loaded yet from the database. Each costs a query, except in
+a dumped QuerySet, which fetches them with its rows, in one query.
 
 A relation of the dumped object itself is one relation away. A relation of
 that related object is two away, and so on. A relation further away than this
