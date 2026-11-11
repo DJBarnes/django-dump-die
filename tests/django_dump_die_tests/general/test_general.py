@@ -336,9 +336,7 @@ class DumpDieGeneralTestCase(IntegrationTestCase):
                 # Object opening tags.
                 """
                 <div class="dump-wrapper">
-                    <span class="dumped_object" title="Dumped Object">
-                        <span class="empty">Unknown_Object_Name</span>
-                    </span>:
+                    <span class="empty" title="Dumped Object">Unknown Object</span>:
                     <span class="type" title="SimpleClass">SimpleClass</span>
                     <span class="braces">{</span>
                     <a

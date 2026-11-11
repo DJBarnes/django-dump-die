@@ -188,7 +188,10 @@ def dump(context, obj):
     if not settings.DEBUG:
         return {"dump_enabled": False}
 
-    object_info = get_dumped_object_info(obj)
+    # Without a name or a location: the call stack that dump() and dd() read them from is Django's template code here,
+    # not the template, so they would be wrong. The tag can't see the template's variable name either.
+    _filename, _linenumber, _obj_name, *object_values = get_dumped_object_info(obj)
+    object_info = (None, None, None, *object_values)
 
     new_context = context.flatten()
 
@@ -236,7 +239,13 @@ def dump_objects(objects):
         (filename, linenumber, obj_name, _hold_if_callable(obj), function_doc, start, end, _hold_if_callable(original))
         for filename, linenumber, obj_name, obj, function_doc, start, end, original in objects
     ]
-    return {"objects": objects, "break_style": app_settings.BREAK_STYLE, "break_size": app_settings.BREAK_SIZE}
+    return {
+        "objects": objects,
+        "break_style": app_settings.BREAK_STYLE,
+        "break_size": app_settings.BREAK_SIZE,
+        # For the docs of a dumped function. The Functions section gets it from each object's own context.
+        "multiline_function_docs": app_settings.MULTILINE_FUNCTION_DOCS,
+    }
 
 
 @register.filter

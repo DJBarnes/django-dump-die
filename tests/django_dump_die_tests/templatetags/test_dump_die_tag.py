@@ -156,6 +156,23 @@ class DumpDieRootIndicesTestCase(SimpleTestCase):
 class DumpDieTagSettingsTestCase(CollectDumpsMixin, SimpleTestCase):
     """Verify the dump output follows the attribute, function, private, and magic member settings."""
 
+    @override_settings(DJANGO_DD_INCLUDE_FILENAME_LINENUMBER=True)
+    def test_template_tag_has_no_name_or_location(self):
+        """Verify the template tag shows no name or location, which would come from Django's template code."""
+        content = render_dump(Branch())
+
+        self.assertIn('<span class="empty" title="Dumped Object">Unknown Object</span>', content)
+        self.assertNotIn('class="location"', content)
+        self.assertNotIn("Unknown_Object_Name", content)
+
+    @override_settings(DJANGO_DD_MULTILINE_FUNCTION_DOCS=True)
+    def test_dumped_function_docs_keep_their_lines(self):
+        """Verify DJANGO_DD_MULTILINE_FUNCTION_DOCS applies to a function dumped itself, not only to the Functions."""
+        dump(Branch.do_work)
+        content = render_dumped_objects()
+
+        self.assertIn('<span class="docs indent-docs">', content)
+
     @override_settings(DJANGO_DD_INCLUDE_ATTRIBUTES=False)
     def test_attributes_left_out(self):
         """Verify complex and intermediate objects have no Attributes section when attributes are off."""
