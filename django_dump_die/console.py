@@ -104,9 +104,7 @@ def printable(text, keep_line_breaks=False):
     :param keep_line_breaks: Whether line breaks and tabs are kept, such as in a function's docs.
     """
     return "".join(
-        character
-        if character.isprintable() or (keep_line_breaks and character in "\n\t")
-        else repr(character)[1:-1]
+        character if character.isprintable() or (keep_line_breaks and character in "\n\t") else repr(character)[1:-1]
         for character in text
     )
 
@@ -158,6 +156,7 @@ def format_dump(object_info, colors=None):
     def paint(text, css_class):
         """Return text escaped for the terminal, in the color of css_class."""
         return color(printable(text, keep_line_breaks=css_class == "docs"), css_class)
+
     filename, linenumber, obj_name, obj, function_doc, root_index_start, root_index_end, original_obj = object_info
 
     if isinstance(obj, DumpBreak):
