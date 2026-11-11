@@ -1,8 +1,8 @@
 Version History
 ***************
 
-Unreleased
-==========
+0.3.0 (2026-11-11)
+==================
 
 Action Needed When Upgrading
 ----------------------------
